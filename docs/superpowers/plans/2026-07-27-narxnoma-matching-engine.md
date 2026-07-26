@@ -16,6 +16,10 @@
 - `ACCEPT_THRESHOLD = 30`. A score of exactly 30 accepts.
 - Hard reject is the integer `-100`, and always wins over accumulation.
 - Colour is a hard identity field. Unknown colour never equals any colour.
+- **RAM is identity only for brands that publish it.** Apple does not put RAM in consumer
+  names, and `extract_memory` deliberately refuses to infer it (see Task 4). A canonical
+  key therefore requires RAM for every brand *except* those in
+  `BRANDS_WITHOUT_PUBLISHED_RAM`. Without this, no iPhone could ever be keyed.
 - Every rejection must be explainable via `why()` returning a specific string, never a generic one.
 - Source of truth for behaviour: `parsers/_matching-engine.md`, `parsers/uzum.md`, `parsers/alifshop.md`. If implementation and doc disagree, verify live, then fix **both** in the same commit.
 - Golden data lives at `narxnoma-seed/golden/audit_*.json` (already preserved from the audit; do not regenerate).
@@ -31,6 +35,7 @@ narxnoma-crawler/
     __init__.py
     matching/
       __init__.py                     public API re-exports
+      brands.py                       brand list, aliases, labels, RAM-publishing policy
       normalize.py                    normalize()
       colors.py                       COLOR_MAP, QUALIFIERS, colors_in_order(), primary_color()
       memory.py                       extract_memory() — RAM/storage, phantom-RAM guard
@@ -58,17 +63,24 @@ Each module is small and single-purpose. `features.py` composes `normalize`, `co
 
 ---
 
-### Task 1: Package scaffold and purity guard
+### Task 1: Package scaffold and brand policy
 
 **Files:**
 - Create: `narxnoma-crawler/pyproject.toml`
 - Create: `narxnoma-crawler/narxnoma/__init__.py`
 - Create: `narxnoma-crawler/narxnoma/matching/__init__.py`
-- Test: `narxnoma-crawler/tests/matching/test_purity.py`
+- Create: `narxnoma-crawler/narxnoma/matching/brands.py`
+- Test: `narxnoma-crawler/tests/matching/test_brands.py`
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: importable package `narxnoma.matching`; pytest runnable from `narxnoma-crawler/`.
+- Produces: importable package `narxnoma.matching`; pytest runnable from `narxnoma-crawler/`;
+  `BRANDS: list[str]`, `BRAND_ALIASES: dict[str, str]`, `BRAND_LABELS: dict[str, str]`,
+  `BRANDS_WITHOUT_PUBLISHED_RAM: frozenset[str]`, `canonical_brand(token: str) -> str`.
+
+Brand policy lives in one module because three later tasks need it: `memory.py` must know
+Apple publishes no RAM, `features.py` resolves aliases, and `keys.py` needs both that
+policy and the display label.
 
 - [ ] **Step 1: Create `pyproject.toml`**
 
@@ -112,53 +124,120 @@ This package must never import anything outside the standard library.
 """
 ```
 
-- [ ] **Step 3: Write the failing purity test**
+- [ ] **Step 3: Write the failing brand-policy tests**
 
-`tests/matching/test_purity.py`:
+`tests/matching/test_brands.py`:
 
 ```python
-import ast
-import pathlib
-
-STDLIB_OK = {
-    "re", "unicodedata", "dataclasses", "typing", "statistics",
-    "functools", "itertools", "collections", "enum", "math",
-}
-MATCHING_DIR = pathlib.Path(__file__).resolve().parents[2] / "narxnoma" / "matching"
+from narxnoma.matching.brands import (
+    BRAND_ALIASES, BRAND_LABELS, BRANDS, BRANDS_WITHOUT_PUBLISHED_RAM, canonical_brand,
+)
 
 
-def _imported_roots(path):
-    tree = ast.parse(path.read_text(encoding="utf-8"))
-    roots = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            for a in node.names:
-                roots.add(a.name.split(".")[0])
-        elif isinstance(node, ast.ImportFrom):
-            if node.level == 0 and node.module:
-                roots.add(node.module.split(".")[0])
-    return roots
+def test_aliases_collapse_sub_brands():
+    assert canonical_brand("iphone") == "apple"
+    assert canonical_brand("redmi") == "xiaomi"
+    assert canonical_brand("poco") == "xiaomi"
 
 
-def test_matching_imports_stdlib_only():
-    offenders = {}
-    for path in MATCHING_DIR.glob("*.py"):
-        bad = _imported_roots(path) - STDLIB_OK - {"narxnoma"}
-        if bad:
-            offenders[path.name] = sorted(bad)
-    assert offenders == {}, f"non-stdlib imports in matching: {offenders}"
+def test_unaliased_brand_passes_through():
+    assert canonical_brand("samsung") == "samsung"
+    assert canonical_brand("honor") == "honor"
+
+
+def test_apple_publishes_no_ram():
+    # Apple never states RAM in consumer names. This drives both the
+    # phantom-RAM guard (Task 4) and key completeness (Task 7).
+    assert "apple" in BRANDS_WITHOUT_PUBLISHED_RAM
+    assert "samsung" not in BRANDS_WITHOUT_PUBLISHED_RAM
+
+
+def test_apple_label_includes_iphone():
+    # "iphone" is a NON_MODEL_TOKEN, so it never survives into model_tokens.
+    # Without it in the label, display names read "Смартфон Apple 17 Pro Max".
+    assert BRAND_LABELS["apple"] == "Apple iPhone"
+    assert BRAND_LABELS["samsung"] == "Samsung"
+
+
+def test_every_alias_target_is_a_known_brand():
+    for target in BRAND_ALIASES.values():
+        assert target in BRANDS
+
+
+def test_every_brand_has_a_label():
+    for b in BRANDS:
+        assert canonical_brand(b) in BRAND_LABELS
 ```
 
-- [ ] **Step 4: Run the test**
+- [ ] **Step 4: Run to verify failure**
 
-Run: `cd narxnoma-crawler && pytest tests/matching/test_purity.py -v`
-Expected: PASS (no modules yet, so no offenders — it becomes a real guard as modules land).
+Run: `cd narxnoma-crawler && pytest tests/matching/test_brands.py -v`
+Expected: FAIL — `ModuleNotFoundError: No module named 'narxnoma.matching.brands'`
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Implement**
+
+`narxnoma/matching/brands.py`:
+
+```python
+"""Brand vocabulary and per-brand policy.
+
+Single home for anything brand-specific, because three modules need it:
+memory.py (who publishes RAM), features.py (alias resolution) and keys.py
+(key completeness + display label).
+"""
+
+# Order matters: matched as substrings, so sub-brands come before parents.
+BRANDS: list[str] = [
+    "apple", "samsung", "honor", "xiaomi", "vivo", "oppo", "realme",
+    "tecno", "infinix", "nothing", "google", "asus", "huawei",
+    "motorola", "zte", "meizu",
+]
+
+BRAND_ALIASES: dict[str, str] = {
+    "iphone": "apple",
+    "redmi": "xiaomi",
+    "poco": "xiaomi",
+}
+
+# Brands that never print RAM in consumer product names. For these, RAM is
+# absent rather than unknown, so a key without RAM is still complete.
+BRANDS_WITHOUT_PUBLISHED_RAM: frozenset[str] = frozenset({"apple"})
+
+BRAND_LABELS: dict[str, str] = {
+    "apple": "Apple iPhone",   # "iphone" is stripped as a NON_MODEL_TOKEN
+    "samsung": "Samsung",
+    "honor": "Honor",
+    "xiaomi": "Xiaomi",
+    "vivo": "Vivo",
+    "oppo": "OPPO",
+    "realme": "Realme",
+    "tecno": "Tecno",
+    "infinix": "Infinix",
+    "nothing": "Nothing",
+    "google": "Google",
+    "asus": "ASUS",
+    "huawei": "Huawei",
+    "motorola": "Motorola",
+    "zte": "ZTE",
+    "meizu": "Meizu",
+}
+
+
+def canonical_brand(token: str) -> str:
+    """Collapse a sub-brand to its parent ('redmi' -> 'xiaomi')."""
+    return BRAND_ALIASES.get(token, token)
+```
+
+- [ ] **Step 6: Run to verify pass**
+
+Run: `cd narxnoma-crawler && pytest tests/matching/test_brands.py -v`
+Expected: PASS — 6 passed
+
+- [ ] **Step 7: Commit**
 
 ```bash
 git add narxnoma-crawler/pyproject.toml narxnoma-crawler/narxnoma narxnoma-crawler/tests
-git commit -m "chore: scaffold narxnoma-crawler package with matching purity guard"
+git commit -m "chore: scaffold narxnoma-crawler package with brand policy module"
 ```
 
 ---
@@ -168,10 +247,15 @@ git commit -m "chore: scaffold narxnoma-crawler package with matching purity gua
 **Files:**
 - Create: `narxnoma-crawler/narxnoma/matching/normalize.py`
 - Test: `narxnoma-crawler/tests/matching/test_normalize.py`
+- Test: `narxnoma-crawler/tests/matching/test_purity.py`
 
 **Interfaces:**
 - Consumes: nothing.
 - Produces: `normalize(s: str | None) -> str`.
+
+The stdlib-only guard lives here rather than in Task 1 so it has real modules to inspect
+from the moment it is written — a guard over an empty directory passes vacuously and
+proves nothing.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -253,11 +337,59 @@ def normalize(s: str | None) -> str:
 Run: `cd narxnoma-crawler && pytest tests/matching/test_normalize.py -v`
 Expected: PASS — 6 passed
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Add the stdlib-only guard**
+
+`tests/matching/test_purity.py`:
+
+```python
+import ast
+import pathlib
+
+STDLIB_OK = {
+    "re", "unicodedata", "dataclasses", "typing", "statistics",
+    "functools", "itertools", "collections", "enum", "math",
+}
+MATCHING_DIR = pathlib.Path(__file__).resolve().parents[2] / "narxnoma" / "matching"
+
+
+def _imported_roots(path):
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    roots = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                roots.add(a.name.split(".")[0])
+        elif isinstance(node, ast.ImportFrom):
+            if node.level == 0 and node.module:
+                roots.add(node.module.split(".")[0])
+    return roots
+
+
+def test_matching_modules_exist():
+    """Guard against the guard passing vacuously over an empty directory."""
+    modules = {p.name for p in MATCHING_DIR.glob("*.py")}
+    assert {"brands.py", "normalize.py"} <= modules
+
+
+def test_matching_imports_stdlib_only():
+    offenders = {}
+    for path in MATCHING_DIR.glob("*.py"):
+        bad = _imported_roots(path) - STDLIB_OK - {"narxnoma"}
+        if bad:
+            offenders[path.name] = sorted(bad)
+    assert offenders == {}, f"non-stdlib imports in matching: {offenders}"
+```
+
+- [ ] **Step 6: Run the guard**
+
+Run: `cd narxnoma-crawler && pytest tests/matching/test_purity.py -v`
+Expected: PASS — 2 passed
+
+- [ ] **Step 7: Commit**
 
 ```bash
-git add narxnoma-crawler/narxnoma/matching/normalize.py narxnoma-crawler/tests/matching/test_normalize.py
-git commit -m "feat(matching): add normalize() with trailing-plus and yo-folding rules"
+git add narxnoma-crawler/narxnoma/matching/normalize.py narxnoma-crawler/tests/matching/test_normalize.py narxnoma-crawler/tests/matching/test_purity.py
+git commit -m "feat(matching): add normalize() and stdlib-only purity guard"
 ```
 
 ---
@@ -520,9 +652,11 @@ Expected: FAIL — `ModuleNotFoundError: No module named 'narxnoma.matching.memo
 """RAM and storage extraction.
 
 The lookbehind (?<![a-zа-я\\d]) before each figure is what stops a model
-code being read as memory. See parsers/_matching-engine.md.
+code being read as memory. See docs/parsers/_matching-engine.md.
 """
 import re
+
+from narxnoma.matching.brands import BRANDS_WITHOUT_PUBLISHED_RAM
 
 _UNIT = re.compile(r"(?<![a-zа-я\d])(\d{1,4})\s*(gb|гб|tb|тб)\b")
 _STORAGE_PAIR = re.compile(r"(?<![a-zа-я\d])(\d{1,3})\s+(\d{2,4})(?!\d)")
@@ -571,7 +705,7 @@ def extract_memory(
     # normalize() has already erased the "/" that tells them apart, so test the
     # RAW string, and never infer RAM for Apple (which does not publish it).
     has_separator = bool(_PAIR_SEPARATOR.search(str(raw or "")))
-    if ram is None and (has_separator or brand != "apple"):
+    if ram is None and (has_separator or brand not in BRANDS_WITHOUT_PUBLISHED_RAM):
         for m in _RAM_PAIR.finditer(normalized):
             a, b = int(m.group(1)), int(m.group(2))
             if min(a, b) <= _MAX_PLAUSIBLE_RAM and max(a, b) >= 32:
@@ -603,7 +737,7 @@ git commit -m "feat(matching): add memory extraction with Apple phantom-RAM guar
 
 **Interfaces:**
 - Consumes: `normalize()` (Task 2), `COLOR_MAP`/`QUALIFIERS`/`colors_in_order`/`primary_color` (Task 3), `extract_memory()` (Task 4).
-- Produces: frozen dataclass `Features(brand, ram_gb, storage_gb, colors: frozenset[str], primary_color: str | None, model_tokens: frozenset[str], normalized: str, stated_unresolvable_color: bool)` and `extract_features(name: str | None) -> Features`.
+- Produces: frozen dataclass `Features(brand, ram_gb, storage_gb, colors: frozenset[str], primary_color: str | None, model_tokens: frozenset[str], normalized: str)` and `extract_features(name: str | None) -> Features`.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -663,12 +797,17 @@ def test_bands_are_reserved_not_model_tokens():
     assert "5g" not in f.model_tokens
 
 
-def test_unresolvable_colour_is_flagged():
-    # A seller stated a colour we cannot map -> we must not treat it as
-    # "no colour" (which would make it a wildcard).
+def test_unmappable_colour_yields_no_colour():
+    # "Конфетный" is not in COLOR_MAP, so no colour resolves. score_match
+    # then hard-rejects it for any colour-bearing target rather than letting
+    # it act as a wildcard.
     f = extract_features("Смартфон Redmi 15 8/256 Конфетный")
     assert f.primary_color is None
-    assert f.stated_unresolvable_color is False  # 'конфетный' is unknown, not a QUALIFIER
+    assert f.colors == frozenset()
+
+
+def test_qualifier_does_not_hide_the_base_colour():
+    # "Velvet Grey": 'velvet' is a QUALIFIER and must not map, but 'grey' must.
     g = extract_features("Смартфон Honor X8D 8/256 Velvet Grey")
     assert g.primary_color == "gray"
 
@@ -693,6 +832,7 @@ Expected: FAIL — `ModuleNotFoundError: No module named 'narxnoma.matching.feat
 import re
 from dataclasses import dataclass
 
+from narxnoma.matching.brands import BRAND_ALIASES, BRANDS, canonical_brand
 from narxnoma.matching.colors import COLOR_MAP, QUALIFIERS, colors_in_order, primary_color
 from narxnoma.matching.memory import extract_memory
 from narxnoma.matching.normalize import normalize
@@ -713,12 +853,9 @@ NON_MODEL_TOKENS: frozenset[str] = frozenset({
     "rang", "smartfoni", "telefon", "chidamli", "zarbaga",   # uz filler
 })
 
-_BRANDS = [
-    "iphone", "apple", "samsung", "honor", "xiaomi", "redmi", "vivo",
-    "oppo", "realme", "tecno", "infinix", "poco", "nothing", "google",
-    "asus", "huawei", "motorola", "zte", "meizu",
-]
-_BRAND_ALIASES = {"iphone": "apple", "redmi": "xiaomi", "poco": "xiaomi"}
+# Sub-brands must be probed BEFORE their parents, so a "Redmi Note 15" is
+# recognised by "redmi" rather than falling through to a bare "xiaomi".
+_BRAND_PROBE_ORDER: list[str] = list(BRAND_ALIASES) + BRANDS
 
 _SKU_MIN_LEN = 5
 _PREFIX_NOISE = re.compile(r"\b(смартфон|smartfon\w*)\b")
@@ -733,7 +870,6 @@ class Features:
     primary_color: str | None
     model_tokens: frozenset[str]
     normalized: str
-    stated_unresolvable_color: bool
 
 
 def extract_features(name: str | None) -> Features:
@@ -742,9 +878,9 @@ def extract_features(name: str | None) -> Features:
     n = re.sub(r"\s+", " ", n)
 
     brand = None
-    for b in _BRANDS:
+    for b in _BRAND_PROBE_ORDER:
         if b in n:
-            brand = _BRAND_ALIASES.get(b, b)
+            brand = canonical_brand(b)
             break
 
     ram, storage = extract_memory(name, n, brand)
@@ -753,9 +889,6 @@ def extract_features(name: str | None) -> Features:
     token_set = set(tokens)
     colors = frozenset(colors_in_order(tokens))
     primary = primary_color(tokens)
-    # A qualifier with no base colour means the seller described a colour we
-    # could not resolve -- that must reject, never act as a wildcard.
-    stated_unresolvable = bool(token_set & QUALIFIERS) and primary is None
 
     reserved = {str(storage or ""), str(ram or ""), "5g", "4g", "0"}
     model_tokens: set[str] = set()
@@ -783,14 +916,13 @@ def extract_features(name: str | None) -> Features:
         primary_color=primary,
         model_tokens=frozenset(model_tokens),
         normalized=n,
-        stated_unresolvable_color=stated_unresolvable,
     )
 ```
 
 - [ ] **Step 4: Run to verify pass**
 
 Run: `cd narxnoma-crawler && pytest tests/matching/test_features.py -v`
-Expected: PASS — 10 passed
+Expected: PASS — 11 passed
 
 - [ ] **Step 5: Commit**
 
@@ -1011,7 +1143,8 @@ git commit -m "feat(matching): add score_match() and explainable why()"
 
 **Interfaces:**
 - Consumes: `Features` (Task 5).
-- Produces: frozen dataclasses `VariantKey(brand, model_tokens, ram_gb, storage_gb, color, sim_kind)` and `PartialKey(brand, model_tokens, ram_gb, storage_gb, color, sim_kind)`; functions `variant_key(f: Features, sim_kind: str) -> VariantKey | None`, `partial_key(f: Features, sim_kind: str) -> PartialKey`, `resolve_partial(partial: PartialKey, candidates: list[VariantKey]) -> VariantKey | None`, `display_name(key: VariantKey) -> str`, `slug(key: VariantKey) -> str`.
+- Consumes also: `BRAND_LABELS`, `BRANDS_WITHOUT_PUBLISHED_RAM` (Task 1).
+- Produces: frozen dataclasses `VariantKey(brand, model_tokens, ram_gb: int | None, storage_gb, color, sim_kind)` and `PartialKey(brand, model_tokens, ram_gb, storage_gb, color, sim_kind)`; functions `variant_key(f: Features, sim_kind: str) -> VariantKey | None`, `partial_key(f: Features, sim_kind: str) -> PartialKey`, `resolve_partial(partial: PartialKey, candidates: list[VariantKey]) -> VariantKey | None`, `ordered_model_tokens(tokens: frozenset[str]) -> list[str]`, `display_name(key: VariantKey) -> str`, `slug(key: VariantKey) -> str`.
 
 **This is the clustering contract.** `resolve_partial` returning `None` for an ambiguous partial is the behaviour that separates us from uzprice.
 
@@ -1020,11 +1153,9 @@ git commit -m "feat(matching): add score_match() and explainable why()"
 `tests/matching/test_keys.py`:
 
 ```python
-import pytest
-
 from narxnoma.matching.features import extract_features as F
 from narxnoma.matching.keys import (
-    PartialKey, VariantKey, display_name, partial_key, resolve_partial, slug, variant_key,
+    display_name, partial_key, resolve_partial, slug, variant_key,
 )
 
 
@@ -1045,6 +1176,19 @@ def test_key_is_none_when_identity_incomplete():
     assert variant_key(F("Чехол для Honor X9d"), "dual") is None
     # No colour -> colour is a hard identity field.
     assert variant_key(F("Honor X9d 12/256 GB"), "dual") is None
+
+
+def test_apple_key_is_complete_without_ram():
+    # Apple never publishes RAM and extract_memory refuses to infer it.
+    # If RAM were required, NO iPhone could ever be keyed.
+    key = k("Смартфон Apple iPhone 17 Pro Max 256 ГБ, Silver")
+    assert key is not None
+    assert key.ram_gb is None
+    assert key.storage_gb == 256
+
+
+def test_non_apple_key_still_requires_ram():
+    assert variant_key(F("Samsung Galaxy A17 128GB Blue"), "dual") is None
 
 
 def test_equal_keys_for_differently_worded_same_phone():
@@ -1094,7 +1238,25 @@ def test_partial_key_refuses_when_nothing_matches():
 
 def test_display_name_is_generated_not_copied():
     key = k("HONOR   x9d 12/256gb   midnight black")
-    assert display_name(key) == "Смартфон Honor X9d 12/256 ГБ, Черный"
+    assert display_name(key) == "Смартфон Honor X9D 12/256 ГБ, Черный"
+
+
+def test_display_name_orders_modifiers_not_alphabetically():
+    # sorted() would give "17 Max Pro". Pro precedes Max in every real name.
+    key = k("Смартфон Apple iPhone 17 Pro Max 256 ГБ, Silver")
+    assert display_name(key) == "Смартфон Apple iPhone 17 Pro Max 256 ГБ, Серебристый"
+
+
+def test_display_name_puts_family_prefix_first():
+    # sorted() would give "15 Note Redmi".
+    key = k("Смартфон Xiaomi Redmi Note 15 8/256 ГБ, чёрный")
+    assert display_name(key) == "Смартфон Xiaomi Redmi Note 15 8/256 ГБ, Черный"
+
+
+def test_display_name_uppercases_initialisms():
+    # sorted() would give "Fe S25".
+    key = k("Samsung Galaxy S25 FE 8/128 Navy")
+    assert display_name(key) == "Смартфон Samsung S25 FE 8/128 ГБ, Синий"
 
 
 def test_slug_is_deterministic_and_url_safe():
@@ -1102,6 +1264,18 @@ def test_slug_is_deterministic_and_url_safe():
     b = k("Honor X9d 12/256 GB Midnight Black")
     assert slug(a) == slug(b)
     assert slug(a) == "honor-x9d-12-256-black"
+
+
+def test_slug_omits_ram_when_the_brand_has_none():
+    assert slug(k("Смартфон Apple iPhone 17 Pro Max 256 ГБ, Silver")) == \
+        "apple-17-pro-max-256-silver"
+
+
+def test_esim_only_slug_is_distinct():
+    dual = slug(k("Смартфон Apple iPhone 17 Pro 256 ГБ, Silver", "dual"))
+    esim = slug(k("Смартфон Apple iPhone 17 Pro 256 ГБ, Silver", "esim_only"))
+    assert dual != esim
+    assert esim.endswith("-esim")
 ```
 
 - [ ] **Step 2: Run to verify failure**
@@ -1123,6 +1297,7 @@ must be resolved unambiguously or parked.
 """
 from dataclasses import dataclass
 
+from narxnoma.matching.brands import BRAND_LABELS, BRANDS_WITHOUT_PUBLISHED_RAM
 from narxnoma.matching.features import Features
 
 SIM_KINDS = ("dual", "esim_only", "unknown")
@@ -1134,20 +1309,22 @@ _COLOR_RU = {
     "orange": "Оранжевый", "pink": "Розовый", "beige": "Бежевый",
     "burgundy": "Бордовый", "yellow": "Желтый",
 }
-_BRAND_RU = {
-    "apple": "Apple", "samsung": "Samsung", "honor": "Honor",
-    "xiaomi": "Xiaomi", "vivo": "Vivo", "oppo": "OPPO", "realme": "Realme",
-    "tecno": "Tecno", "infinix": "Infinix", "nothing": "Nothing",
-    "google": "Google", "asus": "ASUS", "huawei": "Huawei",
-    "motorola": "Motorola", "zte": "ZTE", "meizu": "Meizu",
+
+# Model tokens must be ordered deliberately: model_tokens is a frozenset, so
+# alphabetical sorting produces "17 Max Pro", "15 Note Redmi" and "Fe S25".
+_MODEL_PREFIX_ORDER = ["redmi", "note"]           # family words, read first
+_MODEL_SUFFIX_RANK = {
+    "pro": 1, "plus": 2, "max": 3, "ultra": 4, "air": 5,
+    "fe": 6, "se": 7, "lite": 8, "mini": 9,
 }
+_UPPERCASE_TOKENS = {"fe", "se"}                  # initialisms, not words
 
 
-@dataclass(frozen=True, order=True)
+@dataclass(frozen=True)
 class VariantKey:
     brand: str
     model_tokens: frozenset[str]
-    ram_gb: int
+    ram_gb: int | None        # None is legitimate for brands that omit RAM
     storage_gb: int
     color: str
     sim_kind: str
@@ -1164,8 +1341,15 @@ class PartialKey:
 
 
 def variant_key(f: Features, sim_kind: str) -> VariantKey | None:
-    """A complete canonical identity, or None if any field is unknown."""
-    if not (f.brand and f.model_tokens and f.ram_gb and f.storage_gb and f.primary_color):
+    """A complete canonical identity, or None if any identity field is unknown.
+
+    RAM is required only for brands that publish it. Apple does not, and
+    extract_memory deliberately refuses to infer it -- so requiring RAM here
+    would make every iPhone permanently unkeyable.
+    """
+    if not (f.brand and f.model_tokens and f.storage_gb and f.primary_color):
+        return None
+    if f.brand not in BRANDS_WITHOUT_PUBLISHED_RAM and not f.ram_gb:
         return None
     return VariantKey(
         brand=f.brand,
@@ -1214,9 +1398,26 @@ def resolve_partial(partial: PartialKey, candidates: list[VariantKey]) -> Varian
     return matches[0] if len(matches) == 1 else None
 
 
-def _model_label(key: VariantKey) -> str:
-    return " ".join(t.upper() if any(c.isdigit() for c in t) else t.capitalize()
-                    for t in sorted(key.model_tokens))
+def ordered_model_tokens(tokens: frozenset[str]) -> list[str]:
+    """Family prefix, then designators, then modifiers in canonical rank.
+
+    Alphabetical order is wrong: "17 Pro Max" sorts to "17 Max Pro" and
+    "Redmi Note 15" to "15 Note Redmi".
+    """
+    prefixes = [t for t in _MODEL_PREFIX_ORDER if t in tokens]
+    suffixes = sorted(
+        (t for t in tokens if t in _MODEL_SUFFIX_RANK),
+        key=lambda t: _MODEL_SUFFIX_RANK[t],
+    )
+    used = set(prefixes) | set(suffixes)
+    designators = sorted(t for t in tokens if t not in used)
+    return prefixes + designators + suffixes
+
+
+def _token_label(token: str) -> str:
+    if token in _UPPERCASE_TOKENS or any(c.isdigit() for c in token):
+        return token.upper()
+    return token.capitalize()
 
 
 def display_name(key: VariantKey) -> str:
@@ -1225,14 +1426,18 @@ def display_name(key: VariantKey) -> str:
     Copying retailer names is exactly how a competitor ended up with
     "Cosmic orange" and "Cosmic Orange" as two separate products.
     """
-    brand = _BRAND_RU.get(key.brand, key.brand.capitalize())
+    brand = BRAND_LABELS.get(key.brand, key.brand.capitalize())
+    model = " ".join(_token_label(t) for t in ordered_model_tokens(key.model_tokens))
     color = _COLOR_RU.get(key.color, key.color.capitalize())
-    return f"Смартфон {brand} {_model_label(key)} {key.ram_gb}/{key.storage_gb} ГБ, {color}"
+    memory = f"{key.ram_gb}/{key.storage_gb}" if key.ram_gb else str(key.storage_gb)
+    return f"Смартфон {brand} {model} {memory} ГБ, {color}"
 
 
 def slug(key: VariantKey) -> str:
-    parts = [key.brand, *sorted(key.model_tokens),
-             str(key.ram_gb), str(key.storage_gb), key.color]
+    parts = [key.brand, *ordered_model_tokens(key.model_tokens)]
+    if key.ram_gb:
+        parts.append(str(key.ram_gb))
+    parts += [str(key.storage_gb), key.color]
     if key.sim_kind == "esim_only":
         parts.append("esim")
     return "-".join(parts)
@@ -1241,7 +1446,7 @@ def slug(key: VariantKey) -> str:
 - [ ] **Step 4: Run to verify pass**
 
 Run: `cd narxnoma-crawler && pytest tests/matching/test_keys.py -v`
-Expected: PASS — 10 passed
+Expected: PASS — 17 passed
 
 - [ ] **Step 5: Commit**
 
@@ -1569,11 +1774,24 @@ identically in Tasks 5, 6, 7 and 9. `variant_key(f, sim_kind)` and `partial_key(
 take the same two arguments throughout. `sim_kind()` in Task 8 returns exactly the three
 strings `keys.SIM_KINDS` declares.
 
-**Known gap, deliberately deferred.** `Features.stated_unresolvable_color` is computed in
-Task 5 and asserted in its tests, but `score_match` does not read it — the stricter
-`target.colors and not cand.colors` check already rejects those rows. It becomes load-bearing
-in Plan 3, where clustering must distinguish "colour absent" from "colour stated but
-unmappable" to decide between a partial key and a rejection.
+**Pre-flight corrections applied before execution.** Five defects were found scanning this
+plan against itself; all are fixed above:
+
+1. `variant_key()` required `ram_gb`, but Task 4 refuses to infer RAM for Apple — **no
+   iPhone could ever have been keyed.** RAM is now identity only for brands that publish it.
+2. `display_name`/`slug` sorted `model_tokens` alphabetically, yielding `17 Max Pro`,
+   `15 Note Redmi`, `Fe S25`. Replaced with `ordered_model_tokens()` — family prefix,
+   designators, then modifiers by canonical rank.
+3. Apple display names lost the word "iPhone" (it is a `NON_MODEL_TOKEN`), reading
+   `Смартфон Apple 17 Pro Max`. `BRAND_LABELS["apple"]` is now `"Apple iPhone"`.
+4. A Task 7 test expected `X9d` while the implementation uppercased to `X9D`.
+5. The stdlib purity guard sat in Task 1 where it passed vacuously over an empty
+   directory. Moved to Task 2, with a companion test asserting the modules exist.
+
+**Deferred to Plan 3, deliberately.** Clustering will need to distinguish "colour absent"
+from "colour stated but unmappable" — a `Конфетный` listing must not resolve against a
+partial key the way a colourless listing may. That flag is *not* added here because
+nothing in Plan 1 reads it; adding it now would be an unused field.
 
 ## Follow-on plans
 
