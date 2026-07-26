@@ -698,6 +698,14 @@ _PAIR_SEPARATOR = re.compile(r"\d\s*[/\\+|]\s*\d")
 
 _MAX_PLAUSIBLE_RAM = 24
 
+# Plausible RAM/storage sizes for the bare-pair fallbacks ("12 256" with no
+# unit and no separator). A model number like the "7" in "Galaxy Z Fold 7
+# 512 ГБ" or the "5" in "Galaxy Watch 5 44mm" has the same shape as a real
+# memory pair; restricting candidates to values retailers actually sell
+# stops the model number from being absorbed as RAM or storage.
+_PLAUSIBLE_RAM_GB = frozenset({1, 2, 3, 4, 6, 8, 10, 12, 16, 18, 24})
+_PLAUSIBLE_STORAGE_GB = frozenset({32, 64, 128, 256, 512, 1024, 2048})
+
 
 def extract_memory(
     raw: str | None, normalized: str, brand: str | None
@@ -728,9 +736,10 @@ def extract_memory(
     if storage is None:                      # bare "6 128" form
         for m in _STORAGE_PAIR.finditer(normalized):
             a, b = int(m.group(1)), int(m.group(2))
-            if max(a, b) >= 32:
-                storage = max(a, b)
-                break
+            if max(a, b) not in _PLAUSIBLE_STORAGE_GB:
+                continue
+            storage = max(a, b)
+            break
 
     # A bare "12 256" pair normally means RAM/storage -- but "iPhone 16 256 GB"
     # has the identical shape, and reading 16 as RAM deletes the model number
@@ -741,17 +750,24 @@ def extract_memory(
     if ram is None and (has_separator or brand not in BRANDS_WITHOUT_PUBLISHED_RAM):
         for m in _RAM_PAIR.finditer(normalized):
             a, b = int(m.group(1)), int(m.group(2))
-            if min(a, b) <= _MAX_PLAUSIBLE_RAM and max(a, b) >= 32:
-                ram = min(a, b)
-                break
+            if min(a, b) not in _PLAUSIBLE_RAM_GB or max(a, b) not in _PLAUSIBLE_STORAGE_GB:
+                continue
+            ram = min(a, b)
+            break
 
     return ram, storage
 ```
 
+Plausibility sets exist because Samsung publishes RAM (so it isn't covered by
+`BRANDS_WITHOUT_PUBLISHED_RAM`) but its Galaxy Z line uses a small integer as a model
+number, which collides with the bare-pair shape exactly like `iPhone 16 256 GB` does.
+See `docs/parsers/_matching-engine.md` § "The same trap recurs on Samsung" for the
+corpus evidence.
+
 - [ ] **Step 4: Run to verify pass**
 
 Run: `cd narxnoma-crawler && pytest tests/matching/test_memory.py -v`
-Expected: PASS — 9 passed
+Expected: PASS — 14 passed
 
 - [ ] **Step 5: Commit**
 

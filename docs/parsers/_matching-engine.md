@@ -67,11 +67,20 @@ def extract_features(name):
         if units[0] >= 32: storage = units[0]
         else:              ram = units[0]
 
+    # Plausible RAM/storage sizes for the bare-pair fallbacks below. A model
+    # number ("7" in "Galaxy Z Fold 7 512 ГБ", "5" in "Galaxy Watch 5 44mm")
+    # has the identical shape as a real memory pair; restricting candidates
+    # to sizes retailers actually sell is what stops the model number from
+    # being absorbed as RAM or storage. See "The phantom-RAM trap" below.
+    PLAUSIBLE_RAM_GB = {1, 2, 3, 4, 6, 8, 10, 12, 16, 18, 24}
+    PLAUSIBLE_STORAGE_GB = {32, 64, 128, 256, 512, 1024, 2048}
+
     if storage is None:                       # bare "6 128" form
         for m in re.finditer(r"(?<![a-zа-я\d])(\d{1,3})\s+(\d{2,4})(?!\d)", n):
             a, b = int(m.group(1)), int(m.group(2))
-            if max(a, b) >= 32:
-                storage = max(a, b); break
+            if max(a, b) not in PLAUSIBLE_STORAGE_GB:
+                continue
+            storage = max(a, b); break
 
     # A bare "12 256" pair normally means RAM/storage. "iPhone 16 256 GB" has the
     # identical shape — see "The phantom-RAM trap" below — so require a real
@@ -80,8 +89,9 @@ def extract_features(name):
     if ram is None and (has_pair_sep or brand != "apple"):
         for m in re.finditer(r"(?<![a-zа-я\d])(\d{1,2})\s+(\d{2,4})(?!\d)", n):
             a, b = int(m.group(1)), int(m.group(2))
-            if min(a, b) <= 24 and max(a, b) >= 32:
-                ram = min(a, b); break
+            if min(a, b) not in PLAUSIBLE_RAM_GB or max(a, b) not in PLAUSIBLE_STORAGE_GB:
+                continue
+            ram = min(a, b); break
 
     tokens = set(n.split())
     colors = {COLOR_MAP[t] for t in tokens if t in COLOR_MAP}
@@ -144,6 +154,46 @@ and `Samsung A17 6 128` (non-Apple bare form) working untouched.
 
 > Regression test worth keeping: `iPhone 17 Pro` must reject `iPhone 17 Pro Max`,
 > `iPhone 16 Pro` **and** `iPhone Air`; `Honor X9d 12/256` must still reject `8/256`.
+
+#### The same trap recurs on Samsung — and the Apple guard doesn't cover it
+
+`has_pair_sep or brand != "apple"` only protects brands that never publish RAM. Samsung
+*does* publish RAM, so it is exempt from the guard — and it hits the identical failure
+shape, because the Galaxy Z line uses a small integer as its model/generation number:
+
+```
+"Смартфон Samsung Galaxy Z Fold 7 512 ГБ Jet Black"  → bare pair "7 512" → ram = 7  ← WRONG
+"Смартфон Samsung Galaxy Z Flip 7 256 ГБ Jet Black"  → bare pair "7 256" → ram = 7  ← WRONG
+"Samsung Galaxy Watch 5 44mm Graphite"               → bare pair "5 44"  → ram = 5, storage = 44  ← WRONG
+```
+
+`7` then lands in `reserved_nums`, deleting the model number from `model_tokens` —
+exactly the mechanism that merged `iPhone 16`/`17`/`Air`, this time merging `Z Fold 7`
+and `Z Fold 6`. Checked against the project's 2,834-name corpus this misreads 13
+listings, including current flagship phones.
+
+Brand exclusion can't be the fix here (Samsung genuinely does publish RAM in most of
+its listings, so blanket-excluding it would break the working cases). The general
+defence is **plausibility**: constrain both bare-pair passes to values retailers
+actually sell, and keep scanning past a rejected candidate instead of stopping at the
+first one —
+
+```python
+PLAUSIBLE_RAM_GB = {1, 2, 3, 4, 6, 8, 10, 12, 16, 18, 24}
+PLAUSIBLE_STORAGE_GB = {32, 64, 128, 256, 512, 1024, 2048}
+```
+
+The bare-pair storage loop now requires `max(a, b) in PLAUSIBLE_STORAGE_GB`; the
+bare-pair RAM loop requires `min(a, b) in PLAUSIBLE_RAM_GB and max(a, b) in
+PLAUSIBLE_STORAGE_GB`. Either way, on a rejected candidate the loop `continue`s to the
+next regex match instead of `break`ing, which is what lets `"... 4/128 ..."` still be
+found in a name whose marketing blurb also contains an unrelated `"9 120"`-shaped pair
+(`6.9"` + `120Hz`). The unit-bearing pass (`8ГБ`/`256GB`) is untouched — an explicit
+unit is a statement by the retailer and stays trusted as-is. The Apple guard also stays
+exactly as it is; this is additional, not a replacement — Apple's case (no RAM
+published at all) is still handled by `brand != "apple"`, while Samsung's case (RAM
+published, but a plausible-looking model number sits right next to storage) is handled
+by the plausibility sets.
 
 ### Why `units` collects everything
 

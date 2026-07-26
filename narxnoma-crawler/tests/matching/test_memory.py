@@ -55,3 +55,43 @@ def test_single_unit_figure_classified_by_size():
 
 def test_no_memory_at_all():
     assert mem("Чехол для iPhone 17", brand="apple") == (None, None)
+
+
+def test_samsung_model_number_is_not_read_as_ram_fold():
+    # Real listing: "Смартфон Samsung Galaxy Z Fold 7 512 ГБ Jet Black".
+    # The model number 7 has the same "small int + big int" shape as a
+    # bare RAM/storage pair. Samsung publishes RAM, so it isn't covered by
+    # BRANDS_WITHOUT_PUBLISHED_RAM -- the plausibility set is what stops it.
+    assert mem("Смартфон Samsung Galaxy Z Fold 7 512 ГБ Jet Black", brand="samsung") == (
+        None,
+        512,
+    )
+
+
+def test_samsung_model_number_is_not_read_as_ram_flip():
+    # Real listing: "Смартфон Samsung Galaxy Z Flip 7 256 ГБ Jet Black".
+    assert mem("Смартфон Samsung Galaxy Z Flip 7 256 ГБ Jet Black", brand="samsung") == (
+        None,
+        256,
+    )
+
+
+def test_scans_past_implausible_pair_to_find_real_memory():
+    # Real listing: "Redmi A7 Pro smartfoni 6.9\" 120Hz 6000 mAh 13MP AI
+    # 4/128 Qora". The marketing blurb contains "9 120" (from 6.9" and
+    # 120Hz), which has the shape of a memory pair but isn't one; scanning
+    # must skip it and find the real "4/128" pair.
+    assert mem(
+        'Redmi A7 Pro smartfoni 6.9" 120Hz 6000 mAh 13MP AI 4/128 Qora',
+        brand="xiaomi",
+    ) == (4, 128)
+
+
+def test_watch_size_is_not_plausible_storage():
+    # Real listing: "Samsung Galaxy Watch 5 44mm Graphite". 44 is not a
+    # plausible storage size, so neither RAM nor storage should be read.
+    assert mem("Samsung Galaxy Watch 5 44mm Graphite", brand="samsung") == (None, None)
+
+
+def test_explicit_unit_case_still_works():
+    assert mem("Honor 600 8ГБ/256ГБ") == (8, 256)
