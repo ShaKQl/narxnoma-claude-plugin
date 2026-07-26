@@ -42,3 +42,36 @@ def test_rang_is_not_a_colour():
 def test_no_colour_returns_none():
     assert primary_color(["samsung", "galaxy"]) is None
     assert colors_in_order(["samsung"]) == []
+
+
+def test_graphite_is_gray_not_black():
+    # Corpus: "Redmi Pad Pro 6/128 Graphite Gray", "Galaxy A56 5G 8/256 GB
+    # Graphite". While graphite mapped to black, "Graphite Gray" produced
+    # {black, gray} and falsely intersected genuine Black listings.
+    resolved = set(colors_in_order(["graphite", "gray"]))
+    assert "black" not in resolved
+    assert resolved == {"gray"}
+    assert primary_color(["graphite", "gray"]) == "gray"
+
+
+def test_cobalt_is_a_qualifier_not_blue_or_purple():
+    # Corpus: all 17 occurrences are the compound "Cobalt Violet" (Galaxy
+    # S26 family); cobalt never appears standalone. Remapping it to blue
+    # (as one review suggested) would yield {blue, purple} and false-match
+    # Blue listings, so it must be a qualifier, not a colour.
+    resolved = set(colors_in_order(["cobalt", "violet"]))
+    assert "blue" not in resolved
+    assert resolved == {"purple"}
+    assert "cobalt" in QUALIFIERS
+    assert "cobalt" not in COLOR_MAP
+
+
+def test_zolotistiy_maps_but_golden_does_not():
+    # Corpus: all 10 occurrences of "золотистый" are standalone ("Honor X9D
+    # 12/256 GB, золотистый"), while all 7 occurrences of "golden" are
+    # compounds ("Golden White", "Golden Black"). The two are deliberately
+    # classified differently: золотистый is a base colour, golden is a
+    # shading qualifier.
+    assert COLOR_MAP["золотистый"] == "gold"
+    assert "golden" not in COLOR_MAP
+    assert "golden" in QUALIFIERS
