@@ -692,8 +692,18 @@ import re
 from narxnoma.matching.brands import BRANDS_WITHOUT_PUBLISHED_RAM
 
 _UNIT = re.compile(r"(?<![a-zа-я\d])(\d{1,4})\s*(gb|гб|tb|тб)\b")
-_STORAGE_PAIR = re.compile(r"(?<![a-zа-я\d])(\d{1,3})\s+(\d{2,4})(?!\d)")
-_RAM_PAIR = re.compile(r"(?<![a-zа-я\d])(\d{1,2})\s+(\d{2,4})(?!\d)")
+
+# Zero-width: the two figures are captured inside a lookahead instead of
+# being consumed, so re.finditer's matches can overlap. A plain consuming
+# regex can only offer non-overlapping candidates, and a model number
+# directly adjacent to RAM ("Redmi Note 15 12/256" normalises to
+# "redmi note 15 12 256") makes the model+RAM pair ("15", "12") match
+# first, consuming "12" and hiding the real memory pair ("12", "256") from
+# ever being scanned. Matching zero-width lets the scan advance one
+# character at a time and consider "12 256" too, so the plausibility check
+# below can reject "15 12" and still go on to find the real pair.
+_STORAGE_PAIR = re.compile(r"(?<![a-zа-я\d])(?=(\d{1,3})\s+(\d{2,4})(?!\d))")
+_RAM_PAIR = re.compile(r"(?<![a-zа-я\d])(?=(\d{1,2})\s+(\d{2,4})(?!\d))")
 _PAIR_SEPARATOR = re.compile(r"\d\s*[/\\+|]\s*\d")
 
 _MAX_PLAUSIBLE_RAM = 24

@@ -75,8 +75,14 @@ def extract_features(name):
     PLAUSIBLE_RAM_GB = {1, 2, 3, 4, 6, 8, 10, 12, 16, 18, 24}
     PLAUSIBLE_STORAGE_GB = {32, 64, 128, 256, 512, 1024, 2048}
 
+    # Both pair regexes are zero-width: the two figures are captured inside a
+    # lookahead instead of being consumed, so re.finditer's matches can overlap.
+    # A model number directly adjacent to RAM ("Redmi Note 15 12/256" normalises
+    # to "redmi note 15 12 256") would otherwise make the model+RAM pair
+    # ("15", "12") consume "12" and hide the real memory pair ("12", "256") from
+    # ever being scanned. See "The phantom-RAM trap" below.
     if storage is None:                       # bare "6 128" form
-        for m in re.finditer(r"(?<![a-zа-я\d])(\d{1,3})\s+(\d{2,4})(?!\d)", n):
+        for m in re.finditer(r"(?<![a-zа-я\d])(?=(\d{1,3})\s+(\d{2,4})(?!\d))", n):
             a, b = int(m.group(1)), int(m.group(2))
             if max(a, b) not in PLAUSIBLE_STORAGE_GB:
                 continue
@@ -87,7 +93,7 @@ def extract_features(name):
     # separator in the RAW string, and never infer RAM for Apple.
     has_pair_sep = bool(re.search(r"\d\s*[/\\+|]\s*\d", str(name or "")))
     if ram is None and (has_pair_sep or brand != "apple"):
-        for m in re.finditer(r"(?<![a-zа-я\d])(\d{1,2})\s+(\d{2,4})(?!\d)", n):
+        for m in re.finditer(r"(?<![a-zа-я\d])(?=(\d{1,2})\s+(\d{2,4})(?!\d))", n):
             a, b = int(m.group(1)), int(m.group(2))
             if min(a, b) not in PLAUSIBLE_RAM_GB or max(a, b) not in PLAUSIBLE_STORAGE_GB:
                 continue
@@ -194,6 +200,18 @@ exactly as it is; this is additional, not a replacement — Apple's case (no RAM
 published at all) is still handled by `brand != "apple"`, while Samsung's case (RAM
 published, but a plausible-looking model number sits right next to storage) is handled
 by the plausibility sets.
+
+Plausibility alone isn't enough, though — `continue` only helps if there is a next
+candidate *to* continue to. A two-digit model number sitting directly in front of a
+two-digit RAM value (`"Redmi Note 15 12/256"` normalises to `"redmi note 15 12 256"`)
+has the same non-overlapping problem the lookbehind was built to avoid: a plain
+consuming regex finds `"15 12"` first, rejects it on plausibility, and then has already
+consumed the `"12"` — so the real pair `"12 256"` is never offered as a candidate at
+all, and `ram` comes back `None` even though scanning "past" the rejected pair looks
+like it should have worked. That's why both pair regexes are zero-width (the two
+figures live inside a lookahead, matched but not consumed): `re.finditer` can then
+return overlapping candidates, so after `"15 12"` is rejected, `"12 256"` is still
+found starting one character later.
 
 ### Why `units` collects everything
 

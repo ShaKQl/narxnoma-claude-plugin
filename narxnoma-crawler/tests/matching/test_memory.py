@@ -95,3 +95,25 @@ def test_watch_size_is_not_plausible_storage():
 
 def test_explicit_unit_case_still_works():
     assert mem("Honor 600 8ГБ/256ГБ") == (8, 256)
+
+
+def test_two_digit_ram_after_two_digit_model_number():
+    # Real listing: "Redmi Note 15 12/256 ГБ, черный". normalize() turns
+    # this into "redmi note 15 12 256 гб черный" -- the model number "15"
+    # sits directly before the RAM "12", so a non-overlapping scan finds
+    # only ("15", "12"), which is correctly rejected as implausible
+    # storage, and never backtracks to see the real ("12", "256") pair.
+    assert mem("Redmi Note 15 12/256 ГБ, черный", brand="xiaomi") == (12, 256)
+
+
+def test_two_digit_ram_after_two_digit_model_number_16():
+    # Real listing: "Redmi Note 15 16/512 ГБ". Same trap as above with a
+    # different RAM size, confirming the fix isn't specific to "12".
+    assert mem("Redmi Note 15 16/512 ГБ", brand="xiaomi") == (16, 512)
+
+
+def test_single_digit_ram_after_model_number_still_works():
+    # Real listing: "Redmi Note 15 8/256 ГБ, черный". The single-digit RAM
+    # case always worked (a 1-digit run can't be misread as a 2-4 digit
+    # storage figure), so this pins the pre-fix behaviour against regression.
+    assert mem("Redmi Note 15 8/256 ГБ, черный", brand="xiaomi") == (8, 256)
