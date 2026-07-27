@@ -285,14 +285,18 @@ Encoded **three different ways** — all must be screened:
 3. the **card title** itself, e.g. `"Apple смартфон iPhone 17 Air 256GB, 512GB, 1TB, eSIM"`
 
 Explicit dual markers (`SIM+eSIM`, `nanoSIM+eSIM`, `2 SIM`, `dual`) must **not** be
-rejected — check them first:
+rejected — check them first. The dual marker appears with `+`, `/` and `-`
+separators (`SIM+eSIM` in the raw characteristic value, `nano-SIM/eSIM` on the
+rendered spec sheet), so all of them — plus whitespace, `_` and `.` — are
+stripped before matching, collapsing every spelling onto one canonical form:
 
 ```python
-_DUAL = re.compile(r"(nano)?sim\+e-?sim|dualsim|2sim|двесим")
-_ESIM = re.compile(r"e-?sim")
+_SEPARATORS = re.compile(r"[\s_.\-/+]")
+_DUAL = re.compile(r"simesim|dualsim|2sim|двесим")
+_ESIM = re.compile(r"esim")
 
 def is_esim_only(text):
-    low = re.sub(r"[\s_.\-]", "", str(text).lower())
+    low = _SEPARATORS.sub("", str(text).lower())
     if _DUAL.search(low):
         return False
     return bool(_ESIM.search(low))

@@ -1606,13 +1606,13 @@ they are a different canonical product, not a colour.
 """
 import re
 
-_DUAL = re.compile(r"(nano)?sim\+e-?sim|dualsim|2sim|двесим")
-_ESIM = re.compile(r"e-?sim")
-_PHYSICAL = re.compile(r"nanosim|nano-sim|\bsim\b")
+_SEPARATORS = re.compile(r"[\s_.\-/+]")
+_DUAL = re.compile(r"simesim|dualsim|2sim|двесим")
+_ESIM = re.compile(r"esim")
 
 
 def is_esim_only(text: str | None) -> bool:
-    low = re.sub(r"[\s_.\-]", "", str(text or "").lower())
+    low = _SEPARATORS.sub("", str(text or "").lower())
     if _DUAL.search(low):        # explicit dual markers win, checked first
         return False
     return bool(_ESIM.search(low))
@@ -1622,8 +1622,15 @@ def sim_kind(text: str | None) -> str:
     """One of 'esim_only', 'dual', 'unknown'."""
     if is_esim_only(text):
         return "esim_only"
-    low = re.sub(r"[\s_.\-]", "", str(text or "").lower())
-    if _DUAL.search(low) or _PHYSICAL.search(low):
+    low = _SEPARATORS.sub("", str(text or "").lower())
+    if _DUAL.search(low):
+        return "dual"
+    # Any remaining "sim" mention, after both the eSIM-only and dual checks
+    # have failed, is a physical one. Plain substring test, not \bsim\b:
+    # separator-stripping merges "SIM карта" into "simкарта", and Cyrillic
+    # "к" is a \w character under Python's Unicode-aware \b, so the old
+    # word-boundary regex never matched there.
+    if "sim" in low:
         return "dual"
     return "unknown"
 ```
