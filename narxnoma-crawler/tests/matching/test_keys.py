@@ -121,3 +121,41 @@ def test_esim_only_slug_is_distinct():
     esim = slug(k("Смартфон Apple iPhone 17 Pro 256 ГБ, Silver", "esim_only"))
     assert dual != esim
     assert esim.endswith("-esim")
+
+
+def test_fold_and_flip_are_different_products():
+    # THE MERGE: "fold"/"flip" were neither digit-bearing nor in
+    # MODEL_MODIFIERS, so both names reduced to model_tokens={'7'} and
+    # collapsed onto the identical key samsung-7-12-256-black, scoring 60
+    # with why() == "OK". A Fold costs roughly twice a Flip.
+    fold = k("Samsung Galaxy Z Fold 7 Black 12/256")
+    flip = k("Samsung Galaxy Z Flip 7 Black 12/256")
+    assert fold is not None and flip is not None
+    assert fold != flip
+    assert slug(fold) != slug(flip)
+
+
+def test_unknown_sim_normalises_to_dual():
+    # slug() was not injective: sim_kind "unknown" and "dual" built different
+    # VariantKeys but identical slugs, so two keys claimed one URL.
+    # uzum.md §6 documents eSIM-only variants as ALWAYS explicitly marked (in
+    # three encodings), so an unmarked phone is the ordinary dual-SIM one.
+    f = F("Смартфон Apple iPhone 17 Pro Max 256 ГБ, Silver")
+    assert variant_key(f, "unknown") == variant_key(f, "dual")
+    assert variant_key(f, "unknown").sim_kind == "dual"
+    # esim_only stays distinct, and keeps its slug suffix.
+    assert variant_key(f, "esim_only") != variant_key(f, "dual")
+    assert slug(variant_key(f, "esim_only")).endswith("-esim")
+
+
+def test_invalid_sim_kind_is_rejected():
+    # SIM_KINDS was declared but never enforced, so any string became part of
+    # a canonical identity -- a typo ("Dual", "dual_sim") would silently mint
+    # a second canonical product for a phone that already had one.
+    f = F("Смартфон Honor X9d 12/256 ГБ, черный")
+    for bad in ["Dual", "dual_sim", "", "esim"]:
+        try:
+            variant_key(f, bad)
+        except ValueError:
+            continue
+        raise AssertionError(f"variant_key accepted invalid sim_kind {bad!r}")

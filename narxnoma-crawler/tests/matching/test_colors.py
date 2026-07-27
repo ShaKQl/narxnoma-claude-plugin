@@ -75,3 +75,12 @@ def test_zolotistiy_maps_but_golden_does_not():
     assert COLOR_MAP["золотистый"] == "gold"
     assert "golden" not in COLOR_MAP
     assert "golden" in QUALIFIERS
+
+
+def test_qualifiers_and_color_map_are_disjoint():
+    # Invariant, not a spot check. A word in both would be mapped to a colour
+    # by colors_in_order AND skipped as a qualifier by feature extraction, so
+    # "Velvet Grey"-style compounds would resolve to two colours and falsely
+    # intersect a listing of the shading word's colour.
+    overlap = set(QUALIFIERS) & set(COLOR_MAP)
+    assert not overlap, f"words classified both ways: {sorted(overlap)}"

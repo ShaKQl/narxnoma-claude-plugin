@@ -3,6 +3,8 @@
 Hard reject beats accumulation: a wrong storage can never be out-scored by
 matching brand + colour.
 """
+import re
+
 from narxnoma.matching.features import Features
 
 ACCEPT_THRESHOLD = 30
@@ -12,7 +14,12 @@ HARD_REJECT = -100
 def _model_tokens_missing(needed: frozenset[str], other: Features) -> str | None:
     other_tokens = set(other.normalized.split())
     for mt in needed:
-        if mt not in other_tokens and mt not in other.normalized:
+        # The fallback must be word-boundary anchored, not a raw substring
+        # test: "6" is a substring of "16", so an iPhone 16 satisfied an
+        # iPhone 6 target's model token.
+        if mt not in other_tokens and not re.search(
+            rf"\b{re.escape(mt)}\b", other.normalized
+        ):
             return mt
     return None
 
@@ -31,6 +38,13 @@ def score_match(target: Features, cand: Features) -> int:
         score += 20
     elif target.storage_gb and not cand.storage_gb:
         return HARD_REJECT          # kills accessories for free
+    elif cand.storage_gb and not target.storage_gb:
+        # Symmetric: a target with no storage would otherwise score exactly 30
+        # (brand 10 + model 15 + colour 5) against a candidate of ANY capacity,
+        # so "iPhone 17 Pro Black" accepted a 256 GB and a 1 TB listing alike
+        # and pooled their prices. Storage is a hard identity field in both
+        # directions -- unlike RAM, which stays deliberately asymmetric below.
+        return HARD_REJECT
 
     # Asymmetric on RAM: a MISSING ram is "unknown, don't reject"; a
     # MISMATCHED ram is a hard reject. Many retailers omit RAM.
@@ -65,6 +79,8 @@ def why(target: Features, cand: Features) -> str:
         return f"storage {cand.storage_gb}!={target.storage_gb}"
     if target.storage_gb and not cand.storage_gb:
         return "cand has NO storage"
+    if cand.storage_gb and not target.storage_gb:
+        return "target has NO storage"
     if target.ram_gb and cand.ram_gb and target.ram_gb != cand.ram_gb:
         return f"ram {cand.ram_gb}!={target.ram_gb}"
     missing = _model_tokens_missing(target.model_tokens, cand)

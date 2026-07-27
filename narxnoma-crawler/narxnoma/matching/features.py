@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from narxnoma.matching.brands import BRAND_ALIASES, BRANDS, canonical_brand
 from narxnoma.matching.colors import COLOR_MAP, QUALIFIERS, colors_in_order, primary_color
-from narxnoma.matching.memory import extract_memory
+from narxnoma.matching.memory import scan_memory
 from narxnoma.matching.normalize import normalize
 
 # "galaxy" is deliberately absent: mediapark lists the A07 as
@@ -12,6 +12,11 @@ from narxnoma.matching.normalize import normalize
 MODEL_MODIFIERS: frozenset[str] = frozenset({
     "pro", "ultra", "lite", "plus", "max", "mini", "note", "redmi",
     "air", "fe", "se",          # genuine designators, not marketing words
+    # Family words for the Galaxy Z line. Without them both "Galaxy Z Fold 7"
+    # and "Galaxy Z Flip 7" reduce to model_tokens={'7'} and collapse onto the
+    # identical key samsung-7-12-256-black, merging two products whose prices
+    # differ by roughly a factor of two.
+    "fold", "flip",
 })
 
 NON_MODEL_TOKENS: frozenset[str] = frozenset({
@@ -53,14 +58,20 @@ def extract_features(name: str | None) -> Features:
             brand = canonical_brand(b)
             break
 
-    ram, storage = extract_memory(name, n, brand)
+    ram, storage, stated_ram = scan_memory(name, n, brand)
 
     tokens = n.split()
     token_set = set(tokens)
     colors = frozenset(colors_in_order(tokens))
     primary = primary_color(tokens)
 
-    reserved = {str(storage or ""), str(ram or ""), "5g", "4g", "0"}
+    # stated_ram is reserved as well as ram. For Apple, ram is suppressed to
+    # None (Apple publishes no RAM), but the figure the reseller wrote is
+    # still a memory figure -- without reserving it, "iPhone 17 Pro 12/256GB"
+    # keeps "12" as a MODEL token and keys as apple-12-17-pro-256-silver,
+    # which splits the product exactly as the RAM did and additionally
+    # hard-rejects the listing on the reverse model-token check.
+    reserved = {str(storage or ""), str(ram or ""), str(stated_ram or ""), "5g", "4g", "0"}
     model_tokens: set[str] = set()
     for t in token_set:
         if t in NON_MODEL_TOKENS or t in COLOR_MAP or t in QUALIFIERS or t in reserved:
@@ -72,7 +83,9 @@ def extract_features(name: str | None) -> Features:
         if len(t) >= _SKU_MIN_LEN and any(c.isalpha() for c in t) and any(c.isdigit() for c in t):
             continue
         if any(c.isdigit() for c in t):
-            if t.isdigit() and int(t) in {(storage or -1), (ram or -1)}:
+            if t.isdigit() and int(t) in {
+                (storage or -1), (ram or -1), (stated_ram or -1)
+            }:
                 continue
             model_tokens.add(t)
         elif t in MODEL_MODIFIERS:

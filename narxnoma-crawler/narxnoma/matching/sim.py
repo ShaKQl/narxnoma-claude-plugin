@@ -12,7 +12,10 @@ import re
 # single pair of regexes covers "SIM+eSIM", "nanoSim+eSim" and
 # "nano-SIM/eSIM" alike.
 _SEPARATORS = re.compile(r"[\s_.\-/+]")
-_DUAL = re.compile(r"simesim|dualsim|2sim|двесим")
+# A bare "dual" is an explicit dual marker in its own right (uzum.md §6 lists
+# it alongside SIM+eSIM, nanoSIM+eSIM and 2 SIM). The bare alternative also
+# subsumes "dualsim", which is why that spelling no longer needs its own branch.
+_DUAL = re.compile(r"simesim|dual|2sim|двесим")
 _ESIM = re.compile(r"esim")
 
 

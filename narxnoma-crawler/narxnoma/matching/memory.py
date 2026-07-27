@@ -33,10 +33,16 @@ _PLAUSIBLE_RAM_GB = frozenset({1, 2, 3, 4, 6, 8, 10, 12, 16, 18, 24})
 _PLAUSIBLE_STORAGE_GB = frozenset({32, 64, 128, 256, 512, 1024, 2048})
 
 
-def extract_memory(
+def scan_memory(
     raw: str | None, normalized: str, brand: str | None
-) -> tuple[int | None, int | None]:
-    """Return (ram_gb, storage_gb). Either may be None."""
+) -> tuple[int | None, int | None, int | None]:
+    """Return (ram_gb, storage_gb, stated_ram_gb).
+
+    ``stated_ram_gb`` is the RAM figure a retailer actually wrote, BEFORE the
+    Apple suppression below removes it from identity. Callers that build model
+    tokens need it: a suppressed figure is still a memory figure, and must not
+    be allowed to fall through and become a model token instead.
+    """
     ram: int | None = None
     storage: int | None = None
 
@@ -81,4 +87,25 @@ def extract_memory(
             ram = min(a, b)
             break
 
+    # Global Apple-RAM suppression, applied to EVERY path (unit-bearing,
+    # bare-pair and separator alike) rather than only to the bare-pair
+    # fallback. Apple does not publish RAM, so any RAM figure appearing in an
+    # Apple listing came from a reseller's own wording and must never become
+    # identity. Guarding only the bare-pair path let "iPhone 17 Pro 12/256GB"
+    # yield ram=12 through the unit-bearing pass while "iPhone 17 Pro 256 ГБ"
+    # yielded None, splitting one phone into two canonical products
+    # (apple-17-pro-12-256-silver and apple-17-pro-256-silver) -- a split
+    # offer pool and two different displayed prices.
+    stated_ram = ram
+    if brand in BRANDS_WITHOUT_PUBLISHED_RAM:
+        ram = None
+
+    return ram, storage, stated_ram
+
+
+def extract_memory(
+    raw: str | None, normalized: str, brand: str | None
+) -> tuple[int | None, int | None]:
+    """Return (ram_gb, storage_gb). Either may be None."""
+    ram, storage, _ = scan_memory(raw, normalized, brand)
     return ram, storage

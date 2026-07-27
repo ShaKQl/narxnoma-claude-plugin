@@ -62,3 +62,13 @@ def test_no_sim_information_with_a_slash_in_the_name():
     # the memory figure -- proves widened separator stripping ("/" now
     # stripped too) does not create a spurious "simesim"/"esim" match.
     assert sim_kind("Honor X9d 12/256 GB Black") == "unknown"
+
+
+def test_bare_dual_marker_is_recognised():
+    # uzum.md §6 lists a bare "dual" among the explicit dual markers, but
+    # _DUAL only matched "dualsim", so sim_kind("dual") fell through to
+    # "unknown" and a phone documented as dual got no SIM classification.
+    assert sim_kind("dual") == "dual"
+    assert is_esim_only("dual") is False
+    # The bare alternative must not cost us the compound spelling.
+    assert sim_kind("dualSIM") == "dual"

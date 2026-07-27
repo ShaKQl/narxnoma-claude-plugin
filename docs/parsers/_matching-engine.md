@@ -99,10 +99,19 @@ def extract_features(name):
                 continue
             ram = min(a, b); break
 
+    # GLOBAL Apple-RAM suppression — see "Apple RAM suppression is global" below.
+    # This runs after EVERY path, not just the bare-pair fallback above.
+    stated_ram = ram                      # what the retailer actually wrote
+    if brand == "apple":
+        ram = None
+
     tokens = set(n.split())
     colors = {COLOR_MAP[t] for t in tokens if t in COLOR_MAP}
 
-    reserved_nums = {str(storage or ""), str(ram or ""), "5g", "4g", "0"}
+    # stated_ram is reserved as well as ram: a SUPPRESSED memory figure is
+    # still a memory figure and must not fall through into model_tokens.
+    reserved_nums = {str(storage or ""), str(ram or ""), str(stated_ram or ""),
+                     "5g", "4g", "0"}
     model_tokens = set()
     for t in tokens:
         if t in NON_MODEL_TOKENS or t in COLOR_MAP or t in reserved_nums:
@@ -114,7 +123,8 @@ def extract_features(name):
         if len(t) >= 5 and any(c.isalpha() for c in t) and any(c.isdigit() for c in t):
             continue
         if any(c.isdigit() for c in t):
-            if t.isdigit() and int(t) in {(storage or -1), (ram or -1)}:
+            if t.isdigit() and int(t) in {(storage or -1), (ram or -1),
+                                          (stated_ram or -1)}:
                 continue
             model_tokens.add(t)
         elif t in MODEL_MODIFIERS:
@@ -213,6 +223,44 @@ figures live inside a lookahead, matched but not consumed): `re.finditer` can th
 return overlapping candidates, so after `"15 12"` is rejected, `"12 256"` is still
 found starting one character later.
 
+#### Apple RAM suppression is global, not just on the bare-pair path
+
+`has_pair_sep or brand != "apple"` guards **only the bare-pair fallback**. The
+unit-bearing pass above it has no guard at all, so an Apple listing that spells the
+units out leaks RAM straight through:
+
+```
+"iPhone 17 Pro 12/256GB Silver"  → units = [12, 256] → ram = 12    ← WRONG
+"iPhone 17 Pro 256 ГБ, Silver"   → units = [256]     → ram = None
+```
+
+Same phone, two canonical products — `apple-17-pro-12-256-silver` and
+`apple-17-pro-256-silver` — so the offer pool splits in two and the site shows two
+different prices for one product. 47 listings in the corpus are affected. Note this is
+the *opposite* failure to the phantom-RAM trap above: that one **merged** distinct
+models, this one **splits** a single one. Both come from the same ambiguity.
+
+The fix is one suppression at the end of memory extraction, covering every path:
+
+```python
+if brand in BRANDS_WITHOUT_PUBLISHED_RAM:
+    ram = None
+```
+
+Apple does not publish RAM. Any RAM figure in an Apple listing therefore came from a
+**reseller's own wording**, not from the manufacturer, and must never become identity —
+regardless of how confidently it is written (`12/256GB`, `12 GB RAM`, a separator, a
+unit). The exemption for an explicit separator is gone: a separator proves the seller
+*meant* a memory pair, which was never the question.
+
+> **Suppressing RAM is not enough on its own.** `reserved_nums` is built from `ram`, so
+> zeroing `ram` at the return boundary lets the figure fall through into
+> `model_tokens`: `"iPhone 17 Pro 12/256GB"` keeps `"12"` as a *model* token and keys as
+> `apple-12-17-pro-256-silver`. The split survives in a new place, and the reverse
+> model-token check now hard-rejects the listing outright — strictly worse than the bug
+> being fixed. Memory extraction must therefore return the pre-suppression figure
+> (`stated_ram`) alongside, and feature extraction must reserve it.
+
 ### Why `units` collects everything
 
 `"8ГБ/256ГБ"` normalises to `"8гб 256гб"`. A `re.search` for the *first* unit match
@@ -223,7 +271,7 @@ all Honor 600 matches until fixed.
 
 ```python
 MODEL_MODIFIERS = {"pro", "ultra", "lite", "plus", "max", "mini", "note", "redmi",
-                   "air", "fe", "se"}
+                   "air", "fe", "se", "fold", "flip"}
 
 NON_MODEL_TOKENS = {"gb", "гб", "tb", "тб", "smartfon", "смартфон", "iphone",
                     "apple", "samsung", "honor", "xiaomi", "vivo", "oppo",
@@ -234,6 +282,30 @@ NON_MODEL_TOKENS = {"gb", "гб", "tb", "тб", "smartfon", "смартфон", 
 **`"galaxy"` is deliberately absent** from `MODEL_MODIFIERS`. mediapark lists the A07
 as `"SAMSUNG SM-A075F A07"` with no "Galaxy" — requiring it rejects valid matches.
 Model identity comes from the `a07`/`a17`/`s26` token instead.
+
+#### A dropped family word merges two products
+
+The loop keeps a token only if it is digit-bearing *or* in `MODEL_MODIFIERS`. Everything
+else is **silently discarded** — which is fine for `galaxy` and `z`, and catastrophic
+for `fold` and `flip`:
+
+```
+"Galaxy Z Fold 7 Black 12/256"  → model_tokens = {"7"}
+"Galaxy Z Flip 7 Black 12/256"  → model_tokens = {"7"}
+```
+
+Identical `model_tokens`, identical key `samsung-7-12-256-black`, `score_match` = 60,
+`why()` = `"OK"`. A Fold costs roughly **double** a Flip, so the merged product shows
+one median drawn from two price populations. Adding `fold` and `flip` to
+`MODEL_MODIFIERS` is the whole fix.
+
+They also join `_MODEL_PREFIX_ORDER` (with `redmi` and `note`), because they are family
+words rather than trailing designators: the real name is `Galaxy Z Fold 7`, so
+alphabetical ordering would render the display name as `Samsung 7 Fold`.
+
+> The general rule this illustrates: **a word that distinguishes two products in the
+> shop must be a model token.** When auditing, list every name that reduces to the same
+> `model_tokens` and check none of them are actually different phones.
 
 ### Colour map — base words only
 
@@ -273,16 +345,19 @@ def score_match(t, c):          # t = target features, c = candidate features
         else:                            return -100
     elif t["storage"] and not c["storage"]:
         return -100                      # kills accessories for free
+    elif c["storage"] and not t["storage"]:
+        return -100                      # symmetric — see below
     if t["ram"] and c["ram"]:
         if t["ram"] == c["ram"]: score += 10
         else:                    return -100
 
+    # Word-boundary anchored, NOT a raw substring test — see below.
     cand_tokens = set(c["n"].split())
     for mt in t["model_tokens"]:
-        if mt not in cand_tokens and mt not in c["n"]:
+        if mt not in cand_tokens and not re.search(rf"\b{re.escape(mt)}\b", c["n"]):
             return -100
     for mt in c["model_tokens"]:         # reverse direction — see below
-        if mt not in t["n"].split() and mt not in t["n"]:
+        if mt not in t["n"].split() and not re.search(rf"\b{re.escape(mt)}\b", t["n"]):
             return -100
     if t["model_tokens"] or c["model_tokens"]:
         score += 15
@@ -300,12 +375,55 @@ Key properties:
 
 - **Hard reject (`-100`) beats accumulation.** A wrong storage can never be
   out-scored by matching brand + colour.
-- **Asymmetric on missing data.** Target has storage + candidate doesn't → reject
-  (that's an accessory). Target has RAM + candidate doesn't → allowed (many retailers
-  omit RAM).
+- **Storage is symmetric; RAM is asymmetric.** This asymmetry-of-the-asymmetry is
+  deliberate, and the two fields must not be treated alike:
+  - Target has storage + candidate doesn't → **reject** (that's an accessory).
+  - Candidate has storage + target doesn't → **reject** (see below).
+  - Target has RAM + candidate doesn't → **allow**. Many retailers simply omit RAM, and
+    rejecting on absence would throw away most of the market. Only a *mismatched* RAM
+    rejects.
 - **The reverse model-token check is essential.** It is what stops a `17 Pro Max` SKU
   from matching an `iPhone 17 Pro` target. Without it, every Pro request matches the
   more expensive Pro Max.
+
+### A storage-less target accepts every capacity
+
+Without the symmetric branch, a target that states no storage scores exactly
+
+```
+brand 10 + model 15 + colour 5 = 30 == ACCEPT_THRESHOLD
+```
+
+against a candidate of **any** capacity — the storage block contributes nothing and the
+sum lands precisely on the threshold. Measured: `"iPhone 17 Pro Black"` accepted a
+256 GB listing *and* a 1 TB listing, pooling their prices into a single median. Storage
+is a hard identity field, so absence on either side must reject:
+
+```python
+elif c["storage"] and not t["storage"]:
+    return -100
+```
+
+Mirror it in `why()` with a distinct message (`"target has NO storage"`) so the two
+directions stay tellable apart when reading a rejection dump. RAM stays asymmetric —
+absence there is genuinely "unknown", because retailers omit a RAM that exists; a
+capacity, by contrast, is never omitted from a phone listing that has one.
+
+### Model tokens must match a whole word
+
+The fallback after the token-set test used to be a raw substring check against the
+other side's normalised name. Substrings of numbers are the problem:
+
+```
+token "6"  ⊂  "iphone 16 128gb"       → iPhone 6 target accepts an iPhone 16
+token "16" ⊂  "... 12 256 ..."         → any two-digit model matched a memory figure
+```
+
+Use `re.search(rf"\b{re.escape(mt)}\b", other["n"])` instead, so a token must match a
+whole word. Measured against the 14,860-row golden corpus this changed **one** row: a
+malformed uzum title (`"Smartfon Smartfon Samsung Galaxy S26 Ultra 6 12/256GB Oq"`)
+whose stray `6` previously found a home inside the target's `256`. That row was passing
+by accident, which is exactly the class of accident the boundary anchor removes.
 
 > Only apply the reverse check to a **curated** candidate string. On uzum the raw card
 > title is a marketing blurb (`6.7" AMOLED 90Гц, камера 50Мп, 5000 мАч`) whose stray
@@ -338,14 +456,16 @@ def why(t, c):
         return f"storage {c['storage']}!={t['storage']}"
     if t["storage"] and not c["storage"]:
         return "cand has NO storage"
+    if c["storage"] and not t["storage"]:
+        return "target has NO storage"
     if t["ram"] and c["ram"] and t["ram"] != c["ram"]:
         return f"ram {c['ram']}!={t['ram']}"
     ct = set(c["n"].split())
     for mt in t["model_tokens"]:
-        if mt not in ct and mt not in c["n"]:
+        if mt not in ct and not re.search(rf"\b{re.escape(mt)}\b", c["n"]):
             return f"target token '{mt}' missing"
     for mt in c["model_tokens"]:
-        if mt not in t["n"].split() and mt not in t["n"]:
+        if mt not in t["n"].split() and not re.search(rf"\b{re.escape(mt)}\b", t["n"]):
             return f"cand token '{mt}' extra"
     if t["colors"] and c["colors"] and not (t["colors"] & c["colors"]):
         return f"colour {c['colors']} vs {t['colors']}"

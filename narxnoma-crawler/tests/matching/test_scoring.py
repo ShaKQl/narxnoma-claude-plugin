@@ -77,3 +77,34 @@ def test_why_returns_ok_for_a_match():
     t = F("Смартфон Honor X9d 12/256 ГБ, черный")
     c = F("Honor X9d 12/256 GB Midnight Black")
     assert why(t, c) == "OK"
+
+
+def test_target_without_storage_rejects_candidate_that_states_storage():
+    # Symmetric to the accessory case. A storage-less target used to score
+    # exactly 30 (brand 10 + model 15 + colour 5) -- the accept threshold --
+    # against a candidate of ANY capacity, so one target accepted both a
+    # 256 GB and a 1 TB listing and pooled their prices into one median.
+    t = F("iPhone 17 Pro Black")
+    assert t.storage_gb is None
+    for c in [F("Apple iPhone 17 Pro 256GB Black"), F("Apple iPhone 17 Pro 1TB Black")]:
+        assert score_match(t, c) == HARD_REJECT
+        assert "target has NO storage" in why(t, c)
+
+
+def test_missing_ram_stays_asymmetric():
+    # RAM and storage are deliberately different: a target with no RAM must
+    # still accept a candidate that states one, or every retailer that prints
+    # RAM would be rejected by a target that does not.
+    t = F("Honor X9d 256GB Black")
+    c = F("Смартфон Honor X9d 12/256 ГБ, черный")
+    assert t.ram_gb is None and c.ram_gb == 12
+    assert score_match(t, c) >= ACCEPT_THRESHOLD
+
+
+def test_model_token_must_match_a_whole_word():
+    # The fallback was a raw substring test against the candidate's
+    # normalised name, so the token "6" was satisfied by the "16" in
+    # "iPhone 16" -- an iPhone 6 target accepted an iPhone 16 listing.
+    t = F("Apple iPhone 6 128GB Black")
+    c = F("Apple iPhone 16 128GB Black")
+    assert score_match(t, c) == HARD_REJECT

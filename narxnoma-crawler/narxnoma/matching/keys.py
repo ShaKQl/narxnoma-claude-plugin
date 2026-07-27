@@ -22,7 +22,9 @@ _COLOR_RU = {
 
 # Model tokens must be ordered deliberately: model_tokens is a frozenset, so
 # alphabetical sorting produces "17 Max Pro", "15 Note Redmi" and "Fe S25".
-_MODEL_PREFIX_ORDER = ["redmi", "note"]           # family words, read first
+# Family words, read first. "fold"/"flip" join them for the same reason
+# "note" is here: the real name is "Galaxy Z Fold 7", never "Galaxy Z 7 Fold".
+_MODEL_PREFIX_ORDER = ["redmi", "note", "fold", "flip"]
 _MODEL_SUFFIX_RANK = {
     "pro": 1, "plus": 2, "max": 3, "ultra": 4, "air": 5,
     "fe": 6, "se": 7, "lite": 8, "mini": 9,
@@ -57,10 +59,20 @@ def variant_key(f: Features, sim_kind: str) -> VariantKey | None:
     extract_memory deliberately refuses to infer it -- so requiring RAM here
     would make every iPhone permanently unkeyable.
     """
+    if sim_kind not in SIM_KINDS:
+        raise ValueError(f"sim_kind must be one of {SIM_KINDS}, got {sim_kind!r}")
     if not (f.brand and f.model_tokens and f.storage_gb and f.primary_color):
         return None
     if f.brand not in BRANDS_WITHOUT_PUBLISHED_RAM and not f.ram_gb:
         return None
+    # An unmarked SIM configuration is the ordinary dual-SIM phone. uzum.md §6
+    # documents eSIM-only variants as ALWAYS explicitly marked, in three
+    # different encodings, so silence means dual rather than genuinely unknown.
+    # Normalising here is also what keeps slug() injective: "unknown" and
+    # "dual" produce different VariantKeys but identical slugs, so two keys
+    # would claim one URL. ("esim_only" keeps its distinguishing -esim suffix.)
+    if sim_kind == "unknown":
+        sim_kind = "dual"
     return VariantKey(
         brand=f.brand,
         model_tokens=f.model_tokens,

@@ -292,7 +292,7 @@ stripped before matching, collapsing every spelling onto one canonical form:
 
 ```python
 _SEPARATORS = re.compile(r"[\s_.\-/+]")
-_DUAL = re.compile(r"simesim|dualsim|2sim|двесим")
+_DUAL = re.compile(r"simesim|dual|2sim|двесим")
 _ESIM = re.compile(r"esim")
 
 def is_esim_only(text):
@@ -302,8 +302,37 @@ def is_esim_only(text):
     return bool(_ESIM.search(low))
 ```
 
+`_DUAL` matches a **bare `dual`**, not just `dualsim`. The marker list above names
+`dual` on its own, but the pattern used to require the compound spelling, so
+`sim_kind("dual")` returned `"unknown"` — a phone explicitly documented as dual came
+back unclassified. The bare alternative subsumes `dualsim`, so that spelling no longer
+needs its own branch.
+
 Verify on the rendered page: the product spec sheet shows
 `Тип SIM карты : nano-SIM/eSIM` for the dual variant.
+
+### An unmarked phone is dual, not unknown
+
+Because eSIM-only variants are **always** explicitly marked — in all three encodings
+above — silence carries information: an unmarked phone is the ordinary dual-SIM one.
+`variant_key` therefore normalises `sim_kind="unknown"` to `"dual"` before building the
+key.
+
+This is also what keeps `slug()` injective. `slug()` only appends a suffix for
+`esim_only`, so `"unknown"` and `"dual"` built two *different* `VariantKey`s that
+rendered to the *identical* slug — two canonical products claiming one URL, with
+whichever wrote last silently winning. Normalising at key construction collapses them
+into the one product they always were. `esim_only` keeps its distinguishing `-esim`
+suffix.
+
+`SIM_KINDS` is enforced, not merely declared: `variant_key` raises `ValueError` on
+anything outside `("dual", "esim_only", "unknown")`. Without the check a typo such as
+`"Dual"` or `"dual_sim"` became part of a canonical identity and minted a second
+product for a phone that already had one.
+
+Note the normalisation is deliberately **not** applied to `partial_key`: there,
+`"unknown"` still means "not yet known" and is what lets `resolve_partial` match a
+partial offer against either SIM variant before refusing on ambiguity.
 
 ## 7. Characteristic keys are a typo minefield
 

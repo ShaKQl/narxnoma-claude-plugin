@@ -42,10 +42,13 @@ def test_apple_bare_pair_is_NOT_ram():
     assert mem("Apple iPhone 17 256 ГБ", brand="apple") == (None, 256)
 
 
-def test_apple_WITH_separator_still_reads_ram():
-    # olcha lists "Iphone Air Space Black 12/256 GB" -- explicit separator,
-    # so it really is a memory pair even for Apple.
-    assert mem("Iphone Air Space Black 12/256 GB", brand="apple") == (12, 256)
+def test_apple_WITH_separator_STILL_yields_no_ram():
+    # SUPERSEDED behaviour. This test previously asserted (12, 256): an
+    # explicit separator was taken as proof that a figure really was RAM,
+    # even for Apple. That exemption is exactly what split one phone into two
+    # canonical products, so Apple RAM suppression is now global and this
+    # listing must yield no RAM at all. The storage reading is unchanged.
+    assert mem("Iphone Air Space Black 12/256 GB", brand="apple") == (None, 256)
 
 
 def test_single_unit_figure_classified_by_size():
@@ -117,3 +120,19 @@ def test_single_digit_ram_after_model_number_still_works():
     # case always worked (a 1-digit run can't be misread as a 2-4 digit
     # storage figure), so this pins the pre-fix behaviour against regression.
     assert mem("Redmi Note 15 8/256 ГБ, черный", brand="xiaomi") == (8, 256)
+
+
+def test_apple_unit_bearing_pair_yields_no_ram():
+    # THE SPLIT: the BRANDS_WITHOUT_PUBLISHED_RAM guard used to sit only on
+    # the bare-pair fallback, so "12/256GB" reached the unit-bearing pass
+    # untouched and returned ram=12, while "iPhone 17 Pro 256 ГБ" returned
+    # None. One phone, two canonical products (apple-17-pro-12-256-silver and
+    # apple-17-pro-256-silver): a split offer pool and two displayed prices.
+    # Apple publishes no RAM, so any such figure is a reseller's own wording.
+    assert mem("iPhone 17 Pro 12/256GB Silver", brand="apple") == (None, 256)
+
+
+def test_non_apple_unit_bearing_pair_still_reads_ram():
+    # The suppression must be brand-scoped, not blanket: brands that DO
+    # publish RAM keep it as identity, or 8/256 and 12/256 would merge.
+    assert mem("Honor X9d 12/256GB Black", brand="honor") == (12, 256)

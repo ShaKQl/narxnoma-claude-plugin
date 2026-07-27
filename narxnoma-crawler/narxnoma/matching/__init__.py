@@ -17,6 +17,6 @@ __all__ = [
     "ACCEPT_THRESHOLD", "COLOR_MAP", "Features", "HARD_REJECT", "PartialKey",
     "QUALIFIERS", "VariantKey", "display_name", "extract_features",
     "is_esim_only", "normalize", "ordered_model_tokens", "partial_key",
-    "primary_color", "resolve_partial", "score_match", "sim_kind", "slug",
-    "variant_key", "why",
+    "primary_color", "resolve_partial", "robust_median", "score_match",
+    "sim_kind", "slug", "variant_key", "why",
 ]
