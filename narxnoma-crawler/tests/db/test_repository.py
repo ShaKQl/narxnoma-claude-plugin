@@ -22,7 +22,10 @@ def test_raw_offer_is_append_only(db_conn):
     repo.record_raw_offers(db_conn, sid, [listing(price=2_723_000)])
     repo.record_raw_offers(db_conn, sid, [listing(price=2_699_000)])
     with db_conn.cursor() as cur:
-        cur.execute("SELECT price FROM raw_offer WHERE source_key='k1' ORDER BY observed_at")
+        # ORDER BY id, not observed_at: observed_at defaults to now(), which is the
+        # transaction timestamp -- rows written in the same transaction share it, so
+        # only id (true insertion order) disambiguates them.
+        cur.execute("SELECT price FROM raw_offer WHERE source_key='k1' ORDER BY id")
         assert [r[0] for r in cur.fetchall()] == [2_723_000, 2_699_000]
 
 
