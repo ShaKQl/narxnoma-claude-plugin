@@ -73,7 +73,7 @@ narxnoma-crawler/
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `Settings` (from `config`); `Listing` frozen dataclass with fields `store_slug, source_key, name_raw, price, url, availability, image_url, raw`; `PRICE_MIN`, `PRICE_MAX`, `is_plausible_price(price) -> bool`; `Source` protocol with `slug: str`, `sweep() -> Iterator[Listing]`, `search(query: str) -> Iterator[Listing]`, `can_sweep: bool`; `polite_session(referer, origin, extra_headers) -> requests.Session` and `polite_get`/`polite_post` wrappers applying the delay.
+- Produces: `Settings` (from `config`); `Listing` frozen dataclass with fields `store_slug, source_key, name_raw, price, url, availability, image_url, raw`; `PRICE_MIN`, `PRICE_MAX`, `is_plausible_price(price) -> bool`; `Source` protocol with `slug: str`, `sweep() -> Iterator[Listing]`, `search(query: str) -> Iterator[Listing]`, `can_sweep: bool`; and from `http.py`: `polite_session(referer, origin, extra_headers) -> requests.Session`, `pause()`, `get_json(session, url, **kwargs) -> dict`, `post_json(session, url, **kwargs) -> dict`. Every retailer client calls `get_json`/`post_json` — they apply the timeout and the inter-request delay.
 
 - [ ] **Step 1: Add runtime dependencies**
 
