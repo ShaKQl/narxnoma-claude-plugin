@@ -13,7 +13,8 @@ order, fields untouched) so it stays readable.
 import json
 import pathlib
 
-from narxnoma.sources.idea import parse
+from narxnoma.matching.brands import BRAND_ALIASES, BRANDS
+from narxnoma.sources.idea import BRAND_QUERIES, PHONE_CATEGORY_IDS, _filter_phone_listings, parse
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 
 FIXTURE = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "sources" / "idea.json"
@@ -110,3 +111,38 @@ def test_parsed_count_is_pinned_to_the_recording():
     parsed = parse(payload())
     assert len(raw_items) == 20
     assert len(parsed) == 20                    # nothing in this recording trips the price fence
+
+
+def test_brand_queries_cover_the_major_brands_the_list_used_to_omit():
+    """BRAND_QUERIES is idea's entire reach: a brand missing from it is
+    permanently invisible to the catalogue since idea has no pagination and
+    no browsable catalogue. This pins that OPPO, Huawei and vivo -- three
+    major sellers in this market -- and Xiaomi's "redmi" alias are present,
+    so a future refactor of BRAND_QUERIES can't silently narrow the sweep.
+    """
+    lowered = {q.lower() for q in BRAND_QUERIES}
+    for brand in ("oppo", "huawei", "vivo"):
+        assert brand in lowered
+    assert "redmi" in lowered, "alias keys must be queried, not just canonical brands"
+
+
+def test_brand_queries_is_derived_from_the_canonical_vocabulary_not_hardcoded():
+    # Every canonical brand and every alias key must be queried, and nothing
+    # else -- BRAND_QUERIES must track narxnoma.matching.brands exactly.
+    assert set(BRAND_QUERIES) == set(BRANDS) | set(BRAND_ALIASES)
+    assert BRAND_QUERIES == sorted(BRAND_QUERIES)
+
+
+def test_filter_phone_listings_keeps_only_category_55():
+    """sweep()'s category filter, exercised directly against the recorded
+    fixture rather than over the network. Of the fixture's 20 items, only
+    the 9 category-55 smartphones should survive; the vacuum cleaners (26),
+    fridges (24) and TV (9) must all be dropped.
+    """
+    assert PHONE_CATEGORY_IDS == frozenset({55})
+    listings = parse(payload())
+    filtered = _filter_phone_listings(listings)
+    assert len(filtered) == 9
+    assert all(lst.raw.get("category_id") == 55 for lst in filtered)
+    dropped_ids = {lst.raw.get("category_id") for lst in listings} - {55}
+    assert dropped_ids == {26, 24, 9}

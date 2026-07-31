@@ -77,6 +77,34 @@ def build_query(name_ru):
     return re.sub(r"^\s*Смартфон\s+", "", name_ru).strip()
 ```
 
+## 4a. Responses mix categories -- `category_id` is the only usable signal
+
+A brand-query search (e.g. `search=Samsung`) does not return only phones. In
+a 20-item recording it returned 9 smartphones alongside 7 vacuum cleaners, 3
+fridges and a TV, and none of the appliances fall below the price fence, so
+nothing filters them out on price alone.
+
+The response's human-readable category fields -- `category`, `category_name`,
+`category_slug` -- are `null` or `""` on every observed item, on both phones
+and appliances alike. The only field that actually distinguishes them is the
+undocumented `category_id`. Observed mappings (from the recorded fixture and
+a live "Samsung" sweep, both 2026-07-31):
+
+| `category_id` | Category |
+|---|---|
+| `55` | Smartphones (e.g. Galaxy S25 Ultra, Galaxy A36) |
+| `26` | Vacuum cleaners |
+| `24` | Fridges |
+| `9` | TVs |
+
+**These ids are undocumented by idea** -- there is no field, header, or docs
+page that names them; they were derived purely by observing which products
+carried which id. The crawler (`narxnoma/sources/idea.py`) filters `sweep()`
+output to `PHONE_CATEGORY_IDS = frozenset({55})` and logs the full category
+distribution seen on every sweep, specifically so that a renumbering or a
+second phone category being added shows up in the logs instead of silently
+emptying or polluting the catalogue.
+
 ## 5. Gotchas
 
 - **SKU codes read as model tokens.** idea appends manufacturer part numbers to

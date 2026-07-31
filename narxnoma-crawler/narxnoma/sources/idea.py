@@ -6,21 +6,53 @@ list of brand queries and calls the search endpoint once per brand with
 brand -- see docs/parsers/idea.md); results are merged and deduplicated by
 `source_key` since the same product can surface under more than one brand
 query. `search(query)` issues the same call with the caller's query text.
+
+idea also mixes non-phone categories (appliances) into every response with
+no reliable textual signal to tell them apart, so `sweep()` filters on the
+undocumented `category_id` field before yielding -- see PHONE_CATEGORY_IDS
+and docs/parsers/idea.md.
 """
+import logging
+from collections import Counter
 from typing import Iterator
 
+from narxnoma.matching.brands import BRAND_ALIASES, BRANDS
 from narxnoma.sources.base import Listing, coerce_price, try_build_listing
 from narxnoma.sources.http import get_json, polite_session
+
+logger = logging.getLogger(__name__)
 
 API_URL = "https://api.idea.uz/api/v2/search"
 QUANTITY = 100
 
 # idea has no full-catalogue browse endpoint, so sweep() is a fixed list of
-# brand queries merged together (see module docstring).
-BRAND_QUERIES = [
-    "Samsung", "Xiaomi", "Redmi", "Honor", "Apple",
-    "Infinix", "Tecno", "realme", "Nokia",
-]
+# brand queries merged together (see module docstring) -- this list *is*
+# the sweep's entire reach into idea's catalogue. Any brand missing here is
+# permanently invisible to us, so it is derived from the project's
+# canonical brand vocabulary (narxnoma/matching/brands.py) rather than
+# hardcoded, and must never be allowed to drift from it. Both the canonical
+# brand names and the alias keys (sub-brands, e.g. "redmi" -> "xiaomi") are
+# queried: a retailer lists a phone as "Redmi Note 15" without the word
+# "Xiaomi" anywhere in the name, so querying only the parent brand would
+# miss it. Sorted for determinism.
+BRAND_QUERIES = sorted(set(BRANDS) | set(BRAND_ALIASES))
+
+# idea's `category_id` is the only usable category signal -- the textual
+# `category`/`category_name`/`category_slug` fields are null or empty on
+# every observed item. It is completely undocumented by the retailer;
+# these mappings were derived by observation from the recorded fixture
+# (tests/fixtures/sources/idea.json) and a live "Samsung" sweep on
+# 2026-07-31:
+#   55 = smartphones (e.g. Galaxy S25 Ultra, Galaxy A36)
+#   26 = vacuum cleaners
+#   24 = fridges
+#    9 = TVs
+# Only 55 is a phone category; V1 is smartphones only. Because these ids
+# are undocumented and could be renumbered or a second phone category
+# added without notice, sweep() logs the full category distribution every
+# run (see _filter_phone_listings) so drift is visible instead of silently
+# emptying or polluting the catalogue.
+PHONE_CATEGORY_IDS = frozenset({55})
 
 _HEADERS = {
     "Accept": "application/json",
@@ -49,7 +81,12 @@ def _parse_item(item: dict) -> Listing | None:
 
 
 def parse(payload: dict) -> list[Listing]:
-    """Turn one raw search response into Listings. Pure function, no I/O."""
+    """Turn one raw search response into Listings. Pure function, no I/O.
+
+    Unfiltered and faithful to the payload -- category filtering is crawl
+    policy, not parsing, and belongs in sweep() instead (see
+    _filter_phone_listings and PHONE_CATEGORY_IDS).
+    """
     products = (payload or {}).get("products") or []
     listings = []
     for item in products:
@@ -57,6 +94,25 @@ def parse(payload: dict) -> list[Listing]:
         if lst is not None:
             listings.append(lst)
     return listings
+
+
+def _filter_phone_listings(listings: list[Listing]) -> list[Listing]:
+    """Keep only listings in PHONE_CATEGORY_IDS; log the category mix seen.
+
+    Category filtering is crawl policy (V1 is smartphones only), so it
+    lives here rather than in parse(), which stays a pure, unfiltered view
+    of the payload. Extracted as a standalone function so it is testable
+    directly against a recorded fixture, without a live sweep.
+    """
+    counts = Counter(listing.raw.get("category_id") for listing in listings)
+    logger.info("idea category distribution: %s", dict(counts))
+    filtered_out = {cid: n for cid, n in counts.items() if cid not in PHONE_CATEGORY_IDS}
+    if filtered_out:
+        logger.info("idea filtered out non-phone categories: %s", filtered_out)
+    return [
+        listing for listing in listings
+        if listing.raw.get("category_id") in PHONE_CATEGORY_IDS
+    ]
 
 
 class IdeaSource:
@@ -92,10 +148,12 @@ class IdeaSource:
         There is no pagination and no full-catalogue endpoint, so this
         merges one search call per brand and deduplicates by source_key --
         the same product can appear under more than one brand query.
+        Non-phone categories (appliances) are filtered out here; see
+        PHONE_CATEGORY_IDS and _filter_phone_listings.
         """
         seen: set[str] = set()
         for query in BRAND_QUERIES:
-            for listing in self._fetch(query):
+            for listing in _filter_phone_listings(self._fetch(query)):
                 if listing.source_key in seen:
                     continue
                 seen.add(listing.source_key)
