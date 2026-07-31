@@ -1,5 +1,49 @@
-from narxnoma.cli import render_status
+import os
+
+import pytest
+
+from narxnoma.cli import main, render_report, render_status, report_exit_code
 from narxnoma.pipeline.harvest import HarvestResult
+from narxnoma.pipeline.report import SourceCoverage
+
+
+def _row(slug, offers, expected_min, is_suspicious):
+    return SourceCoverage(slug=slug, offers=offers, median_price=None,
+                          oldest_seen=None, newest_seen=None, last_run_ok=None,
+                          expected_min=expected_min, is_suspicious=is_suspicious)
+
+
+def test_render_report_marks_suspicious_rows_distinctly():
+    rows = [_row("olcha", 3, 300, True), _row("texnomart", 500, 300, False)]
+    out = render_report(rows)
+    olcha_line = next(line for line in out.splitlines() if line.startswith("olcha"))
+    texnomart_line = next(line for line in out.splitlines() if line.startswith("texnomart"))
+    assert "SUSPICIOUS" in olcha_line
+    assert "SUSPICIOUS" not in texnomart_line
+
+
+def test_report_exit_code_nonzero_when_any_source_suspicious():
+    assert report_exit_code([_row("olcha", 3, 300, True), _row("idea", 200, 100, False)]) == 1
+
+
+def test_report_exit_code_zero_when_none_suspicious():
+    assert report_exit_code([_row("idea", 200, 100, False)]) == 0
+
+
+@pytest.mark.db
+def test_cli_report_exits_nonzero_when_a_source_is_suspicious(db_conn, monkeypatch):
+    dsn = os.environ.get("NARXNOMA_DSN")
+    if not dsn:
+        pytest.skip("NARXNOMA_DSN not set")
+    import narxnoma.cli as cli_module
+    from narxnoma.db.connection import connect as real_connect
+
+    monkeypatch.setattr(cli_module, "connect", lambda: real_connect(dsn))
+
+    # db_conn's fixture already truncated offer/raw_offer/harvest_run, so
+    # every source sits at zero offers -- below every non-zero floor.
+    exit_code = main(["report"])
+    assert exit_code != 0
 
 
 def test_render_status_ok():
