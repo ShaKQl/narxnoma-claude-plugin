@@ -58,3 +58,14 @@ def test_try_build_listing_returns_none_for_missing_url():
         store_slug="olcha", source_key="k", name_raw="X", price=1_000_000, url="",
     )
     assert lst is None
+
+
+def test_try_build_listing_returns_none_for_unexpected_keyword_argument():
+    # Fix: a caller passing wrong/missing kwargs raises TypeError, not
+    # ValueError -- that is a bug in the client, but it must still be
+    # logged and dropped rather than killing the sweep mid-run.
+    lst = try_build_listing(
+        store_slug="olcha", source_key="k", name_raw="X", price=1_000_000, url="u",
+        unexpected_kwarg="surprise",
+    )
+    assert lst is None

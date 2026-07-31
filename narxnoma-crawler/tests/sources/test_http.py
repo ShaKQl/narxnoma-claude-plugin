@@ -5,6 +5,8 @@ real (but never-called) requests.Session, and get_json/post_json are
 exercised against a FakeSession stub. pause() is monkeypatched with a
 counter so the suite stays fast.
 """
+import json
+
 import pytest
 import requests
 
@@ -12,15 +14,21 @@ from narxnoma.sources import http
 
 
 class FakeResponse:
-    def __init__(self, json_data=None, raise_exc=None):
+    def __init__(self, json_data=None, raise_exc=None, text=None, status_code=200,
+                json_exc=None):
         self._json_data = json_data if json_data is not None else {}
         self._raise_exc = raise_exc
+        self._json_exc = json_exc
+        self.text = text if text is not None else ""
+        self.status_code = status_code
 
     def raise_for_status(self):
         if self._raise_exc is not None:
             raise self._raise_exc
 
     def json(self):
+        if self._json_exc is not None:
+            raise self._json_exc
         return self._json_data
 
 
@@ -108,5 +116,38 @@ def test_get_json_calls_pause_when_response_raises_for_status(pause_counter):
     error = requests.HTTPError("500 Server Error")
     session = FakeSession(FakeResponse(raise_exc=error))
     with pytest.raises(requests.HTTPError):
+        http.get_json(session, "https://example.uz/api")
+    assert pause_counter["count"] == 1
+
+
+def test_get_json_raises_non_json_response_on_decode_failure(pause_counter):
+    # Fix 2: retailers under load return WAF challenge pages, rate-limit
+    # HTML, or expired-session redirects with a 200 status. That must not
+    # surface as a bare, undiagnosable JSON decode error.
+    body = "<html><body>Attention Required! | Cloudflare</body></html>"
+    decode_error = json.JSONDecodeError("Expecting value", body, 0)
+    session = FakeSession(FakeResponse(text=body, status_code=200, json_exc=decode_error))
+    with pytest.raises(http.NonJsonResponse) as exc_info:
+        http.get_json(session, "https://example.uz/api")
+    message = str(exc_info.value)
+    assert "https://example.uz/api" in message
+    assert "Cloudflare" in message
+
+
+def test_non_json_response_is_a_value_error():
+    # An existing caller that does `except ValueError` (e.g. try_build_listing's
+    # pattern) must keep working unchanged even though this is a new,
+    # more specific exception type.
+    exc = http.NonJsonResponse("https://example.uz/api", 200, "<html>...</html>")
+    assert isinstance(exc, ValueError)
+
+
+def test_get_json_calls_pause_when_body_fails_to_decode(pause_counter):
+    # Same guarantee as test_get_json_calls_pause_when_response_raises_for_status,
+    # but for a body that fails to decode rather than a bad status code.
+    body = "not json"
+    decode_error = json.JSONDecodeError("Expecting value", body, 0)
+    session = FakeSession(FakeResponse(text=body, status_code=200, json_exc=decode_error))
+    with pytest.raises(http.NonJsonResponse):
         http.get_json(session, "https://example.uz/api")
     assert pause_counter["count"] == 1

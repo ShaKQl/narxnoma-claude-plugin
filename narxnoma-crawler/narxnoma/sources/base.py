@@ -47,11 +47,17 @@ def try_build_listing(**kwargs) -> Listing | None:
     seven clients must drop them the same way -- so the handling lives here
     rather than being re-implemented per client.
     """
+    source_key = kwargs.get("source_key") or "<no source_key>"
     try:
         return Listing(**kwargs)
     except ValueError as exc:
-        source_key = kwargs.get("source_key") or "<no source_key>"
         logger.warning("dropping malformed listing %r: %s", source_key, exc)
+        return None
+    except TypeError as exc:
+        # Wrong or missing keyword arguments is a bug in the calling client,
+        # not bad retailer data -- log it loudly so it doesn't hide next to
+        # routine drop-and-count warnings, but still don't kill the sweep.
+        logger.error("dropping listing %r built with bad arguments: %s", source_key, exc)
         return None
 
 

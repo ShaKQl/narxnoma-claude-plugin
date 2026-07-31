@@ -15,6 +15,28 @@ from narxnoma.config import Settings, load_settings
 _settings: Settings | None = None
 
 
+class NonJsonResponse(ValueError):
+    """Raised when a 200-status response body is not valid JSON.
+
+    Retailers under load hand back WAF challenge pages, rate-limit HTML, or
+    expired-session redirects with an HTTP 200 -- response.json() would
+    otherwise raise a bare "expecting value: line 1 column 1" that tells you
+    nothing about which retailer or endpoint misbehaved. Carrying the URL,
+    status, and a body snippet here is what makes the cause diagnosable from
+    a single log line instead of requiring a live repro. Subclasses
+    ValueError so existing `except ValueError` callers keep working
+    unchanged.
+    """
+
+    def __init__(self, url: str, status_code: int, body_snippet: str) -> None:
+        self.url = url
+        self.status_code = status_code
+        self.body_snippet = body_snippet
+        super().__init__(
+            f"non-JSON response from {url} (status {status_code}): {body_snippet!r}"
+        )
+
+
 def _get_settings() -> Settings:
     global _settings
     if _settings is None:
@@ -54,7 +76,10 @@ def get_json(session: requests.Session, url: str, **kwargs) -> dict:
         response.raise_for_status()
     finally:
         pause()
-    return response.json() or {}
+    try:
+        return response.json() or {}
+    except ValueError as exc:
+        raise NonJsonResponse(url, response.status_code, response.text[:200]) from exc
 
 
 def post_json(session: requests.Session, url: str, **kwargs) -> dict:
@@ -66,4 +91,7 @@ def post_json(session: requests.Session, url: str, **kwargs) -> dict:
         response.raise_for_status()
     finally:
         pause()
-    return response.json() or {}
+    try:
+        return response.json() or {}
+    except ValueError as exc:
+        raise NonJsonResponse(url, response.status_code, response.text[:200]) from exc
