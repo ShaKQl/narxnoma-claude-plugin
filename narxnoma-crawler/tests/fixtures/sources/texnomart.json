@@ -1,0 +1,5598 @@
+{
+  "code": 0,
+  "data": {
+    "brands": [
+      {
+        "count": 102,
+        "id": 1714,
+        "name": "Huawei"
+      },
+      {
+        "count": 61,
+        "id": 1490,
+        "name": "Samsung"
+      },
+      {
+        "count": 54,
+        "id": 1569,
+        "name": "Xiaomi"
+      },
+      {
+        "count": 42,
+        "id": 1918,
+        "name": "Vivo"
+      },
+      {
+        "count": 41,
+        "id": 2027,
+        "name": "Honor"
+      },
+      {
+        "count": 36,
+        "id": 1535,
+        "name": "Apple"
+      },
+      {
+        "count": 35,
+        "id": 1951,
+        "name": "OPPO "
+      },
+      {
+        "count": 15,
+        "id": 2301,
+        "name": "ttec"
+      },
+      {
+        "count": 14,
+        "id": 1553,
+        "name": "Baseus"
+      },
+      {
+        "count": 14,
+        "id": 2179,
+        "name": "Novey"
+      },
+      {
+        "count": 13,
+        "id": 2057,
+        "name": "Infinix"
+      },
+      {
+        "count": 11,
+        "id": 2038,
+        "name": "Realme"
+      },
+      {
+        "count": 9,
+        "id": 1572,
+        "name": "Belkin"
+      },
+      {
+        "count": 8,
+        "id": 1664,
+        "name": "Borofone"
+      },
+      {
+        "count": 7,
+        "id": 1466,
+        "name": "Philips"
+      },
+      {
+        "count": 4,
+        "id": 1598,
+        "name": "Sony"
+      },
+      {
+        "count": 3,
+        "id": 1542,
+        "name": "Edifier"
+      },
+      {
+        "count": 3,
+        "id": 2248,
+        "name": "Nothing"
+      },
+      {
+        "count": 2,
+        "id": 1514,
+        "name": "Polaris"
+      },
+      {
+        "count": 2,
+        "id": 1582,
+        "name": "JBL"
+      },
+      {
+        "count": 2,
+        "id": 1584,
+        "name": "Logitech"
+      },
+      {
+        "count": 1,
+        "id": 1563,
+        "name": "OLMIO"
+      },
+      {
+        "count": 1,
+        "id": 1566,
+        "name": "Hoco"
+      },
+      {
+        "count": 1,
+        "id": 1570,
+        "name": "Remax"
+      },
+      {
+        "count": 1,
+        "id": 1596,
+        "name": "Awei"
+      },
+      {
+        "count": 1,
+        "id": 1603,
+        "name": "Amazfit"
+      },
+      {
+        "count": 1,
+        "id": 1955,
+        "name": "Green"
+      },
+      {
+        "count": 1,
+        "id": 2028,
+        "name": "Redmi"
+      },
+      {
+        "count": 1,
+        "id": 2053,
+        "name": "Yesido "
+      },
+      {
+        "count": 1,
+        "id": 2208,
+        "name": "G-tab"
+      },
+      {
+        "count": 1,
+        "id": 2284,
+        "name": "Beeline"
+      },
+      {
+        "count": 1,
+        "id": 2285,
+        "name": "OQ"
+      },
+      {
+        "count": 1,
+        "id": 2295,
+        "name": "SATECHI"
+      }
+    ],
+    "categories": [
+      {
+        "count": 288,
+        "id": 150,
+        "name": "Smartfonlar",
+        "slug": "smartfony"
+      },
+      {
+        "count": 420,
+        "id": 19,
+        "name": "Smartfonlar va gadjetlar",
+        "slug": "bytovaya-tehnika-dlya-doma-i-kuhn"
+      },
+      {
+        "count": 155,
+        "id": 1973,
+        "name": "Study Mode - ON",
+        "slug": "study-mode---on"
+      },
+      {
+        "count": 86,
+        "id": 127,
+        "name": "Telefon aksessuarlari",
+        "slug": "aksessuary-dlya-telefonov"
+      },
+      {
+        "count": 56,
+        "id": 126,
+        "name": "Gadjetlar",
+        "slug": "gadzhety"
+      },
+      {
+        "count": 47,
+        "id": 133,
+        "name": "Smart soatlar",
+        "slug": "smart-chasy"
+      },
+      {
+        "count": 46,
+        "id": 211,
+        "name": "Xiaomi smartfonlari",
+        "slug": "smartfony-xiaomi"
+      },
+      {
+        "count": 46,
+        "id": 652,
+        "name": "Huawei smartfonlari",
+        "slug": "huawei-smartfony"
+      },
+      {
+        "count": 42,
+        "id": 147,
+        "name": "Quloqchin va garnituralar",
+        "slug": "naushniki"
+      },
+      {
+        "count": 42,
+        "id": 212,
+        "name": "Samsung Galaxy",
+        "slug": "smartfon-samsung"
+      },
+      {
+        "count": 42,
+        "id": 213,
+        "name": "Flagmanlar",
+        "slug": "premium-smartfony"
+      },
+      {
+        "count": 41,
+        "id": 342,
+        "name": "Vivo smartfonlari",
+        "slug": "Vivo-smartfon"
+      },
+      {
+        "count": 39,
+        "id": 1076,
+        "name": "Simsiz miniquloqchinlar",
+        "slug": "besprovodnye-naushniki"
+      },
+      {
+        "count": 36,
+        "id": 651,
+        "name": "HONOR smartfonlari",
+        "slug": "smartfony-honor"
+      },
+      {
+        "count": 35,
+        "id": 654,
+        "name": "OPPO Smartfonlari",
+        "slug": "oppo-smartfony"
+      },
+      {
+        "count": 32,
+        "id": 1074,
+        "name": "Bluetooth airpodlar",
+        "slug": "bluetooth-naushniki"
+      },
+      {
+        "count": 29,
+        "id": 1073,
+        "name": "Mobil telefon uchun minigarnituralar",
+        "slug": "naushniki-dlya-telefona"
+      },
+      {
+        "count": 29,
+        "id": 2043,
+        "name": "Huawei nova seriyasi",
+        "slug": "huawei-serii-nova"
+      },
+      {
+        "count": 27,
+        "id": 1511,
+        "name": "Galaxy Series A",
+        "slug": "galaxy-series-a"
+      },
+      {
+        "count": 23,
+        "id": 1334,
+        "name": "Huawei Smart soatlari",
+        "slug": "smart-chasy-huawei"
+      },
+      {
+        "count": 22,
+        "id": 129,
+        "name": "Planshetlar",
+        "slug": "planshety"
+      },
+      {
+        "count": 21,
+        "id": 215,
+        "name": "Yaxshi kameraga ega smartfonlar",
+        "slug": "camera-phone"
+      },
+      {
+        "count": 21,
+        "id": 2092,
+        "name": "Vivo Y seriyasi",
+        "slug": "vivo-serii-y"
+      },
+      {
+        "count": 21,
+        "id": 2309,
+        "name": "OPPO A seriyasi",
+        "slug": "oppo-serii-a"
+      },
+      {
+        "count": 19,
+        "id": 210,
+        "name": "iPhone",
+        "slug": "smartfony-apple"
+      },
+      {
+        "count": 15,
+        "id": 141,
+        "name": "Smartfonlar uchun ushlagichlar",
+        "slug": "derzhateli-dlya-smartfonov"
+      },
+      {
+        "count": 15,
+        "id": 142,
+        "name": "Quvvatlash qurilmalari",
+        "slug": "zaryadnye-ustroistva"
+      },
+      {
+        "count": 15,
+        "id": 1684,
+        "name": "Xiaomi Redmi seriyasi",
+        "slug": "xiaomi-serii-redmi"
+      },
+      {
+        "count": 15,
+        "id": 2067,
+        "name": "HONOR N seriyasi",
+        "slug": "honor-serii-n"
+      },
+      {
+        "count": 14,
+        "id": 128,
+        "name": "Telefonlar",
+        "slug": "telefony"
+      },
+      {
+        "count": 14,
+        "id": 135,
+        "name": "Fitnes soati",
+        "slug": "fitnes-braslet"
+      },
+      {
+        "count": 14,
+        "id": 1080,
+        "name": "Vakuumsiz quloqchinlar",
+        "slug": "naushniki-vkladyshi"
+      },
+      {
+        "count": 14,
+        "id": 1847,
+        "name": "Optom narxlar",
+        "slug": "optovye-ceny"
+      },
+      {
+        "count": 14,
+        "id": 2310,
+        "name": "OPPO Reno seriyasi",
+        "slug": "oppo-serii-reno"
+      },
+      {
+        "count": 13,
+        "id": 149,
+        "name": "Tugmali telefonlar",
+        "slug": "knopochnye-telefony"
+      },
+      {
+        "count": 13,
+        "id": 1264,
+        "name": "Galaxy Series S",
+        "slug": "galaxy-series-s"
+      },
+      {
+        "count": 13,
+        "id": 1274,
+        "name": "Novey tugmali telefonlar",
+        "slug": "novey"
+      },
+      {
+        "count": 13,
+        "id": 2093,
+        "name": "Vivo V seriyasi",
+        "slug": "vivo-serii-v"
+      },
+      {
+        "count": 11,
+        "id": 144,
+        "name": "USB kabellar",
+        "slug": "kabeli"
+      },
+      {
+        "count": 11,
+        "id": 608,
+        "name": "Huawei fitnes soatlari",
+        "slug": "fitnes-braslety-huawei"
+      },
+      {
+        "count": 11,
+        "id": 1520,
+        "name": "Huawei quloqchinlari",
+        "slug": "naushniki-huawei"
+      },
+      {
+        "count": 11,
+        "id": 2068,
+        "name": "HONOR X seriyasi",
+        "slug": "honor-serii-x"
+      },
+      {
+        "count": 11,
+        "id": 2282,
+        "name": "Quvvat adapterlari",
+        "slug": "adaptery-pitaniya"
+      },
+      {
+        "count": 10,
+        "id": 140,
+        "name": "Tashqi batareyalar",
+        "slug": "vneshnie-akkumulyatory"
+      },
+      {
+        "count": 10,
+        "id": 1435,
+        "name": "Infinix smartfonlari",
+        "slug": "smartfony-infinix"
+      },
+      {
+        "count": 9,
+        "id": 650,
+        "name": "Realme Smartfonlari",
+        "slug": "smartfony-realme"
+      },
+      {
+        "count": 9,
+        "id": 912,
+        "name": "Bayramona sovg`alar",
+        "slug": "podarki-dlja-nejo"
+      },
+      {
+        "count": 9,
+        "id": 1082,
+        "name": "Vakuumli quloqchinlar",
+        "slug": "vakuumnye-naushniki"
+      },
+      {
+        "count": 9,
+        "id": 1125,
+        "name": "USB kabel Type-C",
+        "slug": "kabel-type-c"
+      },
+      {
+        "count": 9,
+        "id": 1685,
+        "name": "Xiaomi Mi seriyasi",
+        "slug": "xiaomi-serii-mi"
+      },
+      {
+        "count": 9,
+        "id": 1871,
+        "name": "Apple Watch",
+        "slug": "apple-watch"
+      },
+      {
+        "count": 9,
+        "id": 1977,
+        "name": "iPhone 17 | Air",
+        "slug": "iphone-17-|-air"
+      },
+      {
+        "count": 9,
+        "id": 2022,
+        "name": "Redmi Note 15 | Note 15 Pro | Note 15 Pro Plus",
+        "slug": "redmi-note-15-|-note-15-pro-|-note-15-pro-plus"
+      },
+      {
+        "count": 8,
+        "id": 1077,
+        "name": "Taqiladigan quloqchinlar",
+        "slug": "nakladnye-naushniki"
+      },
+      {
+        "count": 8,
+        "id": 1167,
+        "name": "Huawei planshetlari",
+        "slug": "huawei"
+      },
+      {
+        "count": 7,
+        "id": 1289,
+        "name": "Smart Watch",
+        "slug": "aqlli-soatlar-bo'lib-bo'lib"
+      },
+      {
+        "count": 7,
+        "id": 1976,
+        "name": "iPhone 17 Pro | 17 Pro Max",
+        "slug": "iphone-17-pro-|-17-pro-max"
+      },
+      {
+        "count": 6,
+        "id": 928,
+        "name": "Erkaklar Smart soati",
+        "slug": "muzhskie-chasy"
+      },
+      {
+        "count": 6,
+        "id": 1325,
+        "name": "7 million so‘mgacha smartfonlar",
+        "slug": "smartfony-do-7-mln.-sum"
+      },
+      {
+        "count": 6,
+        "id": 1326,
+        "name": "8 million so‘mgacha smartfonlar",
+        "slug": "smartfony-do-8-mln.-sum"
+      },
+      {
+        "count": 6,
+        "id": 2045,
+        "name": "Huawei Pura seriyasi",
+        "slug": "huawei-serii-pura"
+      },
+      {
+        "count": 6,
+        "id": 2046,
+        "name": "nova 14 | 14 Pro",
+        "slug": "nova-14-|-14-pro"
+      },
+      {
+        "count": 6,
+        "id": 2083,
+        "name": "X7b | 7c | 7d",
+        "slug": "x7b-|-7c-|-7d"
+      },
+      {
+        "count": 6,
+        "id": 2108,
+        "name": "Vivo Y19s",
+        "slug": "vivo-y19s"
+      },
+      {
+        "count": 6,
+        "id": 2118,
+        "name": "Infinix HOT seriyasi",
+        "slug": "infinix-serii-hot"
+      },
+      {
+        "count": 5,
+        "id": 606,
+        "name": "Xiaomi Smart soatlari",
+        "slug": "smart-chasy-xiaomi"
+      },
+      {
+        "count": 5,
+        "id": 1165,
+        "name": "Samsung Planshetlar",
+        "slug": "samsung"
+      },
+      {
+        "count": 5,
+        "id": 1324,
+        "name": "6 million so‘mgacha smartfonlar",
+        "slug": "smartfony-do-6-mln.-sum"
+      },
+      {
+        "count": 5,
+        "id": 1842,
+        "name": "Xiaomi 15 | 15 Ultra",
+        "slug": "xiaomi-15-|-15-ultra"
+      },
+      {
+        "count": 5,
+        "id": 2019,
+        "name": "Redmi Note 14 | Note 14 Pro | Note 14 Pro Plus",
+        "slug": "redni-note-14-|-note-14-pro-|-note-14-pro-plus"
+      },
+      {
+        "count": 5,
+        "id": 2102,
+        "name": "Vivo V60 5G | V60 Lite 5G",
+        "slug": "vivo-v60-5g-|-v60-lite-5g"
+      },
+      {
+        "count": 5,
+        "id": 2117,
+        "name": "Infinix SMART seriyasi",
+        "slug": "infinix-serii-smart"
+      },
+      {
+        "count": 5,
+        "id": 2186,
+        "name": "Galaxy S26 Ultra",
+        "slug": "galaxy-s26-ultra"
+      },
+      {
+        "count": 5,
+        "id": 2188,
+        "name": "Galaxy S26 | S26+",
+        "slug": "galaxy-s26+"
+      },
+      {
+        "count": 5,
+        "id": 2296,
+        "name": "Xiaomi 17T | 17T Pro",
+        "slug": "xiaomi-17t-|-17t-pro"
+      },
+      {
+        "count": 4,
+        "id": 148,
+        "name": "G'ilof",
+        "slug": "chehly"
+      },
+      {
+        "count": 4,
+        "id": 929,
+        "name": "Ayollar Smart soati",
+        "slug": "zhenskie-chasy"
+      },
+      {
+        "count": 4,
+        "id": 1120,
+        "name": "Tavsiya etamiz",
+        "slug": "rekomenduem"
+      },
+      {
+        "count": 4,
+        "id": 1150,
+        "name": "Apple G'ilof",
+        "slug": "chehly-dlya-iphone"
+      },
+      {
+        "count": 4,
+        "id": 1257,
+        "name": "Samsung Smart soatlari",
+        "slug": "smart-chasy-samsung"
+      },
+      {
+        "count": 4,
+        "id": 1323,
+        "name": "5 million so‘mgacha smartfonlar",
+        "slug": "smartfony-do-5-mln.-sum"
+      },
+      {
+        "count": 4,
+        "id": 1447,
+        "name": "HONOR Planshetlari",
+        "slug": "planshety-honor"
+      },
+      {
+        "count": 4,
+        "id": 1792,
+        "name": "Xiaomi 14T | 14T Pro",
+        "slug": "xiaomi-14t-|-14t-pro"
+      },
+      {
+        "count": 4,
+        "id": 1814,
+        "name": "Samsung Quloqchinlari",
+        "slug": "naushniki-samsung"
+      },
+      {
+        "count": 4,
+        "id": 1837,
+        "name": "Sony quloqchinlari",
+        "slug": "naushniki-sony"
+      },
+      {
+        "count": 4,
+        "id": 2000,
+        "name": "Galaxy A17",
+        "slug": "galaxy-a17"
+      },
+      {
+        "count": 4,
+        "id": 2044,
+        "name": "Huawei Mate seriyasi",
+        "slug": "huawei-serii-mate"
+      },
+      {
+        "count": 4,
+        "id": 2047,
+        "name": "nova 14i",
+        "slug": "nova-14i"
+      },
+      {
+        "count": 4,
+        "id": 2054,
+        "name": "nova Y73",
+        "slug": "nova-y73"
+      },
+      {
+        "count": 4,
+        "id": 2105,
+        "name": "Vivo Y04 | Y04s",
+        "slug": "vivo-y04-|-y04s"
+      },
+      {
+        "count": 4,
+        "id": 2111,
+        "name": "Vivo Y29",
+        "slug": "vivo-y29"
+      },
+      {
+        "count": 4,
+        "id": 2112,
+        "name": "Vivo Y28",
+        "slug": "vivo-y28"
+      },
+      {
+        "count": 4,
+        "id": 2276,
+        "name": "Galaxy A57",
+        "slug": "galaxy-a57"
+      },
+      {
+        "count": 4,
+        "id": 2277,
+        "name": "Galaxy A37",
+        "slug": "galaxy-a37"
+      },
+      {
+        "count": 4,
+        "id": 2286,
+        "name": "Apple Watch Series 11",
+        "slug": "apple-watch-series-11"
+      },
+      {
+        "count": 4,
+        "id": 2288,
+        "name": "Apple Watch Series SE",
+        "slug": "apple-watch-series-se"
+      },
+      {
+        "count": 4,
+        "id": 2302,
+        "name": "Galaxy A27",
+        "slug": "galaxy-a27"
+      },
+      {
+        "count": 4,
+        "id": 2311,
+        "name": "Reno15",
+        "slug": "reno15"
+      },
+      {
+        "count": 3,
+        "id": 130,
+        "name": "GPS soat",
+        "slug": "gps-chasy"
+      },
+      {
+        "count": 3,
+        "id": 1290,
+        "name": "Eng yaxshi narxdagi planshet",
+        "slug": "planshet-v-rassrochku"
+      }
+    ],
+    "filter": [
+      {
+        "count": 457,
+        "id": 749,
+        "name": "Rang",
+        "values": [
+          {
+            "count": 154,
+            "id": 50766,
+            "value": "Qora"
+          },
+          {
+            "count": 61,
+            "id": 50695,
+            "value": "Oq"
+          },
+          {
+            "count": 61,
+            "id": 66936,
+            "value": "Ko`k"
+          },
+          {
+            "count": 49,
+            "id": 51064,
+            "value": "Kulrang"
+          },
+          {
+            "count": 31,
+            "id": 52693,
+            "value": "Yashil"
+          },
+          {
+            "count": 28,
+            "id": 50781,
+            "value": "Kumush"
+          },
+          {
+            "count": 15,
+            "id": 57225,
+            "value": "Binafsha"
+          },
+          {
+            "count": 14,
+            "id": 51705,
+            "value": "Oltin"
+          },
+          {
+            "count": 14,
+            "id": 58154,
+            "value": "Moviy"
+          },
+          {
+            "count": 8,
+            "id": 68508,
+            "value": "To`q sariq"
+          },
+          {
+            "count": 7,
+            "id": 57508,
+            "value": "Pushti"
+          },
+          {
+            "count": 5,
+            "id": 51073,
+            "value": "Jigarrang"
+          },
+          {
+            "count": 4,
+            "id": 51791,
+            "value": "Qizil"
+          },
+          {
+            "count": 3,
+            "id": 53350,
+            "value": "Novvot rang"
+          },
+          {
+            "count": 1,
+            "id": 50670,
+            "value": "Mavjud"
+          },
+          {
+            "count": 1,
+            "id": 53157,
+            "value": "Sariq"
+          },
+          {
+            "count": 1,
+            "id": 60828,
+            "value": "Plastik"
+          }
+        ]
+      },
+      {
+        "count": 402,
+        "id": 705,
+        "name": "Akkumulyator hajmi",
+        "values": [
+          {
+            "count": 74,
+            "id": 67238,
+            "value": "5000 mA·s"
+          },
+          {
+            "count": 37,
+            "id": 65478,
+            "value": "7000 mA·s"
+          },
+          {
+            "count": 34,
+            "id": 71605,
+            "value": "6000 mA·s"
+          },
+          {
+            "count": 28,
+            "id": 73225,
+            "value": "6500 mА·s"
+          },
+          {
+            "count": 15,
+            "id": 57620,
+            "value": "5500 mA·s"
+          },
+          {
+            "count": 8,
+            "id": 55099,
+            "value": "471 mA·s"
+          },
+          {
+            "count": 8,
+            "id": 67791,
+            "value": "5200 mA·s"
+          },
+          {
+            "count": 8,
+            "id": 73481,
+            "value": "6620 mA·s"
+          },
+          {
+            "count": 7,
+            "id": 73488,
+            "value": "867 mA·s"
+          },
+          {
+            "count": 6,
+            "id": 69610,
+            "value": "4900 mA·s"
+          },
+          {
+            "count": 6,
+            "id": 71838,
+            "value": "5100 mA·s"
+          },
+          {
+            "count": 6,
+            "id": 74316,
+            "value": "60 mA·s"
+          },
+          {
+            "count": 5,
+            "id": 69400,
+            "value": "7700 mA·s"
+          },
+          {
+            "count": 5,
+            "id": 71428,
+            "value": "4500 mA·s"
+          },
+          {
+            "count": 5,
+            "id": 73696,
+            "value": "5170 mA·s"
+          },
+          {
+            "count": 5,
+            "id": 73785,
+            "value": "3692 mA·s"
+          },
+          {
+            "count": 4,
+            "id": 55241,
+            "value": "55 mA·s"
+          },
+          {
+            "count": 4,
+            "id": 56573,
+            "value": "5600 mA⋅s"
+          },
+          {
+            "count": 4,
+            "id": 68585,
+            "value": "5300 mA·s"
+          },
+          {
+            "count": 4,
+            "id": 68976,
+            "value": "5800 mA·s"
+          },
+          {
+            "count": 4,
+            "id": 73736,
+            "value": "3149 mA·s"
+          },
+          {
+            "count": 4,
+            "id": 73739,
+            "value": "5088 mA·s"
+          },
+          {
+            "count": 4,
+            "id": 73882,
+            "value": "362 mA·s"
+          },
+          {
+            "count": 4,
+            "id": 74331,
+            "value": "7200 mА·s"
+          },
+          {
+            "count": 3,
+            "id": 51773,
+            "value": "10000 mA⋅s"
+          },
+          {
+            "count": 3,
+            "id": 57666,
+            "value": "4700 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 61313,
+            "value": "10000 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 68717,
+            "value": "4300 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 71870,
+            "value": "400 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 72390,
+            "value": "410 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 72686,
+            "value": "486 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 72983,
+            "value": "5110 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 73163,
+            "value": "5240 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 73492,
+            "value": "540 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 73731,
+            "value": "4252 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 74272,
+            "value": "4005 mA·s"
+          },
+          {
+            "count": 3,
+            "id": 74487,
+            "value": "8500 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 51607,
+            "value": "800 mA⋅s"
+          },
+          {
+            "count": 2,
+            "id": 66899,
+            "value": "284 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 69387,
+            "value": "510 mA⋅s"
+          },
+          {
+            "count": 2,
+            "id": 69409,
+            "value": "8300 mА·s"
+          },
+          {
+            "count": 2,
+            "id": 70368,
+            "value": "850 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 72181,
+            "value": "8800 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 72610,
+            "value": "524 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 72691,
+            "value": "470 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 72827,
+            "value": "10100 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 73169,
+            "value": "5410 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 73255,
+            "value": "5230 mА·s"
+          },
+          {
+            "count": 2,
+            "id": 73303,
+            "value": "7606 mA·m"
+          },
+          {
+            "count": 2,
+            "id": 73477,
+            "value": " 54 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 73525,
+            "value": "65 mA / soat"
+          },
+          {
+            "count": 2,
+            "id": 73577,
+            "value": "325 mA/s"
+          },
+          {
+            "count": 2,
+            "id": 73614,
+            "value": "1050 mA / soat"
+          },
+          {
+            "count": 2,
+            "id": 73717,
+            "value": "5160 mA / soat"
+          },
+          {
+            "count": 2,
+            "id": 73879,
+            "value": "296 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 73913,
+            "value": "7040 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 74098,
+            "value": "6580 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 74159,
+            "value": "40 mA⋅s"
+          },
+          {
+            "count": 2,
+            "id": 74189,
+            "value": "7100 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 74253,
+            "value": "6320 mA·s"
+          },
+          {
+            "count": 2,
+            "id": 74292,
+            "value": "6100 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 51430,
+            "value": "4800 mA⋅s"
+          },
+          {
+            "count": 1,
+            "id": 52718,
+            "value": "10000 mA/soat (37 Vt)"
+          },
+          {
+            "count": 1,
+            "id": 53482,
+            "value": "230 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 54673,
+            "value": "600 mA⋅s"
+          },
+          {
+            "count": 1,
+            "id": 54791,
+            "value": "7040 mA⋅s"
+          },
+          {
+            "count": 1,
+            "id": 55054,
+            "value": "1000 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 57118,
+            "value": "420 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 61187,
+            "value": "4000 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 61317,
+            "value": "20000 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 65703,
+            "value": "232 mA / soat"
+          },
+          {
+            "count": 1,
+            "id": 67625,
+            "value": "4500 mA⋅s"
+          },
+          {
+            "count": 1,
+            "id": 69735,
+            "value": "40 mA / soat"
+          },
+          {
+            "count": 1,
+            "id": 71073,
+            "value": "1800 мА·ч"
+          },
+          {
+            "count": 1,
+            "id": 72631,
+            "value": "4780 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 72840,
+            "value": "323 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 73572,
+            "value": "435 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 73603,
+            "value": "445 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 73656,
+            "value": "5260 мА/soat"
+          },
+          {
+            "count": 1,
+            "id": 73753,
+            "value": "7020 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 73766,
+            "value": "58 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 73768,
+            "value": "50 mA·s"
+          },
+          {
+            "count": 1,
+            "id": 74069,
+            "value": "800 mA/soat"
+          },
+          {
+            "count": 1,
+            "id": 74075,
+            "value": "690 mA/soat"
+          },
+          {
+            "count": 1,
+            "id": 74438,
+            "value": "1200 mA / soat"
+          },
+          {
+            "count": 1,
+            "id": 74441,
+            "value": "850 mA⋅s"
+          },
+          {
+            "count": 1,
+            "id": 74444,
+            "value": "1000 mA⋅s"
+          }
+        ]
+      },
+      {
+        "count": 382,
+        "id": 667,
+        "name": "Diagonal",
+        "values": [
+          {
+            "count": 56,
+            "id": 66841,
+            "value": "6.7\""
+          },
+          {
+            "count": 37,
+            "id": 67258,
+            "value": "6.67\""
+          },
+          {
+            "count": 21,
+            "id": 72710,
+            "value": "6.77\""
+          },
+          {
+            "count": 20,
+            "id": 72760,
+            "value": "6.9\""
+          },
+          {
+            "count": 14,
+            "id": 60912,
+            "value": "6.57\""
+          },
+          {
+            "count": 14,
+            "id": 71604,
+            "value": "6.68\""
+          },
+          {
+            "count": 12,
+            "id": 67744,
+            "value": "11\""
+          },
+          {
+            "count": 12,
+            "id": 69267,
+            "value": "6.78\""
+          },
+          {
+            "count": 11,
+            "id": 70724,
+            "value": "6.3\""
+          },
+          {
+            "count": 10,
+            "id": 68547,
+            "value": "6.75\""
+          },
+          {
+            "count": 10,
+            "id": 69497,
+            "value": "1.62\""
+          },
+          {
+            "count": 9,
+            "id": 62972,
+            "value": "6.74\""
+          },
+          {
+            "count": 9,
+            "id": 66979,
+            "value": "6.8\""
+          },
+          {
+            "count": 9,
+            "id": 71869,
+            "value": "1.82\""
+          },
+          {
+            "count": 7,
+            "id": 58020,
+            "value": "6.59\""
+          },
+          {
+            "count": 7,
+            "id": 66812,
+            "value": "2.4\""
+          },
+          {
+            "count": 7,
+            "id": 73459,
+            "value": "6.61\""
+          },
+          {
+            "count": 7,
+            "id": 74096,
+            "value": "6.83\""
+          },
+          {
+            "count": 6,
+            "id": 67250,
+            "value": "6.6\""
+          },
+          {
+            "count": 6,
+            "id": 67341,
+            "value": "1.47\""
+          },
+          {
+            "count": 5,
+            "id": 58880,
+            "value": "6.56\""
+          },
+          {
+            "count": 5,
+            "id": 66822,
+            "value": "1.77\""
+          },
+          {
+            "count": 5,
+            "id": 71905,
+            "value": "11.5\""
+          },
+          {
+            "count": 4,
+            "id": 60135,
+            "value": "8.7\""
+          },
+          {
+            "count": 4,
+            "id": 67041,
+            "value": "6.95\""
+          },
+          {
+            "count": 4,
+            "id": 71068,
+            "value": "8\""
+          },
+          {
+            "count": 4,
+            "id": 71662,
+            "value": "6.5\""
+          },
+          {
+            "count": 4,
+            "id": 73294,
+            "value": " 1.96\""
+          },
+          {
+            "count": 4,
+            "id": 74489,
+            "value": "6.7”"
+          },
+          {
+            "count": 3,
+            "id": 55805,
+            "value": "1.57\""
+          },
+          {
+            "count": 3,
+            "id": 67739,
+            "value": "1.32\""
+          },
+          {
+            "count": 3,
+            "id": 67865,
+            "value": "1.43\""
+          },
+          {
+            "count": 3,
+            "id": 68335,
+            "value": "6.1\""
+          },
+          {
+            "count": 3,
+            "id": 69613,
+            "value": "1.5\""
+          },
+          {
+            "count": 3,
+            "id": 70211,
+            "value": "6.36\""
+          },
+          {
+            "count": 3,
+            "id": 72637,
+            "value": "6.88\""
+          },
+          {
+            "count": 3,
+            "id": 73576,
+            "value": "1,34\""
+          },
+          {
+            "count": 3,
+            "id": 74486,
+            "value": "6.84\""
+          },
+          {
+            "count": 3,
+            "id": 74527,
+            "value": "1.92\""
+          },
+          {
+            "count": 2,
+            "id": 65297,
+            "value": "6.71\""
+          },
+          {
+            "count": 2,
+            "id": 66805,
+            "value": "2.8\""
+          },
+          {
+            "count": 2,
+            "id": 66907,
+            "value": "1.4"
+          },
+          {
+            "count": 2,
+            "id": 67058,
+            "value": "6.52\""
+          },
+          {
+            "count": 2,
+            "id": 67771,
+            "value": "6.43\""
+          },
+          {
+            "count": 2,
+            "id": 67798,
+            "value": "6.51\""
+          },
+          {
+            "count": 2,
+            "id": 69483,
+            "value": "6.73\""
+          },
+          {
+            "count": 2,
+            "id": 72384,
+            "value": "1.2\""
+          },
+          {
+            "count": 2,
+            "id": 73055,
+            "value": "6.76\""
+          },
+          {
+            "count": 1,
+            "id": 59699,
+            "value": "1.47"
+          },
+          {
+            "count": 1,
+            "id": 66940,
+            "value": "6.79\""
+          },
+          {
+            "count": 1,
+            "id": 68117,
+            "value": "6.72\""
+          },
+          {
+            "count": 1,
+            "id": 72383,
+            "value": "1.4\""
+          },
+          {
+            "count": 1,
+            "id": 72630,
+            "value": "6.86\""
+          },
+          {
+            "count": 1,
+            "id": 72690,
+            "value": "1.97\""
+          },
+          {
+            "count": 1,
+            "id": 72969,
+            "value": "2.0\""
+          },
+          {
+            "count": 1,
+            "id": 73300,
+            "value": "1.78\""
+          },
+          {
+            "count": 1,
+            "id": 73438,
+            "value": "2.02\""
+          },
+          {
+            "count": 1,
+            "id": 73490,
+            "value": "1.38\""
+          },
+          {
+            "count": 1,
+            "id": 73851,
+            "value": "6.31\""
+          }
+        ]
+      },
+      {
+        "count": 334,
+        "id": 680,
+        "name": "Ichki xotira",
+        "values": [
+          {
+            "count": 159,
+            "id": 50806,
+            "value": "256 GB"
+          },
+          {
+            "count": 93,
+            "id": 51586,
+            "value": "128 GB"
+          },
+          {
+            "count": 48,
+            "id": 53129,
+            "value": "512 GB"
+          },
+          {
+            "count": 16,
+            "id": 51391,
+            "value": "64 ГБ"
+          },
+          {
+            "count": 5,
+            "id": 50768,
+            "value": "16 GB"
+          },
+          {
+            "count": 5,
+            "id": 51390,
+            "value": "32 GB"
+          },
+          {
+            "count": 5,
+            "id": 51615,
+            "value": "32 MB"
+          },
+          {
+            "count": 1,
+            "id": 50829,
+            "value": "4 MB"
+          },
+          {
+            "count": 1,
+            "id": 53219,
+            "value": "1 GB"
+          },
+          {
+            "count": 1,
+            "id": 54356,
+            "value": "64 MB"
+          }
+        ]
+      },
+      {
+        "count": 326,
+        "id": 679,
+        "name": "Tezkor xotira (RAM)",
+        "values": [
+          {
+            "count": 128,
+            "id": 50774,
+            "value": "8 GB"
+          },
+          {
+            "count": 88,
+            "id": 53052,
+            "value": "12 GB"
+          },
+          {
+            "count": 43,
+            "id": 51879,
+            "value": "4GB"
+          },
+          {
+            "count": 42,
+            "id": 51585,
+            "value": "6 GB"
+          },
+          {
+            "count": 7,
+            "id": 50768,
+            "value": "16 GB"
+          },
+          {
+            "count": 6,
+            "id": 50745,
+            "value": "2 GB"
+          },
+          {
+            "count": 6,
+            "id": 51615,
+            "value": "32 MB"
+          },
+          {
+            "count": 5,
+            "id": 56342,
+            "value": "1.5 GB"
+          },
+          {
+            "count": 1,
+            "id": 51579,
+            "value": "3 GB"
+          }
+        ]
+      },
+      {
+        "count": 323,
+        "id": 675,
+        "name": "Protsessor",
+        "values": [
+          {
+            "count": 16,
+            "id": 66301,
+            "value": "Qualcomm Snapdragon 685"
+          },
+          {
+            "count": 12,
+            "id": 58597,
+            "value": "Qualcomm Snapdragon 680"
+          },
+          {
+            "count": 11,
+            "id": 57607,
+            "value": "MediaTek Helio G85"
+          },
+          {
+            "count": 11,
+            "id": 64084,
+            "value": "MediaTek Helio G99"
+          },
+          {
+            "count": 11,
+            "id": 65465,
+            "value": "HiSilicon Kirin 710A"
+          },
+          {
+            "count": 11,
+            "id": 73057,
+            "value": "HiSilicon Kirin 8000"
+          },
+          {
+            "count": 10,
+            "id": 72655,
+            "value": "Qualcomm Snapdragon 6s Gen 1"
+          },
+          {
+            "count": 9,
+            "id": 72638,
+            "value": "MediaTek Helio G81 Ultra"
+          },
+          {
+            "count": 9,
+            "id": 73237,
+            "value": "Unisoc T7250 (T615)"
+          },
+          {
+            "count": 8,
+            "id": 73038,
+            "value": "Qualcomm Snapdragon 8 Elite"
+          },
+          {
+            "count": 7,
+            "id": 73730,
+            "value": "A19 Pro"
+          },
+          {
+            "count": 7,
+            "id": 73915,
+            "value": "Qualcomm Snapdragon 7 Gen 4"
+          },
+          {
+            "count": 6,
+            "id": 67236,
+            "value": "Unisoc Tiger T612"
+          },
+          {
+            "count": 6,
+            "id": 72404,
+            "value": "MediaTek Dimensity 7300"
+          },
+          {
+            "count": 6,
+            "id": 72978,
+            "value": "MediaTek Helio G100 Ultra"
+          },
+          {
+            "count": 6,
+            "id": 73157,
+            "value": "Qualcomm Snapdragon 6 Gen 3"
+          },
+          {
+            "count": 5,
+            "id": 56340,
+            "value": "Samsung Exynos W920"
+          },
+          {
+            "count": 5,
+            "id": 73643,
+            "value": "Qualcomm Snapdragon 6s Gen 3"
+          },
+          {
+            "count": 5,
+            "id": 73784,
+            "value": "A19"
+          },
+          {
+            "count": 5,
+            "id": 74194,
+            "value": "Qualcomm Snapdragon 8 Elite Gen 5 for Galaxy"
+          },
+          {
+            "count": 5,
+            "id": 74200,
+            "value": "Exynos 2600"
+          },
+          {
+            "count": 4,
+            "id": 57041,
+            "value": "Mali-G51 MP4"
+          },
+          {
+            "count": 4,
+            "id": 66229,
+            "value": "Samsung Exynos 1380"
+          },
+          {
+            "count": 4,
+            "id": 68977,
+            "value": "Qualcomm Snapdragon 6 Gen 1"
+          },
+          {
+            "count": 4,
+            "id": 70593,
+            "value": "Qualcomm Snapdragon 7 Gen 3"
+          },
+          {
+            "count": 4,
+            "id": 72619,
+            "value": "MediaTek Helio G81"
+          },
+          {
+            "count": 4,
+            "id": 73099,
+            "value": "HiSilicon Kirin 9020"
+          },
+          {
+            "count": 4,
+            "id": 73213,
+            "value": "Unisoc T7225 (T612)"
+          },
+          {
+            "count": 4,
+            "id": 73575,
+            "value": " Exynos W1000"
+          },
+          {
+            "count": 4,
+            "id": 73737,
+            "value": "Apple A19 Pro"
+          },
+          {
+            "count": 4,
+            "id": 73818,
+            "value": " MediaTek Dimensity 7360-Turbo"
+          },
+          {
+            "count": 4,
+            "id": 74242,
+            "value": "Exynos 1480"
+          },
+          {
+            "count": 4,
+            "id": 74244,
+            "value": "Exynos 1680"
+          },
+          {
+            "count": 4,
+            "id": 74330,
+            "value": "Snapdragon 6s Gen 2"
+          },
+          {
+            "count": 3,
+            "id": 67823,
+            "value": "Qualcomm Snapdragon 8+ Gen 1"
+          },
+          {
+            "count": 3,
+            "id": 70057,
+            "value": " Qualcomm Snapdragon 8 Gen 3"
+          },
+          {
+            "count": 3,
+            "id": 71974,
+            "value": "Samsung Exynos 2400"
+          },
+          {
+            "count": 3,
+            "id": 72560,
+            "value": "MediaTek Helio G100"
+          },
+          {
+            "count": 3,
+            "id": 72647,
+            "value": "MediaTek Dimensity 9300+"
+          },
+          {
+            "count": 3,
+            "id": 72947,
+            "value": "MediaTek Dimensity 7025-Ultra"
+          },
+          {
+            "count": 3,
+            "id": 72982,
+            "value": "Qualcomm Snapdragon 7s Gen 3"
+          },
+          {
+            "count": 3,
+            "id": 73865,
+            "value": "HiSilicon Kirin 8020"
+          },
+          {
+            "count": 3,
+            "id": 74121,
+            "value": "HiSilicon Kirin 9030 Pro"
+          },
+          {
+            "count": 3,
+            "id": 74271,
+            "value": "Apple A19"
+          },
+          {
+            "count": 3,
+            "id": 74368,
+            "value": "MediaTek Dimensity 9500"
+          },
+          {
+            "count": 2,
+            "id": 62819,
+            "value": "Qualcomm Snapdragon 778G"
+          },
+          {
+            "count": 2,
+            "id": 65395,
+            "value": "Apple A16 Bionic"
+          },
+          {
+            "count": 2,
+            "id": 69513,
+            "value": "MediaTek Dimensity 6080"
+          },
+          {
+            "count": 2,
+            "id": 71400,
+            "value": "MediaTek Dimensity 7050"
+          },
+          {
+            "count": 2,
+            "id": 71664,
+            "value": "MediaTek Helio G91-Ultra"
+          },
+          {
+            "count": 2,
+            "id": 72074,
+            "value": "Qualcomm Snapdragon 8s Gen 3"
+          },
+          {
+            "count": 2,
+            "id": 72617,
+            "value": "MediaTek Helio G91"
+          },
+          {
+            "count": 2,
+            "id": 72643,
+            "value": "MediaTek Dimensity 8300 Ultra"
+          },
+          {
+            "count": 2,
+            "id": 73119,
+            "value": "MediaTek Dimensity 8350"
+          },
+          {
+            "count": 2,
+            "id": 73159,
+            "value": "Samsung Exynos 1580"
+          },
+          {
+            "count": 2,
+            "id": 73704,
+            "value": "Kirin 9010S"
+          },
+          {
+            "count": 2,
+            "id": 73716,
+            "value": "MediaTek Helio G200"
+          },
+          {
+            "count": 2,
+            "id": 74095,
+            "value": "MediaTek Helio G200-Ultra"
+          },
+          {
+            "count": 2,
+            "id": 74097,
+            "value": "MediaTek Dimensity 7400-Ultra"
+          },
+          {
+            "count": 2,
+            "id": 74141,
+            "value": "HiSilicon Kirin T92C"
+          },
+          {
+            "count": 2,
+            "id": 74188,
+            "value": "Qualcomm Snapdragon 8 Elite Gen 5"
+          },
+          {
+            "count": 2,
+            "id": 74252,
+            "value": "MediaTek Dimensity 7100 Elite"
+          },
+          {
+            "count": 2,
+            "id": 74327,
+            "value": "T7225"
+          },
+          {
+            "count": 2,
+            "id": 74343,
+            "value": "MediaTek Dimensity 7300+"
+          },
+          {
+            "count": 2,
+            "id": 74345,
+            "value": "MediaTek Dimensity 9400e"
+          },
+          {
+            "count": 2,
+            "id": 74366,
+            "value": "MediaTek Dimensity 8500 Ultra"
+          },
+          {
+            "count": 2,
+            "id": 74384,
+            "value": "Snapdragon 7 Gen 4"
+          },
+          {
+            "count": 2,
+            "id": 74492,
+            "value": " MediaTek Helio G100 MAX"
+          },
+          {
+            "count": 1,
+            "id": 57577,
+            "value": "MediaTek Helio P35"
+          },
+          {
+            "count": 1,
+            "id": 58062,
+            "value": "MediaTek Helio G70"
+          },
+          {
+            "count": 1,
+            "id": 58634,
+            "value": "MediaTek Helio G88"
+          },
+          {
+            "count": 1,
+            "id": 63401,
+            "value": "MTK6261D"
+          },
+          {
+            "count": 1,
+            "id": 63474,
+            "value": "MediaTek Dimensity 700"
+          },
+          {
+            "count": 1,
+            "id": 65584,
+            "value": "MediaTek Helio G37"
+          },
+          {
+            "count": 1,
+            "id": 68046,
+            "value": "Dimensity 9200+"
+          },
+          {
+            "count": 1,
+            "id": 68749,
+            "value": "Qualcomm Snapdragon 695"
+          },
+          {
+            "count": 1,
+            "id": 69065,
+            "value": "Unisoc Tiger T606"
+          },
+          {
+            "count": 1,
+            "id": 69399,
+            "value": "Qualcomm Snapdragon 7 Gen 1"
+          },
+          {
+            "count": 1,
+            "id": 69688,
+            "value": "Mediatek Helio G99 Ultra"
+          },
+          {
+            "count": 1,
+            "id": 71847,
+            "value": "HiSilicon Kirin 9000S"
+          },
+          {
+            "count": 1,
+            "id": 72534,
+            "value": "MediaTek Dimensity 6300"
+          },
+          {
+            "count": 1,
+            "id": 73302,
+            "value": " Apple S8"
+          },
+          {
+            "count": 1,
+            "id": 73917,
+            "value": "HiSilicon Kirin T82B"
+          },
+          {
+            "count": 1,
+            "id": 73975,
+            "value": " MediaTek MT6261D"
+          },
+          {
+            "count": 1,
+            "id": 73977,
+            "value": "MTK"
+          },
+          {
+            "count": 1,
+            "id": 74101,
+            "value": "Qualcomm Snapdragon 7s Gen 4"
+          },
+          {
+            "count": 1,
+            "id": 74205,
+            "value": "Snapdragon 680"
+          },
+          {
+            "count": 1,
+            "id": 74207,
+            "value": "Snapdragon 685"
+          },
+          {
+            "count": 1,
+            "id": 74483,
+            "value": "MediaTek MT8788V"
+          }
+        ]
+      },
+      {
+        "count": 313,
+        "id": 1184,
+        "name": "Ekran ruxsati",
+        "values": [
+          {
+            "count": 33,
+            "id": 64548,
+            "value": "1600х720"
+          },
+          {
+            "count": 33,
+            "id": 68421,
+            "value": "2340х1080"
+          },
+          {
+            "count": 17,
+            "id": 73482,
+            "value": "1604х720"
+          },
+          {
+            "count": 15,
+            "id": 73217,
+            "value": "2392х1080"
+          },
+          {
+            "count": 14,
+            "id": 71606,
+            "value": "1608х720"
+          },
+          {
+            "count": 12,
+            "id": 65502,
+            "value": "2412х1080"
+          },
+          {
+            "count": 10,
+            "id": 65660,
+            "value": "2400х1080"
+          },
+          {
+            "count": 10,
+            "id": 73077,
+            "value": "1920х1200"
+          },
+          {
+            "count": 8,
+            "id": 72756,
+            "value": "2622х1206"
+          },
+          {
+            "count": 8,
+            "id": 72981,
+            "value": "2712х1220"
+          },
+          {
+            "count": 8,
+            "id": 74219,
+            "value": "1604x720"
+          },
+          {
+            "count": 7,
+            "id": 73705,
+            "value": "2760х1256"
+          },
+          {
+            "count": 6,
+            "id": 73063,
+            "value": "2412х1084"
+          },
+          {
+            "count": 6,
+            "id": 73591,
+            "value": "2372х1080"
+          },
+          {
+            "count": 6,
+            "id": 74099,
+            "value": "2772х1280"
+          },
+          {
+            "count": 6,
+            "id": 74293,
+            "value": "1570x720"
+          },
+          {
+            "count": 5,
+            "id": 70055,
+            "value": "3120x1440"
+          },
+          {
+            "count": 5,
+            "id": 73058,
+            "value": "2776х1224"
+          },
+          {
+            "count": 4,
+            "id": 58881,
+            "value": "2376x1080"
+          },
+          {
+            "count": 4,
+            "id": 63881,
+            "value": "1612x720"
+          },
+          {
+            "count": 4,
+            "id": 72762,
+            "value": "2868х1320"
+          },
+          {
+            "count": 4,
+            "id": 73404,
+            "value": "2736х1264"
+          },
+          {
+            "count": 4,
+            "id": 74217,
+            "value": "1600x720"
+          },
+          {
+            "count": 4,
+            "id": 74254,
+            "value": "2600х1200"
+          },
+          {
+            "count": 4,
+            "id": 74266,
+            "value": "1570х720"
+          },
+          {
+            "count": 3,
+            "id": 58765,
+            "value": "1640x720"
+          },
+          {
+            "count": 3,
+            "id": 59412,
+            "value": "1920х1080"
+          },
+          {
+            "count": 3,
+            "id": 60136,
+            "value": "1340х800"
+          },
+          {
+            "count": 3,
+            "id": 68807,
+            "value": "2532х1170"
+          },
+          {
+            "count": 3,
+            "id": 70206,
+            "value": "2670x1200"
+          },
+          {
+            "count": 3,
+            "id": 72468,
+            "value": "320х240"
+          },
+          {
+            "count": 3,
+            "id": 73697,
+            "value": "2848х1276"
+          },
+          {
+            "count": 3,
+            "id": 74122,
+            "value": "2416х2210"
+          },
+          {
+            "count": 3,
+            "id": 74372,
+            "value": "2728х1264"
+          },
+          {
+            "count": 3,
+            "id": 74390,
+            "value": "2728x1264"
+          },
+          {
+            "count": 3,
+            "id": 74488,
+            "value": "2756x1272"
+          },
+          {
+            "count": 2,
+            "id": 57560,
+            "value": "3200x1440"
+          },
+          {
+            "count": 2,
+            "id": 68067,
+            "value": "2800х1260"
+          },
+          {
+            "count": 2,
+            "id": 72828,
+            "value": "2800х1840"
+          },
+          {
+            "count": 2,
+            "id": 72861,
+            "value": "2700х1224"
+          },
+          {
+            "count": 2,
+            "id": 73043,
+            "value": "3120х1440"
+          },
+          {
+            "count": 2,
+            "id": 73088,
+            "value": "2460х1080"
+          },
+          {
+            "count": 2,
+            "id": 73305,
+            "value": "2360х1640"
+          },
+          {
+            "count": 2,
+            "id": 73407,
+            "value": "2800х1280"
+          },
+          {
+            "count": 2,
+            "id": 73713,
+            "value": "2720х1224"
+          },
+          {
+            "count": 2,
+            "id": 74190,
+            "value": "2808х1256"
+          },
+          {
+            "count": 2,
+            "id": 74225,
+            "value": "2372x1080"
+          },
+          {
+            "count": 2,
+            "id": 74344,
+            "value": "2800x1280"
+          },
+          {
+            "count": 2,
+            "id": 74346,
+            "value": "2780x1264"
+          },
+          {
+            "count": 2,
+            "id": 74367,
+            "value": "2756х1268"
+          },
+          {
+            "count": 2,
+            "id": 74432,
+            "value": "2750х1260"
+          },
+          {
+            "count": 1,
+            "id": 66378,
+            "value": "2388х1080"
+          },
+          {
+            "count": 1,
+            "id": 67616,
+            "value": "2664x1200"
+          },
+          {
+            "count": 1,
+            "id": 69397,
+            "value": "2200х1440"
+          },
+          {
+            "count": 1,
+            "id": 72466,
+            "value": "160х128"
+          },
+          {
+            "count": 1,
+            "id": 72632,
+            "value": "2912х1224"
+          },
+          {
+            "count": 1,
+            "id": 72711,
+            "value": "1610х720"
+          },
+          {
+            "count": 1,
+            "id": 73370,
+            "value": "2832х1316"
+          },
+          {
+            "count": 1,
+            "id": 73852,
+            "value": "2640х1216"
+          },
+          {
+            "count": 1,
+            "id": 73918,
+            "value": "2456х1600"
+          },
+          {
+            "count": 1,
+            "id": 73972,
+            "value": "128x64"
+          },
+          {
+            "count": 1,
+            "id": 74208,
+            "value": "1504х2508"
+          },
+          {
+            "count": 1,
+            "id": 74341,
+            "value": "2772x1272"
+          },
+          {
+            "count": 1,
+            "id": 74439,
+            "value": "296х240"
+          }
+        ]
+      },
+      {
+        "count": 312,
+        "id": 669,
+        "name": "Asosiy Kamera",
+        "values": [
+          {
+            "count": 37,
+            "id": 67654,
+            "value": "50 МP, 2 МP"
+          },
+          {
+            "count": 22,
+            "id": 60949,
+            "value": "50 MP"
+          },
+          {
+            "count": 16,
+            "id": 54756,
+            "value": "8 MP"
+          },
+          {
+            "count": 16,
+            "id": 68512,
+            "value": "50 MP, 0.08 MP"
+          },
+          {
+            "count": 15,
+            "id": 68043,
+            "value": "50 MP, 8 MP, 2 MP"
+          },
+          {
+            "count": 11,
+            "id": 58289,
+            "value": "13 MP, 0.08 MP"
+          },
+          {
+            "count": 11,
+            "id": 69170,
+            "value": "50 MP, 12 MP, 8 MP"
+          },
+          {
+            "count": 11,
+            "id": 71388,
+            "value": "108 MP, 2 MP"
+          },
+          {
+            "count": 11,
+            "id": 72013,
+            "value": "50 MP, 50 MP, 12 MP"
+          },
+          {
+            "count": 10,
+            "id": 73336,
+            "value": "50 MP, 50 MP, 8 MP"
+          },
+          {
+            "count": 9,
+            "id": 69127,
+            "value": "48 MP"
+          },
+          {
+            "count": 8,
+            "id": 67730,
+            "value": "50 MP, 8 MP"
+          },
+          {
+            "count": 8,
+            "id": 70204,
+            "value": "50 MP, 50 MP, 50 MP"
+          },
+          {
+            "count": 8,
+            "id": 74106,
+            "value": "200 MP, 8 MP"
+          },
+          {
+            "count": 7,
+            "id": 67820,
+            "value": "50 MP, 50 MP"
+          },
+          {
+            "count": 7,
+            "id": 73728,
+            "value": "48 MP, 48 MP, 48 MP"
+          },
+          {
+            "count": 6,
+            "id": 69517,
+            "value": "200 МP, 8 МP, 2 МP"
+          },
+          {
+            "count": 6,
+            "id": 70177,
+            "value": "50 MP, 12 MP, 5 MP"
+          },
+          {
+            "count": 6,
+            "id": 70775,
+            "value": "50 MP, 8 MP, 5 MP"
+          },
+          {
+            "count": 5,
+            "id": 66190,
+            "value": "13 МР"
+          },
+          {
+            "count": 5,
+            "id": 72286,
+            "value": "50 MP, 12 MP, 10 MP"
+          },
+          {
+            "count": 5,
+            "id": 72851,
+            "value": "108 MP, 5 MP"
+          },
+          {
+            "count": 5,
+            "id": 73045,
+            "value": "200 MP, 50 MP, 50 MP, 10 MP"
+          },
+          {
+            "count": 5,
+            "id": 73406,
+            "value": "200 MP, 50 MP, 12 MP"
+          },
+          {
+            "count": 5,
+            "id": 73783,
+            "value": "48 MP, 48 MP"
+          },
+          {
+            "count": 4,
+            "id": 67042,
+            "value": "50 MP, 2MP"
+          },
+          {
+            "count": 4,
+            "id": 72656,
+            "value": "50 MP, 5 MP"
+          },
+          {
+            "count": 4,
+            "id": 73691,
+            "value": "50 MP, 50 MP, 2 MP"
+          },
+          {
+            "count": 3,
+            "id": 67313,
+            "value": "13 MP, 5 MP"
+          },
+          {
+            "count": 3,
+            "id": 67628,
+            "value": "50 MP, 2 MP, 2 MP"
+          },
+          {
+            "count": 3,
+            "id": 73236,
+            "value": "32 MP, 0.08 MP"
+          },
+          {
+            "count": 3,
+            "id": 73403,
+            "value": "200 MP, 12 MP"
+          },
+          {
+            "count": 3,
+            "id": 74120,
+            "value": "50 МП, 50 МП, 40 МП"
+          },
+          {
+            "count": 2,
+            "id": 52429,
+            "value": "5 МP"
+          },
+          {
+            "count": 2,
+            "id": 56906,
+            "value": "12 MP"
+          },
+          {
+            "count": 2,
+            "id": 68640,
+            "value": "108 MP, 8 MP, 2 MP"
+          },
+          {
+            "count": 2,
+            "id": 68979,
+            "value": "108 MP, 5 MP, 2 MP"
+          },
+          {
+            "count": 2,
+            "id": 73168,
+            "value": "50 MP, 50 MP, 50 MP, 200 MP"
+          },
+          {
+            "count": 2,
+            "id": 73702,
+            "value": "50 MP, 50 MP, 40 MP, 12.5 MP"
+          },
+          {
+            "count": 2,
+            "id": 73703,
+            "value": "50 MP, 13 MP, 12 MP"
+          },
+          {
+            "count": 2,
+            "id": 74187,
+            "value": "200 MP, 50 MP, 50 MP"
+          },
+          {
+            "count": 1,
+            "id": 50698,
+            "value": "Мavjud emas"
+          },
+          {
+            "count": 1,
+            "id": 61628,
+            "value": "48 MP, 5 MP, 2 MP"
+          },
+          {
+            "count": 1,
+            "id": 66845,
+            "value": "108 MP, 2 MP 2 MP"
+          },
+          {
+            "count": 1,
+            "id": 67316,
+            "value": "64 MP, 8 MP, 2 MP"
+          },
+          {
+            "count": 1,
+            "id": 67757,
+            "value": "50 MP, 5 MP, 2 MP"
+          },
+          {
+            "count": 1,
+            "id": 68439,
+            "value": "13 MP, 2 MP"
+          },
+          {
+            "count": 1,
+            "id": 68580,
+            "value": "50 MP, 5 MP, 2 MP, 2 MP"
+          },
+          {
+            "count": 1,
+            "id": 68613,
+            "value": "64 MP, 2 MP, 2 MP"
+          },
+          {
+            "count": 1,
+            "id": 68706,
+            "value": "100 MP, 2 MP, 2 MP"
+          },
+          {
+            "count": 1,
+            "id": 71403,
+            "value": "50 MP, 8 MP, 32 MP"
+          },
+          {
+            "count": 1,
+            "id": 71846,
+            "value": "50 MP, 12 MP, 13 MP"
+          },
+          {
+            "count": 1,
+            "id": 73098,
+            "value": "50 MP, 48 MP, 40 MP, 1.5 MP"
+          },
+          {
+            "count": 1,
+            "id": 73369,
+            "value": "50 MP, 40 MP, 48 MP, 1.5 MP"
+          },
+          {
+            "count": 1,
+            "id": 73973,
+            "value": "3 MP"
+          }
+        ]
+      },
+      {
+        "count": 310,
+        "id": 670,
+        "name": "Old kamera",
+        "values": [
+          {
+            "count": 83,
+            "id": 54756,
+            "value": "8 MP"
+          },
+          {
+            "count": 49,
+            "id": 52429,
+            "value": "5 МP"
+          },
+          {
+            "count": 41,
+            "id": 60949,
+            "value": "50 MP"
+          },
+          {
+            "count": 41,
+            "id": 66227,
+            "value": "32 MР"
+          },
+          {
+            "count": 32,
+            "id": 56906,
+            "value": "12 MP"
+          },
+          {
+            "count": 18,
+            "id": 66190,
+            "value": "13 МР"
+          },
+          {
+            "count": 16,
+            "id": 73729,
+            "value": "18 MP"
+          },
+          {
+            "count": 11,
+            "id": 57075,
+            "value": "16 MP"
+          },
+          {
+            "count": 10,
+            "id": 56969,
+            "value": "20 MP"
+          },
+          {
+            "count": 5,
+            "id": 65441,
+            "value": "60 MP"
+          },
+          {
+            "count": 2,
+            "id": 50698,
+            "value": "Мavjud emas"
+          },
+          {
+            "count": 2,
+            "id": 73056,
+            "value": "60 MP, 8 MP"
+          }
+        ]
+      },
+      {
+        "count": 310,
+        "id": 3376,
+        "name": "Ekranning yangilanish tezligi",
+        "values": [
+          {
+            "count": 190,
+            "id": 53233,
+            "value": "120 Gts"
+          },
+          {
+            "count": 70,
+            "id": 56597,
+            "value": "90 Gts"
+          },
+          {
+            "count": 29,
+            "id": 51498,
+            "value": "60 Gts"
+          },
+          {
+            "count": 21,
+            "id": 58890,
+            "value": "144 Gts"
+          }
+        ]
+      },
+      {
+        "count": 207,
+        "id": 1168,
+        "name": "Operatsion tizim",
+        "values": [
+          {
+            "count": 130,
+            "id": 55570,
+            "value": "Android"
+          },
+          {
+            "count": 19,
+            "id": 52435,
+            "value": "iOS"
+          },
+          {
+            "count": 19,
+            "id": 66276,
+            "value": "HarmonyOS"
+          },
+          {
+            "count": 6,
+            "id": 73880,
+            "value": "watchOS 26"
+          },
+          {
+            "count": 5,
+            "id": 56332,
+            "value": "Wear OS"
+          },
+          {
+            "count": 5,
+            "id": 74424,
+            "value": "HarmonyOS 6.0"
+          },
+          {
+            "count": 4,
+            "id": 72634,
+            "value": "HyperOS"
+          },
+          {
+            "count": 4,
+            "id": 73573,
+            "value": "Wear OS 6.0"
+          },
+          {
+            "count": 2,
+            "id": 69511,
+            "value": "Android 14"
+          },
+          {
+            "count": 2,
+            "id": 73296,
+            "value": "watchOS 11"
+          },
+          {
+            "count": 2,
+            "id": 73304,
+            "value": "iPadOS"
+          },
+          {
+            "count": 1,
+            "id": 70592,
+            "value": "Funtouch OS 14"
+          },
+          {
+            "count": 1,
+            "id": 71223,
+            "value": "Funtouch OS 14"
+          },
+          {
+            "count": 1,
+            "id": 72607,
+            "value": "HarmonyOS 5.0"
+          },
+          {
+            "count": 1,
+            "id": 73036,
+            "value": "Android 15"
+          },
+          {
+            "count": 1,
+            "id": 73302,
+            "value": " Apple S8"
+          },
+          {
+            "count": 1,
+            "id": 73397,
+            "value": "Mualliflik"
+          },
+          {
+            "count": 1,
+            "id": 73462,
+            "value": "MagicOS 8.0"
+          },
+          {
+            "count": 1,
+            "id": 73467,
+            "value": "Hyper OS 2"
+          },
+          {
+            "count": 1,
+            "id": 73638,
+            "value": "Android 16"
+          }
+        ]
+      },
+      {
+        "count": 204,
+        "id": 3415,
+        "name": "Model",
+        "values": [
+          {
+            "count": 5,
+            "id": 73644,
+            "value": "X7d"
+          },
+          {
+            "count": 5,
+            "id": 74196,
+            "value": "Galaxy S26 Ultra"
+          },
+          {
+            "count": 4,
+            "id": 71607,
+            "value": "Y28"
+          },
+          {
+            "count": 4,
+            "id": 72696,
+            "value": "Y19s"
+          },
+          {
+            "count": 4,
+            "id": 73289,
+            "value": "Y29"
+          },
+          {
+            "count": 4,
+            "id": 73483,
+            "value": "nova Y73"
+          },
+          {
+            "count": 4,
+            "id": 73503,
+            "value": "A5"
+          },
+          {
+            "count": 4,
+            "id": 73693,
+            "value": "Galaxy A17"
+          },
+          {
+            "count": 4,
+            "id": 73782,
+            "value": "V60 Lite"
+          },
+          {
+            "count": 4,
+            "id": 74243,
+            "value": "Galaxy A37"
+          },
+          {
+            "count": 4,
+            "id": 74245,
+            "value": "Galaxy A57"
+          },
+          {
+            "count": 4,
+            "id": 74332,
+            "value": "Vivo Y31d"
+          },
+          {
+            "count": 4,
+            "id": 74490,
+            "value": " Galaxy A27"
+          },
+          {
+            "count": 3,
+            "id": 51591,
+            "value": "15"
+          },
+          {
+            "count": 3,
+            "id": 65229,
+            "value": "600"
+          },
+          {
+            "count": 3,
+            "id": 72984,
+            "value": "Redmi Note 14 Pro+"
+          },
+          {
+            "count": 3,
+            "id": 73064,
+            "value": "nova 13"
+          },
+          {
+            "count": 3,
+            "id": 73461,
+            "value": "X6c"
+          },
+          {
+            "count": 3,
+            "id": 73606,
+            "value": "Galaxy A07"
+          },
+          {
+            "count": 3,
+            "id": 73640,
+            "value": "Galaxy S25 FE"
+          },
+          {
+            "count": 3,
+            "id": 73866,
+            "value": "nova 14 Pro"
+          },
+          {
+            "count": 3,
+            "id": 73868,
+            "value": "nova 14"
+          },
+          {
+            "count": 3,
+            "id": 74124,
+            "value": "Mate X7"
+          },
+          {
+            "count": 3,
+            "id": 74199,
+            "value": "Galaxy S26"
+          },
+          {
+            "count": 3,
+            "id": 74340,
+            "value": "Realme C85"
+          },
+          {
+            "count": 2,
+            "id": 65977,
+            "value": "Reno 8T"
+          },
+          {
+            "count": 2,
+            "id": 70246,
+            "value": "A38"
+          },
+          {
+            "count": 2,
+            "id": 70644,
+            "value": "Phone 2"
+          },
+          {
+            "count": 2,
+            "id": 71638,
+            "value": "Honor 200 Lite"
+          },
+          {
+            "count": 2,
+            "id": 72075,
+            "value": "200 Pro 5G"
+          },
+          {
+            "count": 2,
+            "id": 72618,
+            "value": "HOT 50i"
+          },
+          {
+            "count": 2,
+            "id": 72645,
+            "value": "14T"
+          },
+          {
+            "count": 2,
+            "id": 72649,
+            "value": "14T Pro"
+          },
+          {
+            "count": 2,
+            "id": 72979,
+            "value": "Redmi Note 14 Pro"
+          },
+          {
+            "count": 2,
+            "id": 73060,
+            "value": "nova 13 Pro"
+          },
+          {
+            "count": 2,
+            "id": 73170,
+            "value": "15 Ultra"
+          },
+          {
+            "count": 2,
+            "id": 73233,
+            "value": "A5 Pro"
+          },
+          {
+            "count": 2,
+            "id": 73333,
+            "value": "nova Y63"
+          },
+          {
+            "count": 2,
+            "id": 73636,
+            "value": "Y19s Pro"
+          },
+          {
+            "count": 2,
+            "id": 73701,
+            "value": "Pura 80 Pro Ultra "
+          },
+          {
+            "count": 2,
+            "id": 73706,
+            "value": "Pura 80"
+          },
+          {
+            "count": 2,
+            "id": 73722,
+            "value": "Smart 10"
+          },
+          {
+            "count": 2,
+            "id": 73779,
+            "value": "Redmi 15"
+          },
+          {
+            "count": 2,
+            "id": 74035,
+            "value": "60 Pro+"
+          },
+          {
+            "count": 2,
+            "id": 74118,
+            "value": "nova 14i"
+          },
+          {
+            "count": 2,
+            "id": 74137,
+            "value": " Reno15 F"
+          },
+          {
+            "count": 2,
+            "id": 74139,
+            "value": "Reno15"
+          },
+          {
+            "count": 2,
+            "id": 74193,
+            "value": "Magic8 Pro"
+          },
+          {
+            "count": 2,
+            "id": 74201,
+            "value": "Galaxy S26+"
+          },
+          {
+            "count": 2,
+            "id": 74255,
+            "value": "600 Lite"
+          },
+          {
+            "count": 2,
+            "id": 74294,
+            "value": "A6x "
+          },
+          {
+            "count": 2,
+            "id": 74329,
+            "value": " Vivo Y11d"
+          },
+          {
+            "count": 2,
+            "id": 74433,
+            "value": "V70"
+          },
+          {
+            "count": 1,
+            "id": 53691,
+            "value": "130"
+          },
+          {
+            "count": 1,
+            "id": 55389,
+            "value": "Redmi Note 10"
+          },
+          {
+            "count": 1,
+            "id": 55410,
+            "value": "Redmi Note 9S"
+          },
+          {
+            "count": 1,
+            "id": 58183,
+            "value": "200"
+          },
+          {
+            "count": 1,
+            "id": 58761,
+            "value": "HOT 10i"
+          },
+          {
+            "count": 1,
+            "id": 62417,
+            "value": "BH43"
+          },
+          {
+            "count": 1,
+            "id": 62418,
+            "value": "BH8"
+          },
+          {
+            "count": 1,
+            "id": 62419,
+            "value": "CA96"
+          },
+          {
+            "count": 1,
+            "id": 65445,
+            "value": "nova 10"
+          },
+          {
+            "count": 1,
+            "id": 65468,
+            "value": "nova Y61"
+          },
+          {
+            "count": 1,
+            "id": 65474,
+            "value": "nova Y70"
+          },
+          {
+            "count": 1,
+            "id": 66122,
+            "value": "nova 10 SE"
+          },
+          {
+            "count": 1,
+            "id": 66538,
+            "value": " Redmi 12"
+          },
+          {
+            "count": 1,
+            "id": 69480,
+            "value": "Honor X seriyasi"
+          },
+          {
+            "count": 1,
+            "id": 70226,
+            "value": "A78"
+          },
+          {
+            "count": 1,
+            "id": 70239,
+            "value": "Y02t"
+          },
+          {
+            "count": 1,
+            "id": 70247,
+            "value": "A58"
+          },
+          {
+            "count": 1,
+            "id": 70272,
+            "value": "nova Y72"
+          },
+          {
+            "count": 1,
+            "id": 70369,
+            "value": "A55"
+          },
+          {
+            "count": 1,
+            "id": 70587,
+            "value": "V30"
+          },
+          {
+            "count": 1,
+            "id": 71222,
+            "value": "Y100"
+          },
+          {
+            "count": 1,
+            "id": 71335,
+            "value": "HOT 40i"
+          },
+          {
+            "count": 1,
+            "id": 71401,
+            "value": "Reno 11F"
+          },
+          {
+            "count": 1,
+            "id": 71404,
+            "value": "OPPO"
+          },
+          {
+            "count": 1,
+            "id": 71425,
+            "value": "nova 12s"
+          },
+          {
+            "count": 1,
+            "id": 71436,
+            "value": "nova 12 SE"
+          },
+          {
+            "count": 1,
+            "id": 71475,
+            "value": "Mi 13T Pro"
+          },
+          {
+            "count": 1,
+            "id": 71843,
+            "value": "Y18"
+          },
+          {
+            "count": 1,
+            "id": 71849,
+            "value": "Pura 70"
+          },
+          {
+            "count": 1,
+            "id": 72018,
+            "value": "POCO C65"
+          },
+          {
+            "count": 1,
+            "id": 72224,
+            "value": "X6b"
+          },
+          {
+            "count": 1,
+            "id": 72409,
+            "value": "12F"
+          },
+          {
+            "count": 1,
+            "id": 72443,
+            "value": "Galaxy A06"
+          },
+          {
+            "count": 1,
+            "id": 72642,
+            "value": "Mix Flip"
+          },
+          {
+            "count": 1,
+            "id": 72803,
+            "value": "Galaxy A16"
+          },
+          {
+            "count": 1,
+            "id": 72949,
+            "value": "HONOR X9c Smart"
+          },
+          {
+            "count": 1,
+            "id": 73121,
+            "value": "Reno13 F"
+          },
+          {
+            "count": 1,
+            "id": 73133,
+            "value": "Reno13"
+          },
+          {
+            "count": 1,
+            "id": 73160,
+            "value": "Galaxy A56"
+          },
+          {
+            "count": 1,
+            "id": 73221,
+            "value": "13i"
+          },
+          {
+            "count": 1,
+            "id": 73348,
+            "value": "V50 Lite"
+          },
+          {
+            "count": 1,
+            "id": 73613,
+            "value": "Novey 102"
+          },
+          {
+            "count": 1,
+            "id": 73615,
+            "value": "Novey 118"
+          },
+          {
+            "count": 1,
+            "id": 73616,
+            "value": "Novey A70R"
+          },
+          {
+            "count": 1,
+            "id": 73657,
+            "value": "X5c"
+          },
+          {
+            "count": 1,
+            "id": 73700,
+            "value": "Pura 80 Pro"
+          },
+          {
+            "count": 1,
+            "id": 73748,
+            "value": "Y04"
+          }
+        ]
+      },
+      {
+        "count": 177,
+        "id": 4434,
+        "name": "Seriya",
+        "values": [
+          {
+            "count": 28,
+            "id": 69479,
+            "value": "Huawei nova seriyasi"
+          },
+          {
+            "count": 22,
+            "id": 69474,
+            "value": "Vivo Y seriyasi"
+          },
+          {
+            "count": 13,
+            "id": 70040,
+            "value": "OPPO A seriyasi"
+          },
+          {
+            "count": 13,
+            "id": 73639,
+            "value": "Galaxy S seriyasi"
+          },
+          {
+            "count": 12,
+            "id": 69480,
+            "value": "Honor X seriyasi"
+          },
+          {
+            "count": 12,
+            "id": 70168,
+            "value": "Galaxy A seriyasi"
+          },
+          {
+            "count": 11,
+            "id": 70036,
+            "value": "OPPO Reno seriyasi"
+          },
+          {
+            "count": 10,
+            "id": 66959,
+            "value": "Samsung A seriyasi"
+          },
+          {
+            "count": 10,
+            "id": 70160,
+            "value": "Xiaomi Mi seriyasi"
+          },
+          {
+            "count": 9,
+            "id": 69475,
+            "value": "Vivo seriyasi V"
+          },
+          {
+            "count": 6,
+            "id": 69489,
+            "value": "Xiaomi seriyasi Redmi"
+          },
+          {
+            "count": 6,
+            "id": 71850,
+            "value": "Huawei Pura seriyasi"
+          },
+          {
+            "count": 5,
+            "id": 70287,
+            "value": "Infinix HOT seriasi"
+          },
+          {
+            "count": 3,
+            "id": 69481,
+            "value": "Honor N seriyasi"
+          },
+          {
+            "count": 3,
+            "id": 70686,
+            "value": "Realme C seriyasi"
+          },
+          {
+            "count": 3,
+            "id": 72557,
+            "value": "Huawei Mate seriyasi"
+          },
+          {
+            "count": 2,
+            "id": 70303,
+            "value": "Infinix Smart seriyasi"
+          },
+          {
+            "count": 2,
+            "id": 70645,
+            "value": "Nothing Phone seriyasi"
+          },
+          {
+            "count": 2,
+            "id": 71629,
+            "value": "Xiaomi Redmi seriyasi"
+          },
+          {
+            "count": 2,
+            "id": 74192,
+            "value": "HONOR Magic seriyasi"
+          },
+          {
+            "count": 1,
+            "id": 70106,
+            "value": "Xiaomi POCO seriyasi"
+          },
+          {
+            "count": 1,
+            "id": 71374,
+            "value": "Vivo seriya X"
+          },
+          {
+            "count": 1,
+            "id": 72641,
+            "value": "Xiaomi Mix seriyasi"
+          }
+        ]
+      },
+      {
+        "count": 86,
+        "id": 880,
+        "name": "Korpus materiali",
+        "values": [
+          {
+            "count": 42,
+            "id": 54072,
+            "value": "Alyumin"
+          },
+          {
+            "count": 17,
+            "id": 60828,
+            "value": "Plastik"
+          },
+          {
+            "count": 4,
+            "id": 67030,
+            "value": "Zanglamas po`latdan"
+          },
+          {
+            "count": 4,
+            "id": 73875,
+            "value": "Zanglamaydigan po‘lat, plastik"
+          },
+          {
+            "count": 3,
+            "id": 67384,
+            "value": "Alyumin, plastik"
+          },
+          {
+            "count": 2,
+            "id": 73742,
+            "value": "Keramika, titan"
+          },
+          {
+            "count": 1,
+            "id": 51093,
+            "value": "Metall"
+          },
+          {
+            "count": 1,
+            "id": 55802,
+            "value": "Ftorelastomer"
+          },
+          {
+            "count": 1,
+            "id": 59882,
+            "value": "Kompyuter+ABS+silikon"
+          },
+          {
+            "count": 1,
+            "id": 59884,
+            "value": "Kompyuter + silikon"
+          },
+          {
+            "count": 1,
+            "id": 62049,
+            "value": "ABS + silikon"
+          },
+          {
+            "count": 1,
+            "id": 62065,
+            "value": "Plastik ABS + alyuminiy"
+          },
+          {
+            "count": 1,
+            "id": 62099,
+            "value": "ABS plastik, silikon"
+          },
+          {
+            "count": 1,
+            "id": 62107,
+            "value": "ABS plastik, alyuminiy"
+          },
+          {
+            "count": 1,
+            "id": 62303,
+            "value": "Alyuminiy qotishmasi + silikon"
+          },
+          {
+            "count": 1,
+            "id": 62305,
+            "value": "Alyuminiy qotishmasi"
+          },
+          {
+            "count": 1,
+            "id": 62313,
+            "value": "ABS + akril"
+          },
+          {
+            "count": 1,
+            "id": 62326,
+            "value": "plastik + silikon"
+          },
+          {
+            "count": 1,
+            "id": 67215,
+            "value": "Alyumin, plastik PS"
+          },
+          {
+            "count": 1,
+            "id": 72839,
+            "value": "Nanokristall keramika"
+          }
+        ]
+      },
+      {
+        "count": 49,
+        "id": 567,
+        "name": "Turi",
+        "values": [
+          {
+            "count": 16,
+            "id": 50868,
+            "value": "Planshet"
+          },
+          {
+            "count": 14,
+            "id": 51629,
+            "value": "Smart soat"
+          },
+          {
+            "count": 5,
+            "id": 69190,
+            "value": "Portativ akkumulyator"
+          },
+          {
+            "count": 4,
+            "id": 70641,
+            "value": "Smartfon uchun sumka"
+          },
+          {
+            "count": 3,
+            "id": 74300,
+            "value": "Quvvat adapteri"
+          },
+          {
+            "count": 2,
+            "id": 65694,
+            "value": "Tarmoqli quvvatlash qurilmasi"
+          },
+          {
+            "count": 2,
+            "id": 73351,
+            "value": "Aloqa abonent kartasi"
+          },
+          {
+            "count": 1,
+            "id": 55125,
+            "value": "Elektron tarozi"
+          },
+          {
+            "count": 1,
+            "id": 72315,
+            "value": "Stilus"
+          },
+          {
+            "count": 1,
+            "id": 72608,
+            "value": "Soat"
+          }
+        ]
+      },
+      {
+        "count": 47,
+        "id": 3763,
+        "name": "Soat shakli",
+        "values": [
+          {
+            "count": 23,
+            "id": 56507,
+            "value": "Dumaloq"
+          },
+          {
+            "count": 11,
+            "id": 61145,
+            "value": "Kvadrat"
+          },
+          {
+            "count": 6,
+            "id": 61136,
+            "value": "Tortburchak"
+          },
+          {
+            "count": 4,
+            "id": 67348,
+            "value": "To`rtburchak"
+          },
+          {
+            "count": 2,
+            "id": 71953,
+            "value": "To'rtburchaklar"
+          },
+          {
+            "count": 1,
+            "id": 72694,
+            "value": "To'trburchak"
+          }
+        ]
+      },
+      {
+        "count": 47,
+        "id": 3764,
+        "name": "Korpus o'lchami, mm",
+        "values": [
+          {
+            "count": 10,
+            "id": 52707,
+            "value": "46"
+          },
+          {
+            "count": 9,
+            "id": 53669,
+            "value": "44"
+          },
+          {
+            "count": 6,
+            "id": 51285,
+            "value": "40"
+          },
+          {
+            "count": 4,
+            "id": 51065,
+            "value": "42"
+          },
+          {
+            "count": 3,
+            "id": 51592,
+            "value": "47"
+          },
+          {
+            "count": 3,
+            "id": 74485,
+            "value": "42.9 "
+          },
+          {
+            "count": 2,
+            "id": 55316,
+            "value": "43"
+          },
+          {
+            "count": 2,
+            "id": 72663,
+            "value": "48х38 mm"
+          },
+          {
+            "count": 1,
+            "id": 52101,
+            "value": "41 mm"
+          },
+          {
+            "count": 1,
+            "id": 52954,
+            "value": "41"
+          },
+          {
+            "count": 1,
+            "id": 53763,
+            "value": "51"
+          },
+          {
+            "count": 1,
+            "id": 53916,
+            "value": "40 mm"
+          },
+          {
+            "count": 1,
+            "id": 60876,
+            "value": "44 mm"
+          },
+          {
+            "count": 1,
+            "id": 73297,
+            "value": "46 mm"
+          },
+          {
+            "count": 1,
+            "id": 73469,
+            "value": "47 mm × 47 mm× 12 mm"
+          },
+          {
+            "count": 1,
+            "id": 73473,
+            "value": "48,1 mm x 39,2 mm x 10,6 mm"
+          }
+        ]
+      },
+      {
+        "count": 39,
+        "id": 1788,
+        "name": "Quloqchinlar turi",
+        "values": [
+          {
+            "count": 19,
+            "id": 51548,
+            "value": "O‘rnatiladigan quloqchinlar"
+          },
+          {
+            "count": 13,
+            "id": 74303,
+            "value": "TWS"
+          },
+          {
+            "count": 6,
+            "id": 58182,
+            "value": "Taqiladigan quloqchinlar"
+          },
+          {
+            "count": 1,
+            "id": 55788,
+            "value": "Yostiqchali"
+          }
+        ]
+      },
+      {
+        "count": 38,
+        "id": 1140,
+        "name": "Material",
+        "values": [
+          {
+            "count": 31,
+            "id": 60828,
+            "value": "Plastik"
+          },
+          {
+            "count": 3,
+            "id": 73118,
+            "value": "plastik + silikon"
+          },
+          {
+            "count": 2,
+            "id": 73290,
+            "value": "Plastik, silikon"
+          },
+          {
+            "count": 1,
+            "id": 51139,
+            "value": "Neylon"
+          },
+          {
+            "count": 1,
+            "id": 58200,
+            "value": "Silikonli"
+          }
+        ]
+      },
+      {
+        "count": 22,
+        "id": 1645,
+        "name": "Matritsa turi",
+        "values": [
+          {
+            "count": 14,
+            "id": 50850,
+            "value": "IPS"
+          },
+          {
+            "count": 3,
+            "id": 50833,
+            "value": "LCD"
+          },
+          {
+            "count": 3,
+            "id": 51488,
+            "value": "TFT"
+          },
+          {
+            "count": 2,
+            "id": 62284,
+            "value": "pls"
+          }
+        ]
+      },
+      {
+        "count": 16,
+        "id": 3487,
+        "name": "Ulanish turi",
+        "values": [
+          {
+            "count": 8,
+            "id": 51663,
+            "value": "Bluetooth"
+          },
+          {
+            "count": 8,
+            "id": 55554,
+            "value": "Simsiz"
+          }
+        ]
+      },
+      {
+        "count": 14,
+        "id": 737,
+        "name": "Quvvati",
+        "values": [
+          {
+            "count": 8,
+            "id": 54943,
+            "value": "20 Vt"
+          },
+          {
+            "count": 1,
+            "id": 52729,
+            "value": "45 Vt"
+          },
+          {
+            "count": 1,
+            "id": 53513,
+            "value": "25 Vt"
+          },
+          {
+            "count": 1,
+            "id": 53644,
+            "value": "15 Vt"
+          },
+          {
+            "count": 1,
+            "id": 53692,
+            "value": "45"
+          },
+          {
+            "count": 1,
+            "id": 54048,
+            "value": "60 Vt"
+          },
+          {
+            "count": 1,
+            "id": 72816,
+            "value": "22.5  Vt"
+          }
+        ]
+      },
+      {
+        "count": 5,
+        "id": 1789,
+        "name": "Shovqindan himoya tizimi",
+        "values": [
+          {
+            "count": 3,
+            "id": 50670,
+            "value": "Mavjud"
+          },
+          {
+            "count": 2,
+            "id": 50698,
+            "value": "Мavjud emas"
+          }
+        ]
+      },
+      {
+        "count": 1,
+        "id": 720,
+        "name": "Chang yig‘ish idishi",
+        "values": [
+          {
+            "count": 1,
+            "id": 57202,
+            "value": "Konteyner"
+          }
+        ]
+      },
+      {
+        "count": 1,
+        "id": 721,
+        "name": "Chang yig‘uvchi idish hajmi",
+        "values": [
+          {
+            "count": 1,
+            "id": 67660,
+            "value": "2.5 l"
+          }
+        ]
+      },
+      {
+        "count": 1,
+        "id": 722,
+        "name": "Quvvatini boshqarish",
+        "values": [
+          {
+            "count": 1,
+            "id": 53450,
+            "value": "Tutqich ustida"
+          }
+        ]
+      },
+      {
+        "count": 1,
+        "id": 933,
+        "name": "Platforma materiali",
+        "values": [
+          {
+            "count": 1,
+            "id": 71756,
+            "value": "Plastik, shisha"
+          }
+        ]
+      },
+      {
+        "count": 1,
+        "id": 1529,
+        "name": "Maksimal yuklanish",
+        "values": [
+          {
+            "count": 1,
+            "id": 73140,
+            "value": "200 kg"
+          }
+        ]
+      },
+      {
+        "count": 1,
+        "id": 1530,
+        "name": "Aniq o‘lchov",
+        "values": [
+          {
+            "count": 1,
+            "id": 55928,
+            "value": "100 g"
+          }
+        ]
+      },
+      {
+        "count": 1,
+        "id": 3264,
+        "name": "Tozalash turi",
+        "values": [
+          {
+            "count": 1,
+            "id": 51891,
+            "value": "Quruq"
+          }
+        ]
+      },
+      {
+        "count": 1,
+        "id": 4574,
+        "name": "Tashqi ekran diagonali",
+        "values": [
+          {
+            "count": 1,
+            "id": 74446,
+            "value": "1.7\""
+          }
+        ]
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "page_size": 20,
+      "total_count": 490,
+      "total_page": 25
+    },
+    "price": {
+      "max_price": 24479000,
+      "min_price": 4000
+    },
+    "products": [
+      {
+        "all_count": 1,
+        "availability": "withManager",
+        "axiom_monthly_price": "143 917 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00027047",
+        "discount": 0,
+        "id": 354792,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3547/354792/199484/fd741bf5-cf8e-4410-abed-29a5ac59d8d7.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "TFT LCD"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "48 MP, 5 MP, 2 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "8 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "HiSilicon Kirin 710A"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "64 ГБ"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "3"
+          }
+        ],
+        "name": "Smartfon  Huawei nova Y70 4/64Gb Moviy",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 1727000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "a532c47a-a791-11ed-88d5-40a8f02c4f60"
+      },
+      {
+        "all_count": 492,
+        "availability": "openToCart",
+        "axiom_monthly_price": "249 834 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00031750",
+        "discount": 0,
+        "id": 358918,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3589/358918/212110/096a7fc0-087f-4e05-9af9-c52be0f2b8d4.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "Super AMOLED"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 MP, 50 MP, 2 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "13 МР"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "MediaTek Helio G99"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "128 GB"
+          }
+        ],
+        "name": "Samsung Galaxy A17 6/128GB Gray",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [],
+        "sale_price": 2998000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          },
+          {
+            "background_color": "#00bfff",
+            "id": 143,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/143/25866391-164e-40cc-8bee-f7773ac0f869.svg",
+            "is_image": true,
+            "key": "IP",
+            "name": "IP54",
+            "position": "top-right",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "0bd324c4-948b-11f0-88f3-40a8f02c4f60"
+      },
+      {
+        "all_count": 91,
+        "availability": "openToCart",
+        "axiom_monthly_price": "624 917 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00032832",
+        "discount": 0,
+        "id": 359853,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3598/359853/215710/4598c17e-99f2-4568-a93b-c284a1b0eb25.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "AMOLED"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "200 MP, 8 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "32 MР"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": " MediaTek Dimensity 7360-Turbo"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "2"
+          }
+        ],
+        "name": "Vivo V70 FE 8/256GB Blue Smartfoni",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [],
+        "sale_price": 7499000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "f1ece794-5fd5-11f1-b0f6-bd93623c6d6a"
+      },
+      {
+        "all_count": 3,
+        "availability": "withManager",
+        "axiom_monthly_price": "97 500 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00022415",
+        "discount": 0,
+        "id": 96765,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/967/96765/204134/a47f225c-6519-4894-a524-75409d73af94.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "IPS LCD"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "13 MP, 2 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "5 МP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "MediaTek Helio G70"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "32 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "3"
+          }
+        ],
+        "name": "Infinix HOT 10i 2/32GB Black",
+        "old_price": 0,
+        "reviews_average": 5,
+        "reviews_count": 1,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 1170000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "bfb1001c-48f9-11ec-88c8-40a8f02c4f64"
+      },
+      {
+        "all_count": 5,
+        "availability": "openToCart",
+        "axiom_monthly_price": "2 039 917 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00032316",
+        "discount": 0,
+        "id": 359439,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3594/359439/214125/5064bf99-dcb9-41e0-bea3-477bdf15c98a.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "Super Retina XDR"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "48 MP, 48 MP, 48 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "18 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "A19 Pro"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "512 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "3"
+          }
+        ],
+        "name": "Apple iPhone 17 Pro Max 12/512GB Silver",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 24479000,
+        "stickers": [
+          {
+            "background_color": "#ffc800",
+            "id": 107,
+            "image": null,
+            "is_image": false,
+            "key": "Гарантия 1 год",
+            "name": "Kafolat 1 yil",
+            "position": "bottom-left",
+            "text_color": "#000000"
+          },
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "4ba02d9d-00c5-11f1-b0ec-f920bd262f92"
+      },
+      {
+        "all_count": 54,
+        "availability": "withManager",
+        "axiom_monthly_price": "203 917 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00033103",
+        "discount": 0,
+        "id": 360052,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3600/360052/216218/7044c2e5-98d4-47a1-bc30-71632afe59c2.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "TFT LCD"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 MP, 0.08 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "5 МP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "MediaTek Helio G81 Ultra"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "2"
+          }
+        ],
+        "name": "Смартфон Honor X6c 6/256GB Ocean Cyan",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 2447000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "c5b389c5-81bd-11f1-b0f9-ffc62ec4c820"
+      },
+      {
+        "all_count": 11,
+        "availability": "openToCart",
+        "axiom_monthly_price": "334 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00002386",
+        "discount": 0,
+        "id": 88473,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/884/88473/206000/28cd19bd-99a2-41ea-bdd5-e6733145800d.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [],
+        "name": "Keramik himoya oynasi Redmi Note 9S",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 4000,
+        "stickers": [],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "3d246d13-444b-11eb-8d23-18c04d2db57c"
+      },
+      {
+        "all_count": 287,
+        "availability": "openToCart",
+        "axiom_monthly_price": "285 584 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00031747",
+        "discount": 0,
+        "id": 358915,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3589/358915/212080/855d046f-2737-4926-98ed-41614dacb57e.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "Super AMOLED"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 MP, 50 MP, 2 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "13 МР"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "MediaTek Helio G99"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          }
+        ],
+        "name": "Samsung Galaxy A17 8/256GB Black",
+        "old_price": 0,
+        "reviews_average": 5,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 3427000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          },
+          {
+            "background_color": "#00bfff",
+            "id": 143,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/143/25866391-164e-40cc-8bee-f7773ac0f869.svg",
+            "is_image": true,
+            "key": "IP",
+            "name": "IP54",
+            "position": "top-right",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "eee8d615-9488-11f0-88f3-40a8f02c4f60"
+      },
+      {
+        "all_count": 20,
+        "availability": "openToCart",
+        "axiom_monthly_price": "406 084 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00033029",
+        "discount": 0,
+        "id": 360069,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3600/360069/216271/b52c0c46-3dd8-44bd-ad87-bc426c68cbed.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "OLED"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 МP, 2 МP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "8 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "HiSilicon Kirin 8000"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "2"
+          }
+        ],
+        "name": "Смартфон Huawei nova 15 Max 8/256GB Lake Cyan",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 4873000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 133,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/133/64a83dac-2fdb-4f85-ac1b-7629490f1d7b.svg",
+            "is_image": true,
+            "key": "new",
+            "name": "Yangi",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "9cba6a43-7538-11f1-b0f6-bd93623c6d6a"
+      },
+      {
+        "all_count": 140,
+        "availability": "openToCart",
+        "axiom_monthly_price": "574 834 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00032782",
+        "discount": 0,
+        "id": 359780,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3597/359780/215524/44ac5d9f-967f-41eb-a3a6-3c2ea3fed2b4.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "AMOLED"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "200 MP, 12 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "50 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "Qualcomm Snapdragon 7 Gen 4"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "2"
+          }
+        ],
+        "name": "Honor 600 8/256GB Golden White Smartfoni",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 6898000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          },
+          {
+            "background_color": "#00bfff",
+            "id": 150,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/150/7b188815-d968-41be-9e4c-db46396cec35.svg",
+            "is_image": true,
+            "key": "IP",
+            "name": "IP69",
+            "position": "top-right",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "d2b78e22-5438-11f1-b0f5-ce4bee7caf6e"
+      },
+      {
+        "all_count": 1,
+        "availability": "openToCart",
+        "axiom_monthly_price": "240 584 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00029563",
+        "discount": 0,
+        "id": 357149,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3571/357149/204693/44c32aa2-5750-4c30-ba4b-66e2662a91c6.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "108 MP, 8 MP, 2 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "32 MР"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "Qualcomm Snapdragon 680"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "3"
+          }
+        ],
+        "name": "Huawei nova 12SE 8/256GB Black Smartfoni",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 2887000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "25d46e1f-0084-11ef-88e9-40a8f02c4f60"
+      },
+      {
+        "all_count": 13,
+        "availability": "withManager",
+        "axiom_monthly_price": "666 584 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00032323",
+        "discount": 0,
+        "id": 359443,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3594/359443/214154/b8478eb8-4e22-4c65-a332-e15722b6e214.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "AMOLED"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 MP, 50 MP, 8 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "50 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "Qualcomm Snapdragon 7 Gen 4"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "512 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "3"
+          }
+        ],
+        "name": "OPPO Reno15 5G 12/512GB Aurora White Smartfoni",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 7999000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "c1062da9-073b-11f1-b0ec-f920bd262f92"
+      },
+      {
+        "all_count": 2,
+        "availability": "withManager",
+        "axiom_monthly_price": "168 334 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00025326",
+        "discount": 0,
+        "id": 104652,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/1046/104652/182168/99f75cc1-7fdd-45da-9ede-4996d7e5ca4b.jpg",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "IPS"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 MP, 2 MP, 2 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "16 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "MediaTek Dimensity 700"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "64 ГБ"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "3"
+          }
+        ],
+        "name": "OPPO A55 4/64GB Rainbow Blue Smartfoni",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 2020000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "879f9da5-18a9-11ed-88d2-40a8f02c4f60"
+      },
+      {
+        "all_count": 32,
+        "availability": "openToCart",
+        "axiom_monthly_price": "944 417 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00032788",
+        "discount": 0,
+        "id": 359898,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3598/359898/215748/2382fe07-c2d2-441b-b9b4-59fd8f8666a5.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "AMOLED"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "200 MP, 50 MP, 12 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "50 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "Qualcomm Snapdragon 8 Elite"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "512 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "3"
+          }
+        ],
+        "name": "Honor 600 Pro 12/512GB Golden White Smartfoni",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [],
+        "sale_price": 11333000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          },
+          {
+            "background_color": "#00bfff",
+            "id": 150,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/150/7b188815-d968-41be-9e4c-db46396cec35.svg",
+            "is_image": true,
+            "key": "IP",
+            "name": "IP69",
+            "position": "top-right",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "964aeec4-543f-11f1-b0f5-ce4bee7caf6e"
+      },
+      {
+        "all_count": 3,
+        "availability": "withManager",
+        "axiom_monthly_price": "128 167 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00028684",
+        "discount": 0,
+        "id": 356351,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3563/356351/204334/240307a6-bc57-49ab-b4c6-a50545c5b584.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "IPS"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "8 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "8 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "MediaTek Helio P35"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "128 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "1"
+          }
+        ],
+        "name": "Vivo Y02t 4/128Gb Orchid Blue Smartfoni",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 1538000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "e32c94a7-77dd-11ee-88e8-40a8f02c4f60"
+      },
+      {
+        "all_count": 10,
+        "availability": "openToCart",
+        "axiom_monthly_price": "492 500 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00029285",
+        "discount": 0,
+        "id": 356924,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3569/356924/204457/80c3dc19-3c9b-45eb-861d-585f73d1e2df.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "AMOLED"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 MP, 50 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "50 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "Qualcomm Snapdragon 7 Gen 3"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          }
+        ],
+        "name": "Vivo V30 12/256GB Lush Green Smartfoni",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [
+          {
+            "id": 8,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sale-month/8/cbeaba74-4ff2-4f54-8d20-1106298728dd.svg",
+            "key": "50-0-2",
+            "name": "50-0-2"
+          }
+        ],
+        "sale_price": 5910000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "df5907ce-dc46-11ee-88e8-40a8f02c4f60"
+      },
+      {
+        "all_count": 89,
+        "availability": "openToCart",
+        "axiom_monthly_price": "266 584 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00032716",
+        "discount": 0,
+        "id": 359698,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3596/359698/215152/c180223f-6eca-4b7a-bd0a-7ae6c62312c4.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "LCD"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 MP, 0.08 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "5 МP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "T7225"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "2"
+          }
+        ],
+        "name": "Vivo Y11d 4/256GB Black",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [],
+        "sale_price": 3199000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "acd97b8b-41f7-11f1-b0f2-b20e664528ba"
+      },
+      {
+        "all_count": 77,
+        "availability": "openToCart",
+        "axiom_monthly_price": "333 250 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00032718",
+        "discount": 0,
+        "id": 359700,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3597/359700/215159/7ec92448-958f-4ac8-8501-5d985a251d4e.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "LCD"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 МP, 2 МP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "8 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "Snapdragon 6s Gen 2"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "128 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "2"
+          }
+        ],
+        "name": "Vivo Y31d 8/128GB White",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [],
+        "sale_price": 3999000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "d7845684-41f8-11f1-b0f2-b20e664528ba"
+      },
+      {
+        "all_count": 17,
+        "availability": "openToCart",
+        "axiom_monthly_price": "333 250 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00032694",
+        "discount": 0,
+        "id": 359711,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3597/359711/215201/243e461c-e477-4d0f-9119-ab3cff95f51a.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "IPS"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "8 MP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "Qualcomm Snapdragon 685"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "1"
+          }
+        ],
+        "name": "Realme C85 8/256GB Black",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [],
+        "sale_price": 3999000,
+        "stickers": [
+          {
+            "background_color": "#00bfff",
+            "id": 150,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/150/7b188815-d968-41be-9e4c-db46396cec35.svg",
+            "is_image": true,
+            "key": "IP",
+            "name": "IP69",
+            "position": "top-right",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "aea1b0e9-3f0f-11f1-b0f2-b20e664528ba"
+      },
+      {
+        "all_count": 66,
+        "availability": "withManager",
+        "axiom_monthly_price": "266 584 so'mdan / 18 oy",
+        "benefit": 0,
+        "code": "00032717",
+        "discount": 0,
+        "id": 359699,
+        "image": "https://mini-io-api.texnomart.uz/catalog/product/3596/359699/215180/34f4b53f-885b-42f6-904f-68de4bcc761c.webp",
+        "is_can_loan_order": 1,
+        "main_characters": [
+          {
+            "name": "Ekran turi",
+            "order": 10,
+            "value": "LCD"
+          },
+          {
+            "name": "Asosiy Kamera",
+            "order": 8,
+            "value": "50 MP, 0.08 MP"
+          },
+          {
+            "name": "Old kamera",
+            "order": 9,
+            "value": "5 МP"
+          },
+          {
+            "name": "Protsessor",
+            "order": 5,
+            "value": "T7225"
+          },
+          {
+            "name": "Ichki xotira",
+            "order": 4,
+            "value": "256 GB"
+          },
+          {
+            "name": "Kameralar soni",
+            "order": 1,
+            "value": "2"
+          }
+        ],
+        "name": "Vivo Y11d 4/256GB Platinum",
+        "old_price": 0,
+        "reviews_average": null,
+        "reviews_count": 0,
+        "sale_months": [],
+        "sale_price": 3199000,
+        "stickers": [
+          {
+            "background_color": "#00ba00",
+            "id": 121,
+            "image": "https://mini-io-api.texnomart.uz/catalog/sticker/uz/121/32aa9d83-28c7-4101-a501-18c77a1fd512.svg",
+            "is_image": true,
+            "key": "imei",
+            "name": "IMEI",
+            "position": "bottom-left",
+            "text_color": "#ffffff"
+          }
+        ],
+        "store_count": null,
+        "total_count": null,
+        "uuid": "38eaab07-41f8-11f1-b0f2-b20e664528ba"
+      }
+    ],
+    "sale_months": [
+      {
+        "count": 370,
+        "id": 8,
+        "name": "50-0-2"
+      },
+      {
+        "count": 33,
+        "id": 4,
+        "name": "0-0-12"
+      },
+      {
+        "count": 33,
+        "id": 7,
+        "name": "0-0-9"
+      }
+    ],
+    "stickers": [
+      {
+        "count": 254,
+        "id": 121,
+        "name": "IMEI"
+      },
+      {
+        "count": 37,
+        "id": 133,
+        "name": "Yangi"
+      },
+      {
+        "count": 29,
+        "id": 140,
+        "name": "IP68"
+      },
+      {
+        "count": 19,
+        "id": 107,
+        "name": "Kafolat 1 yil"
+      },
+      {
+        "count": 15,
+        "id": 150,
+        "name": "IP69"
+      },
+      {
+        "count": 8,
+        "id": 141,
+        "name": "IP67"
+      },
+      {
+        "count": 7,
+        "id": 143,
+        "name": "IP54"
+      },
+      {
+        "count": 6,
+        "id": 144,
+        "name": "IP64"
+      },
+      {
+        "count": 2,
+        "id": 142,
+        "name": "IP66"
+      }
+    ],
+    "total": 490
+  },
+  "errors": null,
+  "message": "Success!",
+  "status": 200,
+  "success": true
+}
