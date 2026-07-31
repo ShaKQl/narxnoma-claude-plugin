@@ -10,7 +10,7 @@ single GET, no auth, and it hands you the product URL so you never build one.
 ## 1. Endpoint
 
 ```
-GET https://api.idea.uz/api/v2/search?search=<text>&quantity=20&type[]=shops&type[]=products
+GET https://api.idea.uz/api/v2/search?search=<text>&quantity=100&type[]=shops&type[]=products
 ```
 
 No auth.
@@ -28,12 +28,17 @@ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 ```python
 r = session.get(IDEA_API, params={
     "search": query,
-    "quantity": 20,
+    "quantity": 100,
     "type[]": ["shops", "products"],     # requests expands the list correctly
 }, timeout=(15, 60))
 ```
 
-`quantity` controls result count; 20 is enough. There is no pagination.
+`quantity` controls result count and is honoured up to about 100 (a live
+call for "Samsung" on 2026-07-31 returned 74 products). The single-card
+matcher this file originally documented only needed one match per name, so
+it used `quantity=20`; the crawler's `sweep()` needs full-catalogue coverage
+per brand query and uses `quantity=100` instead. There is no pagination
+either way.
 
 ## 2. Response shape
 

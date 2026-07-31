@@ -9,6 +9,13 @@ explicitly with:
 import pytest
 
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
+from narxnoma.sources.idea import (
+    API_URL as IDEA_API_URL,
+    BRAND_QUERIES as IDEA_BRAND_QUERIES,
+    QUANTITY as IDEA_QUANTITY,
+    IdeaSource,
+    parse as idea_parse,
+)
 from narxnoma.sources.olcha import API_URL, CATEGORY, OlchaSource, PER_PAGE, parse
 from narxnoma.sources.texnomart import (
     API_URL as TEXNOMART_API_URL,
@@ -77,3 +84,30 @@ def test_texnomart_search_page_still_matches_documented_shape():
         assert PRICE_MIN <= lst.price <= PRICE_MAX
         assert lst.url.startswith("https://texnomart.uz/product/detail/")
         assert lst.url.endswith("/")
+
+
+@pytest.mark.live
+def test_idea_search_still_matches_documented_shape():
+    source = IdeaSource()
+    session = source._get_session()
+    payload = get_json(
+        session,
+        IDEA_API_URL,
+        params={"search": IDEA_BRAND_QUERIES[0], "quantity": IDEA_QUANTITY,
+                "type[]": ["shops", "products"]},
+    )
+
+    assert "products" in payload, "'products' is gone"
+
+    products = payload["products"]
+    assert products, "live search returned no products"
+    first = products[0]
+    for field in ("id", "name", "url", "current_price"):
+        assert field in first, f"documented field {field!r} is missing from a live product"
+
+    listings = idea_parse(payload)
+    assert listings, "parse() found nothing in a live response"
+    for lst in listings:
+        assert lst.store_slug == "idea"
+        assert PRICE_MIN <= lst.price <= PRICE_MAX
+        assert lst.url.startswith("https://idea.uz/")

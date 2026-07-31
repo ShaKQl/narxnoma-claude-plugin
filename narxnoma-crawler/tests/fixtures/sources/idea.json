@@ -1,0 +1,1542 @@
+{
+  "products": [
+    {
+      "id": 1042,
+      "name": "VCC 5252 Black",
+      "slug": "samsung-vcc-5252-black-changyutgichi",
+      "title_name": "Samsung VCC 5252 Black changyutgichi",
+      "telegram_name": "Samsung VCC 5252 Black changyutgichi",
+      "url": "https://idea.uz/product/1042-samsung-vcc-5252-black-changyutgichi",
+      "sku": "1315",
+      "unique_code": "1315",
+      "brand_id": 3,
+      "category_id": 26,
+      "img": "https://api.idea.uz/storage/products/June2021/uzJCUHlSjSrWWLedqpfj.jpg",
+      "small_img": "https://api.idea.uz/storage/products/June2021/uzJCUHlSjSrWWLedqpfj-small.jpg",
+      "second_small_img": "https://api.idea.uz/storage/products/June2021/b73zAJkfLBKGs3kbKhx6-small.jpg",
+      "medium_img": "https://api.idea.uz/storage/products/June2021/uzJCUHlSjSrWWLedqpfj-medium.jpg",
+      "second_medium_img": "https://api.idea.uz/storage/products/June2021/b73zAJkfLBKGs3kbKhx6-medium.jpg",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/June2021/uzJCUHlSjSrWWLedqpfj.jpg",
+          "small": "https://api.idea.uz/storage/products/June2021/uzJCUHlSjSrWWLedqpfj-small.jpg",
+          "medium": "https://api.idea.uz/storage/products/June2021/uzJCUHlSjSrWWLedqpfj-medium.jpg"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/June2021/b73zAJkfLBKGs3kbKhx6.jpg",
+          "small": "https://api.idea.uz/storage/products/June2021/b73zAJkfLBKGs3kbKhx6-small.jpg",
+          "medium": "https://api.idea.uz/storage/products/June2021/b73zAJkfLBKGs3kbKhx6-medium.jpg"
+        }
+      ],
+      "current_price": 999000,
+      "current_price_formatted": "999 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 999000,
+      "old_price_formatted": "999 000 soʻm",
+      "min_price": 999000,
+      "min_price_formatted": "999 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 166500
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 166500,
+          "old_price_per_month": 166500,
+          "current_price": 999000,
+          "old_price": 999000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 166500,
+      "min_price_per_month_formatted": "166 500 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 166500,
+      "old_min_price_per_month_formatted": "166 500 soʻm",
+      "in_stock": 11,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/1042/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 1814,
+      "name": "SC 5241 BLUE",
+      "slug": "samsung-sc-5241-blue-changyutgichi",
+      "title_name": "Samsung SC 5241 BLUE changyutgichi",
+      "telegram_name": "Samsung SC 5241 BLUE changyutgichi",
+      "url": "https://idea.uz/product/1814-samsung-sc-5241-blue-changyutgichi",
+      "sku": "2267",
+      "unique_code": "2267",
+      "brand_id": 3,
+      "category_id": 26,
+      "img": "https://api.idea.uz/storage/products/April2021/kiyYTUcrG5hM53YkzT53.jpg",
+      "small_img": "https://api.idea.uz/storage/products/April2021/kiyYTUcrG5hM53YkzT53-small.jpg",
+      "second_small_img": "https://api.idea.uz/storage/products/March2020/MGOGiRCnCkNw9Xq0adjD-small.jpg",
+      "medium_img": "https://api.idea.uz/storage/products/April2021/kiyYTUcrG5hM53YkzT53-medium.jpg",
+      "second_medium_img": "https://api.idea.uz/storage/products/March2020/MGOGiRCnCkNw9Xq0adjD-medium.jpg",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/April2021/kiyYTUcrG5hM53YkzT53.jpg",
+          "small": "https://api.idea.uz/storage/products/April2021/kiyYTUcrG5hM53YkzT53-small.jpg",
+          "medium": "https://api.idea.uz/storage/products/April2021/kiyYTUcrG5hM53YkzT53-medium.jpg"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2020/MGOGiRCnCkNw9Xq0adjD.jpg",
+          "small": "https://api.idea.uz/storage/products/March2020/MGOGiRCnCkNw9Xq0adjD-small.jpg",
+          "medium": "https://api.idea.uz/storage/products/March2020/MGOGiRCnCkNw9Xq0adjD-medium.jpg"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2020/Q6RfqVRc2UBLSPS2ZVRw.jpg",
+          "small": "https://api.idea.uz/storage/products/March2020/Q6RfqVRc2UBLSPS2ZVRw-small.jpg",
+          "medium": "https://api.idea.uz/storage/products/March2020/Q6RfqVRc2UBLSPS2ZVRw-medium.jpg"
+        }
+      ],
+      "current_price": 999000,
+      "current_price_formatted": "999 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 999000,
+      "old_price_formatted": "999 000 soʻm",
+      "min_price": 999000,
+      "min_price_formatted": "999 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 166500
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 166500,
+          "old_price_per_month": 166500,
+          "current_price": 999000,
+          "old_price": 999000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 166500,
+      "min_price_per_month_formatted": "166 500 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 166500,
+      "old_min_price_per_month_formatted": "166 500 soʻm",
+      "in_stock": 8,
+      "rating": 0,
+      "rating_count": 0,
+      "description": "Устройство создано для сухой уборки ковровых, мебельных и паркетных покрытий.",
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/1814/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 3012,
+      "name": "SC 5251 RED",
+      "slug": "pylesos-samsung-sc-5251-red",
+      "title_name": "SC 5251 RED",
+      "telegram_name": "SC 5251 RED",
+      "url": "https://idea.uz/product/3012-pylesos-samsung-sc-5251-red",
+      "sku": "3475",
+      "unique_code": "3475",
+      "brand_id": null,
+      "category_id": 26,
+      "img": "https://api.idea.uz/storage/products/January2021/of6hqDSNoD7TYLbW4yuA.jpg",
+      "small_img": "https://api.idea.uz/storage/products/January2021/of6hqDSNoD7TYLbW4yuA-small.jpg",
+      "second_small_img": "https://api.idea.uz/storage/products/January2021/c15vpvEF2lEZjFIL7RPh-small.jpg",
+      "medium_img": "https://api.idea.uz/storage/products/January2021/of6hqDSNoD7TYLbW4yuA-medium.jpg",
+      "second_medium_img": "https://api.idea.uz/storage/products/January2021/c15vpvEF2lEZjFIL7RPh-medium.jpg",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/January2021/of6hqDSNoD7TYLbW4yuA.jpg",
+          "small": "https://api.idea.uz/storage/products/January2021/of6hqDSNoD7TYLbW4yuA-small.jpg",
+          "medium": "https://api.idea.uz/storage/products/January2021/of6hqDSNoD7TYLbW4yuA-medium.jpg"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/January2021/c15vpvEF2lEZjFIL7RPh.jpg",
+          "small": "https://api.idea.uz/storage/products/January2021/c15vpvEF2lEZjFIL7RPh-small.jpg",
+          "medium": "https://api.idea.uz/storage/products/January2021/c15vpvEF2lEZjFIL7RPh-medium.jpg"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/January2021/ZCCmHuEav3MtphTHIHRq.jpg",
+          "small": "https://api.idea.uz/storage/products/January2021/ZCCmHuEav3MtphTHIHRq-small.jpg",
+          "medium": "https://api.idea.uz/storage/products/January2021/ZCCmHuEav3MtphTHIHRq-medium.jpg"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/January2021/e9YLLIkX4gTHjqwUuz8j.jpg",
+          "small": "https://api.idea.uz/storage/products/January2021/e9YLLIkX4gTHjqwUuz8j-small.jpg",
+          "medium": "https://api.idea.uz/storage/products/January2021/e9YLLIkX4gTHjqwUuz8j-medium.jpg"
+        }
+      ],
+      "current_price": 999000,
+      "current_price_formatted": "999 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 999000,
+      "old_price_formatted": "999 000 soʻm",
+      "min_price": 999000,
+      "min_price_formatted": "999 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 166500
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 166500,
+          "old_price_per_month": 166500,
+          "current_price": 999000,
+          "old_price": 999000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 166500,
+      "min_price_per_month_formatted": "166 500 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 166500,
+      "old_min_price_per_month_formatted": "166 500 soʻm",
+      "in_stock": 16,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/3012/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 7356,
+      "name": "VC20M255BWB/UZ",
+      "slug": "pylesos-samsung-vc20m255bwb",
+      "title_name": "VC20M255BWB/UZ",
+      "telegram_name": "VC20M255BWB/UZ",
+      "url": "https://idea.uz/product/7356-pylesos-samsung-vc20m255bwb",
+      "sku": "8614",
+      "unique_code": "8614",
+      "brand_id": 3,
+      "category_id": 26,
+      "img": "https://api.idea.uz/storage/products/June2025/hSdIRlgUTZqzJ6ASsTem.png",
+      "small_img": "https://api.idea.uz/storage/products/June2025/hSdIRlgUTZqzJ6ASsTem-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/June2025/hSdIRlgUTZqzJ6ASsTem-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/June2025/hSdIRlgUTZqzJ6ASsTem-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/June2025/hSdIRlgUTZqzJ6ASsTem-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/June2025/hSdIRlgUTZqzJ6ASsTem.png",
+          "small": "https://api.idea.uz/storage/products/June2025/hSdIRlgUTZqzJ6ASsTem-small.png",
+          "medium": "https://api.idea.uz/storage/products/June2025/hSdIRlgUTZqzJ6ASsTem-medium.png"
+        }
+      ],
+      "current_price": 1599000,
+      "current_price_formatted": "1 599 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 1599000,
+      "old_price_formatted": "1 599 000 soʻm",
+      "min_price": 1599000,
+      "min_price_formatted": "1 599 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 266500
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 266500,
+          "old_price_per_month": 266500,
+          "current_price": 1599000,
+          "old_price": 1599000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 266500,
+      "min_price_per_month_formatted": "266 500 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 266500,
+      "old_min_price_per_month_formatted": "266 500 soʻm",
+      "in_stock": 675,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/7356/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 7357,
+      "name": "VC20M2545JN/UZ",
+      "slug": "pylesos-samsung-vc20m2545jn",
+      "title_name": "VC20M2545JN/UZ",
+      "telegram_name": "VC20M2545JN/UZ",
+      "url": "https://idea.uz/product/7357-pylesos-samsung-vc20m2545jn",
+      "sku": "8615",
+      "unique_code": "8615",
+      "brand_id": 3,
+      "category_id": 26,
+      "img": "https://api.idea.uz/storage/products/July2024/QFprScXVDjgSxc7zByWl.png",
+      "small_img": "https://api.idea.uz/storage/products/July2024/QFprScXVDjgSxc7zByWl-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/July2024/Cx60UBwRthz11gYp8pBF-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/July2024/QFprScXVDjgSxc7zByWl-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/July2024/Cx60UBwRthz11gYp8pBF-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/July2024/QFprScXVDjgSxc7zByWl.png",
+          "small": "https://api.idea.uz/storage/products/July2024/QFprScXVDjgSxc7zByWl-small.png",
+          "medium": "https://api.idea.uz/storage/products/July2024/QFprScXVDjgSxc7zByWl-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/July2024/Cx60UBwRthz11gYp8pBF.png",
+          "small": "https://api.idea.uz/storage/products/July2024/Cx60UBwRthz11gYp8pBF-small.png",
+          "medium": "https://api.idea.uz/storage/products/July2024/Cx60UBwRthz11gYp8pBF-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/July2024/HF9Q0mPZ8YXxzOFu1eki.png",
+          "small": "https://api.idea.uz/storage/products/July2024/HF9Q0mPZ8YXxzOFu1eki-small.png",
+          "medium": "https://api.idea.uz/storage/products/July2024/HF9Q0mPZ8YXxzOFu1eki-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/July2024/6rfeCIqWBBxsWYtf5WKY.png",
+          "small": "https://api.idea.uz/storage/products/July2024/6rfeCIqWBBxsWYtf5WKY-small.png",
+          "medium": "https://api.idea.uz/storage/products/July2024/6rfeCIqWBBxsWYtf5WKY-medium.png"
+        }
+      ],
+      "current_price": 1699000,
+      "current_price_formatted": "1 699 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 1699000,
+      "old_price_formatted": "1 699 000 soʻm",
+      "min_price": 1699000,
+      "min_price_formatted": "1 699 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 283167
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 283167,
+          "old_price_per_month": 283167,
+          "current_price": 1699000,
+          "old_price": 1699000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 283167,
+      "min_price_per_month_formatted": "283 167 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 283167,
+      "old_min_price_per_month_formatted": "283 167 soʻm",
+      "in_stock": 626,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/7357/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 7359,
+      "name": "VC20M257BWR/UZ",
+      "slug": "pylesos-samsung-vc20m257bwr",
+      "title_name": "VC20M257BWR/UZ",
+      "telegram_name": "VC20M257BWR/UZ",
+      "url": "https://idea.uz/product/7359-pylesos-samsung-vc20m257bwr",
+      "sku": "8617",
+      "unique_code": "8617",
+      "brand_id": 3,
+      "category_id": 26,
+      "img": "https://api.idea.uz/storage/products/July2024/xWlmyOhG3cgnRg5wER2R.png",
+      "small_img": "https://api.idea.uz/storage/products/July2024/xWlmyOhG3cgnRg5wER2R-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/July2024/xWlmyOhG3cgnRg5wER2R-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/July2024/xWlmyOhG3cgnRg5wER2R-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/July2024/xWlmyOhG3cgnRg5wER2R-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/July2024/xWlmyOhG3cgnRg5wER2R.png",
+          "small": "https://api.idea.uz/storage/products/July2024/xWlmyOhG3cgnRg5wER2R-small.png",
+          "medium": "https://api.idea.uz/storage/products/July2024/xWlmyOhG3cgnRg5wER2R-medium.png"
+        }
+      ],
+      "current_price": 1799000,
+      "current_price_formatted": "1 799 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 1799000,
+      "old_price_formatted": "1 799 000 soʻm",
+      "min_price": 1799000,
+      "min_price_formatted": "1 799 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 299834
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 299834,
+          "old_price_per_month": 299834,
+          "current_price": 1799000,
+          "old_price": 1799000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 299834,
+      "min_price_per_month_formatted": "299 834 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 299834,
+      "old_min_price_per_month_formatted": "299 834 soʻm",
+      "in_stock": 457,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/7359/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 7477,
+      "name": "VC20M253BWR/UZ",
+      "slug": "samsung-vc20m253bwr-uz-changyutgichi",
+      "title_name": "Samsung VC20M253BWR/UZ changyutgichi",
+      "telegram_name": "Samsung VC20M253BWR/UZ changyutgichi",
+      "url": "https://idea.uz/product/7477-samsung-vc20m253bwr-uz-changyutgichi",
+      "sku": "8787",
+      "unique_code": "8787",
+      "brand_id": 3,
+      "category_id": 26,
+      "img": "https://api.idea.uz/storage/products/August2024/IwAenJInUB04bZwEZTcV.png",
+      "small_img": "https://api.idea.uz/storage/products/August2024/IwAenJInUB04bZwEZTcV-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/August2024/X9isB1BmxOKm7p64vqoy-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/August2024/IwAenJInUB04bZwEZTcV-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/August2024/X9isB1BmxOKm7p64vqoy-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/August2024/IwAenJInUB04bZwEZTcV.png",
+          "small": "https://api.idea.uz/storage/products/August2024/IwAenJInUB04bZwEZTcV-small.png",
+          "medium": "https://api.idea.uz/storage/products/August2024/IwAenJInUB04bZwEZTcV-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/August2024/X9isB1BmxOKm7p64vqoy.png",
+          "small": "https://api.idea.uz/storage/products/August2024/X9isB1BmxOKm7p64vqoy-small.png",
+          "medium": "https://api.idea.uz/storage/products/August2024/X9isB1BmxOKm7p64vqoy-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/August2024/j6w953pzFFGqJf7Vlaeb.png",
+          "small": "https://api.idea.uz/storage/products/August2024/j6w953pzFFGqJf7Vlaeb-small.png",
+          "medium": "https://api.idea.uz/storage/products/August2024/j6w953pzFFGqJf7Vlaeb-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/August2024/95PKmaAcnxevIike69ZK.png",
+          "small": "https://api.idea.uz/storage/products/August2024/95PKmaAcnxevIike69ZK-small.png",
+          "medium": "https://api.idea.uz/storage/products/August2024/95PKmaAcnxevIike69ZK-medium.png"
+        }
+      ],
+      "current_price": 1499000,
+      "current_price_formatted": "1 499 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 1499000,
+      "old_price_formatted": "1 499 000 soʻm",
+      "min_price": 1499000,
+      "min_price_formatted": "1 499 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 249834
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 249834,
+          "old_price_per_month": 249834,
+          "current_price": 1499000,
+          "old_price": 1499000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 249834,
+      "min_price_per_month_formatted": "249 834 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 249834,
+      "old_min_price_per_month_formatted": "249 834 soʻm",
+      "in_stock": 786,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/7477/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 8050,
+      "name": "UE55DU7100UXUZ",
+      "slug": "televizor-samsung-ue55du7100uxuz",
+      "title_name": "Televizor Samsung UE55DU7100UXUZ",
+      "telegram_name": "Televizor Samsung UE55DU7100UXUZ",
+      "url": "https://idea.uz/product/8050-televizor-samsung-ue55du7100uxuz",
+      "sku": "9410",
+      "unique_code": "9410",
+      "brand_id": 3,
+      "category_id": 9,
+      "img": "https://api.idea.uz/storage/products/October2024/ScLtaPni5hy8faW7mP9a.png",
+      "small_img": "https://api.idea.uz/storage/products/October2024/ScLtaPni5hy8faW7mP9a-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/October2024/Z6eJNB0NKXltev11ekT6-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/October2024/ScLtaPni5hy8faW7mP9a-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/October2024/Z6eJNB0NKXltev11ekT6-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/October2024/ScLtaPni5hy8faW7mP9a.png",
+          "small": "https://api.idea.uz/storage/products/October2024/ScLtaPni5hy8faW7mP9a-small.png",
+          "medium": "https://api.idea.uz/storage/products/October2024/ScLtaPni5hy8faW7mP9a-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/October2024/Z6eJNB0NKXltev11ekT6.png",
+          "small": "https://api.idea.uz/storage/products/October2024/Z6eJNB0NKXltev11ekT6-small.png",
+          "medium": "https://api.idea.uz/storage/products/October2024/Z6eJNB0NKXltev11ekT6-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/October2024/3fl77pHLfAK7xUu1comg.png",
+          "small": "https://api.idea.uz/storage/products/October2024/3fl77pHLfAK7xUu1comg-small.png",
+          "medium": "https://api.idea.uz/storage/products/October2024/3fl77pHLfAK7xUu1comg-medium.png"
+        }
+      ],
+      "current_price": 6999000,
+      "current_price_formatted": "6 999 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 6999000,
+      "old_price_formatted": "6 999 000 soʻm",
+      "min_price": 6999000,
+      "min_price_formatted": "6 999 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 1499834
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 1499834,
+          "old_price_per_month": 1499834,
+          "current_price": 8999000,
+          "old_price": 8999000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 1499834,
+      "min_price_per_month_formatted": "1 499 834 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 1499834,
+      "old_min_price_per_month_formatted": "1 499 834 soʻm",
+      "in_stock": 61,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/8050/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 9029,
+      "name": "RT42CB662022WT",
+      "slug": "sovutgich-samsung-rt42cb662022wt",
+      "title_name": "Sovutgich SAMSUNG RT42CB662022WT",
+      "telegram_name": "Sovutgich SAMSUNG RT42CB662022WT",
+      "url": "https://idea.uz/product/9029-sovutgich-samsung-rt42cb662022wt",
+      "sku": "10602",
+      "unique_code": "10602",
+      "brand_id": 3,
+      "category_id": 24,
+      "img": "https://api.idea.uz/storage/products/December2024/qP3RRyl8CAUm2ADnd1sv.png",
+      "small_img": "https://api.idea.uz/storage/products/December2024/qP3RRyl8CAUm2ADnd1sv-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/December2024/PqXr3iMI7xckCRagVznT-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/December2024/qP3RRyl8CAUm2ADnd1sv-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/December2024/PqXr3iMI7xckCRagVznT-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/December2024/qP3RRyl8CAUm2ADnd1sv.png",
+          "small": "https://api.idea.uz/storage/products/December2024/qP3RRyl8CAUm2ADnd1sv-small.png",
+          "medium": "https://api.idea.uz/storage/products/December2024/qP3RRyl8CAUm2ADnd1sv-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/December2024/PqXr3iMI7xckCRagVznT.png",
+          "small": "https://api.idea.uz/storage/products/December2024/PqXr3iMI7xckCRagVznT-small.png",
+          "medium": "https://api.idea.uz/storage/products/December2024/PqXr3iMI7xckCRagVznT-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/December2024/G0qX6UbXWx8yPkakI5S1.png",
+          "small": "https://api.idea.uz/storage/products/December2024/G0qX6UbXWx8yPkakI5S1-small.png",
+          "medium": "https://api.idea.uz/storage/products/December2024/G0qX6UbXWx8yPkakI5S1-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/December2024/f8Ls8E7pEc8E93TL084u.png",
+          "small": "https://api.idea.uz/storage/products/December2024/f8Ls8E7pEc8E93TL084u-small.png",
+          "medium": "https://api.idea.uz/storage/products/December2024/f8Ls8E7pEc8E93TL084u-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/December2024/mTR61k5uCLKTzfk3Le0A.png",
+          "small": "https://api.idea.uz/storage/products/December2024/mTR61k5uCLKTzfk3Le0A-small.png",
+          "medium": "https://api.idea.uz/storage/products/December2024/mTR61k5uCLKTzfk3Le0A-medium.png"
+        }
+      ],
+      "current_price": 10999000,
+      "current_price_formatted": "10 999 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 10999000,
+      "old_price_formatted": "10 999 000 soʻm",
+      "min_price": 10999000,
+      "min_price_formatted": "10 999 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 1833167
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 1833167,
+          "old_price_per_month": 1833167,
+          "current_price": 10999000,
+          "old_price": 10999000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 1833167,
+      "min_price_per_month_formatted": "1 833 167 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 1833167,
+      "old_min_price_per_month_formatted": "1 833 167 soʻm",
+      "in_stock": 33,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/9029/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 9030,
+      "name": "RT47CG6442S9WT",
+      "slug": "sovutgich-samsung-rt47cg6442s9wt",
+      "title_name": "Sovutgich SAMSUNG RT47CG6442S9WT",
+      "telegram_name": "Sovutgich SAMSUNG RT47CG6442S9WT",
+      "url": "https://idea.uz/product/9030-sovutgich-samsung-rt47cg6442s9wt",
+      "sku": "10603",
+      "unique_code": "10603",
+      "brand_id": 3,
+      "category_id": 24,
+      "img": "https://api.idea.uz/storage/products/December2024/l0ukBDA8RGmiY8kJIjo3.png",
+      "small_img": "https://api.idea.uz/storage/products/December2024/l0ukBDA8RGmiY8kJIjo3-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/December2024/5sNdYkAyBNMpo7saak1X-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/December2024/l0ukBDA8RGmiY8kJIjo3-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/December2024/5sNdYkAyBNMpo7saak1X-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/December2024/l0ukBDA8RGmiY8kJIjo3.png",
+          "small": "https://api.idea.uz/storage/products/December2024/l0ukBDA8RGmiY8kJIjo3-small.png",
+          "medium": "https://api.idea.uz/storage/products/December2024/l0ukBDA8RGmiY8kJIjo3-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/December2024/5sNdYkAyBNMpo7saak1X.png",
+          "small": "https://api.idea.uz/storage/products/December2024/5sNdYkAyBNMpo7saak1X-small.png",
+          "medium": "https://api.idea.uz/storage/products/December2024/5sNdYkAyBNMpo7saak1X-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/December2024/hDQ9cqjcWkg3dE8Bq9UL.png",
+          "small": "https://api.idea.uz/storage/products/December2024/hDQ9cqjcWkg3dE8Bq9UL-small.png",
+          "medium": "https://api.idea.uz/storage/products/December2024/hDQ9cqjcWkg3dE8Bq9UL-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/December2024/6nPPZmoprGwV7PKlbUmI.png",
+          "small": "https://api.idea.uz/storage/products/December2024/6nPPZmoprGwV7PKlbUmI-small.png",
+          "medium": "https://api.idea.uz/storage/products/December2024/6nPPZmoprGwV7PKlbUmI-medium.png"
+        }
+      ],
+      "current_price": 10999000,
+      "current_price_formatted": "10 999 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 10999000,
+      "old_price_formatted": "10 999 000 soʻm",
+      "min_price": 10999000,
+      "min_price_formatted": "10 999 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 1833167
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 1833167,
+          "old_price_per_month": 1833167,
+          "current_price": 10999000,
+          "old_price": 10999000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 1833167,
+      "min_price_per_month_formatted": "1 833 167 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 1833167,
+      "old_min_price_per_month_formatted": "1 833 167 soʻm",
+      "in_stock": 15,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/9030/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10430,
+      "name": "RT42CG6420B1WT",
+      "slug": "sovutgich-samsung-rt42cg6420b1wt",
+      "title_name": "Sovutgich Samsung RT42CG6420B1WT",
+      "telegram_name": "Sovutgich Samsung RT42CG6420B1WT",
+      "url": "https://idea.uz/product/10430-sovutgich-samsung-rt42cg6420b1wt",
+      "sku": "10654",
+      "unique_code": "10654",
+      "brand_id": 3,
+      "category_id": 24,
+      "img": "https://api.idea.uz/storage/products/January2025/SGTxVAlM6YPXnx3mRDiy.png",
+      "small_img": "https://api.idea.uz/storage/products/January2025/SGTxVAlM6YPXnx3mRDiy-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/January2025/KtXV2kz89TWCxjlax39c-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/January2025/SGTxVAlM6YPXnx3mRDiy-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/January2025/KtXV2kz89TWCxjlax39c-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/January2025/SGTxVAlM6YPXnx3mRDiy.png",
+          "small": "https://api.idea.uz/storage/products/January2025/SGTxVAlM6YPXnx3mRDiy-small.png",
+          "medium": "https://api.idea.uz/storage/products/January2025/SGTxVAlM6YPXnx3mRDiy-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/January2025/KtXV2kz89TWCxjlax39c.png",
+          "small": "https://api.idea.uz/storage/products/January2025/KtXV2kz89TWCxjlax39c-small.png",
+          "medium": "https://api.idea.uz/storage/products/January2025/KtXV2kz89TWCxjlax39c-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/January2025/kvir5zqSvtaU58TDBAQE.png",
+          "small": "https://api.idea.uz/storage/products/January2025/kvir5zqSvtaU58TDBAQE-small.png",
+          "medium": "https://api.idea.uz/storage/products/January2025/kvir5zqSvtaU58TDBAQE-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/January2025/tIhyvI4JiHwvQbAK7Y1R.png",
+          "small": "https://api.idea.uz/storage/products/January2025/tIhyvI4JiHwvQbAK7Y1R-small.png",
+          "medium": "https://api.idea.uz/storage/products/January2025/tIhyvI4JiHwvQbAK7Y1R-medium.png"
+        }
+      ],
+      "current_price": 10999000,
+      "current_price_formatted": "10 999 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 10999000,
+      "old_price_formatted": "10 999 000 soʻm",
+      "min_price": 10999000,
+      "min_price_formatted": "10 999 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 1833167
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 1833167,
+          "old_price_per_month": 1833167,
+          "current_price": 10999000,
+          "old_price": 10999000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 1833167,
+      "min_price_per_month_formatted": "1 833 167 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 1833167,
+      "old_min_price_per_month_formatted": "1 833 167 soʻm",
+      "in_stock": 10,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10430/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10506,
+      "name": "Galaxy S25 Ultra 12/256 Titanium Blue",
+      "slug": "smartfon-samsung-galaxy-s25-ultra-12-256-titanium-blue",
+      "title_name": "Smartfon Samsung Galaxy S25 Ultra 12/256 Titanium Blue ",
+      "telegram_name": "Smartfon Samsung Galaxy S25 Ultra 12/256 Titanium Blue ",
+      "url": "https://idea.uz/product/10506-smartfon-samsung-galaxy-s25-ultra-12-256-titanium-blue",
+      "sku": "10734",
+      "unique_code": "10734",
+      "brand_id": 3,
+      "category_id": 55,
+      "img": "https://api.idea.uz/storage/products/January2025/Fo2jPiSSUp7JUlZTLDqI.png",
+      "small_img": "https://api.idea.uz/storage/products/January2025/Fo2jPiSSUp7JUlZTLDqI-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/January2025/JOsAWzAfXlbNpzIhL3w3-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/January2025/Fo2jPiSSUp7JUlZTLDqI-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/January2025/JOsAWzAfXlbNpzIhL3w3-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/January2025/Fo2jPiSSUp7JUlZTLDqI.png",
+          "small": "https://api.idea.uz/storage/products/January2025/Fo2jPiSSUp7JUlZTLDqI-small.png",
+          "medium": "https://api.idea.uz/storage/products/January2025/Fo2jPiSSUp7JUlZTLDqI-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/January2025/JOsAWzAfXlbNpzIhL3w3.png",
+          "small": "https://api.idea.uz/storage/products/January2025/JOsAWzAfXlbNpzIhL3w3-small.png",
+          "medium": "https://api.idea.uz/storage/products/January2025/JOsAWzAfXlbNpzIhL3w3-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/January2025/yPtEQwqzK8j6JDT06pc9.png",
+          "small": "https://api.idea.uz/storage/products/January2025/yPtEQwqzK8j6JDT06pc9-small.png",
+          "medium": "https://api.idea.uz/storage/products/January2025/yPtEQwqzK8j6JDT06pc9-medium.png"
+        }
+      ],
+      "current_price": 16199000,
+      "current_price_formatted": "16 199 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 16199000,
+      "old_price_formatted": "16 199 000 soʻm",
+      "min_price": 16199000,
+      "min_price_formatted": "16 199 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 3199000
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 3199000,
+          "old_price_per_month": 3199000,
+          "current_price": 19194000,
+          "old_price": 19194000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 3199000,
+      "min_price_per_month_formatted": "3 199 000 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 3199000,
+      "old_min_price_per_month_formatted": "3 199 000 soʻm",
+      "in_stock": 6,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10506/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10516,
+      "name": "Galaxy S25 12/128 Silver Shadow",
+      "slug": "smartfon-samsung-galaxy-s25-12-128-silver-shadow",
+      "title_name": "Galaxy S25 12/128 Silver Shadow",
+      "telegram_name": "Galaxy S25 12/128 Silver Shadow",
+      "url": "https://idea.uz/product/10516-smartfon-samsung-galaxy-s25-12-128-silver-shadow",
+      "sku": "10751",
+      "unique_code": "10751",
+      "brand_id": 3,
+      "category_id": 55,
+      "img": "https://api.idea.uz/storage/products/February2025/u8S0B19rRNdc9CNVQhcV.png",
+      "small_img": "https://api.idea.uz/storage/products/February2025/u8S0B19rRNdc9CNVQhcV-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/February2025/RuIiTGhZBmrdg2RPdI9D-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/February2025/u8S0B19rRNdc9CNVQhcV-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/February2025/RuIiTGhZBmrdg2RPdI9D-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/February2025/u8S0B19rRNdc9CNVQhcV.png",
+          "small": "https://api.idea.uz/storage/products/February2025/u8S0B19rRNdc9CNVQhcV-small.png",
+          "medium": "https://api.idea.uz/storage/products/February2025/u8S0B19rRNdc9CNVQhcV-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/February2025/RuIiTGhZBmrdg2RPdI9D.png",
+          "small": "https://api.idea.uz/storage/products/February2025/RuIiTGhZBmrdg2RPdI9D-small.png",
+          "medium": "https://api.idea.uz/storage/products/February2025/RuIiTGhZBmrdg2RPdI9D-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/February2025/HXrtY1yUUkd4sDCd5aGQ.png",
+          "small": "https://api.idea.uz/storage/products/February2025/HXrtY1yUUkd4sDCd5aGQ-small.png",
+          "medium": "https://api.idea.uz/storage/products/February2025/HXrtY1yUUkd4sDCd5aGQ-medium.png"
+        }
+      ],
+      "current_price": 10399000,
+      "current_price_formatted": "10 399 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 10399000,
+      "old_price_formatted": "10 399 000 soʻm",
+      "min_price": 10399000,
+      "min_price_formatted": "10 399 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 1999000
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 1999000,
+          "old_price_per_month": 1999000,
+          "current_price": 11994000,
+          "old_price": 11994000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 1999000,
+      "min_price_per_month_formatted": "1 999 000 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 1999000,
+      "old_min_price_per_month_formatted": "1 999 000 soʻm",
+      "in_stock": 4,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10516/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10517,
+      "name": "Galaxy S25 Ultra 12/256 Titanium Gray",
+      "slug": "smartfon-samsung-galaxy-s25-ultra-12-256-titanium-gray",
+      "title_name": "Galaxy S25 Ultra 12/256 Titanium Gray",
+      "telegram_name": "Galaxy S25 Ultra 12/256 Titanium Gray",
+      "url": "https://idea.uz/product/10517-smartfon-samsung-galaxy-s25-ultra-12-256-titanium-gray",
+      "sku": "10752",
+      "unique_code": "10752",
+      "brand_id": 3,
+      "category_id": 55,
+      "img": "https://api.idea.uz/storage/products/February2025/H6D2lV7hFNHW2vfvMFCk.png",
+      "small_img": "https://api.idea.uz/storage/products/February2025/H6D2lV7hFNHW2vfvMFCk-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/February2025/pM7F9nVLtadBgQnAMmuT-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/February2025/H6D2lV7hFNHW2vfvMFCk-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/February2025/pM7F9nVLtadBgQnAMmuT-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/February2025/H6D2lV7hFNHW2vfvMFCk.png",
+          "small": "https://api.idea.uz/storage/products/February2025/H6D2lV7hFNHW2vfvMFCk-small.png",
+          "medium": "https://api.idea.uz/storage/products/February2025/H6D2lV7hFNHW2vfvMFCk-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/February2025/pM7F9nVLtadBgQnAMmuT.png",
+          "small": "https://api.idea.uz/storage/products/February2025/pM7F9nVLtadBgQnAMmuT-small.png",
+          "medium": "https://api.idea.uz/storage/products/February2025/pM7F9nVLtadBgQnAMmuT-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/February2025/2LTwXXaOqm6V0EgtgNi7.png",
+          "small": "https://api.idea.uz/storage/products/February2025/2LTwXXaOqm6V0EgtgNi7-small.png",
+          "medium": "https://api.idea.uz/storage/products/February2025/2LTwXXaOqm6V0EgtgNi7-medium.png"
+        }
+      ],
+      "current_price": 16199000,
+      "current_price_formatted": "16 199 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 16199000,
+      "old_price_formatted": "16 199 000 soʻm",
+      "min_price": 16199000,
+      "min_price_formatted": "16 199 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 3199000
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 3199000,
+          "old_price_per_month": 3199000,
+          "current_price": 19194000,
+          "old_price": 19194000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 3199000,
+      "min_price_per_month_formatted": "3 199 000 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 3199000,
+      "old_min_price_per_month_formatted": "3 199 000 soʻm",
+      "in_stock": 9,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10517/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10684,
+      "name": "Galaxy A36 8/128gb White",
+      "slug": "smartfon-samsung-galaxy-a36-8-128gb-white",
+      "title_name": "Smartfon Samsung  Galaxy A36 8/128gb White",
+      "telegram_name": "Smartfon Samsung  Galaxy A36 8/128gb White",
+      "url": "https://idea.uz/product/10684-smartfon-samsung-galaxy-a36-8-128gb-white",
+      "sku": "10970",
+      "unique_code": "10970",
+      "brand_id": null,
+      "category_id": 55,
+      "img": "https://api.idea.uz/storage/products/March2025/CSSpzaLSP68oc4kKQoMf.png",
+      "small_img": "https://api.idea.uz/storage/products/March2025/CSSpzaLSP68oc4kKQoMf-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/March2025/CSSpzaLSP68oc4kKQoMf-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/March2025/CSSpzaLSP68oc4kKQoMf-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/March2025/CSSpzaLSP68oc4kKQoMf-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/CSSpzaLSP68oc4kKQoMf.png",
+          "small": "https://api.idea.uz/storage/products/March2025/CSSpzaLSP68oc4kKQoMf-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/CSSpzaLSP68oc4kKQoMf-medium.png"
+        }
+      ],
+      "current_price": 4399000,
+      "current_price_formatted": "4 399 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 4399000,
+      "old_price_formatted": "4 399 000 soʻm",
+      "min_price": 4399000,
+      "min_price_formatted": "4 399 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 733167
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 733167,
+          "old_price_per_month": 733167,
+          "current_price": 4399000,
+          "old_price": 4399000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 733167,
+      "min_price_per_month_formatted": "733 167 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 733167,
+      "old_min_price_per_month_formatted": "733 167 soʻm",
+      "in_stock": 6,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10684/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10685,
+      "name": "Galaxy A36 8/256gb Black",
+      "slug": "smartfon-samsung-galaxy-a36-8-256gb-black",
+      "title_name": "Smartfon Samsung Galaxy A36 8/256gb Black",
+      "telegram_name": "Smartfon Samsung Galaxy A36 8/256gb Black",
+      "url": "https://idea.uz/product/10685-smartfon-samsung-galaxy-a36-8-256gb-black",
+      "sku": "10971",
+      "unique_code": "10971",
+      "brand_id": null,
+      "category_id": 55,
+      "img": "https://api.idea.uz/storage/products/March2025/AjO7fPsU3bfQA7CKbn0b.png",
+      "small_img": "https://api.idea.uz/storage/products/March2025/AjO7fPsU3bfQA7CKbn0b-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/March2025/AjO7fPsU3bfQA7CKbn0b-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/March2025/AjO7fPsU3bfQA7CKbn0b-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/March2025/AjO7fPsU3bfQA7CKbn0b-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/AjO7fPsU3bfQA7CKbn0b.png",
+          "small": "https://api.idea.uz/storage/products/March2025/AjO7fPsU3bfQA7CKbn0b-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/AjO7fPsU3bfQA7CKbn0b-medium.png"
+        }
+      ],
+      "current_price": 4799000,
+      "current_price_formatted": "4 799 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 4799000,
+      "old_price_formatted": "4 799 000 soʻm",
+      "min_price": 4799000,
+      "min_price_formatted": "4 799 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 799834
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 799834,
+          "old_price_per_month": 799834,
+          "current_price": 4799000,
+          "old_price": 4799000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 799834,
+      "min_price_per_month_formatted": "799 834 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 799834,
+      "old_min_price_per_month_formatted": "799 834 soʻm",
+      "in_stock": 8,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10685/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10708,
+      "name": "Galaxy A36 8/128gb Black",
+      "slug": "smartfon-samsung-galaxy-a36-8-128gb-black",
+      "title_name": "Smartfon Samsung Galaxy A36 8/128gb Black",
+      "telegram_name": "Smartfon Samsung Galaxy A36 8/128gb Black",
+      "url": "https://idea.uz/product/10708-smartfon-samsung-galaxy-a36-8-128gb-black",
+      "sku": "10976",
+      "unique_code": "10976",
+      "brand_id": 3,
+      "category_id": 55,
+      "img": "https://api.idea.uz/storage/products/March2025/ySEnTyBAZfX16vIMGiFP.png",
+      "small_img": "https://api.idea.uz/storage/products/March2025/ySEnTyBAZfX16vIMGiFP-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/March2025/Vevuws2PZcuC8CINhNFl-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/March2025/ySEnTyBAZfX16vIMGiFP-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/March2025/Vevuws2PZcuC8CINhNFl-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/ySEnTyBAZfX16vIMGiFP.png",
+          "small": "https://api.idea.uz/storage/products/March2025/ySEnTyBAZfX16vIMGiFP-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/ySEnTyBAZfX16vIMGiFP-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/Vevuws2PZcuC8CINhNFl.png",
+          "small": "https://api.idea.uz/storage/products/March2025/Vevuws2PZcuC8CINhNFl-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/Vevuws2PZcuC8CINhNFl-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/SobblV5rXj6sqlm8cX35.png",
+          "small": "https://api.idea.uz/storage/products/March2025/SobblV5rXj6sqlm8cX35-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/SobblV5rXj6sqlm8cX35-medium.png"
+        }
+      ],
+      "current_price": 4399000,
+      "current_price_formatted": "4 399 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 4399000,
+      "old_price_formatted": "4 399 000 soʻm",
+      "min_price": 4399000,
+      "min_price_formatted": "4 399 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 733167
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 733167,
+          "old_price_per_month": 733167,
+          "current_price": 4399000,
+          "old_price": 4399000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 733167,
+      "min_price_per_month_formatted": "733 167 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 733167,
+      "old_min_price_per_month_formatted": "733 167 soʻm",
+      "in_stock": 21,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10708/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10709,
+      "name": "Galaxy A36 8/256gb White",
+      "slug": "smartfon-samsung-galaxy-a36-8-256gb-white",
+      "title_name": "Smartfon Samsung Galaxy A36 8/256gb White",
+      "telegram_name": "Smartfon Samsung Galaxy A36 8/256gb White",
+      "url": "https://idea.uz/product/10709-smartfon-samsung-galaxy-a36-8-256gb-white",
+      "sku": "10977",
+      "unique_code": "10977",
+      "brand_id": 3,
+      "category_id": 55,
+      "img": "https://api.idea.uz/storage/products/March2025/QpBzcoJFvOtlU70WgrxI.png",
+      "small_img": "https://api.idea.uz/storage/products/March2025/QpBzcoJFvOtlU70WgrxI-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/March2025/n6KDhehj0wK4eoK5kMVg-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/March2025/QpBzcoJFvOtlU70WgrxI-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/March2025/n6KDhehj0wK4eoK5kMVg-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/QpBzcoJFvOtlU70WgrxI.png",
+          "small": "https://api.idea.uz/storage/products/March2025/QpBzcoJFvOtlU70WgrxI-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/QpBzcoJFvOtlU70WgrxI-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/n6KDhehj0wK4eoK5kMVg.png",
+          "small": "https://api.idea.uz/storage/products/March2025/n6KDhehj0wK4eoK5kMVg-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/n6KDhehj0wK4eoK5kMVg-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/VIzQLAEoC0njcZfl2sZ4.png",
+          "small": "https://api.idea.uz/storage/products/March2025/VIzQLAEoC0njcZfl2sZ4-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/VIzQLAEoC0njcZfl2sZ4-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/5Y3QMKJfAngRwBmT6UyN.png",
+          "small": "https://api.idea.uz/storage/products/March2025/5Y3QMKJfAngRwBmT6UyN-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/5Y3QMKJfAngRwBmT6UyN-medium.png"
+        }
+      ],
+      "current_price": 4799000,
+      "current_price_formatted": "4 799 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 4799000,
+      "old_price_formatted": "4 799 000 soʻm",
+      "min_price": 4799000,
+      "min_price_formatted": "4 799 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 799834
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 799834,
+          "old_price_per_month": 799834,
+          "current_price": 4799000,
+          "old_price": 4799000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 799834,
+      "min_price_per_month_formatted": "799 834 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 799834,
+      "old_min_price_per_month_formatted": "799 834 soʻm",
+      "in_stock": 8,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10709/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10710,
+      "name": "Galaxy A56 8/128gb Gray",
+      "slug": "smartfon-samsung-galaxy-a56-8-128gb-gray",
+      "title_name": "Smartfon Samsung Galaxy A56 8/128gb Gray",
+      "telegram_name": "Smartfon Samsung Galaxy A56 8/128gb Gray",
+      "url": "https://idea.uz/product/10710-smartfon-samsung-galaxy-a56-8-128gb-gray",
+      "sku": "10983",
+      "unique_code": "10983",
+      "brand_id": 3,
+      "category_id": 55,
+      "img": "https://api.idea.uz/storage/products/March2025/JAYjXJLsKPheeTnJoQjH.png",
+      "small_img": "https://api.idea.uz/storage/products/March2025/JAYjXJLsKPheeTnJoQjH-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/March2025/mxrqAhOUICdLL0ztt8Cw-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/March2025/JAYjXJLsKPheeTnJoQjH-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/March2025/mxrqAhOUICdLL0ztt8Cw-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/JAYjXJLsKPheeTnJoQjH.png",
+          "small": "https://api.idea.uz/storage/products/March2025/JAYjXJLsKPheeTnJoQjH-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/JAYjXJLsKPheeTnJoQjH-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/mxrqAhOUICdLL0ztt8Cw.png",
+          "small": "https://api.idea.uz/storage/products/March2025/mxrqAhOUICdLL0ztt8Cw-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/mxrqAhOUICdLL0ztt8Cw-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/tdaDbPlUhjDS74oVP8Gg.png",
+          "small": "https://api.idea.uz/storage/products/March2025/tdaDbPlUhjDS74oVP8Gg-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/tdaDbPlUhjDS74oVP8Gg-medium.png"
+        }
+      ],
+      "current_price": 5099000,
+      "current_price_formatted": "5 099 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 1,
+      "is_promotional": 0,
+      "old_price": 5099000,
+      "old_price_formatted": "5 099 000 soʻm",
+      "min_price": 5099000,
+      "min_price_formatted": "5 099 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 849834
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 849834,
+          "old_price_per_month": 849834,
+          "current_price": 5099000,
+          "old_price": 5099000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 849834,
+      "min_price_per_month_formatted": "849 834 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 849834,
+      "old_min_price_per_month_formatted": "849 834 soʻm",
+      "in_stock": 10,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10710/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    },
+    {
+      "id": 10711,
+      "name": "Galaxy A56 8/128gb Olive",
+      "slug": "smartfon-samsung-galaxy-a56-8-128gb-olive",
+      "title_name": "Smartfon Samsung Galaxy A56 8/128gb Olive",
+      "telegram_name": "Smartfon Samsung Galaxy A56 8/128gb Olive",
+      "url": "https://idea.uz/product/10711-smartfon-samsung-galaxy-a56-8-128gb-olive",
+      "sku": "10984",
+      "unique_code": "10984",
+      "brand_id": 3,
+      "category_id": 55,
+      "img": "https://api.idea.uz/storage/products/March2025/mkEGCToz62Spa9PohG6O.png",
+      "small_img": "https://api.idea.uz/storage/products/March2025/mkEGCToz62Spa9PohG6O-small.png",
+      "second_small_img": "https://api.idea.uz/storage/products/March2025/OI7gvHWkmCLR7tpsWRju-small.png",
+      "medium_img": "https://api.idea.uz/storage/products/March2025/mkEGCToz62Spa9PohG6O-medium.png",
+      "second_medium_img": "https://api.idea.uz/storage/products/March2025/OI7gvHWkmCLR7tpsWRju-medium.png",
+      "gallery": [
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/mkEGCToz62Spa9PohG6O.png",
+          "small": "https://api.idea.uz/storage/products/March2025/mkEGCToz62Spa9PohG6O-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/mkEGCToz62Spa9PohG6O-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/OI7gvHWkmCLR7tpsWRju.png",
+          "small": "https://api.idea.uz/storage/products/March2025/OI7gvHWkmCLR7tpsWRju-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/OI7gvHWkmCLR7tpsWRju-medium.png"
+        },
+        {
+          "original": "https://api.idea.uz/storage/products/March2025/0gGgMZVY6Zqpbl8WuwUm.png",
+          "small": "https://api.idea.uz/storage/products/March2025/0gGgMZVY6Zqpbl8WuwUm-small.png",
+          "medium": "https://api.idea.uz/storage/products/March2025/0gGgMZVY6Zqpbl8WuwUm-medium.png"
+        }
+      ],
+      "current_price": 5099000,
+      "current_price_formatted": "5 099 000 soʻm",
+      "is_special": 0,
+      "is_bestseller": 0,
+      "is_promotional": 0,
+      "old_price": 5099000,
+      "old_price_formatted": "5 099 000 soʻm",
+      "min_price": 5099000,
+      "min_price_formatted": "5 099 000 soʻm",
+      "discount_percent": 0,
+      "discount": "",
+      "installment_payment": 1,
+      "ins_pay_prices": {
+        "6": 849834
+      },
+      "installment_prices": [
+        {
+          "duration": 6,
+          "price_per_month": 849834,
+          "old_price_per_month": 849834,
+          "current_price": 5099000,
+          "old_price": 5099000,
+          "discount": 0
+        }
+      ],
+      "min_price_per_month": 849834,
+      "min_price_per_month_formatted": "849 834 soʻm",
+      "min_price_per_month_duration": 6,
+      "old_min_price_per_month": 849834,
+      "old_min_price_per_month_formatted": "849 834 soʻm",
+      "in_stock": 27,
+      "rating": 0,
+      "rating_count": 0,
+      "description": null,
+      "category": null,
+      "category_name": "",
+      "category_slug": "",
+      "brand_name": "",
+      "edit_url": "https://api.idea.uz/admin/products/10711/edit",
+      "has_gift": 0,
+      "sticker_promotion": 0,
+      "sticker_bonus": 0,
+      "sticker_installment": 0
+    }
+  ],
+  "shops": [],
+  "brands": [],
+  "categories": []
+}
