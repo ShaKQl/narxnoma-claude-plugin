@@ -88,11 +88,28 @@ def try_build_listing(**kwargs) -> Listing | None:
 
 @runtime_checkable
 class Source(Protocol):
+    """One retailer.
+
+    CALLER CONTRACT: check `can_sweep` before calling `sweep()`. A source that
+    cannot browse a catalogue raises from `sweep()` rather than yielding
+    nothing -- returning an empty iterator would let a caller that forgot this
+    check record a perfectly successful harvest of zero listings, which is
+    indistinguishable from a retailer whose catalogue really is empty. Failing
+    loudly is the point.
+    """
+
     slug: str
+
+    #: False when the retailer exposes no catalogue browse (mediapark, whose
+    #: only endpoint is a no-pagination autocomplete). Such a source is reached
+    #: through `search()` alone.
     can_sweep: bool
 
     def sweep(self) -> Iterator[Listing]:
-        """Every phone the retailer will show us, without a target list."""
+        """Every phone the retailer will show us, without a target list.
+
+        Raises NotImplementedError when `can_sweep` is False.
+        """
 
     def search(self, query: str) -> Iterator[Listing]:
         """Listings matching a query. Used for sources that cannot be swept."""
