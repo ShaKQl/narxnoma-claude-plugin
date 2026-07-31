@@ -18,5 +18,10 @@ def db_conn(dsn):
 
     with connect(dsn) as conn:
         migrate(conn)
-        yield conn
-        conn.rollback()
+        with conn.cursor() as cur:
+            cur.execute("TRUNCATE raw_offer, offer, harvest_run RESTART IDENTITY CASCADE")
+        conn.commit()
+        try:
+            yield conn
+        finally:
+            conn.rollback()

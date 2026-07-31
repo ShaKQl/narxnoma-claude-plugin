@@ -340,8 +340,19 @@ volumes:
 `narxnoma/db/schema.sql`:
 
 ```sql
--- Idempotent. Safe to run on every start.
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- Idempotent. Executed on every application start.
+--
+-- HOW TO CHANGE THIS FILE. Never edit an existing CREATE TABLE to add or alter a
+-- column: CREATE TABLE IF NOT EXISTS is a no-op on a database that already has the
+-- table, so the change would apply on a fresh database and silently not apply in
+-- production. Instead append an explicit migration at the bottom of the file --
+-- ALTER TABLE ... ADD COLUMN IF NOT EXISTS ... -- and bump the schema_version row.
+
+CREATE TABLE IF NOT EXISTS schema_version (
+    version     integer PRIMARY KEY,
+    applied_at  timestamptz NOT NULL DEFAULT now()
+);
+INSERT INTO schema_version (version) VALUES (1) ON CONFLICT (version) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS store (
     id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -360,7 +371,8 @@ CREATE TABLE IF NOT EXISTS raw_offer (
     name_raw     text NOT NULL,
     price        bigint NOT NULL CHECK (price BETWEEN 100000 AND 100000000),
     url          text NOT NULL,
-    availability text NOT NULL DEFAULT 'UNKNOWN',
+    availability text NOT NULL DEFAULT 'UNKNOWN'
+        CHECK (availability IN ('IN_STOCK', 'OUT_OF_STOCK', 'UNKNOWN')),
     image_url    text,
     payload      jsonb,
     observed_at  timestamptz NOT NULL DEFAULT now()
@@ -377,14 +389,15 @@ CREATE TABLE IF NOT EXISTS offer (
     name_raw     text NOT NULL,
     price        bigint NOT NULL CHECK (price BETWEEN 100000 AND 100000000),
     url          text NOT NULL,
-    availability text NOT NULL DEFAULT 'UNKNOWN',
+    availability text NOT NULL DEFAULT 'UNKNOWN'
+        CHECK (availability IN ('IN_STOCK', 'OUT_OF_STOCK', 'UNKNOWN')),
     image_url    text,
     first_seen   timestamptz NOT NULL DEFAULT now(),
     last_seen    timestamptz NOT NULL DEFAULT now(),
     UNIQUE (store_id, source_key)
 );
 CREATE INDEX IF NOT EXISTS offer_last_seen ON offer (last_seen DESC);
-CREATE INDEX IF NOT EXISTS offer_variant ON offer (variant_id);
+CREATE INDEX IF NOT EXISTS offer_variant ON offer (variant_id) WHERE variant_id IS NOT NULL;
 
 -- One row per source per cycle. Makes a silently-dead source visible.
 CREATE TABLE IF NOT EXISTS harvest_run (
@@ -397,6 +410,8 @@ CREATE TABLE IF NOT EXISTS harvest_run (
     listings_kept integer NOT NULL DEFAULT 0,
     error         text
 );
+CREATE INDEX IF NOT EXISTS harvest_run_store_started
+    ON harvest_run (store_id, started_at DESC);
 
 INSERT INTO store (slug, name, website_url) VALUES
     ('uzum',      'Uzum',      'https://uzum.uz'),
@@ -434,8 +449,13 @@ def db_conn(dsn):
 
     with connect(dsn) as conn:
         migrate(conn)
-        yield conn
-        conn.rollback()
+        with conn.cursor() as cur:
+            cur.execute("TRUNCATE raw_offer, offer, harvest_run RESTART IDENTITY CASCADE")
+        conn.commit()
+        try:
+            yield conn
+        finally:
+            conn.rollback()
 ```
 
 `tests/db/test_migrate.py`:
