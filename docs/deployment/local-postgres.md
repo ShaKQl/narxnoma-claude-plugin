@@ -15,11 +15,46 @@ This is a development convenience only. Production uses the `docker-compose.yml`
 | Location | `.local/pgsql/` (binaries), `.local/pgdata/` (cluster) |
 | Port | **55432** — deliberately not 5432, so it cannot collide with anything else |
 | Superuser | `narxnoma`, `trust` authentication |
-| Database | `narxnoma` |
+| Databases | `narxnoma` (production-shaped, has real crawled data) and `narxnoma_test` (disposable) |
 | Log | `.local/pg.log` |
 
 Nothing was installed system-wide. No service was registered, no registry key written, no
 PATH entry added. Deleting `.local/` removes every trace.
+
+## Two databases, two variables — never mix them up
+
+There are **two separate databases and two separate environment variables**, and they must
+never point at the same database:
+
+| Variable | Database | Read by | Purpose |
+|---|---|---|---|
+| `NARXNOMA_DSN` | `narxnoma` | `narxnoma/config.py` (`load_settings()`) | The **production/runtime** setting. This is what the deployed crawler and web app use on the server, and what a real harvest writes to locally. |
+| `NARXNOMA_TEST_DSN` | `narxnoma_test` | `tests/conftest.py` (`dsn` fixture) | The **test** setting. Disposable, truncated on every run. |
+
+**Why this matters:** every `db`-marked test depends on the `db_conn` fixture in
+`tests/conftest.py`, and that fixture runs `TRUNCATE raw_offer, offer, harvest_run
+RESTART IDENTITY CASCADE` **unconditionally, before every single `db` test**. If the test
+suite ever read the same variable the production app reads, running `pytest` on a machine
+where that variable is exported — for example the deployed server — would silently wipe
+whatever the live crawler had collected. This actually happened once in development: an
+earlier version of `db_conn` read `NARXNOMA_DSN`, and running the suite locally wiped 448
+real olcha offers that had been harvested minutes before.
+
+Two independent guards now prevent that:
+
+1. **Different variable names.** `tests/conftest.py` reads only `NARXNOMA_TEST_DSN`. It
+   never falls back to `NARXNOMA_DSN` — if `NARXNOMA_TEST_DSN` is unset, `db`-marked tests
+   skip, exactly as they did before when `NARXNOMA_DSN` was unset.
+2. **A database-name check.** Before truncating anything, `db_conn` calls
+   `require_disposable_test_database(dsn)`, which parses the database name out of the DSN
+   and raises `RuntimeError` unless it contains `test`. This catches the case where
+   `NARXNOMA_TEST_DSN` itself gets pointed at the wrong database — belt and braces.
+
+Create `narxnoma_test` once, alongside `narxnoma`:
+
+```bash
+.local/pgsql/bin/createdb.exe -h 127.0.0.1 -p 55432 -U narxnoma narxnoma_test
+```
 
 ## Daily use
 
@@ -37,14 +72,19 @@ PATH entry added. Deleting `.local/` removes every trace.
 `pg_ctl ... -w start` blocks under Git Bash — omit `-w` and check with `pg_isready`
 instead.
 
-Then export the DSN and run the suite:
+Then export the **test** DSN and run the suite:
 
 ```bash
-export NARXNOMA_DSN="postgresql://narxnoma@127.0.0.1:55432/narxnoma"
+export NARXNOMA_TEST_DSN="postgresql://narxnoma@127.0.0.1:55432/narxnoma_test"
 cd narxnoma-crawler && python -m pytest tests/ -q
 ```
 
-Without `NARXNOMA_DSN` the `db`-marked tests skip rather than fail, so the suite still
+Do **not** export `NARXNOMA_DSN` for this — that is the production variable, and pointing
+it at `narxnoma_test` (or vice versa) defeats the whole point of having two of them. If you
+also want to exercise the crawler for real against the `narxnoma` database (e.g. `python -m
+narxnoma.cli harvest`), export `NARXNOMA_DSN` separately for that command only.
+
+Without `NARXNOMA_TEST_DSN` the `db`-marked tests skip rather than fail, so the suite still
 passes on a machine with no database — it just verifies less. **A green run with the
 variable unset is not evidence the storage layer works.**
 
@@ -58,6 +98,7 @@ rm pg.zip
 ./pgsql/bin/initdb.exe -D ./pgdata -U narxnoma --auth=trust --encoding=UTF8 --locale=C
 ./pgsql/bin/pg_ctl.exe -D ./pgdata -l ./pg.log -o "-p 55432" start
 ./pgsql/bin/createdb.exe -h 127.0.0.1 -p 55432 -U narxnoma narxnoma
+./pgsql/bin/createdb.exe -h 127.0.0.1 -p 55432 -U narxnoma narxnoma_test
 ```
 
 The file id in that URL pins PostgreSQL 16.14 and will change when EDB publishes a new

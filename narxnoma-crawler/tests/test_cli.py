@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from narxnoma.cli import main, render_report, render_status, report_exit_code
@@ -31,10 +29,10 @@ def test_report_exit_code_zero_when_none_suspicious():
 
 
 @pytest.mark.db
-def test_cli_report_exits_nonzero_when_a_source_is_suspicious(db_conn, monkeypatch):
-    dsn = os.environ.get("NARXNOMA_DSN")
-    if not dsn:
-        pytest.skip("NARXNOMA_DSN not set")
+def test_cli_report_exits_nonzero_when_a_source_is_suspicious(db_conn, dsn, monkeypatch):
+    # Reuses the `dsn` fixture (NARXNOMA_TEST_DSN) rather than reading
+    # NARXNOMA_DSN directly, so the connection main() ends up using is
+    # guaranteed to be the same disposable database db_conn just truncated.
     import narxnoma.cli as cli_module
     from narxnoma.db.connection import connect as real_connect
 

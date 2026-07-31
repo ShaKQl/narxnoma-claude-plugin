@@ -15,7 +15,7 @@ build-backend = "setuptools.build_meta"
 testpaths = ["tests"]
 pythonpath = ["."]
 markers = [
-    "db: needs a PostgreSQL instance (set NARXNOMA_DSN)",
+    "db: needs a PostgreSQL instance (set NARXNOMA_TEST_DSN, a disposable database distinct from the production NARXNOMA_DSN)",
     "live: hits a real retailer API",
 ]
 addopts = "-m 'not live'"

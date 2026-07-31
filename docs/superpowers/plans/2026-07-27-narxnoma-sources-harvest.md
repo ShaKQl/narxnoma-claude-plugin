@@ -315,7 +315,14 @@ git commit -m "feat(sources): add Listing, Source protocol and polite HTTP layer
 
 **Interfaces:**
 - Consumes: `load_settings` (Task 1).
-- Produces: `connect()` context manager; `migrate(conn)` applying `schema.sql` idempotently; pytest fixture `db_conn` that skips when `NARXNOMA_DSN` is unset.
+- Produces: `connect()` context manager; `migrate(conn)` applying `schema.sql` idempotently; pytest fixture `db_conn` that skips when `NARXNOMA_TEST_DSN` is unset.
+
+**Note (added in the p2-task-12 fix pass):** the `db_conn` fixture below reads
+`NARXNOMA_TEST_DSN`, a variable distinct from `NARXNOMA_DSN` (the production setting read
+by `narxnoma/config.py`). It also refuses to truncate a database whose name doesn't
+contain `test`. See `docs/deployment/local-postgres.md` for why: `db_conn` truncates its
+database unconditionally on every `db` test, so a test suite that shared a variable with
+production could destroy live crawler data.
 
 - [ ] **Step 1: Add local Postgres**
 
@@ -432,13 +439,36 @@ ON CONFLICT (slug) DO NOTHING;
 import os
 
 import pytest
+from psycopg.conninfo import conninfo_to_dict
+
+
+def require_disposable_test_database(dsn: str) -> None:
+    """Belt-and-braces guard, independent of the NARXNOMA_TEST_DSN /
+    NARXNOMA_DSN split above: refuse to truncate any database whose name
+    does not mark it as disposable.
+
+    The primary guard against wiping production is that the test suite
+    reads NARXNOMA_TEST_DSN, a variable distinct from NARXNOMA_DSN (the
+    setting narxnoma/config.py hands the deployed crawler and web app).
+    This function is the second line of defense, for the case where
+    NARXNOMA_TEST_DSN itself gets pointed at the wrong database.
+    """
+    dbname = conninfo_to_dict(dsn).get("dbname") or ""
+    if "test" not in dbname:
+        raise RuntimeError(
+            f"refusing to truncate database {dbname!r}: the test suite only "
+            "runs against a database whose name contains 'test', so that a "
+            "human can see at a glance it is disposable. Point "
+            "NARXNOMA_TEST_DSN at a database like 'narxnoma_test', not "
+            f"{dbname!r}."
+        )
 
 
 @pytest.fixture(scope="session")
 def dsn():
-    value = os.environ.get("NARXNOMA_DSN")
+    value = os.environ.get("NARXNOMA_TEST_DSN")
     if not value:
-        pytest.skip("NARXNOMA_DSN not set; start docker-compose and export it")
+        pytest.skip("NARXNOMA_TEST_DSN not set; start postgres and export it")
     return value
 
 
@@ -446,6 +476,8 @@ def dsn():
 def db_conn(dsn):
     from narxnoma.db.connection import connect
     from narxnoma.db.migrate import migrate
+
+    require_disposable_test_database(dsn)
 
     with connect(dsn) as conn:
         migrate(conn)
@@ -456,6 +488,24 @@ def db_conn(dsn):
             yield conn
         finally:
             conn.rollback()
+```
+
+`tests/test_conftest_guard.py` — a test for the guard itself, so a regression in
+`require_disposable_test_database` is caught without needing a live database:
+
+```python
+import pytest
+
+from conftest import require_disposable_test_database
+
+
+def test_refuses_a_database_without_test_in_its_name():
+    with pytest.raises(RuntimeError):
+        require_disposable_test_database("postgresql://narxnoma@127.0.0.1:55432/narxnoma")
+
+
+def test_does_not_raise_for_a_database_named_with_test_suffix():
+    require_disposable_test_database("postgresql://narxnoma@127.0.0.1:55432/narxnoma_test")
 ```
 
 `tests/db/test_migrate.py`:
@@ -499,7 +549,7 @@ Register the markers in `pyproject.toml` under `[tool.pytest.ini_options]`:
 
 ```toml
 markers = [
-    "db: needs a PostgreSQL instance (set NARXNOMA_DSN)",
+    "db: needs a PostgreSQL instance (set NARXNOMA_TEST_DSN, a disposable database distinct from the production NARXNOMA_DSN)",
     "live: hits a real retailer API",
 ]
 addopts = "-m 'not live'"
@@ -508,7 +558,7 @@ addopts = "-m 'not live'"
 - [ ] **Step 4: Run to verify failure**
 
 Run: `cd narxnoma-crawler && python -m pytest tests/db -v`
-Expected: FAIL — `ModuleNotFoundError: No module named 'narxnoma.db'` (or SKIP if `NARXNOMA_DSN` is unset; export it first, after `docker compose up -d`).
+Expected: FAIL — `ModuleNotFoundError: No module named 'narxnoma.db'` (or SKIP if `NARXNOMA_TEST_DSN` is unset; export it first, after `docker compose up -d`). Do not export `NARXNOMA_DSN` for this — that is the production variable; the test suite reads `NARXNOMA_TEST_DSN` only, and never falls back.
 
 - [ ] **Step 5: Implement**
 
@@ -560,11 +610,14 @@ def migrate(conn: psycopg.Connection) -> None:
 
 ```bash
 cd narxnoma-crawler && docker compose up -d
-export NARXNOMA_DSN=postgresql://narxnoma:narxnoma@localhost:5432/narxnoma
+docker compose exec db createdb -U narxnoma narxnoma_test   # once, alongside the default narxnoma db
+export NARXNOMA_TEST_DSN=postgresql://narxnoma:narxnoma@localhost:5432/narxnoma_test
 python -m pytest tests/db -v
 ```
 
-Expected: PASS — 3 passed
+Expected: PASS — 3 passed. Use `NARXNOMA_TEST_DSN`, not `NARXNOMA_DSN`, for running tests —
+see `docs/deployment/local-postgres.md` for why the two must never point at the same
+database.
 
 - [ ] **Step 7: Commit**
 
