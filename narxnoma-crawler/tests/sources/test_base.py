@@ -1,7 +1,7 @@
 import pytest
 
 from narxnoma.sources.base import (
-    PRICE_MAX, PRICE_MIN, Listing, is_plausible_price, try_build_listing,
+    PRICE_MAX, PRICE_MIN, Listing, coerce_price, is_plausible_price, try_build_listing,
 )
 
 
@@ -58,6 +58,45 @@ def test_try_build_listing_returns_none_for_missing_url():
         store_slug="olcha", source_key="k", name_raw="X", price=1_000_000, url="",
     )
     assert lst is None
+
+
+def test_coerce_price_passes_through_int():
+    assert coerce_price(3246000) == 3246000
+
+
+def test_coerce_price_parses_numeric_string():
+    assert coerce_price("3246000") == 3246000
+
+
+def test_coerce_price_rejects_zero_int():
+    assert coerce_price(0) is None
+
+
+def test_coerce_price_rejects_zero_string():
+    assert coerce_price("0") is None
+
+
+def test_coerce_price_rejects_empty_string():
+    assert coerce_price("") is None
+
+
+def test_coerce_price_rejects_none():
+    assert coerce_price(None) is None
+
+
+def test_coerce_price_rejects_non_numeric_string():
+    assert coerce_price("not-a-price") is None
+
+
+def test_coerce_price_parses_float_ish_string():
+    # olcha's total_price arrives as a string like "3246000.0" in practice.
+    assert coerce_price("3246000.0") == 3246000
+
+
+def test_coerce_price_rejects_negative_value():
+    # A negative price is meaningless, and the plausibility fences would
+    # reject it anyway -- coerce it away at the source instead.
+    assert coerce_price(-5000) is None
 
 
 def test_try_build_listing_returns_none_for_unexpected_keyword_argument():

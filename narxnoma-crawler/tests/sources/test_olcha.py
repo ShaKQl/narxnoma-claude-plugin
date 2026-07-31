@@ -64,6 +64,27 @@ def test_known_product_parses_exactly():
     assert by_key[KNOWN_SOURCE_KEY].url == KNOWN_URL
 
 
+def test_falls_back_to_total_price_when_discount_price_is_absent():
+    # Every item in the recorded fixture has a non-null discount_price, so
+    # the total_price-as-string fallback branch never runs in the other
+    # tests above. The live API types these two fields differently
+    # (discount_price: int, total_price: string) and only discount_price is
+    # exercised by the recording -- a broken string coercion here would
+    # pass the whole suite silently. Force the fallback by nulling out
+    # discount_price on one real item and keep its (string) total_price.
+    data = payload()
+    products = data["data"]["products"]
+    target = products[0]
+    target["discount_price"] = None
+    expected_price = int(float(target["total_price"]))
+
+    by_key = {lst.source_key: lst for lst in parse(data)}
+    assert target["alias"] in by_key
+    result = by_key[target["alias"]]
+    assert isinstance(result.price, int)
+    assert result.price == expected_price
+
+
 def test_malformed_items_are_dropped_not_raised():
     # One bad item must never kill a sweep of several hundred.
     broken = payload()

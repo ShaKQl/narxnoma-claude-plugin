@@ -17,6 +17,31 @@ def is_plausible_price(price: int | None) -> bool:
     return price is not None and PRICE_MIN <= price <= PRICE_MAX
 
 
+def coerce_price(value: Any) -> int | None:
+    """Coerce a retailer's raw price field to an int, or None if unusable.
+
+    Retailer price fields are untyped in practice: olcha returns
+    `discount_price` as an int but `total_price` as a string; mediapark
+    returns `price` as a string; alifshop returns tiyin. Assuming any of
+    these is already an int is how a whole source silently yields nothing --
+    every client must run its price fields through this before building a
+    Listing.
+
+    `None`, `""`, `0`, `"0"`, and any non-numeric string all return `None`.
+    A negative value also returns `None`: a negative price is meaningless
+    and the plausibility fences in `Listing` would reject it anyway.
+    """
+    if value in (None, "", 0, "0"):
+        return None
+    try:
+        price = int(float(value))
+    except (TypeError, ValueError):
+        return None
+    if price < 0:
+        return None
+    return price
+
+
 @dataclass(frozen=True)
 class Listing:
     """One offer as the retailer stated it. Nothing is inferred here."""

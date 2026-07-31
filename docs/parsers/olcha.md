@@ -12,8 +12,9 @@ the best coverage of the non-uzum sources.
 
 olcha's search endpoint caps results per query, so 66 phones would mean 66 ranked,
 truncated calls. The catalogue endpoint returns the *entire* smartphone category in
-**22 paged calls** with no ranking cap — fewer requests, complete data, and matching
-happens offline against the full set.
+**~23 paged calls** (indicative, not fixed -- the catalogue grows) with no ranking
+cap — fewer requests, complete data, and matching happens offline against the full
+set.
 
 Use this pattern whenever a site exposes a category listing and the category is small
 enough (hundreds, not thousands). It is **not** viable on uzum or alifshop, where the
@@ -39,8 +40,9 @@ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 `clientmodel: web` is required.
 
 > **`per_page` is capped at 20 server-side.** Requesting 100 silently returns 20, so
-> the page count is fixed by the category size (~440 phones → 22 pages). Don't try to
-> shortcut it.
+> the page count is fixed by the category size (~460 phones → ~23 pages as observed
+> in a live sweep on 2026-07-31; indicative, not fixed -- it drifts as the catalogue
+> changes). Don't try to shortcut it.
 
 ## 3. Response shape
 
@@ -50,24 +52,33 @@ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
     "products": [
       {
         "name_ru": "Смартфон Samsung Galaxy A27 5G 8/256GB Pink",
-        "discount_price": 3290000,   // current price, PLAIN SUM
-        "total_price": 3590000,      // pre-discount
+        "discount_price": 3290000,   // current price, PLAIN SUM, arrives as an int
+        "total_price": "3590000",    // pre-discount, arrives as a STRING
         "alias": "smartfon-samsung-galaxy-a27-5g-8-256gb-pink",
         "quantity": 12
       }
     ],
-    "paginator": {"last_page": 22}
+    "paginator": {"last_page": 23}
   }
 }
 ```
 
 | Field | Meaning |
 |---|---|
-| `discount_price` | **use this**; fall back to `total_price` when absent/0 |
+| `discount_price` | **use this**; fall back to `total_price` when absent/0. Arrives as an **int**. |
+| `total_price` | fallback only. Arrives as a **string**, not an int -- do not assume either field's type. |
 | `name_ru` | carries RAM + storage + colour |
 | `alias` | URL slug |
 | `quantity` | stock |
 | `paginator.last_page` | loop bound |
+
+> **Both price fields must go through numeric coercion, never used raw.**
+> `discount_price` and `total_price` are typed differently by the same
+> endpoint on the same item -- a retailer changing a field's JSON type is
+> invisible to a status-code check, and code that assumes an int is how a
+> whole source silently yields nothing. This is why every price in this
+> client passes through `coerce_price()` (`narxnoma/sources/base.py`)
+> before a `Listing` is built.
 
 ## 4. Product URL — verified
 
@@ -113,10 +124,10 @@ def fetch_catalog(session, refresh=False):
 
 ## 6. Matching against a full catalogue
 
-Because you score every phone against ~440 items rather than a ranked top-20, ties
-are common — the catalogue contains both parent rows and per-variant rows. **Break
-ties toward the cheapest**, since variation rows carry the full spec and win on model
-tokens anyway:
+Because you score every phone against ~460 items (indicative, not fixed) rather than
+a ranked top-20, ties are common — the catalogue contains both parent rows and
+per-variant rows. **Break ties toward the cheapest**, since variation rows carry the
+full spec and win on model tokens anyway:
 
 ```python
 if sc > best_score or (sc == best_score and best and item["price"] < best["price"]):

@@ -5,9 +5,9 @@ smartphone category is fewer calls and better coverage than one search per
 phone (see docs/parsers/olcha.md). `search()` therefore filters the swept
 catalogue client-side rather than hitting a different endpoint.
 """
-from typing import Any, Iterator
+from typing import Iterator
 
-from narxnoma.sources.base import Listing, try_build_listing
+from narxnoma.sources.base import Listing, coerce_price, try_build_listing
 from narxnoma.sources.http import get_json, polite_session
 
 API_URL = "https://mobile.olcha.uz/api/v2/products"
@@ -22,22 +22,14 @@ _HEADERS = {
 }
 
 
-def _to_price(value: Any) -> int | None:
-    """olcha prices arrive as either int or numeric string; never trust either blindly."""
-    if value in (None, "", 0, "0"):
-        return None
-    try:
-        return int(float(value))
-    except (TypeError, ValueError):
-        return None
-
-
 def _parse_item(item: dict) -> Listing | None:
     alias = item.get("alias")
     name = item.get("name_ru")
-    price = _to_price(item.get("discount_price"))
+    # discount_price arrives as int, total_price as string -- coerce_price
+    # handles both so this fallback doesn't silently break on type alone.
+    price = coerce_price(item.get("discount_price"))
     if price is None:
-        price = _to_price(item.get("total_price"))
+        price = coerce_price(item.get("total_price"))
     if not alias:
         return None
 
@@ -90,6 +82,10 @@ class OlchaSource:
         page = 1
         last_page = 1
         while page <= last_page:
+            # TODO(plan-3): no per-page error handling -- a transient failure
+            # on any one page (e.g. page 12 of 23) loses the whole sweep.
+            # Partial-progress recovery (retry/resume) is deferred; the next
+            # six clients inherit this same gap until it's built once, here.
             payload = get_json(
                 session,
                 API_URL,
