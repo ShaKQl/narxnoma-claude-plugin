@@ -5,8 +5,24 @@ import sys
 
 from narxnoma.db.connection import connect
 from narxnoma.db.migrate import migrate
-from narxnoma.pipeline.harvest import harvest_all
+from narxnoma.pipeline.harvest import HarvestResult, harvest_all
 from narxnoma.sources import SOURCES
+
+
+def render_status(result: HarvestResult) -> str:
+    """Render one of three visibly distinct states for a harvest result.
+
+    `skipped` is checked before `ok` on purpose: a skipped source currently
+    also carries ok=True (it isn't a failure), so checking `ok` first would
+    render it as plain "ok" -- indistinguishable from a source that
+    genuinely swept its whole catalogue. That was the bug: mediapark's
+    skip looked identical to a real, successful, zero-listing run.
+    """
+    if result.skipped:
+        return f"SKIPPED ({result.error})"
+    if not result.ok:
+        return f"FAILED: {result.error}"
+    return "ok"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -25,8 +41,7 @@ def main(argv: list[str] | None = None) -> int:
         results = harvest_all(conn, chosen)
 
     for r in results:
-        status = "ok" if r.ok else f"FAILED: {r.error}"
-        logging.info("%-10s seen=%-6d kept=%-6d %s", r.slug, r.seen, r.kept, status)
+        logging.info("%-10s seen=%-6d kept=%-6d %s", r.slug, r.seen, r.kept, render_status(r))
     return 0 if all(r.ok for r in results) else 1
 
 
