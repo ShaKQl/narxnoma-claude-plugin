@@ -1,6 +1,9 @@
 """Shared vocabulary for every retailer client."""
+import logging
 from dataclasses import dataclass, field
 from typing import Any, Iterator, Protocol, runtime_checkable
+
+logger = logging.getLogger(__name__)
 
 # A price outside this range is a unit bug, not a bargain. alifshop reports
 # tiyin (1/100 SUM); forgetting the divisor lands 100x high.
@@ -35,6 +38,21 @@ class Listing:
             raise ValueError(f"implausible price {self.price!r} for {self.source_key!r}")
         if self.availability not in AVAILABILITY:
             raise ValueError(f"unknown availability {self.availability!r}")
+
+
+def try_build_listing(**kwargs) -> Listing | None:
+    """Build a Listing, or return None and log why.
+
+    One malformed item must never kill a sweep of several hundred, and all
+    seven clients must drop them the same way -- so the handling lives here
+    rather than being re-implemented per client.
+    """
+    try:
+        return Listing(**kwargs)
+    except ValueError as exc:
+        source_key = kwargs.get("source_key") or "<no source_key>"
+        logger.warning("dropping malformed listing %r: %s", source_key, exc)
+        return None
 
 
 @runtime_checkable

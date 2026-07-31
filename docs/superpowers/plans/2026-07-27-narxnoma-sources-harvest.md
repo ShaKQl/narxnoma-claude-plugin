@@ -73,7 +73,7 @@ narxnoma-crawler/
 
 **Interfaces:**
 - Consumes: nothing.
-- Produces: `Settings` (from `config`); `Listing` frozen dataclass with fields `store_slug, source_key, name_raw, price, url, availability, image_url, raw`; `PRICE_MIN`, `PRICE_MAX`, `is_plausible_price(price) -> bool`; `Source` protocol with `slug: str`, `sweep() -> Iterator[Listing]`, `search(query: str) -> Iterator[Listing]`, `can_sweep: bool`; and from `http.py`: `polite_session(referer, origin, extra_headers) -> requests.Session`, `pause()`, `get_json(session, url, **kwargs) -> dict`, `post_json(session, url, **kwargs) -> dict`. Every retailer client calls `get_json`/`post_json` — they apply the timeout and the inter-request delay.
+- Produces: `Settings` (from `config`); `Listing` frozen dataclass with fields `store_slug, source_key, name_raw, price, url, availability, image_url, raw`; `PRICE_MIN`, `PRICE_MAX`, `is_plausible_price(price) -> bool`; `try_build_listing(**kwargs) -> Listing | None`; `Source` protocol with `slug: str`, `sweep() -> Iterator[Listing]`, `search(query: str) -> Iterator[Listing]`, `can_sweep: bool`; and from `http.py`: `polite_session(referer, origin, extra_headers) -> requests.Session`, `pause()`, `get_json(session, url, **kwargs) -> dict`, `post_json(session, url, **kwargs) -> dict`. Every retailer client calls `get_json`/`post_json` — they apply the timeout and the inter-request delay.
 
 - [ ] **Step 1: Add runtime dependencies**
 
@@ -851,7 +851,7 @@ def test_malformed_items_are_dropped_not_raised():
 
 - [ ] **Step 3: Run it and confirm it fails** with `ModuleNotFoundError`.
 
-- [ ] **Step 4: Implement the client.** Read `docs/parsers/<slug>.md` for the endpoint contract and `narxnoma-seed/sources.py` for the verified request handling. `parse()` must be a pure function of the payload so it is testable offline. Drop and count any item that fails `Listing` construction rather than raising — one malformed item must not kill a sweep.
+- [ ] **Step 4: Implement the client.** Read `docs/parsers/<slug>.md` for the endpoint contract and `narxnoma-seed/sources.py` for the verified request handling. `parse()` must be a pure function of the payload so it is testable offline. Build each `Listing` with `try_build_listing` (Task 1), never `Listing(...)` directly — a parse loop that constructs `Listing` itself is re-implementing the drop-and-count handling that `try_build_listing` exists to centralize, one malformed item must not kill a sweep, and any item `try_build_listing` returns `None` for is dropped and counted rather than raising.
 
 - [ ] **Step 5: Run the parse test and confirm it passes.**
 

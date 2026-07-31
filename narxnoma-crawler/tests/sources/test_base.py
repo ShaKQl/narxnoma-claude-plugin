@@ -1,7 +1,7 @@
 import pytest
 
 from narxnoma.sources.base import (
-    PRICE_MAX, PRICE_MIN, Listing, is_plausible_price,
+    PRICE_MAX, PRICE_MIN, Listing, is_plausible_price, try_build_listing,
 )
 
 
@@ -36,3 +36,25 @@ def test_listing_is_frozen_and_hashable():
     hash(lst)
     with pytest.raises(Exception):
         lst.price = 5
+
+
+def test_try_build_listing_returns_listing_for_valid_input():
+    lst = try_build_listing(
+        store_slug="olcha", source_key="k", name_raw="X", price=1_000_000, url="u",
+    )
+    assert isinstance(lst, Listing)
+    assert lst.source_key == "k"
+
+
+def test_try_build_listing_returns_none_for_implausible_price():
+    lst = try_build_listing(
+        store_slug="olcha", source_key="k", name_raw="X", price=99, url="u",
+    )
+    assert lst is None
+
+
+def test_try_build_listing_returns_none_for_missing_url():
+    lst = try_build_listing(
+        store_slug="olcha", source_key="k", name_raw="X", price=1_000_000, url="",
+    )
+    assert lst is None

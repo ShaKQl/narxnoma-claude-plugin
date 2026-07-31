@@ -8,16 +8,26 @@ import time
 
 import requests
 
-from narxnoma.config import load_settings
+from narxnoma.config import Settings, load_settings
 
-_SETTINGS = load_settings()
+# Loaded lazily so tests can monkeypatch settings without an import-time
+# side effect baking a delay in before the test gets a chance to change it.
+_settings: Settings | None = None
+
+
+def _get_settings() -> Settings:
+    global _settings
+    if _settings is None:
+        _settings = load_settings()
+    return _settings
 
 
 def polite_session(referer: str, origin: str | None = None,
                    extra_headers: dict[str, str] | None = None) -> requests.Session:
+    settings = _get_settings()
     session = requests.Session()
     session.headers.update({
-        "User-Agent": _SETTINGS.user_agent,
+        "User-Agent": settings.user_agent,
         "Accept": "application/json, text/plain, */*",
         "Referer": referer,
     })
@@ -29,20 +39,31 @@ def polite_session(referer: str, origin: str | None = None,
 
 
 def pause() -> None:
-    time.sleep(random.uniform(_SETTINGS.min_delay, _SETTINGS.max_delay))
+    settings = _get_settings()
+    time.sleep(random.uniform(settings.min_delay, settings.max_delay))
 
 
 def get_json(session: requests.Session, url: str, **kwargs) -> dict:
-    timeout = (_SETTINGS.connect_timeout, _SETTINGS.read_timeout)
-    response = session.get(url, timeout=timeout, **kwargs)
-    response.raise_for_status()
-    pause()
+    settings = _get_settings()
+    timeout = (settings.connect_timeout, settings.read_timeout)
+    # The delay runs whether the request succeeds or raises: a failing
+    # retailer is exactly when backing off matters most, and a retry loop
+    # must not hit a struggling API at full speed.
+    try:
+        response = session.get(url, timeout=timeout, **kwargs)
+        response.raise_for_status()
+    finally:
+        pause()
     return response.json() or {}
 
 
 def post_json(session: requests.Session, url: str, **kwargs) -> dict:
-    timeout = (_SETTINGS.connect_timeout, _SETTINGS.read_timeout)
-    response = session.post(url, timeout=timeout, **kwargs)
-    response.raise_for_status()
-    pause()
+    settings = _get_settings()
+    timeout = (settings.connect_timeout, settings.read_timeout)
+    # See get_json: the delay must not be skipped on failure.
+    try:
+        response = session.post(url, timeout=timeout, **kwargs)
+        response.raise_for_status()
+    finally:
+        pause()
     return response.json() or {}
