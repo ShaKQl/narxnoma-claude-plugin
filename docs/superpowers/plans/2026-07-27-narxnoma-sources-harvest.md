@@ -1308,11 +1308,30 @@ def test_malformed_items_are_dropped_not_raised():
     # One bad item must never kill a sweep of several hundred.
     broken = payload()
     parse(broken)          # must not raise even with the junk item below
+
+
+def test_parsed_count_is_pinned_to_the_recording():
+    """Pin how many of the recorded items survive parsing.
+
+    Retailer responses mix phones with accessories, and the price fence
+    silently drops the accessories -- correctly, but silently. Without this
+    assertion a change to PRICE_MIN or coerce_price could turn a 4,000 SUM
+    screen protector into a catalogue entry and no test would fail.
+    """
+    raw_items = ...          # FIXTURE: count the item list in the recorded file
+    parsed = parse(payload())
+    assert len(parsed) == 0  # FIXTURE: replace with the real parsed count
+    # If parsed < raw, name each dropped item and why, so the gap is deliberate.
 ```
 
   Finish `test_malformed_items_are_dropped_not_raised` by injecting a junk item into the
   payload's item list in the shape idea uses — an entry with a null price, or a missing
   name — and asserting `parse()` returns the other items without raising.
+
+  Then fill in `test_parsed_count_is_pinned_to_the_recording`: count the items in the
+  recorded fixture and the items `parse()` actually returns, identify every item the
+  recording drops and say why in a comment — a source quietly discarding items is the
+  failure mode this project exists to prevent.
 
 - [ ] **Step 3: Run it and confirm it fails** with `ModuleNotFoundError`.
 
@@ -1481,11 +1500,30 @@ def test_malformed_items_are_dropped_not_raised():
     # One bad item must never kill a sweep of several hundred.
     broken = payload()
     parse(broken)          # must not raise even with the junk item below
+
+
+def test_parsed_count_is_pinned_to_the_recording():
+    """Pin how many of the recorded items survive parsing.
+
+    Retailer responses mix phones with accessories, and the price fence
+    silently drops the accessories -- correctly, but silently. Without this
+    assertion a change to PRICE_MIN or coerce_price could turn a 4,000 SUM
+    screen protector into a catalogue entry and no test would fail.
+    """
+    raw_items = ...          # FIXTURE: count the item list in the recorded file
+    parsed = parse(payload())
+    assert len(parsed) == 0  # FIXTURE: replace with the real parsed count
+    # If parsed < raw, name each dropped item and why, so the gap is deliberate.
 ```
 
   Finish `test_malformed_items_are_dropped_not_raised` by injecting a junk item into the
   payload's item list in the shape beemarket uses — an entry with a null price, or a
   missing name — and asserting `parse()` returns the other items without raising.
+
+  Then fill in `test_parsed_count_is_pinned_to_the_recording`: count the items in the
+  recorded fixture and the items `parse()` actually returns, identify every item the
+  recording drops and say why in a comment — a source quietly discarding items is the
+  failure mode this project exists to prevent.
 
 - [ ] **Step 3: Run it and confirm it fails** with `ModuleNotFoundError`.
 
@@ -1658,11 +1696,30 @@ def test_malformed_items_are_dropped_not_raised():
     # One bad item must never kill a sweep of several hundred.
     broken = payload()
     parse(broken)          # must not raise even with the junk item below
+
+
+def test_parsed_count_is_pinned_to_the_recording():
+    """Pin how many of the recorded items survive parsing.
+
+    Retailer responses mix phones with accessories, and the price fence
+    silently drops the accessories -- correctly, but silently. Without this
+    assertion a change to PRICE_MIN or coerce_price could turn a 4,000 SUM
+    screen protector into a catalogue entry and no test would fail.
+    """
+    raw_items = ...          # FIXTURE: count the item list in the recorded file
+    parsed = parse(payload())
+    assert len(parsed) == 0  # FIXTURE: replace with the real parsed count
+    # If parsed < raw, name each dropped item and why, so the gap is deliberate.
 ```
 
   Finish `test_malformed_items_are_dropped_not_raised` by injecting a junk item into the
   payload's item list in the shape alifshop uses — an entry with a null price, or a
   missing name — and asserting `parse()` returns the other items without raising.
+
+  Then fill in `test_parsed_count_is_pinned_to_the_recording`: count the items in the
+  recorded fixture and the items `parse()` actually returns, identify every item the
+  recording drops and say why in a comment — a source quietly discarding items is the
+  failure mode this project exists to prevent.
 
   **Add one further test** asserting the tiyin conversion explicitly, by reading the raw
   integer for `KNOWN_SOURCE_KEY` straight out of the fixture and checking
@@ -1845,11 +1902,30 @@ def test_malformed_items_are_dropped_not_raised():
     # One bad item must never kill a sweep of several hundred.
     broken = payload()
     parse(broken)          # must not raise even with the junk item below
+
+
+def test_parsed_count_is_pinned_to_the_recording():
+    """Pin how many of the recorded items survive parsing.
+
+    Retailer responses mix phones with accessories, and the price fence
+    silently drops the accessories -- correctly, but silently. Without this
+    assertion a change to PRICE_MIN or coerce_price could turn a 4,000 SUM
+    screen protector into a catalogue entry and no test would fail.
+    """
+    raw_items = ...          # FIXTURE: count the item list in the recorded file
+    parsed = parse(payload())
+    assert len(parsed) == 0  # FIXTURE: replace with the real parsed count
+    # If parsed < raw, name each dropped item and why, so the gap is deliberate.
 ```
 
   Finish `test_malformed_items_are_dropped_not_raised` by injecting a junk item into the
   payload's item list in the shape mediapark uses — an entry with a null price, or a
   missing name — and asserting `parse()` returns the other items without raising.
+
+  Then fill in `test_parsed_count_is_pinned_to_the_recording`: count the items in the
+  recorded fixture and the items `parse()` actually returns, identify every item the
+  recording drops and say why in a comment — a source quietly discarding items is the
+  failure mode this project exists to prevent.
 
 - [ ] **Step 3: Run it and confirm it fails** with `ModuleNotFoundError`.
 
@@ -2045,6 +2121,20 @@ def test_malformed_items_are_dropped_not_raised():
     # One bad item must never kill a sweep of several hundred.
     broken = payload()
     parse(broken)          # must not raise even with the junk item below
+
+
+def test_parsed_count_is_pinned_to_the_recording():
+    """Pin how many of the recorded items survive parsing.
+
+    Retailer responses mix phones with accessories, and the price fence
+    silently drops the accessories -- correctly, but silently. Without this
+    assertion a change to PRICE_MIN or coerce_price could turn a 4,000 SUM
+    screen protector into a catalogue entry and no test would fail.
+    """
+    raw_items = ...          # FIXTURE: count the item list in the recorded file
+    parsed = parse(payload())
+    assert len(parsed) == 0  # FIXTURE: replace with the real parsed count
+    # If parsed < raw, name each dropped item and why, so the gap is deliberate.
 ```
 
   Finish `test_malformed_items_are_dropped_not_raised` by injecting a junk item into the
@@ -2053,6 +2143,11 @@ def test_malformed_items_are_dropped_not_raised():
   `errors`-key failure mode: construct a payload shaped like
   `{"data": null, "errors": [{"message": "..."}]}` and assert `parse()` returns `[]`
   rather than raising or silently returning garbage.
+
+  Then fill in `test_parsed_count_is_pinned_to_the_recording`: count the items in the
+  recorded fixture and the items `parse()` actually returns, identify every item the
+  recording drops and say why in a comment — a source quietly discarding items is the
+  failure mode this project exists to prevent.
 
 - [ ] **Step 3: Run it and confirm it fails** with `ModuleNotFoundError`.
 

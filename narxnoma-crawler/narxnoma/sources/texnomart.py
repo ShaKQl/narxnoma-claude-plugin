@@ -25,6 +25,8 @@ _HEADERS = {
 
 def _parse_item(item: dict) -> Listing | None:
     product_id = item.get("id")
+    if not product_id:
+        return None
     name = item.get("name")
     # old_price is frequently 0 and must never be used as a price fallback --
     # sale_price is the only field texnomart guarantees to be current.
@@ -32,10 +34,10 @@ def _parse_item(item: dict) -> Listing | None:
 
     return try_build_listing(
         store_slug="texnomart",
-        source_key=str(product_id) if product_id else None,
+        source_key=str(product_id),
         name_raw=name,
         price=price,
-        url=PRODUCT_URL.format(id=product_id) if product_id else None,
+        url=PRODUCT_URL.format(id=product_id),
         image_url=item.get("image"),
         raw=item,
     )

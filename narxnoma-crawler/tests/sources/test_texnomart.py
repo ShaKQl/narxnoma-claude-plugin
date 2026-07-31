@@ -80,8 +80,33 @@ def test_malformed_items_are_dropped_not_raised():
         "sale_price": None,
         "old_price": 0,
     })
-    good_keys = {lst.source_key for lst in parse(payload())}
-    result_keys = {lst.source_key for lst in parse(broken)}   # must not raise even with the junk items above
+    good_listings = parse(payload())
+    good_keys = {lst.source_key for lst in good_listings}
+    result_listings = parse(broken)   # must not raise even with the junk items above
+    result_keys = {lst.source_key for lst in result_listings}
     assert good_keys <= result_keys
     assert "999999001" not in result_keys
     assert "999999002" not in result_keys
+    # Neither junk item may leak through under some other key either -- pin the
+    # count so a leak can't pass by coincidentally matching an existing key.
+    assert len(result_listings) == len(good_listings)
+
+
+def test_price_fence_drops_the_recorded_accessory():
+    """Pin the one real drop in the recorded fixture, not just its count.
+
+    The fixture holds 20 raw items but parse() yields 19. The missing one is
+    id 88473, "Keramik himoya oynasi Redmi Note 9S" -- a ceramic screen
+    protector priced at 4,000 SUM, well below the 100,000 SUM price fence.
+    It's an accessory, not a phone, and the fence is correctly rejecting it.
+    Asserting the specific key (not just a count) means this test still
+    means something if the fixture is ever re-recorded and its size changes.
+    """
+    raw_items = payload()["data"]["products"]
+    assert len(raw_items) == 20
+
+    listings = parse(payload())
+    assert len(listings) == 19
+
+    parsed_keys = {lst.source_key for lst in listings}
+    assert "88473" not in parsed_keys
