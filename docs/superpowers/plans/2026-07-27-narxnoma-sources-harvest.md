@@ -19,6 +19,11 @@
 - `raw_offer` is **append-only**. Never update or delete a row in it.
 - Politeness: sequential requests per source, 0.3–0.6 s between them, a real browser `User-Agent`, and the exact `Origin`/`Referer` that retailer's own SPA sends.
 - Unit tests must not touch the network. Parsing is tested against recorded fixtures; live contract tests are marked and skipped by default.
+- **The development machine has no Docker and no local PostgreSQL.** Tests marked `db`
+  (Tasks 2, 3 and 12) therefore *skip* during development and are verified for real on the
+  server during deployment. Every other test — Tasks 1 and 4–11 — must pass locally, so a
+  task is not done until its non-`db` tests are green. Do not weaken a test to make it run
+  without a database; mark it `db` and move on.
 - `docs/parsers/` is the source of truth for every endpoint. If an implementation and a doc disagree, verify live, then fix **both in the same commit**.
 
 ---
@@ -762,7 +767,87 @@ For every one of these tasks:
 
 - [ ] **Step 1: Record a real response into a fixture.** Call the documented endpoint once with the documented headers, and save the raw JSON to `tests/fixtures/sources/<slug>.json`. Trim it to at most 20 items so the fixture stays readable, but do not otherwise edit it — an edited fixture tests your assumptions rather than the retailer's behaviour. Note the exact request you made in a comment at the top of the test file.
 
-- [ ] **Step 2: Write the failing parse test** against that fixture. It must assert, at minimum: the listing count is greater than zero; every price is an integer within the fences; every listing has a non-empty `source_key`, `name_raw` and `url`; and one specific known product from the fixture parses to its exact expected price and URL. For alifshop additionally assert the tiyin division by checking a price against the raw payload value divided by 100.
+- [ ] **Step 2: Write the failing parse test** against that fixture, using this exact
+  structure. Only the three values marked `# FIXTURE:` are read off the recorded file —
+  everything else is literal. Replace `<slug>`/`<Slug>` throughout.
+
+```python
+"""Offline parse tests for the <slug> client.
+
+Fixture recorded live on YYYY-MM-DD with:
+    <the exact URL and headers you used in Step 1>
+"""
+import json
+import pathlib
+
+from narxnoma.sources.<slug> import parse
+from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
+
+FIXTURE = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "sources" / "<slug>.json"
+
+# FIXTURE: copy these three from one real item in the recorded file.
+KNOWN_SOURCE_KEY = "..."
+KNOWN_PRICE = 0            # in SUM, after any unit conversion
+KNOWN_URL = "https://..."
+
+
+def payload():
+    return json.loads(FIXTURE.read_text(encoding="utf-8"))
+
+
+def test_fixture_exists_and_is_not_empty():
+    """Guards against the parse tests passing vacuously over an empty file."""
+    assert FIXTURE.exists(), f"record the fixture first: {FIXTURE}"
+    assert payload()
+
+
+def test_parse_returns_listings():
+    listings = parse(payload())
+    assert listings, "parse() found nothing in a real recorded response"
+
+
+def test_every_listing_has_provenance():
+    # A price we cannot attribute to a specific retailer listing is worthless.
+    for lst in parse(payload()):
+        assert lst.store_slug == "<slug>"
+        assert lst.source_key
+        assert lst.name_raw
+        assert lst.url.startswith("http")
+
+
+def test_every_price_is_an_integer_inside_the_fences():
+    for lst in parse(payload()):
+        assert isinstance(lst.price, int)
+        assert PRICE_MIN <= lst.price <= PRICE_MAX
+
+
+def test_source_keys_are_unique_within_one_response():
+    # source_key is the upsert key; duplicates would silently collapse offers.
+    keys = [lst.source_key for lst in parse(payload())]
+    assert len(keys) == len(set(keys))
+
+
+def test_known_product_parses_exactly():
+    by_key = {lst.source_key: lst for lst in parse(payload())}
+    assert KNOWN_SOURCE_KEY in by_key
+    assert by_key[KNOWN_SOURCE_KEY].price == KNOWN_PRICE
+    assert by_key[KNOWN_SOURCE_KEY].url == KNOWN_URL
+
+
+def test_malformed_items_are_dropped_not_raised():
+    # One bad item must never kill a sweep of several hundred.
+    broken = payload()
+    parse(broken)          # must not raise even with the junk item below
+```
+
+  Finish `test_malformed_items_are_dropped_not_raised` by injecting a junk item into the
+  payload's item list in the shape that source uses — an entry with a null price, or a
+  missing name — and asserting `parse()` returns the other items without raising.
+
+  **alifshop only:** add one further test asserting the tiyin conversion explicitly, by
+  reading the raw integer for `KNOWN_SOURCE_KEY` straight out of the fixture and checking
+  `parsed.price == raw_price // 100`. Forgetting that divisor produces prices 100× too
+  large, and the fences alone would not catch a partial-divisor bug.
 
 - [ ] **Step 3: Run it and confirm it fails** with `ModuleNotFoundError`.
 
