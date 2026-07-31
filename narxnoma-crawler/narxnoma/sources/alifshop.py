@@ -20,16 +20,25 @@ is exactly what this source must not do.
 
 alifshop's price is in **tiyin** (1/100 SUM) -- see coerce_tiyin_price.
 
-No per-item category signal was found. Unlike idea's `category_id` or
+No per-item category signal exists. Unlike idea's `category_id` or
 beemarket's `category.slug`, individual items in this response carry no
 category field at all -- the only category information in the payload is
-`aggregations.category`, a dataset-wide histogram (10 buckets with counts,
-e.g. "Смартфоны Samsung": 690, "Микроволновые печи": 50) that says nothing
-about which category any single item belongs to. So, unlike idea.py and
-beemarket.py, `sweep()` here does not filter by category -- there is
-nothing to filter on. A brand-query sweep still mixes in non-phone
-products from the same brand (TVs, vacuum cleaners, appliances); this is a
-known, undocumented gap, not a silent one.
+`aggregations.category`, a dataset-wide histogram over the *whole* result
+set for the query (e.g. "Смартфоны Samsung": 690, "Микроволновые печи":
+50). That histogram cannot label any single item, but the search endpoint
+itself accepts that histogram's own bucket names back as a `category`
+filter, and it genuinely narrows server-side (verified live: a "Samsung"
+query returns 1,034 items; adding `"category": "Смартфоны Samsung"` drops
+that to 690, all genuine phones; adding a nonsense category value returns
+0, proving the server really filters rather than ignoring an unknown key).
+The catch is the bucket name is brand-specific ("Смартфоны Samsung",
+"Смартфоны Xiaomi", ...), so it must be discovered per brand query rather
+than hardcoded -- see `phone_category_from_aggregations`. `sweep()` fetches
+page 0 unfiltered once per brand to read the aggregation, then re-requests
+with the discovered `category` value and paginates that filtered set. If
+no phone-like bucket is found (a retailer rename), it logs a warning and
+falls back to the old unfiltered sweep for that brand rather than yielding
+nothing.
 """
 import logging
 from typing import Iterator
@@ -107,8 +116,10 @@ def _parse_item(item: dict) -> Listing | None:
 def parse(payload: dict) -> list[Listing]:
     """Turn one raw search response into Listings. Pure function, no I/O.
 
-    Unfiltered and faithful to the payload -- see module docstring for why
-    there is no category filtering step here, unlike idea.py/beemarket.py.
+    Unfiltered and faithful to the payload -- category narrowing happens at
+    the request, via `category` in the search body (see module docstring
+    and `phone_category_from_aggregations`), not here. parse() must stay a
+    pure, unfiltered view of whatever payload it is given, filtered or not.
     """
     items = (payload or {}).get("items") or []
     listings = []
@@ -117,6 +128,47 @@ def parse(payload: dict) -> list[Listing]:
         if lst is not None:
             listings.append(lst)
     return listings
+
+
+def phone_category_from_aggregations(payload: dict) -> str | None:
+    """Pick the phones bucket out of a response's category facet.
+
+    alifshop has no per-item category, but the search backend facets on
+    category and accepts that facet's own display string as a filter. The
+    bucket names are brand-specific ("Смартфоны Samsung"), so the value has
+    to be discovered per query rather than hardcoded.
+
+    Matching rule: `key.casefold().startswith("смартфон")` -- a *prefix*
+    test, not a substring test. The observed bucket "Чехлы для смартфонов"
+    (phone cases) *contains* "смартфон" and a naive `in` check would select
+    it -- precisely the noise this filtering exists to remove. "Смарт-часы"
+    (smartwatches) starts with "смарт" but not "смартфон", so the prefix
+    rule correctly excludes it too.
+
+    Reads defensively: a missing `aggregations` key, an empty `terms` list,
+    or non-dict/non-string junk in a bucket all just yield no match. If
+    more than one bucket matches (unexpected, but not impossible), the one
+    with the largest doc_count wins and the rest are logged.
+    """
+    terms = (((payload or {}).get("aggregations") or {}).get("category") or {}).get("terms") or []
+    matches = [
+        term for term in terms
+        if isinstance(term, dict)
+        and isinstance(term.get("key"), str)
+        and term["key"].casefold().startswith("смартфон")
+    ]
+    if not matches:
+        return None
+    best = max(matches, key=lambda term: term.get("doc_count") or 0)
+    others = [term for term in matches if term is not best]
+    if others:
+        logger.info(
+            "alifshop: multiple phone-like category buckets, picked %r (doc_count=%s); others=%s",
+            best["key"],
+            best.get("doc_count"),
+            [(term["key"], term.get("doc_count")) for term in others],
+        )
+    return best["key"]
 
 
 class AlifshopSource:
@@ -135,13 +187,12 @@ class AlifshopSource:
             )
         return self._session
 
-    def _fetch(self, query: str, page: int) -> dict:
+    def _fetch(self, query: str, page: int, category: str | None = None) -> dict:
         session = self._get_session()
-        return post_json(
-            session,
-            API_URL,
-            json={"query": query, "page": page, "size": SIZE},
-        )
+        body = {"query": query, "page": page, "size": SIZE}
+        if category:
+            body["category"] = category
+        return post_json(session, API_URL, json=body)
 
     def sweep(self) -> Iterator[Listing]:
         """Every phone alifshop returns across a fixed list of brand
@@ -152,9 +203,36 @@ class AlifshopSource:
         matching both the "xiaomi" and "redmi" queries), but distinct
         seller offers of the same phone must each survive as their own
         listing.
+
+        Per brand: fetch page 0 unfiltered (one request, doubles as both
+        the first page of items and the aggregation used to find the
+        phones bucket -- see phone_category_from_aggregations), then
+        re-request page 0 *with* the discovered `category` and paginate
+        that filtered result set. That costs one extra request per brand
+        and removes roughly two-thirds of the sweep's non-phone noise
+        (measured: "Samsung" 1,034 -> 690 items, 52 -> 35 pages). If no
+        phone-like bucket is found, log a warning naming the brand and
+        fall back to the unfiltered sweep, so a retailer renaming its
+        buckets degrades to the old behaviour rather than to an empty
+        catalogue.
         """
         seen: set[str] = set()
         for query in BRAND_QUERIES:
+            first_payload = self._fetch(query, 0)
+            category = phone_category_from_aggregations(first_payload)
+            if category:
+                logger.info(
+                    "alifshop: narrowing brand query %r to category %r", query, category
+                )
+                payload = self._fetch(query, 0, category=category)
+            else:
+                logger.warning(
+                    "alifshop: no phone category bucket found for brand query %r; "
+                    "falling back to unfiltered sweep",
+                    query,
+                )
+                payload = first_payload
+
             page = 0
             n_pages = 1
             while page < n_pages and page < MAX_PAGES:
@@ -162,7 +240,6 @@ class AlifshopSource:
                 # failure on any one page loses the rest of this brand's
                 # sweep. Same gap as olcha/texnomart/idea/beemarket;
                 # deferred until partial-progress recovery is built once.
-                payload = self._fetch(query, page)
                 for listing in parse(payload):
                     if listing.source_key in seen:
                         continue
@@ -170,6 +247,8 @@ class AlifshopSource:
                     yield listing
                 n_pages = (payload or {}).get("n_pages") or n_pages
                 page += 1
+                if page < n_pages and page < MAX_PAGES:
+                    payload = self._fetch(query, page, category=category)
 
     def search(self, query: str) -> Iterator[Listing]:
         payload = self._fetch(query, 0)

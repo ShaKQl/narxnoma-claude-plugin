@@ -78,7 +78,37 @@ Body:
 No per-item category or product-type field exists anywhere in this response.
 `aggregations.category` is a dataset-wide histogram (10 buckets with counts) over
 the *whole* result set for the query, not a per-item field — it cannot be used to
-filter an individual item as phone vs. non-phone.
+tag an individual item as phone vs. non-phone.
+
+**But the search request accepts a `category` filter, and it genuinely narrows
+server-side.** The valid values are exactly the display strings in that same
+response's `aggregations.category.terms[].key` — there is no numeric id, and the
+value is brand-specific ("Смартфоны Samsung", "Смартфоны Xiaomi", ...), so it has
+to be read off each query's own aggregation rather than hardcoded. Measured live
+on 2026-07-31:
+
+| Request body | `n_items` | `n_pages` |
+|---|---|---|
+| `{"query": "Samsung", "page": 0, "size": 20}` | 1,034 | 52 |
+| `{"query": "Samsung", "page": 0, "size": 20, "category": "Смартфоны Samsung"}` | 690 | 35 |
+| `{"query": "Samsung", "page": 0, "size": 20, "category": "Nonexistent Category XYZ"}` | 0 | — |
+
+The third row is what proves this is a real server-side filter and not an ignored
+unknown key: a made-up category value returns nothing, and the unfiltered "Samsung"
+sweep is one third non-phones — microwaves, TVs, washing machines, vacuums,
+fridges, smartwatches, tablets, headphones, and phone cases — that a downstream
+matcher-health table would otherwise have to absorb.
+
+The crawler client (`narxnoma/sources/alifshop.py`) picks the phones bucket with
+`phone_category_from_aggregations`: `key.casefold().startswith("смартфон")`.
+**This must be a prefix test, not a substring test** — the observed bucket
+"Чехлы для смартфонов" (phone cases) *contains* "смартфон" and a naive `in` check
+would select it, which is exactly the non-phone noise this filter exists to
+remove. "Смарт-часы" (smartwatches) starts with "смарт" but not "смартфон", so the
+prefix rule correctly excludes it too. `sweep()` fetches page 0 unfiltered once per
+brand to read the aggregation, re-requests page 0 with the discovered `category`,
+and paginates that filtered set; if no phone-like bucket is found it logs a
+warning and falls back to the unfiltered sweep for that brand.
 
 > **Units trap:** `price` is in tiyin. `259900000 / 100 = 2,599,000 SUM`. Forgetting
 > the divisor produces prices 100× too large, which is obvious — but a *partial*

@@ -18,7 +18,7 @@ together); this fixture is just page 0 (20 items, the server-side max
 import json
 import pathlib
 
-from narxnoma.sources.alifshop import parse
+from narxnoma.sources.alifshop import parse, phone_category_from_aggregations
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 
 FIXTURE = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "sources" / "alifshop.json"
@@ -130,3 +130,82 @@ def test_parsed_count_is_pinned_to_the_recording():
     parsed = parse(payload())
     assert len(raw_items) == 20
     assert len(parsed) == 20                 # nothing in this recording trips the price fence
+
+
+# --- phone_category_from_aggregations -----------------------------------
+#
+# The fixture's own aggregations.category.terms (recorded live, see the
+# module docstring above) already contains both the trap and the correct
+# answer side by side: "Смартфоны Samsung" (690) and "Чехлы для смартфонов"
+# (10, phone cases -- contains "смартфон" as a substring but must not be
+# selected) and "Смарт-часы" (22, smartwatches -- starts with "смарт" but
+# not "смартфон", must not be selected either).
+
+
+def test_phone_category_from_real_fixture():
+    assert phone_category_from_aggregations(payload()) == "Смартфоны Samsung"
+
+
+def test_phone_category_none_when_aggregations_missing():
+    assert phone_category_from_aggregations({"items": []}) is None
+
+
+def test_phone_category_none_when_terms_empty():
+    broken = {"aggregations": {"category": {"terms": []}}}
+    assert phone_category_from_aggregations(broken) is None
+
+
+def test_phone_category_none_when_aggregations_key_absent():
+    assert phone_category_from_aggregations({}) is None
+    assert phone_category_from_aggregations(None) is None
+
+
+def test_phone_category_does_not_select_phone_cases():
+    """The trap: "Чехлы для смартфонов" (phone cases) contains "смартфон"
+    as a substring but is not a phones bucket. A naive `in` check would
+    select it; the required prefix check must not. Constructed so it is
+    the *only* смартфон-containing bucket -- if this ever returns
+    "Чехлы для смартфонов", the regression is confirmed.
+    """
+    synthetic = {
+        "aggregations": {
+            "category": {
+                "terms": [
+                    {"doc_count": 10, "key": "Чехлы для смартфонов"},
+                    {"doc_count": 50, "key": "Микроволновые печи"},
+                ]
+            }
+        }
+    }
+    assert phone_category_from_aggregations(synthetic) is None
+
+
+def test_phone_category_does_not_select_smartwatches():
+    """"Смарт-часы" (smartwatches) starts with "смарт" but not
+    "смартфон" -- the prefix rule must exclude it.
+    """
+    synthetic = {
+        "aggregations": {
+            "category": {
+                "terms": [
+                    {"doc_count": 22, "key": "Смарт-часы"},
+                ]
+            }
+        }
+    }
+    assert phone_category_from_aggregations(synthetic) is None
+
+
+def test_phone_category_largest_doc_count_wins_among_matches():
+    synthetic = {
+        "aggregations": {
+            "category": {
+                "terms": [
+                    {"doc_count": 5, "key": "Смартфоны Apple"},
+                    {"doc_count": 690, "key": "Смартфоны Samsung"},
+                    {"doc_count": 100, "key": "Смартфоны Xiaomi"},
+                ]
+            }
+        }
+    }
+    assert phone_category_from_aggregations(synthetic) == "Смартфоны Samsung"
