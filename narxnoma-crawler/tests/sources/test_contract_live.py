@@ -30,6 +30,11 @@ from narxnoma.sources.idea import (
     IdeaSource,
     parse as idea_parse,
 )
+from narxnoma.sources.mediapark import (
+    API_URL as MEDIAPARK_API_URL,
+    MediaparkSource,
+    parse as mediapark_parse,
+)
 from narxnoma.sources.olcha import API_URL, CATEGORY, OlchaSource, PER_PAGE, parse
 from narxnoma.sources.texnomart import (
     API_URL as TEXNOMART_API_URL,
@@ -231,3 +236,33 @@ def test_alifshop_search_still_matches_documented_shape():
         assert lst.store_slug == "alifshop"
         assert PRICE_MIN <= lst.price <= PRICE_MAX
         assert lst.url.startswith("https://alifshop.uz/moderated-offer/")
+
+
+@pytest.mark.live
+def test_mediapark_autocomplete_still_matches_documented_shape():
+    """Checks the only endpoint this source has -- an autocomplete search,
+    not a browsable catalogue -- still returns the documented fields and
+    that the string-typed price still casts and lands inside the fences.
+    """
+    source = MediaparkSource()
+    session = source._get_session()
+    payload = get_json(session, MEDIAPARK_API_URL, params={"st": "Samsung", "lang": "ru"})
+
+    assert "products" in payload, "'products' is gone"
+
+    products = payload["products"]
+    assert products, "live autocomplete returned no products"
+    first = products[0]
+    for field in ("id", "name", "price", "linkUrl"):
+        assert field in first, f"documented field {field!r} is missing from a live product"
+    assert isinstance(first["price"], str), (
+        "mediapark's price field is no longer a string -- coerce_price still "
+        "handles ints fine, but this pins the documented trap so a change is visible"
+    )
+
+    listings = mediapark_parse(payload)
+    assert listings, "parse() found nothing in a live response"
+    for lst in listings:
+        assert lst.store_slug == "mediapark"
+        assert PRICE_MIN <= lst.price <= PRICE_MAX
+        assert lst.url.startswith("https://mediapark.uz/")
