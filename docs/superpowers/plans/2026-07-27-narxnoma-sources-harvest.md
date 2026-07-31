@@ -2464,10 +2464,45 @@ git commit -m "feat(pipeline): add harvest stage with per-source isolation and C
 
 **Interfaces:**
 - Consumes: the repository (Task 3).
-- Produces: `coverage_report(conn) -> list[SourceCoverage]` with `slug, offers, median_price, oldest_seen, newest_seen, last_run_ok`.
+- Produces: `coverage_report(conn) -> list[SourceCoverage]` with `slug, offers, median_price, oldest_seen, newest_seen, last_run_ok, expected_min, is_suspicious`; and `EXPECTED_MIN_OFFERS: dict[str, int]`.
 
 This task exists because a source can fail silently by returning fewer rows rather than
 by raising. The incumbent has a store dead since April still flagged healthy.
+
+### The silent-shrinkage guard — added after Task 7's review
+
+Every source built so far shares one blind spot, and it must be closed here rather than
+in each client. All of them raise loudly when an endpoint 404s or returns non-JSON. None
+of them notice a retailer that starts answering **HTTP 200 with an empty item list**. In
+that case `sweep()` exits cleanly after page one, the harvest records `ok = True` with
+zero listings, and the catalogue quietly empties while every check stays green.
+
+This is not hypothetical. beemarket's sweep now uses an endpoint discovered by watching
+the retailer's own frontend, which the retailer does not document and could rescope
+without warning — and the same failure shape applies to alifshop's and uzum's per-brand
+queries, and to any category id or slug a retailer renumbers.
+
+So `coverage_report` must carry a **per-source expected floor**:
+
+```python
+# Measured live 2026-07-26/27. These are floors, not targets: a source returning
+# far fewer offers than this has almost certainly had its endpoint rescoped, not
+# had its catalogue shrink. Update deliberately, with a note, never to silence an alert.
+EXPECTED_MIN_OFFERS = {
+    "olcha": 300,        # ~460 phones observed across 23 pages
+    "texnomart": 300,    # ~500 observed across 25 pages
+    "beemarket": 250,    # 436 observed via the smartfony category endpoint
+    "idea": 100,         # no pagination; reach is bounded by the brand-query list
+    "alifshop": 200,     # per-brand sweep
+    "uzum": 200,         # per-brand GraphQL sweep
+    "mediapark": 0,      # search-only, never swept
+}
+```
+
+`is_suspicious` is `True` when a source's live offer count falls below its floor. The
+report must make those rows visibly distinct, and the CLI must exit non-zero if any
+source is suspicious — a crawl that "succeeded" while losing 90% of a catalogue is not a
+success. Include a test that a source below its floor is flagged and one above it is not.
 
 - [ ] **Step 1: Write the failing test**
 
