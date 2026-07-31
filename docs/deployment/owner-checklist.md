@@ -6,6 +6,16 @@ three things in §4, I can build and run the whole platform without further inpu
 
 Work through it top to bottom. Total time: about an hour, plus DNS propagation.
 
+**Decisions already made (2026-07-27), so you don't have to make them while buying:**
+
+| | |
+|---|---|
+| Domain | **`narxnoma.uz`** (plus `narxnoma.com` defensively) |
+| Registrar + host | **PS Cloud Services — `pscloud.uz`** — both from one vendor |
+| Server | Tashkent / TAS-IX, Ubuntu 24.04 LTS, 4 vCPU / 8 GB / 80–160 GB SSD |
+| DNS + TLS | Cloudflare free tier + Let's Encrypt |
+| Starting from | Nothing — no existing domain, server, or Cloudflare account |
+
 > **Never paste a password, private key, or API token into our chat.** Everything secret
 > goes into a file on your machine, and you tell me only the *path*. §4 gives the exact
 > commands. If a secret does end up in chat, treat it as compromised and rotate it.
@@ -25,24 +35,24 @@ Work through it top to bottom. Total time: about an hour, plus DNS propagation.
 and it ranks better for local queries. **`.uz` does not require local presence** — no
 company registration, no VAT number, no residency. Terms run 1–10 years.
 
-### Where to buy — recommended
+### Where to buy
+
+**Buy `narxnoma.uz` from [PS Cloud Services](https://pscloud.uz/en) (`pscloud.uz`).**
 
 The registry is **CCTLD.UZ**, operated by UZINFOCOM. It does not sell to end users; you buy
-through one of its ~25 accredited registrars. The full official list is at
-<https://cctld.uz/reg/?lang=eng>.
-
-**My recommendation: [PS Cloud Services](https://pscloud.uz/en) (`pscloud.uz`).**
-It is both an accredited `.uz` registrar *and* a Tashkent cloud provider, so the domain and
-the server come from one vendor, on one invoice, with one support contact. That matters more
-than saving a few dollars when something breaks at 2am.
-
-**Alternative: [aHOST](https://www.ahost.uz/en) (`ahost.uz`)** — Tashkent-based since 2010,
-operating as SUVAN NET LLC, consistently ranked the top Uzbek host. Also does both domains
-and servers. Pick this if PS Cloud's panel or pricing doesn't suit you.
+through one of its ~25 accredited registrars, and PS Cloud is one of them. It is also a
+Tashkent cloud provider, so the domain and the server in §2 come from one vendor, on one
+invoice, with one support contact — which matters more than saving a few dollars when
+something breaks at 2am.
 
 For `narxnoma.com`, use **[Cloudflare Registrar](https://www.cloudflare.com/products/registrar/)**
-— it sells at wholesale cost with no renewal markup and no upsells. It cannot sell `.uz`,
-which is why the two domains come from different places.
+— wholesale cost, no renewal markup, no upsells. It cannot sell `.uz`, which is the only
+reason the two domains come from different places.
+
+> If PS Cloud turns out to be unavailable or the pricing is bad, the fallback is
+> [aHOST](https://www.ahost.uz/en) — Tashkent-based since 2010 as SUVAN NET LLC, also both
+> registrar and host. The full official registrar list is at <https://cctld.uz/reg/?lang=eng>.
+> Tell me if you switch; nothing else in this document changes.
 
 ### Registration settings
 
@@ -88,14 +98,15 @@ risk of throttling or blocking. We already have one live example: `ishonchsale.u
 A German host like Hetzner would be cheaper and technically excellent, but it gives up both
 of those advantages. Not worth it here.
 
-### Where to buy — recommended
+### Where to buy
 
-**[PS Cloud Services](https://pscloud.uz/en)** if you also bought the domain there —
-Tashkent datacenter, one vendor for everything.
+**Buy it from [PS Cloud Services](https://pscloud.uz/en)** — the same vendor as the domain,
+Tashkent datacenter, one invoice.
 
-**Alternatives, both fine:**
-- **[aHOST VDS](https://www.ahost.uz/en/vds)** — TAS-IX network, long track record.
-- **[UzCloud](https://uzcloud.uz/en/infrastructure/vm)** — Tier III Tashkent datacenter, explicitly built for Uzbek data-residency compliance. Choose this if you expect to care about data-residency rules later.
+> Fallbacks if PS Cloud can't supply this spec: [aHOST VDS](https://www.ahost.uz/en/vds)
+> (TAS-IX, long track record) or [UzCloud](https://uzcloud.uz/en/infrastructure/vm)
+> (Tier III Tashkent, built around Uzbek data-residency compliance). Either is fine — just
+> tell me which, and give me the IP.
 
 ### During setup
 
@@ -266,11 +277,13 @@ None of these block deployment; they block *launch*.
 
 | Thing | Where | Cost shape |
 |---|---|---|
-| `narxnoma.uz` | [PS Cloud](https://pscloud.uz/en) or [aHOST](https://www.ahost.uz/en); full registrar list at [cctld.uz](https://cctld.uz/reg/?lang=eng) | annual |
+| `narxnoma.uz` | [PS Cloud](https://pscloud.uz/en) | annual |
 | `narxnoma.com` | [Cloudflare Registrar](https://www.cloudflare.com/products/registrar/) | annual, at cost |
-| VPS 4/8/80 Tashkent | [PS Cloud](https://pscloud.uz/en), [aHOST VDS](https://www.ahost.uz/en/vds), or [UzCloud](https://uzcloud.uz/en/infrastructure/vm) | monthly |
+| VPS 4/8/80 Tashkent | [PS Cloud](https://pscloud.uz/en) | monthly |
 | DNS, TLS, CDN | [Cloudflare](https://dash.cloudflare.com/sign-up) | free tier |
 | TLS certificates | Let's Encrypt via Caddy | free |
+
+Two purchases, one vendor, plus a free Cloudflare account.
 
 I have deliberately not quoted prices — they change, and they differ by promotion and
 billing period. Check the current rates when you buy.
