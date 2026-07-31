@@ -24,11 +24,15 @@ web-customers`, `x-iid: <any UUID>` -- or it returns a bare 401. Drop only
 `apollographql-client-name` or `x-iid` and it instead returns **200 OK**
 with `data: null` and an `errors` array: checking `response.status_code`
 alone reports success on a request that returned nothing.
-`UzumSource._fetch` inspects `payload.get("errors")` explicitly and raises
-`UzumGraphQLError` when present, so a broken sweep call is loud rather than
-silently looking like "no more items for this brand." `parse()` itself
-never raises for this -- it logs and returns `[]`, so a caller handed one
-already-fetched payload gets an empty result rather than a crash.
+`UzumSource._fetch_payload` inspects `payload.get("errors")` explicitly and
+raises `UzumGraphQLError` when present, so a broken sweep call is loud
+rather than silently looking like "no more items for this brand." `parse()`
+itself never raises for this -- it logs and returns `[]`, so a caller handed
+one already-fetched payload gets an empty result rather than a crash.
+`_fetch_payload` also survives a **server-side token revocation**: the cache
+refreshes only when the locally decoded `exp` passes, so a token revoked
+early arrives as a bare 401 the cache cannot predict. That 401 re-mints once
+and retries; a second 401 is a real auth failure and raises.
 
 **Card price is not product price** (section 5): a card bundles several
 models and every storage tier under one `minSellPrice`. Every listing here
@@ -49,20 +53,45 @@ unbounded query -- the Android smartphone category alone runs to thousands
 of multi-seller listings.
 
 **name_raw** (sections 5a/5b/7): uzum hands back no single product-name
-field. `_build_name_raw` takes the card title only up to its first comma
-(marketing blurb after that), lets the SKU's own `Модель` characteristic
-override it when present, and -- when the SKU states its own memory --
-strips memory figures out of the spec before combining, so the card's
-overall storage *range* never masquerades as this SKU's specific tier (the
-exact bug that once reported 2,672,010 for a phone whose true price was
-3,068,010; see `test_known_product_name_raw_strips_the_cards_other_memory_tiers`
-in tests/sources/test_uzum.py for the live instance of this trap in the
-recorded fixture). Characteristic keys are a typo minefield (`Память`,
-`памяять`, `Памяьт:`, `Xotirasi`, and -- observed live in this recording --
-`xotra`, a typo the doc's own `startswith("xotira")` sample does not catch;
+field. `name_raw` is the *only* handle the clustering stage gets on a
+product's identity -- a name that loses the brand or the storage figure
+cannot be keyed at all, and the offer drops out of the catalogue silently.
+`_build_name_raw` therefore has three jobs, and each of them has already
+been got wrong once:
+
+- take the card title only up to its first comma (marketing blurb after
+  that), and let the SKU's own `Модель` characteristic override it;
+- when the head is reduced to a prefix in front of a `Модель` value, keep
+  the whole brand-bearing head rather than its first word, after dropping
+  a leading `Smartfon`/`Смартфон`/`Telefon`/`Телефон` product-type noun.
+  Keeping only the first word turned
+  `("Smartfon Samsung Galaxy A16, ...", "A16 8/256")` into
+  `"Smartfon A16 Qora"` -- brand, RAM and storage all unrecoverable -- and
+  10 of this recording's 20 cards lead with that noun, so it was the common
+  case rather than an edge;
+- when the SKU states its own memory, strip memory figures out of the
+  *card-derived* text before combining, so the card's overall storage
+  *range* never masquerades as this SKU's specific tier (the exact bug that
+  once reported 2,672,010 for a phone whose true price was 3,068,010; see
+  `test_known_product_name_raw_strips_the_cards_other_memory_tiers`).
+  Memory stripping is **never** applied to the `Модель` value itself --
+  that value is the trustworthy one, and stripping it deleted the very
+  figure section 5b exists to preserve.
+
+When neither the SKU's characteristics nor the truncated head yields any
+memory at all, the *full* card title is searched for a memory pattern and
+the match appended: cards that state memory after the first comma
+("Smartfon Samsung Galaxy A16, 4/128 GB, 2 SIM, ...") otherwise produced a
+storage-less, unkeyable name from information we were already holding in
+`raw["card_title"]`.
+
+Characteristic keys are a typo minefield (`Память`, `памяять`, `Памяьт:`,
+`Xotirasi`, `RAM/ROM`, and -- observed live in this recording -- `xotra`, a
+typo the doc's own `startswith("xotira")` sample does not catch;
 `_char_kind` here classifies by the shorter `startswith("xot")` prefix
-instead), so keys are classified loosely by prefix, never matched exactly.
-`_parse_sku` also puts the untouched card title and the SKU's full
+instead, and treats a bare `ram`/`rom` token as memory because `normalize`
+folds `RAM/ROM` to `ram rom`), so keys are classified loosely, never matched
+exactly. `_parse_sku` also puts the untouched card title and the SKU's full
 `characteristicValues` list into `Listing.raw`, so a later clustering stage
 can redo this name-building better without re-crawling.
 
@@ -118,6 +147,12 @@ OFFSET_CAP = 1000
 # docs/parsers/uzum.md section 1.
 _TOKEN_REFRESH_MARGIN_SECONDS = 300
 
+# Assumed TTL when the access_token cookie is not a decodable JWT. uzum can
+# change the cookie format at any time; a crash inside _decode_jwt_exp would
+# kill the entire sweep over a value that is only a refresh optimisation, so
+# an undecodable token is treated as short-lived instead.
+_TOKEN_FALLBACK_TTL_SECONDS = 3600
+
 # Cached at module (process) level -- "mint a token once (cached for the
 # process, refreshed ~5 minutes before its 6-hour exp)" per the task brief.
 # Every UzumSource instance in this process shares one token.
@@ -157,10 +192,25 @@ class UzumGraphQLError(RuntimeError):
 
 
 def _decode_jwt_exp(token: str) -> int:
-    payload_b64 = token.split(".")[1]
-    payload_b64 += "=" * (-len(payload_b64) % 4)
-    claims = json.loads(base64.urlsafe_b64decode(payload_b64))
-    return int(claims["exp"])
+    """The `exp` claim of the access_token cookie, or a conservative
+    fallback expiry if the cookie is not a decodable JWT.
+
+    The expiry is only used to decide *when to refresh*, so it must never be
+    able to raise: an opaque or reformatted cookie would otherwise crash
+    _get_token and take the whole sweep with it, even though the token
+    itself may be perfectly usable.
+    """
+    try:
+        payload_b64 = token.split(".")[1]
+        payload_b64 += "=" * (-len(payload_b64) % 4)
+        claims = json.loads(base64.urlsafe_b64decode(payload_b64))
+        return int(claims["exp"])
+    except (AttributeError, IndexError, KeyError, TypeError, ValueError):
+        logger.warning(
+            "uzum: access_token is not a decodable JWT; assuming a %ds TTL",
+            _TOKEN_FALLBACK_TTL_SECONDS,
+        )
+        return int(time.time()) + _TOKEN_FALLBACK_TTL_SECONDS
 
 
 def _mint_token() -> tuple[str, str]:
@@ -208,18 +258,44 @@ def _get_token() -> tuple[str, str]:
     return token, iid
 
 
+def _invalidate_token() -> None:
+    """Force the next _get_token() to mint a fresh token.
+
+    The cache refreshes on the locally decoded `exp`, which cannot see a
+    *server-side* revocation: uzum can invalidate a token before its stated
+    expiry, and the only signal is a 401 on the next graphql call. See
+    UzumSource._fetch_payload.
+    """
+    _token_cache.update(token=None, iid=None, exp=0)
+
+
+# `RAM/ROM` is in docs/parsers/uzum.md section 7's own observed-key list, but
+# `normalize` folds the slash to a space and hands back `ram rom`, which no
+# prefix test in this function recognised -- so the key classified as "other"
+# and its memory value was dropped without a trace. Same class of bug as the
+# `xotra` typo below. Matched on tokens, not as a substring: `rang` (colour)
+# must not be caught by a bare `"ram" in k`.
+_MEMORY_KEY_TOKENS = frozenset({"ram", "rom"})
+
+
 def _char_kind(key: str) -> str:
-    """Classify a characteristic key loosely by prefix -- never match
-    exactly. docs/parsers/uzum.md section 7 catalogues the typo minefield
+    """Classify a characteristic key loosely -- never match exactly.
+    docs/parsers/uzum.md section 7 catalogues the typo minefield
     (`Память`, `память`, `ПАМЯТЬ`, `Памят:`, `Память:`, `Памяьт:`,
-    `памяять`, `Объем памяти`, `Xotirasi`); this recording additionally
-    turned up `xotra` (missing the final `i`) and `Xotira:` (trailing
-    colon, stripped by `normalize` anyway) -- neither matches the doc's own
-    `startswith("xotira")` sample, which is why this uses the shorter
-    `startswith("xot")` instead.
+    `памяять`, `Объем памяти`, `Xotirasi`, `RAM/ROM`); this recording
+    additionally turned up `xotra` (missing the final `i`) and `Xotira:`
+    (trailing colon, stripped by `normalize` anyway) -- neither matches the
+    doc's own `startswith("xotira")` sample, which is why this uses the
+    shorter `startswith("xot")` instead. Every key in section 7's list is
+    exercised by test_char_kind_classifies_every_observed_key.
     """
     k = normalize(key)
-    if k.startswith("памя") or k.startswith("xot") or "объем памяти" in k:
+    if (
+        k.startswith("памя")
+        or k.startswith("xot")
+        or "объем памяти" in k
+        or _MEMORY_KEY_TOKENS & set(k.split())
+    ):
         return "memory"
     if k.startswith("модел") or k.startswith("model"):
         return "model"
@@ -264,43 +340,120 @@ _MEMORY_SINGLE_RE = re.compile(
 )
 
 
+# Residue left behind by the two substitutions above. Stripping "(8+8)/128
+# GB" out of "Smartfon Oppo A5i Pro (8+8)/128 GB" leaves "( )/" hanging off
+# the end -- SKU 6931382 in the recorded fixture parsed to
+# "Smartfon Oppo A5i Pro ( )/ 8/128 Binafsha".
+_EMPTY_BRACKETS_RE = re.compile(r"[(\[{]\s*[)\]}]")
+# A separator with no word character immediately to its left is orphaned.
+# Deliberately one-sided: a separator that IS preceded by a word character
+# may be a real model marker ("Note 14 Pro+"), and must survive.
+_ORPHAN_SEPARATOR_RE = re.compile(r"(?<!\w)[/\\|+]+")
+
+# Anything smaller is a RAM figure or a screen size, not a storage tier --
+# used to reject "4/6" out of "4/6/128Gb" and "2 SIM" when recovering memory
+# from a full card title.
+_MIN_PLAUSIBLE_STORAGE_GB = 32
+
+
+def _collapse(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip(" ,;:-/\\|")
+
+
 def _strip_memory(text: str) -> str:
+    """Remove memory figures from CARD-DERIVED text only.
+
+    Never call this on a SKU's own `Модель` or memory value:
+    docs/parsers/uzum.md section 5b strips memory from the *card title*
+    precisely because the SKU's own value is the trustworthy one. Applying
+    it to `Модель` deleted the figure the whole section exists to preserve
+    ("A16 8/256" -> "A16").
+    """
     text = _MEMORY_PAIR_RE.sub(" ", text)
     text = _MEMORY_SINGLE_RE.sub(" ", text)
-    return re.sub(r"\s+", " ", text).strip()
+    text = _EMPTY_BRACKETS_RE.sub(" ", text)
+    text = _ORPHAN_SEPARATOR_RE.sub(" ", text)
+    return _collapse(text)
+
+
+def _has_memory(text: str) -> bool:
+    return bool(_MEMORY_PAIR_RE.search(text) or _MEMORY_SINGLE_RE.search(text))
+
+
+def _memory_from_title(title: str) -> str:
+    """First plausible memory figure anywhere in the FULL card title.
+
+    Last resort for cards that state memory after the first comma
+    ("Smartfon Samsung Galaxy A16, 4/128 GB, 2 SIM, ...") while the SKU has
+    no memory characteristic of its own. Without it those SKUs produce a
+    name with neither RAM nor storage, which the clustering stage cannot
+    key -- and the figure was sitting in raw["card_title"] all along.
+    """
+    for match in _MEMORY_PAIR_RE.finditer(title):
+        figures = [int(f) for f in re.findall(r"\d{1,4}", match.group(0))]
+        if figures and max(figures) >= _MIN_PLAUSIBLE_STORAGE_GB:
+            return _collapse(match.group(0))
+    match = _MEMORY_SINGLE_RE.search(title)
+    return _collapse(match.group(0)) if match else ""
+
+
+# "Smartfon Samsung Galaxy A16", "Смартфон Samsung ...", "Telefon ...".
+# Harmless while the whole head is the name (it is what the retailer wrote),
+# but fatal once the head is cut down to a prefix: it is a product-type noun
+# carrying no identity, and keeping it in place of the brand is what made
+# ("Smartfon Samsung Galaxy A16, ...", "A16 8/256") parse to
+# "Smartfon A16 Qora".
+_LEAD_NOUN_RE = re.compile(r"^(?:smartfon|смартфон|telefon|телефон)\w*\b[\s:,-]*", re.I)
+
+_SUBTOKEN_RE = re.compile(r"[^0-9A-Za-zЀ-ӿ]+")
+
+
+def _prefix_for_model(head: str, model_v: str) -> str:
+    """The brand-bearing part of the card head, to sit in front of a Модель.
+
+    A bare Модель value ("17 Pro Max 256 GB", "A16 8/256") carries no brand
+    of its own, so the head has to supply it. Every head word whose
+    sub-tokens all already appear in the Модель value is dropped, so
+    "IPhone 17 Pro/Pro Max" + "17 Pro Max 256 GB" yields "IPhone" rather
+    than repeating the model, while "Samsung Galaxy A16" + "A16 8/256"
+    keeps "Samsung Galaxy".
+    """
+    model_tokens = {t for t in _SUBTOKEN_RE.split(model_v.lower()) if t}
+    kept = []
+    for word in _LEAD_NOUN_RE.sub("", head).split():
+        subtokens = [t for t in _SUBTOKEN_RE.split(word.lower()) if t]
+        if subtokens and all(t in model_tokens for t in subtokens):
+            continue
+        kept.append(word)
+    return " ".join(kept)
 
 
 def _build_name_raw(card_title: str | None, model_v: str, mem_v: str, color_v: str) -> str:
-    """Best-effort faithful name. docs/parsers/uzum.md sections 5a/5b:
-
-    - take the card title only up to its first comma (the marketing blurb
-      lives after it);
-    - let the SKU's own Модель characteristic override that head entirely
-      when present;
-    - when the SKU states its own memory, strip memory figures out of
-      whichever spec string is in play before combining.
-
-    When the SKU's Модель already stands in for the head, the card's first
-    word (almost always a brand/product-type token) is prefixed back on --
-    a bare Модель value like "17 Pro Max 256 GB" carries no brand context
-    of its own. When the head is used directly it already starts with that
-    same token, so nothing is prefixed and duplicated.
+    """Best-effort faithful name -- and the clustering stage's ONLY handle on
+    this product's identity. See the module docstring for the three rules
+    and the bug each of them fixes.
     """
-    head = (card_title or "").split(",")[0].strip()
-    first_word = head.split()[0] if head else ""
+    full_title = (card_title or "").strip()
+    head = full_title.split(",")[0].strip()
 
     if model_v:
+        # The SKU's own Модель wins outright and is never rewritten.
         spec = model_v
-        prefix = first_word
+        prefix = _prefix_for_model(head, model_v)
+        if mem_v or _has_memory(model_v):
+            # ...but the card head in front of it must not smuggle the
+            # card's overall storage RANGE in beside it (section 5b).
+            prefix = _strip_memory(prefix)
     else:
-        spec = head
         prefix = ""
+        spec = _strip_memory(head) if mem_v else head
 
-    if mem_v:
-        spec = _strip_memory(spec)
-
-    parts = [p for p in (prefix, spec, mem_v, color_v) if p]
-    return re.sub(r"\s+", " ", " ".join(parts)).strip()
+    name = _collapse(" ".join(p for p in (prefix, spec, mem_v) if p))
+    if not _has_memory(name):
+        recovered = _memory_from_title(full_title)
+        if recovered:
+            name = _collapse(f"{name} {recovered}")
+    return _collapse(f"{name} {color_v}" if color_v else name)
 
 
 def _items(payload: dict) -> list[dict]:
@@ -358,8 +511,8 @@ def parse(payload: dict) -> list[Listing]:
 
     Handles the `errors`-key failure mode (docs/parsers/uzum.md section 2)
     by returning [] rather than raising -- the live fetch path
-    (UzumSource._fetch) is what raises on this, so a broken sweep call is
-    loud instead of silently looking like an empty brand.
+    (UzumSource._fetch_payload) is what raises on this, so a broken sweep
+    call is loud instead of silently looking like an empty brand.
     """
     if (payload or {}).get("errors"):
         logger.warning("uzum: graphql payload carries an errors key, returning no listings: %s",
@@ -412,19 +565,38 @@ class UzumSource:
             )
         return self._session
 
-    def _fetch_payload(self, text: str, offset: int) -> dict:
-        """POST one makeSearch page, raising on the errors-key failure mode
-        (docs/parsers/uzum.md section 2) rather than treating it as an
-        empty/end-of-results page -- see module docstring for why.
-        """
+    def _post_page(self, text: str, offset: int) -> dict:
         session = self._get_session()
         token, iid = _get_token()
-        payload = post_json(
+        return post_json(
             session,
             GRAPHQL_URL,
             headers={"Authorization": f"Bearer {token}", "x-iid": iid},
             json={"query": SEARCH_QUERY, "variables": _search_variables(text, offset)},
         )
+
+    def _fetch_payload(self, text: str, offset: int) -> dict:
+        """POST one makeSearch page, raising on the errors-key failure mode
+        (docs/parsers/uzum.md section 2) rather than treating it as an
+        empty/end-of-results page -- see module docstring for why.
+
+        A 401 re-mints the token once and retries. The cached token is only
+        refreshed when its locally decoded `exp` passes, which cannot see a
+        server-side revocation: without this, a token revoked in the middle
+        of a brand sweep propagated an HTTPError all the way out of sweep()
+        and ended the run, even though minting a new one takes one request.
+        A second 401 is a genuine auth failure and is left to raise.
+        """
+        try:
+            payload = self._post_page(text, offset)
+        except requests.HTTPError as exc:
+            if getattr(exc.response, "status_code", None) != 401:
+                raise
+            logger.warning(
+                "uzum: 401 for %r@%d -- re-minting the token and retrying once", text, offset
+            )
+            _invalidate_token()
+            payload = self._post_page(text, offset)
         errors = (payload or {}).get("errors")
         if errors:
             raise UzumGraphQLError(f"uzum graphql errors for {text!r}@{offset}: {errors!r}")

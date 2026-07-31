@@ -277,6 +277,16 @@ if mem_v:  # sku stated its own memory → it wins outright
     spec = re.sub(r"(?<![a-zа-я\d])\d{1,4}\s*(?:gb|гб|tb|тб)\b", " ", spec, flags=re.I)
 ```
 
+> **V1 crawler note (`narxnoma/sources/uzum.py`).** The strip above applies
+> to the **card title only**. Never run it over the SKU's own `Модель` or
+> memory value: those are the trustworthy figures this section exists to
+> protect, and stripping them turns `"A16 8/256"` into `"A16"` — a name
+> with no storage tier, which the clustering stage cannot key at all.
+> `_strip_memory` in the crawler is documented as card-derived-text-only for
+> exactly this reason.
+
+## 6. TRAP 2 — eSIM-only variants
+
 > **V1 crawler note (`narxnoma/sources/uzum.py`).** This whole section is
 > matcher-era guidance, written for a target-driven matcher where an
 > eSIM-only variant was the wrong answer to a specific query and had to be
@@ -288,8 +298,6 @@ if mem_v:  # sku stated its own memory → it wins outright
 > classify; `is_esim_only`/`sim_kind` (`narxnoma.matching.sim`) are not
 > called from the crawler at all. See `test_esim_only_variant_is_kept` in
 > `tests/sources/test_uzum.py`.
-
-## 6. TRAP 2 — eSIM-only variants
 
 Our iPhones are **nanoSIM + eSIM**. Uzum lists eSIM-only variants side by side at a
 materially lower price:
@@ -366,6 +374,10 @@ Never match characteristic keys exactly. Observed across 66 queries:
 `модел` · `Сим-карта` · `SIM карта` · ` SIM карта` (leading space) · `Тип` ·
 `16 PRO MAX` (a value used as a key)
 
+Added from the 2026-08-01 live "Samsung" recording: `Xotira` · `Xotira:`
+(trailing colon) · `XOTIRA` · **`xotra`** (a typo missing the final `i`) ·
+`Rang` (Uzbek for colour).
+
 Classify loosely by prefix:
 
 ```python
@@ -390,6 +402,18 @@ def char_kind(key):
 > uses the shorter `k.startswith("xot")` instead, which catches `Xotirasi`,
 > `Xotira`, `Xotira:` and `xotra` alike. If you copy this section's sample
 > code elsewhere, use `"xot"`, not `"xotira"`.
+>
+> **`RAM/ROM` has the same defect, and it is in this section's own list
+> above.** `normalize` folds the slash to a space, so the key arrives as
+> `ram rom`, which none of the prefix tests in the sample recognise — it
+> falls through to `"other"` and the SKU's memory value is silently
+> dropped. `narxnoma/sources/uzum.py` additionally treats a bare `ram` or
+> `rom` *token* as memory. Match on tokens, not as a substring: a plain
+> `"ram" in k` also fires on the Uzbek colour key `Rang`.
+> `test_char_kind_classifies_every_observed_key` in
+> `tests/sources/test_uzum.py` runs every key named in this section through
+> the classifier, so a key added here without a matching rule fails a test
+> rather than losing data in production.
 
 ## 8. Colours are Russian — and, in card/model strings, Uzbek
 
