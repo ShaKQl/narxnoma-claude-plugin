@@ -9,6 +9,14 @@ explicitly with:
 import pytest
 
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
+from narxnoma.sources.beemarket import (
+    API_URL as BEEMARKET_API_URL,
+    PHONE_CATEGORY_SLUGS as BEEMARKET_PHONE_CATEGORY_SLUGS,
+    SWEEP_API_URL as BEEMARKET_SWEEP_API_URL,
+    BeemarketSource,
+    _filter_phone_listings as beemarket_filter_phone_listings,
+    parse as beemarket_parse,
+)
 from narxnoma.sources.idea import (
     API_URL as IDEA_API_URL,
     BRAND_QUERIES as IDEA_BRAND_QUERIES,
@@ -111,3 +119,76 @@ def test_idea_search_still_matches_documented_shape():
         assert lst.store_slug == "idea"
         assert PRICE_MIN <= lst.price <= PRICE_MAX
         assert lst.url.startswith("https://idea.uz/")
+
+
+@pytest.mark.live
+def test_beemarket_category_sweep_still_matches_documented_shape():
+    """Checks the narrowed, undocumented endpoint sweep() actually calls
+    (see beemarket.py module docstring for why it isn't the generic search
+    the task brief documents) still returns the doubly-nested envelope and
+    documented fields, still scopes to smartfony server-side, and that
+    prices still land inside the fences.
+    """
+    source = BeemarketSource()
+    session = source._get_session()
+    payload = get_json(
+        session, BEEMARKET_SWEEP_API_URL, params={"page": 1, "is_bshop": 1},
+    )
+
+    data = payload.get("data")
+    assert data is not None, "top-level 'data' key is gone"
+    assert "data" in data, "'data.data' is gone"
+    assert "last_page" in data, "'data.last_page' is gone"
+
+    products = data["data"]
+    assert products, "live category sweep returned no products"
+    first = products[0]
+    for field in ("id", "name", "slug", "category", "actual_price", "price"):
+        assert field in first, f"documented field {field!r} is missing from a live product"
+    assert first["category"]["slug"] == "smartfony", (
+        "the category-scoped endpoint no longer scopes to smartfony -- "
+        "sweep() would silently start pulling the whole catalogue again"
+    )
+
+    listings = beemarket_parse(payload)
+    assert listings, "parse() found nothing in a live response"
+    filtered = beemarket_filter_phone_listings(listings)
+    assert len(filtered) == len(listings), (
+        "the category endpoint returned a non-phone category live -- "
+        "PHONE_CATEGORY_SLUGS or the endpoint's scoping has drifted"
+    )
+    for lst in filtered:
+        assert lst.store_slug == "beemarket"
+        assert PRICE_MIN <= lst.price <= PRICE_MAX
+        assert lst.url.startswith("https://market.beeline.uz/")
+        assert lst.raw.get("category", {}).get("slug") in BEEMARKET_PHONE_CATEGORY_SLUGS
+
+
+@pytest.mark.live
+def test_beemarket_search_still_matches_documented_shape():
+    """The documented generic search endpoint, used by search(query)."""
+    source = BeemarketSource()
+    session = source._get_session()
+    payload = get_json(
+        session,
+        BEEMARKET_API_URL,
+        params={"q": "Honor", "is_bshop": 1, "page": 1},
+    )
+
+    data = payload.get("data")
+    assert data is not None, "top-level 'data' key is gone"
+    assert "data" in data, "'data.data' is gone"
+    assert "last_page" in data, "'data.last_page' is gone"
+
+    products = data["data"]
+    assert products, "live search returned no products"
+    first = products[0]
+    for field in ("id", "name", "slug", "category", "actual_price", "price"):
+        assert field in first, f"documented field {field!r} is missing from a live product"
+
+    listings = beemarket_parse(payload)
+    assert listings, "parse() found nothing in a live response"
+    for lst in listings:
+        assert lst.store_slug == "beemarket"
+        assert PRICE_MIN <= lst.price <= PRICE_MAX
+        assert lst.url.startswith("https://market.beeline.uz/")
