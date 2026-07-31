@@ -129,8 +129,10 @@ def test_brand_queries_cover_the_major_brands_the_list_used_to_omit():
 def test_brand_queries_is_derived_from_the_canonical_vocabulary_not_hardcoded():
     # Every canonical brand and every alias key must be queried, and nothing
     # else -- BRAND_QUERIES must track narxnoma.matching.brands exactly.
+    # BRAND_QUERIES is a tuple (shared with alifshop.py via
+    # narxnoma.sources.brand_queries), so sort as a list for comparison.
     assert set(BRAND_QUERIES) == set(BRANDS) | set(BRAND_ALIASES)
-    assert BRAND_QUERIES == sorted(BRAND_QUERIES)
+    assert list(BRAND_QUERIES) == sorted(BRAND_QUERIES)
 
 
 def test_filter_phone_listings_keeps_only_category_55():

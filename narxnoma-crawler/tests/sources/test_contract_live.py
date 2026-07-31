@@ -8,6 +8,12 @@ explicitly with:
 """
 import pytest
 
+from narxnoma.sources.alifshop import (
+    API_URL as ALIFSHOP_API_URL,
+    SIZE as ALIFSHOP_SIZE,
+    AlifshopSource,
+    parse as alifshop_parse,
+)
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 from narxnoma.sources.beemarket import (
     API_URL as BEEMARKET_API_URL,
@@ -32,7 +38,7 @@ from narxnoma.sources.texnomart import (
     TexnomartSource,
     parse as texnomart_parse,
 )
-from narxnoma.sources.http import get_json
+from narxnoma.sources.http import get_json, post_json
 
 
 @pytest.mark.live
@@ -192,3 +198,36 @@ def test_beemarket_search_still_matches_documented_shape():
         assert lst.store_slug == "beemarket"
         assert PRICE_MIN <= lst.price <= PRICE_MAX
         assert lst.url.startswith("https://market.beeline.uz/")
+
+
+@pytest.mark.live
+def test_alifshop_search_still_matches_documented_shape():
+    """Checks the documented fields, the 0-based page contract, and --
+    above all -- that the tiyin-to-SUM conversion still lands prices inside
+    the fences against a live response, not just the recorded fixture.
+    """
+    source = AlifshopSource()
+    session = source._get_session()
+    payload = post_json(
+        session,
+        ALIFSHOP_API_URL,
+        json={"query": "Samsung", "page": 0, "size": ALIFSHOP_SIZE},
+    )
+
+    assert "items" in payload, "'items' is gone"
+    assert "n_pages" in payload, "'n_pages' is gone"
+
+    items = payload["items"]
+    assert items, "live search returned no items"
+    first = items[0]
+    for field in ("id", "slug", "price", "product", "partner"):
+        assert field in first, f"documented field {field!r} is missing from a live item"
+    assert "name" in first["product"], "'product.name' is gone"
+    assert "slug" in first["partner"], "'partner.slug' is gone"
+
+    listings = alifshop_parse(payload)
+    assert listings, "parse() found nothing in a live response"
+    for lst in listings:
+        assert lst.store_slug == "alifshop"
+        assert PRICE_MIN <= lst.price <= PRICE_MAX
+        assert lst.url.startswith("https://alifshop.uz/moderated-offer/")

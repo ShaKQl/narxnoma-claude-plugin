@@ -16,8 +16,8 @@ import logging
 from collections import Counter
 from typing import Iterator
 
-from narxnoma.matching.brands import BRAND_ALIASES, BRANDS
 from narxnoma.sources.base import Listing, coerce_price, try_build_listing
+from narxnoma.sources.brand_queries import BRAND_QUERIES
 from narxnoma.sources.http import get_json, polite_session
 
 logger = logging.getLogger(__name__)
@@ -28,14 +28,10 @@ QUANTITY = 100
 # idea has no full-catalogue browse endpoint, so sweep() is a fixed list of
 # brand queries merged together (see module docstring) -- this list *is*
 # the sweep's entire reach into idea's catalogue. Any brand missing here is
-# permanently invisible to us, so it is derived from the project's
-# canonical brand vocabulary (narxnoma/matching/brands.py) rather than
-# hardcoded, and must never be allowed to drift from it. Both the canonical
-# brand names and the alias keys (sub-brands, e.g. "redmi" -> "xiaomi") are
-# queried: a retailer lists a phone as "Redmi Note 15" without the word
-# "Xiaomi" anywhere in the name, so querying only the parent brand would
-# miss it. Sorted for determinism.
-BRAND_QUERIES = sorted(set(BRANDS) | set(BRAND_ALIASES))
+# permanently invisible to us. alifshop.py needs the identical list for the
+# same reason, so it is shared rather than duplicated -- see
+# narxnoma.sources.brand_queries (imported above) for the derivation and
+# rationale.
 
 # idea's `category_id` is the only usable category signal -- the textual
 # `category`/`category_name`/`category_slug` fields are null or empty on

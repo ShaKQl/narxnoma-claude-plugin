@@ -43,23 +43,42 @@ Body:
 {
   "items": [
     {
+      "id": "4ab27e23-1f44-4c49-8a0d-213b82ab40a1", // per-listing UUID, distinct per partner offer
       "price": 259900000,                       // TIYIN — divide by 100
       "slug": "honor-x9d-12-256-gb-midnight-black-abc123",
+      "quantity": 7,
+      "partner_id": 1378,
       "product": {"name": "Honor X9d 12/256 GB Midnight Black"},
-      "partner": {"slug": "some-seller"}
+      "partner": {"id": 1378, "slug": "some-seller"}
     }
   ],
   "n_pages": 4
 }
 ```
 
+> **Corrected 2026-07-31, live crawler client.** This section previously omitted
+> `items[].id`. It is the field the crawler client (`narxnoma/sources/alifshop.py`)
+> uses as `source_key` — a UUID assigned per listing by alifshop itself, distinct
+> per partner offer even when `slug`, `product.name`, and `price` are identical
+> across sellers. `slug` alone is not documented as guaranteed unique across
+> partners and must not be relied on for dedup; `id` is. Also present but unused
+> by the crawler client: `quantity` (stock count, used for availability) and
+> `partner_id` (redundant with `partner.id`).
+
 | Field | Meaning |
 |---|---|
+| `items[].id` | **per-listing UUID** — use this as the dedupe/upsert key, not `slug` |
 | `items[].price` | **TIYIN** — divide by **100** to get SUM |
 | `items[].product.name` | the string to match against |
 | `items[].slug` | listing slug, used for the URL |
+| `items[].quantity` | stock count; `0` means out of stock |
 | `items[].partner.slug` | seller identity — useful for dedupe/diagnostics |
 | `n_pages` | total pages for this query |
+
+No per-item category or product-type field exists anywhere in this response.
+`aggregations.category` is a dataset-wide histogram (10 buckets with counts) over
+the *whole* result set for the query, not a per-item field — it cannot be used to
+filter an individual item as phone vs. non-phone.
 
 > **Units trap:** `price` is in tiyin. `259900000 / 100 = 2,599,000 SUM`. Forgetting
 > the divisor produces prices 100× too large, which is obvious — but a *partial*
