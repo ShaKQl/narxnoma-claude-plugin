@@ -222,6 +222,17 @@ useful lever — skip it.
 - `availableAmount` — filter to `> 0`; zero-stock SKUs are phantom listings.
 - Card-level `minSellPrice` / `minFullPrice` also exist. **Do not use them** — see below.
 
+> **V1 crawler note (`narxnoma/sources/uzum.py`).** The `availableAmount > 0`
+> filter above is matcher-era guidance: it was written for a target-driven
+> matcher hunting one specific phone, where a zero-stock SKU is noise to
+> screen out. The V1 aggregator crawler is cataloguing every real offer, so
+> it deliberately keeps zero-stock SKUs rather than dropping them — recorded
+> with `availability="OUT_OF_STOCK"` (derived from `availableAmount`).
+> Hiding an out-of-stock offer is a presentation decision that belongs
+> downstream, not a reason to lose the observation. See the module
+> docstring in `uzum.py` and `test_zero_stock_sku_is_kept_as_out_of_stock`
+> in `tests/sources/test_uzum.py`.
+
 ## 5. TRAP 1 — card price ≠ product price
 
 Uzum resellers bundle **several models and every storage tier under one card**:
@@ -265,6 +276,18 @@ if mem_v:  # sku stated its own memory → it wins outright
                   r"\d{1,4}\s*(?:gb|гб|tb|тб)?", " ", spec, flags=re.I)
     spec = re.sub(r"(?<![a-zа-я\d])\d{1,4}\s*(?:gb|гб|tb|тб)\b", " ", spec, flags=re.I)
 ```
+
+> **V1 crawler note (`narxnoma/sources/uzum.py`).** This whole section is
+> matcher-era guidance, written for a target-driven matcher where an
+> eSIM-only variant was the wrong answer to a specific query and had to be
+> screened out. The V1 aggregator crawler keeps eSIM-only variants — they
+> are a legitimate, separate product at a genuinely different price, and
+> dropping them loses real offers. Whatever SIM characteristic exists (any
+> of the three encodings below) survives verbatim into
+> `Listing.raw["characteristic_values"]` for a later clustering stage to
+> classify; `is_esim_only`/`sim_kind` (`narxnoma.matching.sim`) are not
+> called from the crawler at all. See `test_esim_only_variant_is_kept` in
+> `tests/sources/test_uzum.py`.
 
 ## 6. TRAP 2 — eSIM-only variants
 
@@ -355,6 +378,18 @@ def char_kind(key):
     if k.startswith("цвет") or k.startswith("rang"): return "color"
     return "other"
 ```
+
+> **Corrected 2026-08-01 (V1 crawler, live "Samsung" recording).** Add
+> `Xotira:` (trailing colon — already handled fine by `normalize`, which
+> strips punctuation) and, more importantly, **`xotra`** — a typo missing
+> the final `i` — to the observed-keys list above. `xotra` does **not**
+> match this section's own `startswith("xotira")` sample: `"xotra"` is
+> shorter than `"xotira"` and Python's `str.startswith` requires the full
+> prefix to be present, so a key that reads `xotra` falls through to
+> `"other"` and its memory value is silently lost. `narxnoma/sources/uzum.py`
+> uses the shorter `k.startswith("xot")` instead, which catches `Xotirasi`,
+> `Xotira`, `Xotira:` and `xotra` alike. If you copy this section's sample
+> code elsewhere, use `"xot"`, not `"xotira"`.
 
 ## 8. Colours are Russian — and, in card/model strings, Uzbek
 

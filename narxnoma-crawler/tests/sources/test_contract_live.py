@@ -43,6 +43,11 @@ from narxnoma.sources.texnomart import (
     TexnomartSource,
     parse as texnomart_parse,
 )
+from narxnoma.sources.uzum import (
+    PHONE_CATEGORY_IDS as UZUM_PHONE_CATEGORY_IDS,
+    UzumSource,
+    parse as uzum_parse,
+)
 from narxnoma.sources.http import get_json, post_json
 
 
@@ -266,3 +271,46 @@ def test_mediapark_autocomplete_still_matches_documented_shape():
         assert lst.store_slug == "mediapark"
         assert PRICE_MIN <= lst.price <= PRICE_MAX
         assert lst.url.startswith("https://mediapark.uz/")
+
+
+@pytest.mark.live
+def test_uzum_makesearch_still_matches_documented_shape():
+    """Checks token minting, the makeSearch GraphQL shape, the documented
+    field names (skuList.sellPrice/fullPrice/availableAmount/
+    characteristicValues, category.id), and that SKU-level prices still
+    land inside the fences -- all against a live response, not just the
+    recorded fixture. A silent field rename here is exactly what would make
+    parse() start returning nothing without any exception being raised.
+    """
+    source = UzumSource()
+    payload = source._fetch_payload("Samsung", 0)
+
+    data = payload.get("data")
+    assert data is not None, "top-level 'data' key is gone (or an 'errors' key slipped through)"
+    make_search = data.get("makeSearch")
+    assert make_search is not None, "'data.makeSearch' is gone"
+    assert "total" in make_search, "'data.makeSearch.total' is gone"
+    assert "items" in make_search, "'data.makeSearch.items' is gone"
+
+    items = make_search["items"]
+    assert items, "live makeSearch returned no items"
+    phone_items = [
+        item for item in items
+        if ((item.get("catalogCard") or {}).get("category") or {}).get("id")
+        in UZUM_PHONE_CATEGORY_IDS
+    ]
+    assert phone_items, "no item in a live 'Samsung' search matched the documented phone category ids"
+    card = phone_items[0]["catalogCard"]
+    for field in ("productId", "title", "category", "skuList"):
+        assert field in card, f"documented field catalogCard.{field!r} is missing from a live card"
+    sku = card["skuList"][0]
+    for field in ("id", "sellPrice", "fullPrice", "availableAmount", "characteristicValues"):
+        assert field in sku, f"documented field skuList[].{field!r} is missing from a live SKU"
+
+    listings = uzum_parse(payload)
+    assert listings, "parse() found nothing in a live response"
+    for lst in listings:
+        assert lst.store_slug == "uzum"
+        assert PRICE_MIN <= lst.price <= PRICE_MAX
+        assert lst.url.startswith("https://uzum.uz/ru/product/")
+        assert lst.raw["category_id"] in UZUM_PHONE_CATEGORY_IDS
