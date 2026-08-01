@@ -1,0 +1,765 @@
+{
+  "data": {
+    "makeSearch": {
+      "total": 565,
+      "items": [
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2996356,
+            "title": "Smartfon Samsung Galaxy A16, Super AMOLED, 90Hz 6.7\", 50 MP",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 11008116,
+                "sellPrice": 1999000,
+                "fullPrice": 4200000,
+                "availableAmount": 166,
+                "characteristicValues": [
+                  {
+                    "title": "4GB | 128GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2478675,
+            "title": "Smartfon OPPO A5i (4+4)GB/64GB, Nebula Red | Starry Purple, 1 yil kafolat + UZIMEI",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 8941436,
+                "sellPrice": 1490000,
+                "fullPrice": 1490000,
+                "availableAmount": 3,
+                "characteristicValues": [
+                  {
+                    "title": "Qirmizi",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2996356,
+            "title": "Smartfon Samsung Galaxy A16, Super AMOLED, 90Hz 6.7\", 50 MP",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 11008117,
+                "sellPrice": 1999000,
+                "fullPrice": 4200000,
+                "availableAmount": 10,
+                "characteristicValues": [
+                  {
+                    "title": "4GB | 128GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Yashil",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 1349726,
+            "title": "Smartfon Oppo A40m 6/256GB, rangi Oq/Qora, 90HZ 50MP 5100Mah 45W, 1 Yil kafolat",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 4353378,
+                "sellPrice": 2490000,
+                "fullPrice": 2990000,
+                "availableAmount": 41,
+                "characteristicValues": [
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 1978967,
+            "title": "Smartfon Samsung Galaxy A17 4G, 6/128, 8/256, sAMOLED 90 Hz, 50 Mp, 5000 mA/h, 25 Вт",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 6998861,
+                "sellPrice": 3068010,
+                "fullPrice": 10000000,
+                "availableAmount": 66,
+                "characteristicValues": [
+                  {
+                    "title": "8/256GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": 6998860,
+                "sellPrice": 2499000,
+                "fullPrice": 10000000,
+                "availableAmount": 273,
+                "characteristicValues": [
+                  {
+                    "title": "6/128GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 1961974,
+            "title": "Smartfon Oppo A5i Pro (8+8)/128 GB, oq/binafsha, IP65 suv va changdan himoya+1 yil kafolat",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 6931382,
+                "sellPrice": 2350000,
+                "fullPrice": 2400000,
+                "availableAmount": 3,
+                "characteristicValues": [
+                  {
+                    "title": "8/128",
+                    "characteristic": {
+                      "title": "xotra"
+                    }
+                  },
+                  {
+                    "title": "Binafsha",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 3050296,
+            "title": "Smartfon Samsung Galaxy A16, 4/128 GB, 2 SIM, Super AMOLED, kamera 50 Mp, 1 yil kafolat",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 11194303,
+                "sellPrice": 2049000,
+                "fullPrice": 4398000,
+                "availableAmount": 60,
+                "characteristicValues": [
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 1978967,
+            "title": "Smartfon Samsung Galaxy A17 4G, 6/128, 8/256, sAMOLED 90 Hz, 50 Mp, 5000 mA/h, 25 Вт",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 6998864,
+                "sellPrice": 2499000,
+                "fullPrice": 10000000,
+                "availableAmount": 65,
+                "characteristicValues": [
+                  {
+                    "title": "6/128GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Kulrang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": 6998865,
+                "sellPrice": 3068010,
+                "fullPrice": 10000000,
+                "availableAmount": 93,
+                "characteristicValues": [
+                  {
+                    "title": "8/256GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Kulrang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2996356,
+            "title": "Smartfon Samsung Galaxy A16, Super AMOLED, 90Hz 6.7\", 50 MP",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 11209158,
+                "sellPrice": 1999000,
+                "fullPrice": 4200000,
+                "availableAmount": 115,
+                "characteristicValues": [
+                  {
+                    "title": "4GB | 128GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Kumush rang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 1951131,
+            "title": "Samsung Galaxy A07 smartfoni, 2 SIM, 6.7\" 90Hz, 5000 mA·soat 25W, Helio G99, 50MP kamera",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 6888154,
+                "sellPrice": 1899000,
+                "fullPrice": 10000000,
+                "availableAmount": 111,
+                "characteristicValues": [
+                  {
+                    "title": "6/128GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2318433,
+            "title": "Samsung Galaxy A16, 4/6/128Gb, 5000Ma/S, 50MP,  Uzimei o'tgan, 1 yil kafolat",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 8455482,
+                "sellPrice": 2199000,
+                "fullPrice": 3200000,
+                "availableAmount": 84,
+                "characteristicValues": [
+                  {
+                    "title": "4/128",
+                    "characteristic": {
+                      "title": "XOTIRA"
+                    }
+                  },
+                  {
+                    "title": "Kumush rang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 1349810,
+            "title": "Samsung Galaxy A16,2 SIM-kartalar, Super AMOLED, 50 megapikselli kamera, 1 yillik kafolat",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 5557422,
+                "sellPrice": 2299000,
+                "fullPrice": 6200000,
+                "availableAmount": 96,
+                "characteristicValues": [
+                  {
+                    "title": "4/128 GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Kumush rang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 3050296,
+            "title": "Smartfon Samsung Galaxy A16, 4/128 GB, 2 SIM, Super AMOLED, kamera 50 Mp, 1 yil kafolat",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 11194304,
+                "sellPrice": 2049000,
+                "fullPrice": 4398000,
+                "availableAmount": 47,
+                "characteristicValues": [
+                  {
+                    "title": "Kumush rang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2558646,
+            "title": "Samsung Galaxy F07 4/64 GB, 5000 mA/soat, 50 MP kamera, 2ta SIM karta, 1 yillik kafolat",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 9289971,
+                "sellPrice": 1529000,
+                "fullPrice": 2200000,
+                "availableAmount": 25,
+                "characteristicValues": [
+                  {
+                    "title": "4/64",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Yashil",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2318433,
+            "title": "Samsung Galaxy A16, 4/6/128Gb, 5000Ma/S, 50MP,  Uzimei o'tgan, 1 yil kafolat",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 9240271,
+                "sellPrice": 2199000,
+                "fullPrice": 3200000,
+                "availableAmount": 1,
+                "characteristicValues": [
+                  {
+                    "title": "4/128",
+                    "characteristic": {
+                      "title": "XOTIRA"
+                    }
+                  },
+                  {
+                    "title": "Och yashil",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2462659,
+            "title": "Smartfon Samsung Galaxy A16 4/128GB, 2 SIM-kartalar, AMOLED, 50MP kamera, 1 yillik kafolat",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 8875585,
+                "sellPrice": 2089000,
+                "fullPrice": 3000000,
+                "availableAmount": 45,
+                "characteristicValues": [
+                  {
+                    "title": "4/128",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2897488,
+            "title": "Smartfon Samsung Galaxy A07, 6.7\" dyuym displey, 90Hz, 50Mp kamera, IP54 Himoya",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 10996656,
+                "sellPrice": 1699000,
+                "fullPrice": 2499000,
+                "availableAmount": 72,
+                "characteristicValues": [
+                  {
+                    "title": "4GB / 64GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": 10618751,
+                "sellPrice": 1799000,
+                "fullPrice": 2699000,
+                "availableAmount": 24,
+                "characteristicValues": [
+                  {
+                    "title": "4GB / 128GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 1965705,
+            "title": "Smartfon Samsung Galaxy A17, 6.7\" 90Hz ekran, kamera 50Mp, batareya 5000 mA/h",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 6945005,
+                "sellPrice": 2899000,
+                "fullPrice": 3883500,
+                "availableAmount": 114,
+                "characteristicValues": [
+                  {
+                    "title": "6GB 128GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": 6945006,
+                "sellPrice": 3199000,
+                "fullPrice": 4633500,
+                "availableAmount": 3,
+                "characteristicValues": [
+                  {
+                    "title": "8GB 256GB",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Qora",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2961082,
+            "title": "Смартфон Samsung Galaxy A17, 6.7\" Super AMOLED 90Гц экран, камера 50Мп, 5000 мАч",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 10870649,
+                "sellPrice": 13000000,
+                "fullPrice": 13000000,
+                "availableAmount": 5,
+                "characteristicValues": [
+                  {
+                    "title": "8/256",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Toʻq kulrang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": 10870648,
+                "sellPrice": 13000000,
+                "fullPrice": 13000000,
+                "availableAmount": 6,
+                "characteristicValues": [
+                  {
+                    "title": "6/128",
+                    "characteristic": {
+                      "title": "Xotira"
+                    }
+                  },
+                  {
+                    "title": "Toʻq kulrang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "catalogCard": {
+            "__typename": "SkuGroupCard",
+            "productId": 2750967,
+            "title": "Samsung Galaxy A57 5G smartfoni, 50MP, sAMOLED, 120Hz, 1 yil kafolat, Sovg'asiga adapter",
+            "category": {
+              "id": 15271,
+              "title": "Smartfonlar Android"
+            },
+            "skuList": [
+              {
+                "id": 10054233,
+                "sellPrice": 5899000,
+                "fullPrice": 10000000,
+                "availableAmount": 985,
+                "characteristicValues": [
+                  {
+                    "title": "8/256GB",
+                    "characteristic": {
+                      "title": "Xotira:"
+                    }
+                  },
+                  {
+                    "title": "Kulrang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              },
+              {
+                "id": 10054231,
+                "sellPrice": 5215000,
+                "fullPrice": 9000000,
+                "availableAmount": 997,
+                "characteristicValues": [
+                  {
+                    "title": "8/128GB",
+                    "characteristic": {
+                      "title": "Xotira:"
+                    }
+                  },
+                  {
+                    "title": "Kulrang",
+                    "characteristic": {
+                      "title": "Rang"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

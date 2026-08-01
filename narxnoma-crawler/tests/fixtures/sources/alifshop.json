@@ -1,0 +1,1762 @@
+{
+  "n_pages": 52,
+  "n_items": 1034,
+  "current_page": 0,
+  "items": [
+    {
+      "id": "4ab27e23-1f44-4c49-8a0d-213b82ab40a1",
+      "slug": "smartfon-samsung-galaxy-a07-4-128-gb-cherniy-1762320736",
+      "partner_id": 1403,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 173000000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 1,
+      "condition": {
+        "id": 44923,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1403,
+        "slug": "mark-store-warehouse"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A07 4/128 ГБ, черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246326-1762259649-photo_2025-11-04_17-32-45.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246326-1762259649-photo_2025-11-04_17-32-45.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246327-1762259649-photo_2025-11-04_17-33-06.jpg"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246328-1762259649-photo_2025-11-04_17-33-10.jpg"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246328-1762259649-photo_2025-11-04_17-32-50.jpg"
+          },
+          {
+            "order": 4,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246329-1762259649-photo_2025-11-04_17-32-57.jpg"
+          },
+          {
+            "order": 5,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246330-1762259649-photo_2025-11-04_17-33-01.jpg"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": false
+    },
+    {
+      "id": "4a776e3a-a2b9-40ae-8a59-af3d67add7d2",
+      "slug": "smartfon-samsung-galaxy-a07-4-128-gb-cherniy-1761215096",
+      "partner_id": 1403,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 173000000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 1,
+      "condition": {
+        "id": 44923,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1403,
+        "slug": "mark-store-warehouse"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A07 4/128 ГБ, черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246249-1760790057-1f8f70a195d7d4dc5ba1e67363795069.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246249-1760790057-1f8f70a195d7d4dc5ba1e67363795069.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246249-1760861028-Без названия (1).jpg"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1403/1778246249-1760861032-images.jpg"
+          }
+        ]
+      },
+      "has_imei": true,
+      "has_guarantee": true
+    },
+    {
+      "id": "86bc3df9-f5f5-4ea6-98ac-24749b4dc8f2",
+      "slug": "smartfon-samsung-galaxy-a07-4-128-gb-zeleniy-1765786044",
+      "partner_id": 1379,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 180000000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 2,
+      "condition": {
+        "id": 44933,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1379,
+        "slug": "imart-warehouse"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A07 4/128 ГБ, зеленый",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778176720-1765782727-25фе 4.PNG"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778176720-1765782727-25фе 4.PNG"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778176722-1765782727-25фе 5.PNG"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": false
+    },
+    {
+      "id": "87dac8ff-fa6a-4138-8331-6a478dd189a0",
+      "slug": "smartfon-samsung-galaxy-a07-4-128-gb-zeleniy-1782817806",
+      "partner_id": 1378,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 182100000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 7,
+      "condition": {
+        "id": 20663,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1378,
+        "slug": "goodlike-warehouse"
+      },
+      "product": {
+        "name": "Смартфон Samsung Galaxy A07 4/128 ГБ, Зеленый",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817444-960x1280 (4).png"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817444-960x1280 (4).png"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817619-1755935283-Frame 679.jpg"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817628-1755935300-Frame 686.jpg"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817622-1755935289-Frame 684.jpg"
+          },
+          {
+            "order": 4,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817626-1755935295-Frame 685.jpg"
+          },
+          {
+            "order": 5,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817633-1755935307-Frame 688.jpg"
+          },
+          {
+            "order": 6,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817624-1755935292-Frame 689.jpg"
+          },
+          {
+            "order": 7,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817631-1755935303-Frame 687.jpg"
+          },
+          {
+            "order": 8,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782817636-1755935311-Frame 690.jpg"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": true
+    },
+    {
+      "id": "2d6c7b0f-2d5e-4512-a49f-20ac5ea6960e",
+      "slug": "smartfon-samsung-galaxy-a07-6-128-gb-light-violet-1782905054",
+      "partner_id": 1378,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 184600000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 3,
+      "condition": {
+        "id": 20663,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1378,
+        "slug": "goodlike-warehouse"
+      },
+      "product": {
+        "name": "Смартфон Samsung Galaxy A07 6/128 ГБ, Light Violet",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782903127-960x1280 (12).png"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782903127-960x1280 (12).png"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782903347-12.png"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782903350-13.png"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782903352-14.png"
+          },
+          {
+            "order": 4,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782903354-15.png"
+          },
+          {
+            "order": 5,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1782903357-16.png"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": true
+    },
+    {
+      "id": "fa1faf33-3012-4d5f-b900-9f960e4d638e",
+      "slug": "smartfon-samsung-galaxy-a07-6-128-gb-cherniy-1765782538",
+      "partner_id": 1379,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 189000000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 6,
+      "condition": {
+        "id": 44933,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1379,
+        "slug": "imart-warehouse"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A07 6/128 ГБ, черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778234851-1765780951-25фе 2.PNG"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778234851-1765780951-25фе 2.PNG"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778234853-1765780951-25фе 3.PNG"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": false
+    },
+    {
+      "id": "0b9a7ad2-6d05-488c-b952-fb466124a666",
+      "slug": "smartfon-samsung-galaxy-a07-6-128-gb-cherniy-1784019384",
+      "partner_id": 1378,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 192000000,
+      "old_price": 211000000,
+      "discount": -9,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 5,
+      "condition": {
+        "id": 20663,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1378,
+        "slug": "goodlike-warehouse"
+      },
+      "product": {
+        "name": "Смартфон Samsung Galaxy A07 6/128 ГБ, Черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017301-Без названия (960 x 1280 пикс.) (12).png"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017301-Без названия (960 x 1280 пикс.) (12).png"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017303-1755942447-Frame 684.jpg"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017305-1755942448-Frame 679.jpg"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017305-1755942448-Frame 685.jpg"
+          },
+          {
+            "order": 4,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017306-1755942448-Frame 688.jpg"
+          },
+          {
+            "order": 5,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017306-1769159691-Frame 3046.png"
+          },
+          {
+            "order": 6,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017307-1769159691-Frame 3047.png"
+          },
+          {
+            "order": 7,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017308-1769159691-Frame 3048.png"
+          },
+          {
+            "order": 8,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1784017308-1769159691-Frame 3050.png"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": true
+    },
+    {
+      "id": "031c705d-2e94-4ce1-a25b-900178c41c45",
+      "slug": "smartfon-samsung-galaxy-a07-4-128-gb-zeleniy-1770268868",
+      "partner_id": 1370,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 199900000,
+      "old_price": 225000000,
+      "discount": -11,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 1,
+      "condition": {
+        "id": 42554,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1370,
+        "slug": "platinum-store"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A07 4/128 ГБ, зеленый",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1370/1778261773-1770226444-1.png"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1370/1778261773-1770226444-1.png"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1370/1778261774-1770226444-2.png"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1370/1778261776-1770226444-3.png"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": false
+    },
+    {
+      "id": "21aa4037-6ec9-4905-8654-eadfa55e4f65",
+      "slug": "smartfon-samsung-galaxy-a07-4-128-gb-cherniy-1782488810",
+      "partner_id": 1346,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 199900000,
+      "old_price": 299900000,
+      "discount": -33,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 1,
+      "condition": {
+        "id": 41684,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1346,
+        "slug": "grand-tech-shop-3"
+      },
+      "product": {
+        "name": "Смартфон Samsung Galaxy A07 4/128 ГБ, черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1782480836-8051599374.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1782480836-8051599374.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1782480837-1778113731-1758116995-1755768951-1755513033-image_2025-08-18_15-30-04.png"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": false
+    },
+    {
+      "id": "0304c17b-9d3a-4f0c-af4f-28fd8a9dc4d1",
+      "slug": "smartfon-samsung-galaxy-a07-6-128-gb-cherniy-1758779838",
+      "partner_id": 1346,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 199900000,
+      "old_price": 259900000,
+      "discount": -23,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 2,
+      "condition": {
+        "id": 41684,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1346,
+        "slug": "grand-tech-shop-3"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A07 6/128 ГБ, черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1758738546-1757314041-Frame 1321317676.png"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1758738546-1757314041-Frame 1321317676.png"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1758738546-1757314045-Frame 1321317688.png"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": false
+    },
+    {
+      "id": "9c6e4f86-0ae1-45e9-9450-f1771c465ce4",
+      "slug": "smartfon-samsung-galaxy-a07-6-128-gb-fioletoviy-1760035950",
+      "partner_id": 1346,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 199900000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 1,
+      "condition": {
+        "id": 41684,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1346,
+        "slug": "grand-tech-shop-3"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A07 6/128 ГБ, фиолетовый",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1778190336-1760029692-1756010780-1755780060-A07 Silver.png"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1778190336-1760029692-1756010780-1755780060-A07 Silver.png"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1778190338-1760029692-1756010780-1755780060-6.png"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1346/1778190339-1760029693-1756010780-1755780060-3.png"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": false
+    },
+    {
+      "id": "42294c1c-4c75-4671-a940-7edbb1f863d8",
+      "slug": "smartfon-samsung-galaxy-a07-6-128-gb-cherniy-1766722242",
+      "partner_id": 1380,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 203000000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 1,
+      "condition": {
+        "id": 40049,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1380,
+        "slug": "t-max-warehouse"
+      },
+      "product": {
+        "name": "Смартфон Samsung Galaxy A07 6/128 ГБ, Черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1380/1778244028-1766669689-007 1756186641-1.png"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1380/1778244028-1766669689-007 1756186641-1.png"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1380/1778244029-1766669689-007 1756186643-2.png"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": true
+    },
+    {
+      "id": "f371f8dc-495f-420a-8116-358ae5984705",
+      "slug": "smartfon-samsung-galaxy-a16-4-128-gb-titanium-black-1783415828",
+      "partner_id": 1378,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 231800000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 2,
+      "condition": {
+        "id": 20663,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1378,
+        "slug": "goodlike-warehouse"
+      },
+      "product": {
+        "name": "Смартфон Samsung Galaxy A16 4/128 ГБ, Titanium Black",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1783415484-960x1280 (16).png"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1783415484-960x1280 (16).png"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1783415755-ct4kbjlpb7f3jk81avb0.jpg"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1783415748-ct4kbjdpb7f3jk81avag.jpg"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1783415751-ct4kbjdpq3gujfcfu7gg.jpg"
+          },
+          {
+            "order": 4,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1378/1783415753-ct4kbjk5j42b32f46obg.jpg"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": true
+    },
+    {
+      "id": "987290a3-0fa7-4dc8-8144-c5aacee09991",
+      "slug": "smartfon-samsung-galaxy-a17-6-128-gb-cherniy-1775733916",
+      "partner_id": 1392,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 236300000,
+      "old_price": 295375000,
+      "discount": -19,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 12,
+      "condition": {
+        "id": 44114,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1392,
+        "slug": "eplaza-warehouse"
+      },
+      "product": {
+        "name": "Смартфон Samsung Galaxy A17 6/128 ГБ, черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1392/1778435311-1775733507-photo_2026-04-09_15-22-42.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1392/1778435311-1775733507-photo_2026-04-09_15-22-42.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1392/1778435313-1758612596-3.png"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1392/1778435314-1758619614-2.png"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1392/1778435316-1758619616-3.png"
+          }
+        ]
+      },
+      "has_imei": true,
+      "has_guarantee": true
+    },
+    {
+      "id": "0504f7be-2619-478b-a8da-465924a24b11",
+      "slug": "smartfon-samsung-galaxy-a17-6-128-gb-siniy-1775733890",
+      "partner_id": 1392,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 236300000,
+      "old_price": 295375000,
+      "discount": -19,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 7,
+      "condition": {
+        "id": 44114,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1392,
+        "slug": "eplaza-warehouse"
+      },
+      "product": {
+        "name": "Смартфон Samsung Galaxy A17 6/128 ГБ, синий",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1392/1778262652-1775730218-photo_2026-04-09_15-22-42.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1392/1778262652-1775730218-photo_2026-04-09_15-22-42.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1392/1778262654-1758612238-1.png"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1077/1758619365-2.png"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1392/1778349907-1778262656-1758619369-3.png"
+          }
+        ]
+      },
+      "has_imei": true,
+      "has_guarantee": true
+    },
+    {
+      "id": "6a6310d9-9c39-46d8-a703-a575de83fa6a",
+      "slug": "smartfon-samsung-galaxy-a17-4-128-gb-awesome-gray-1775107978",
+      "partner_id": 1379,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 244000000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 9,
+      "condition": {
+        "id": 44933,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1379,
+        "slug": "imart-warehouse"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A17 4/128 ГБ, Awesome Gray",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778153592-1775067635-photo_2025-08-07_09-19-17.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778153592-1775067635-photo_2025-08-07_09-19-17.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778153592-1775067635-photo_2025-08-07_13-13-59.jpg"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": false
+    },
+    {
+      "id": "c304e706-366e-4b06-8121-859afa201993",
+      "slug": "smartfon-samsung-galaxy-a17-4-128-gb-cherniy-1775107996",
+      "partner_id": 1379,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 244000000,
+      "old_price": 0,
+      "discount": null,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 32,
+      "condition": {
+        "id": 44933,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1379,
+        "slug": "imart-warehouse"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A17 4/128 ГБ, черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778368607-1775067138-photo_2025-08-07_09-17-55.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778368607-1775067138-photo_2025-08-07_09-17-55.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1379/1778368608-1775067139-photo_2025-08-07_09-17-55 (2).jpg"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": false
+    },
+    {
+      "id": "4139cf89-f033-4af2-b052-b2382648f7da",
+      "slug": "smartfon-samsung-galaxy-a17-6-128-gb-cherniy-1758517124",
+      "partner_id": 1411,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 247900000,
+      "old_price": 297900000,
+      "discount": -16,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 26,
+      "condition": {
+        "id": 44912,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1411,
+        "slug": "on-off-warehouse"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A17 6/128 ГБ, черный",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778292128-1761124352-photo_5_2025-10-22_14-07-23.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778292128-1761124352-photo_5_2025-10-22_14-07-23.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778292130-1758274677-Frame 251.png"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778292132-1758274677-Frame 252.png"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778292133-1758274677-Frame 253.png"
+          }
+        ]
+      },
+      "has_imei": true,
+      "has_guarantee": true
+    },
+    {
+      "id": "4f6c1dc8-5305-4a18-847c-bdbda2ad215b",
+      "slug": "smartfon-samsung-galaxy-a17-6-128-gb-goluboy-1770210340",
+      "partner_id": 1411,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 247900000,
+      "old_price": 297900000,
+      "discount": -16,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 7,
+      "condition": {
+        "id": 44912,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1411,
+        "slug": "on-off-warehouse"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A17 6/128 ГБ, голубой",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778141534-1770209734-1761124315-photo_6_2025-10-22_14-07-23.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778141534-1770209734-1761124315-photo_6_2025-10-22_14-07-23.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778141535-1769158657-Frame 3039.png"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778141536-1769158657-Frame 3040.png"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778141537-1769158657-Frame 3041.png"
+          },
+          {
+            "order": 4,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778141537-1769158657-Frame 3043.png"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": true
+    },
+    {
+      "id": "2fb0ef54-250b-4d1e-837d-a1d33c777166",
+      "slug": "smartfon-samsung-galaxy-a17-6-128-gb-seriy-1769241338",
+      "partner_id": 1411,
+      "product_id": null,
+      "brand_id": 157,
+      "brand_name": "Samsung",
+      "brand_image": "/files?k1=6e92c8d6-0c7e-4ac7-b7d6-464439efc1e8&k2=d6539c931421ec23b1608a1b1523467f4bcdbdf8d52fb78135170be0cc343abbd63bf704dffa596c4fafa4eae4050675b94ba9627dbfc6a39ef635bbc126b5c6",
+      "price": 247900000,
+      "old_price": 297900000,
+      "discount": -16,
+      "label_ru": null,
+      "label_uz": null,
+      "quantity": 22,
+      "condition": {
+        "id": 44912,
+        "duration": 24,
+        "commission": 75,
+        "prepayment": 0,
+        "event_id": null
+      },
+      "partner": {
+        "id": 1411,
+        "slug": "on-off-warehouse"
+      },
+      "product": {
+        "name": "Смартфон  Samsung Galaxy A17 6/128 ГБ, Серый",
+        "title_image": {
+          "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778282876-1770209764-1761124332-photo_4_2025-10-22_14-07-23.jpg"
+        },
+        "images": [
+          {
+            "order": 0,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778282876-1770209764-1761124332-photo_4_2025-10-22_14-07-23.jpg"
+          },
+          {
+            "order": 1,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778282877-1769155829-Frame 3030.png"
+          },
+          {
+            "order": 2,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778282879-1769155830-Frame 3031.png"
+          },
+          {
+            "order": 3,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778282880-1769155830-Frame 3032.png"
+          },
+          {
+            "order": 4,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778282881-1769155830-Frame 3033.png"
+          },
+          {
+            "order": 5,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778282882-1769155830-Frame 3034.png"
+          },
+          {
+            "order": 6,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778282883-1769155830-Frame 3035.png"
+          },
+          {
+            "order": 7,
+            "sm_path": "https://s3.fortifai.uz/shop/moderation/partner-1411/1778282884-1769155830-Frame 3036.png"
+          }
+        ]
+      },
+      "has_imei": false,
+      "has_guarantee": true
+    }
+  ],
+  "aggregations": {
+    "price": {
+      "doc_count": 1034,
+      "stats": {
+        "count": 1034,
+        "min": 6400000,
+        "max": 3690000000,
+        "avg": 662483356.1895552,
+        "sum": 685007790300
+      }
+    },
+    "brand": {
+      "doc_count": 1034,
+      "terms": [
+        {
+          "doc_count": 1019,
+          "key": "Samsung"
+        },
+        {
+          "doc_count": 9,
+          "key": "Pitaka"
+        },
+        {
+          "doc_count": 5,
+          "key": "MR Glass "
+        },
+        {
+          "doc_count": 1,
+          "key": "Tapo"
+        }
+      ]
+    },
+    "category": {
+      "doc_count": 1034,
+      "terms": [
+        {
+          "doc_count": 690,
+          "key": "Смартфоны Samsung"
+        },
+        {
+          "doc_count": 50,
+          "key": "Микроволновые печи"
+        },
+        {
+          "doc_count": 46,
+          "key": "Телевизоры"
+        },
+        {
+          "doc_count": 42,
+          "key": "Стиральные машины"
+        },
+        {
+          "doc_count": 39,
+          "key": "Все пылесосы"
+        },
+        {
+          "doc_count": 39,
+          "key": "Холодильники и морозильные камеры"
+        },
+        {
+          "doc_count": 22,
+          "key": "Смарт-часы"
+        },
+        {
+          "doc_count": 18,
+          "key": "Все планшеты"
+        },
+        {
+          "doc_count": 17,
+          "key": "Наушники"
+        },
+        {
+          "doc_count": 10,
+          "key": "Чехлы для смартфонов"
+        }
+      ]
+    },
+    "filters": {
+      "doc_count": 1034,
+      "attributes": [
+        {
+          "doc_count": 30,
+          "key": "Dolby digital +",
+          "values": [
+            {
+              "doc_count": 2,
+              "key": "нет"
+            },
+            {
+              "doc_count": 19,
+              "key": "есть"
+            },
+            {
+              "doc_count": 1,
+              "key": "Dolby Vision, Dolby Audio, DTS Virtual X"
+            },
+            {
+              "doc_count": 5,
+              "key": "Dolby Digital"
+            },
+            {
+              "doc_count": 2,
+              "key": "Dolby Audio"
+            },
+            {
+              "doc_count": 2,
+              "key": "Dolby Atmos"
+            }
+          ]
+        },
+        {
+          "doc_count": 33,
+          "key": "HDR",
+          "values": [
+            {
+              "doc_count": 1,
+              "key": "Нет"
+            },
+            {
+              "doc_count": 1,
+              "key": "Да"
+            },
+            {
+              "doc_count": 5,
+              "key": "HDR10, HLG"
+            },
+            {
+              "doc_count": 1,
+              "key": "HDR10, HDR10+, HLG, Dolby Vision IQ"
+            },
+            {
+              "doc_count": 3,
+              "key": "HDR10, HDR10+, HLG, Dolby Vision"
+            },
+            {
+              "doc_count": 14,
+              "key": "HDR10+"
+            },
+            {
+              "doc_count": 1,
+              "key": "HDR10 Pro, HLG"
+            },
+            {
+              "doc_count": 9,
+              "key": "HDR10"
+            }
+          ]
+        },
+        {
+          "doc_count": 4,
+          "key": "LED-Дисплей",
+          "values": [
+            {
+              "doc_count": 4,
+              "key": "есть"
+            }
+          ]
+        },
+        {
+          "doc_count": 4,
+          "key": "Автосматывание шнура",
+          "values": [
+            {
+              "doc_count": 2,
+              "key": "нет"
+            },
+            {
+              "doc_count": 2,
+              "key": "Есть"
+            }
+          ]
+        },
+        {
+          "doc_count": 1,
+          "key": "Аккумулятор",
+          "values": [
+            {
+              "doc_count": 1,
+              "key": "Li-Ion, 208 мАч"
+            }
+          ]
+        },
+        {
+          "doc_count": 2,
+          "key": "Антикоррозионное покрытие",
+          "values": [
+            {
+              "doc_count": 2,
+              "key": "есть"
+            }
+          ]
+        },
+        {
+          "doc_count": 400,
+          "key": "Аутентификация",
+          "values": [
+            {
+              "doc_count": 83,
+              "key": "сканер отпечатка пальца на экране"
+            },
+            {
+              "doc_count": 2,
+              "key": "сканер отпечатка пальца"
+            },
+            {
+              "doc_count": 211,
+              "key": "разблокировку по отпечатку пальца"
+            },
+            {
+              "doc_count": 7,
+              "key": "разблокировка по лицу , сканер отпечатка пальца на экране"
+            },
+            {
+              "doc_count": 110,
+              "key": "разблокировка по лицу"
+            },
+            {
+              "doc_count": 22,
+              "key": "боковой сканер отпечатка пальца + распознавание лица"
+            },
+            {
+              "doc_count": 19,
+              "key": "Ультразвуковой сканер отпечатков пальцев под экраном, разблокировка по лицу Face Unlock"
+            },
+            {
+              "doc_count": 1,
+              "key": "Ультразвуковой сканер отпечатка пальца (под экраном), распознавание лица"
+            },
+            {
+              "doc_count": 1,
+              "key": "Сканер отпечатков пальцев, встроенный в экран (In-Display Fingerprint), разблокировка по лицу Face Unlock"
+            },
+            {
+              "doc_count": 1,
+              "key": "Сканер отпечатков пальцев (в экране), распознавание лица"
+            },
+            {
+              "doc_count": 2,
+              "key": "Сканер отпечатка пальца, распознавание лица"
+            },
+            {
+              "doc_count": 75,
+              "key": "Сканер отпечатка пальца, Face Unlock"
+            },
+            {
+              "doc_count": 1,
+              "key": "Сканер отпечатка пальца (в боковой кнопке), распознавание лица"
+            }
+          ]
+        },
+        {
+          "doc_count": 17,
+          "key": "Безопасность для аллергиков",
+          "values": [
+            {
+              "doc_count": 7,
+              "key": "Есть"
+            },
+            {
+              "doc_count": 10,
+              "key": "Да — Steam™ удаляет до 99,9 % аллергенов"
+            }
+          ]
+        },
+        {
+          "doc_count": 48,
+          "key": "Беспроводная связь",
+          "values": [
+            {
+              "doc_count": 1,
+              "key": "Wi‑Fi 6E, Bluetooth 5.3, AirPlay 2, Chromecast"
+            },
+            {
+              "doc_count": 3,
+              "key": "Wi‑Fi 5, Bluetooth 5.0"
+            },
+            {
+              "doc_count": 1,
+              "key": "Wifi"
+            },
+            {
+              "doc_count": 2,
+              "key": "Wi-Fi: 2.4 ГГц / 5 ГГц (802.11n), Bluetooth: 5.0, Поддержка Miracast"
+            },
+            {
+              "doc_count": 34,
+              "key": "Wi-Fi, Bluetooth"
+            },
+            {
+              "doc_count": 1,
+              "key": "Wi-Fi (802.11 a/b/g/n/ac)"
+            },
+            {
+              "doc_count": 14,
+              "key": "Wi-Fi"
+            },
+            {
+              "doc_count": 2,
+              "key": "Chromecast"
+            },
+            {
+              "doc_count": 7,
+              "key": "Bluetooth"
+            },
+            {
+              "doc_count": 4,
+              "key": "Airplay"
+            }
+          ]
+        },
+        {
+          "doc_count": 15,
+          "key": "Беспроводная связь и навигация",
+          "values": [
+            {
+              "doc_count": 2,
+              "key": "ГЛОНАСС"
+            },
+            {
+              "doc_count": 1,
+              "key": "Wi‑Fi, Bluetooth 5.3, GPS, NFC"
+            },
+            {
+              "doc_count": 2,
+              "key": "Wi-Fi"
+            },
+            {
+              "doc_count": 4,
+              "key": "NFC"
+            },
+            {
+              "doc_count": 2,
+              "key": "Galileo"
+            },
+            {
+              "doc_count": 1,
+              "key": "GPS, ГЛОНАСС, GALILEO, BeiDou, QZSS"
+            },
+            {
+              "doc_count": 6,
+              "key": "GPS"
+            },
+            {
+              "doc_count": 10,
+              "key": "Bluetooth"
+            },
+            {
+              "doc_count": 2,
+              "key": "Beidou"
+            }
+          ]
+        },
+        {
+          "doc_count": 591,
+          "key": "Беспроводные интерфейсы",
+          "values": [
+            {
+              "doc_count": 1,
+              "key": "Wi‑Fi (b/g/n/ac), Bluetooth (5.x), FM‑радио, 3.5 мм аудио‑разъём, USB‑C"
+            },
+            {
+              "doc_count": 3,
+              "key": "WiFi7(802.11be), Bluetooth 6.0, NFC, UWB"
+            },
+            {
+              "doc_count": 7,
+              "key": "Wi-Fi, Bluetooth 5.3, NFC"
+            },
+            {
+              "doc_count": 4,
+              "key": "Wi-Fi a/b/g/n/ac (2,4 ГГц + 5 ГГц) + Bluetooth 5.3 + NFC"
+            },
+            {
+              "doc_count": 12,
+              "key": "Wi-Fi 802.11a/b/g/n/ac/ax, Bluetooth 5.4, NFC"
+            },
+            {
+              "doc_count": 1,
+              "key": "Wi-Fi 802.11a/b/g/n/ac/ax 2.4 ГГц+5 ГГц+6 ГГц, MIMO, 1024-QAM"
+            },
+            {
+              "doc_count": 7,
+              "key": "Wi-Fi 802.11 a/b/g/n/ac/ax (2,4 / 5 / 6 ГГц), Bluetooth 5.4, NFC"
+            },
+            {
+              "doc_count": 5,
+              "key": "Wi-Fi 802.11 a/b/g/n/ac (2.4/5 ГГц), Wi-Fi Direct"
+            },
+            {
+              "doc_count": 2,
+              "key": "Wi-Fi 802.11 a/b/g/n/ac (2.4 + 5 ГГц), Wi-Fi Direct"
+            },
+            {
+              "doc_count": 15,
+              "key": "Wi-Fi 7, Bluetooth 5.4, NFC"
+            },
+            {
+              "doc_count": 1,
+              "key": "Wi-Fi 7 (802.11be), Bluetooth 5.4, NFC, UWB"
+            },
+            {
+              "doc_count": 17,
+              "key": "Wi-Fi 7 (802.11 a/b/g/n/ac/ax/be), Bluetooth 5.4, NFC, UWB"
+            },
+            {
+              "doc_count": 65,
+              "key": "Wi-Fi 6E, Bluetooth 5.3, NFC."
+            },
+            {
+              "doc_count": 1,
+              "key": "Wi-Fi 6E, Bluetooth 5.3, NFC"
+            },
+            {
+              "doc_count": 1,
+              "key": "Wi-Fi 6, Bluetooth 6.0, NFC, ИК-порт"
+            },
+            {
+              "doc_count": 9,
+              "key": "Wi-Fi 6, Bluetooth 5.3, NFC"
+            },
+            {
+              "doc_count": 3,
+              "key": "Wi-Fi 6, Bluetooth 5.2"
+            },
+            {
+              "doc_count": 2,
+              "key": "Wi-Fi 6 (802.11ax), NFC, Bluetooth 5.3, Wi-Fi Direct, стереодинамики с Dolby Atmos"
+            },
+            {
+              "doc_count": 1,
+              "key": "Wi-Fi 6 (802.11 a/b/g/n/ac/ax), Wi-Fi Direct."
+            },
+            {
+              "doc_count": 11,
+              "key": "Wi-Fi 5 (802.11a/b/g/n/ac, 2.4/5 ГГц), NFC, Bluetooth 5.3, Wi-Fi Direct"
+            }
+          ]
+        },
+        {
+          "doc_count": 31,
+          "key": "Блокировка от детей",
+          "values": [
+            {
+              "doc_count": 5,
+              "key": "нет"
+            },
+            {
+              "doc_count": 26,
+              "key": "есть"
+            }
+          ]
+        },
+        {
+          "doc_count": 12,
+          "key": "Быстрая заморозка",
+          "values": [
+            {
+              "doc_count": 10,
+              "key": "Есть"
+            },
+            {
+              "doc_count": 1,
+              "key": "Да (до 12 кг/сутки)"
+            },
+            {
+              "doc_count": 1,
+              "key": "2 кг/сут"
+            }
+          ]
+        },
+        {
+          "doc_count": 9,
+          "key": "Быстрая зарядка",
+          "values": [
+            {
+              "doc_count": 1,
+              "key": "Есть (PD / QC / Mi Fast Charge)"
+            },
+            {
+              "doc_count": 8,
+              "key": "Да"
+            }
+          ]
+        },
+        {
+          "doc_count": 26,
+          "key": "Быстрая стирка",
+          "values": [
+            {
+              "doc_count": 3,
+              "key": "да"
+            },
+            {
+              "doc_count": 4,
+              "key": "Да"
+            },
+            {
+              "doc_count": 1,
+              "key": "HA"
+            },
+            {
+              "doc_count": 15,
+              "key": "15 мин"
+            },
+            {
+              "doc_count": 2,
+              "key": "15 м"
+            },
+            {
+              "doc_count": 1,
+              "key": "14 мин"
+            }
+          ]
+        },
+        {
+          "doc_count": 24,
+          "key": "Быстро",
+          "values": [
+            {
+              "doc_count": 10,
+              "key": "да"
+            },
+            {
+              "doc_count": 3,
+              "key": "Программа TurboWash 59 мин"
+            },
+            {
+              "doc_count": 9,
+              "key": "15МИН"
+            },
+            {
+              "doc_count": 3,
+              "key": "1400 оборотов в минуту"
+            }
+          ]
+        },
+        {
+          "doc_count": 15,
+          "key": "Версия Bluetooth",
+          "values": [
+            {
+              "doc_count": 3,
+              "key": "6.1"
+            },
+            {
+              "doc_count": 10,
+              "key": "5.4"
+            },
+            {
+              "doc_count": 2,
+              "key": "5.3"
+            }
+          ]
+        },
+        {
+          "doc_count": 1,
+          "key": "Версия HDMI",
+          "values": [
+            {
+              "doc_count": 1,
+              "key": "1xHDMI(2.0) /(HDCP 2.2)"
+            }
+          ]
+        },
+        {
+          "doc_count": 704,
+          "key": "Версия ОС на начало продаж",
+          "values": [
+            {
+              "doc_count": 44,
+              "key": "Android 16, One UI 8.5"
+            },
+            {
+              "doc_count": 2,
+              "key": "Android 16, HyperOS 3"
+            },
+            {
+              "doc_count": 92,
+              "key": "Android 16 One UI 8"
+            },
+            {
+              "doc_count": 231,
+              "key": "Android 16"
+            },
+            {
+              "doc_count": 76,
+              "key": "Android 15 OneUI 7"
+            },
+            {
+              "doc_count": 1,
+              "key": "Android 15 + One UI 7"
+            },
+            {
+              "doc_count": 216,
+              "key": "Android 15"
+            },
+            {
+              "doc_count": 4,
+              "key": "Android 14"
+            },
+            {
+              "doc_count": 3,
+              "key": "Android 13"
+            },
+            {
+              "doc_count": 1,
+              "key": "Android 11"
+            },
+            {
+              "doc_count": 34,
+              "key": "ANDROID"
+            }
+          ]
+        },
+        {
+          "doc_count": 682,
+          "key": "Вес",
+          "values": [
+            {
+              "doc_count": 1,
+              "key": "9 кг"
+            },
+            {
+              "doc_count": 2,
+              "key": "8 кг"
+            },
+            {
+              "doc_count": 1,
+              "key": "6.2 кг"
+            },
+            {
+              "doc_count": 3,
+              "key": "6 кг"
+            },
+            {
+              "doc_count": 1,
+              "key": "500 г"
+            },
+            {
+              "doc_count": 1,
+              "key": "5.7 кг"
+            },
+            {
+              "doc_count": 1,
+              "key": "5.4 кг"
+            },
+            {
+              "doc_count": 1,
+              "key": "5.1 кг"
+            },
+            {
+              "doc_count": 1,
+              "key": "49 г"
+            },
+            {
+              "doc_count": 6,
+              "key": "481 г"
+            },
+            {
+              "doc_count": 2,
+              "key": "47 г"
+            },
+            {
+              "doc_count": 2,
+              "key": "469 г"
+            },
+            {
+              "doc_count": 1,
+              "key": "465 г"
+            },
+            {
+              "doc_count": 1,
+              "key": "430 г"
+            },
+            {
+              "doc_count": 2,
+              "key": "41.8 г"
+            },
+            {
+              "doc_count": 1,
+              "key": "4.6г"
+            },
+            {
+              "doc_count": 4,
+              "key": "4.26 кг"
+            },
+            {
+              "doc_count": 1,
+              "key": "4.2 кг"
+            },
+            {
+              "doc_count": 3,
+              "key": "4,8 кг"
+            },
+            {
+              "doc_count": 2,
+              "key": "333 г"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

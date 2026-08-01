@@ -43,23 +43,72 @@ Body:
 {
   "items": [
     {
+      "id": "4ab27e23-1f44-4c49-8a0d-213b82ab40a1", // per-listing UUID, distinct per partner offer
       "price": 259900000,                       // TIYIN — divide by 100
       "slug": "honor-x9d-12-256-gb-midnight-black-abc123",
+      "quantity": 7,
+      "partner_id": 1378,
       "product": {"name": "Honor X9d 12/256 GB Midnight Black"},
-      "partner": {"slug": "some-seller"}
+      "partner": {"id": 1378, "slug": "some-seller"}
     }
   ],
   "n_pages": 4
 }
 ```
 
+> **Corrected 2026-07-31, live crawler client.** This section previously omitted
+> `items[].id`. It is the field the crawler client (`narxnoma/sources/alifshop.py`)
+> uses as `source_key` — a UUID assigned per listing by alifshop itself, distinct
+> per partner offer even when `slug`, `product.name`, and `price` are identical
+> across sellers. `slug` alone is not documented as guaranteed unique across
+> partners and must not be relied on for dedup; `id` is. Also present but unused
+> by the crawler client: `quantity` (stock count, used for availability) and
+> `partner_id` (redundant with `partner.id`).
+
 | Field | Meaning |
 |---|---|
+| `items[].id` | **per-listing UUID** — use this as the dedupe/upsert key, not `slug` |
 | `items[].price` | **TIYIN** — divide by **100** to get SUM |
 | `items[].product.name` | the string to match against |
 | `items[].slug` | listing slug, used for the URL |
+| `items[].quantity` | stock count; `0` means out of stock |
 | `items[].partner.slug` | seller identity — useful for dedupe/diagnostics |
 | `n_pages` | total pages for this query |
+
+No per-item category or product-type field exists anywhere in this response.
+`aggregations.category` is a dataset-wide histogram (10 buckets with counts) over
+the *whole* result set for the query, not a per-item field — it cannot be used to
+tag an individual item as phone vs. non-phone.
+
+**But the search request accepts a `category` filter, and it genuinely narrows
+server-side.** The valid values are exactly the display strings in that same
+response's `aggregations.category.terms[].key` — there is no numeric id, and the
+value is brand-specific ("Смартфоны Samsung", "Смартфоны Xiaomi", ...), so it has
+to be read off each query's own aggregation rather than hardcoded. Measured live
+on 2026-07-31:
+
+| Request body | `n_items` | `n_pages` |
+|---|---|---|
+| `{"query": "Samsung", "page": 0, "size": 20}` | 1,034 | 52 |
+| `{"query": "Samsung", "page": 0, "size": 20, "category": "Смартфоны Samsung"}` | 690 | 35 |
+| `{"query": "Samsung", "page": 0, "size": 20, "category": "Nonexistent Category XYZ"}` | 0 | — |
+
+The third row is what proves this is a real server-side filter and not an ignored
+unknown key: a made-up category value returns nothing, and the unfiltered "Samsung"
+sweep is one third non-phones — microwaves, TVs, washing machines, vacuums,
+fridges, smartwatches, tablets, headphones, and phone cases — that a downstream
+matcher-health table would otherwise have to absorb.
+
+The crawler client (`narxnoma/sources/alifshop.py`) picks the phones bucket with
+`phone_category_from_aggregations`: `key.casefold().startswith("смартфон")`.
+**This must be a prefix test, not a substring test** — the observed bucket
+"Чехлы для смартфонов" (phone cases) *contains* "смартфон" and a naive `in` check
+would select it, which is exactly the non-phone noise this filter exists to
+remove. "Смарт-часы" (smartwatches) starts with "смарт" but not "смартфон", so the
+prefix rule correctly excludes it too. `sweep()` fetches page 0 unfiltered once per
+brand to read the aggregation, re-requests page 0 with the discovered `category`,
+and paginates that filtered set; if no phone-like bucket is found it logs a
+warning and falls back to the unfiltered sweep for that brand.
 
 > **Units trap:** `price` is in tiyin. `259900000 / 100 = 2,599,000 SUM`. Forgetting
 > the divisor produces prices 100× too large, which is obvious — but a *partial*

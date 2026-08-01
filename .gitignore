@@ -26,3 +26,6 @@ narxnoma-crawler/database/cache/
 # OS
 Thumbs.db
 .DS_Store
+
+# Local dev PostgreSQL (portable binaries + cluster) - never commit
+.local/
