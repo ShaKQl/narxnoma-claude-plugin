@@ -79,7 +79,21 @@ def extract_features(name: str | None) -> Features:
         if re.fullmatch(r"\d+(?:gb|гб|tb|тб)", t):
             continue
         # Skip SKU/catalogue codes (letters+digits, len >= 5): "a075f",
-        # "sm-a175f". Real designators (a07, a17, x9d, y31d) are <= 4 chars.
+        # "sm-a175f", and spec-blurb fragments like "120hz", "200mp", "6500mah".
+        #
+        # 5 is measured, not guessed. Across all 14,860 golden rows, accept/reject
+        # agreement is 99.993% at 5 and 99.987% at 6, 7, 8 and with the rule off
+        # entirely -- raising it is strictly worse. At 6 the rule stops discarding
+        # 5-character mixed tokens, so "120hz" and "200mp" survive as model tokens
+        # and then reject a legitimate Redmi Note 15 Pro match: the marketing-blurb
+        # failure uzum.md section 5a exists to prevent, recreated by loosening the
+        # rule that prevents it. See test_sku_min_len_is_measured_not_guessed.
+        #
+        # KNOWN GAP: this also discards real designators of 5+ characters --
+        # "reno15", "magic8", "fold4". Those products are currently unkeyable. The
+        # fix is a targeted designator allowlist applied BEFORE this rule, not a
+        # different threshold; length cannot separate the two populations, because
+        # real designators and catalogue codes overlap in length.
         if len(t) >= _SKU_MIN_LEN and any(c.isalpha() for c in t) and any(c.isdigit() for c in t):
             continue
         if any(c.isdigit() for c in t):

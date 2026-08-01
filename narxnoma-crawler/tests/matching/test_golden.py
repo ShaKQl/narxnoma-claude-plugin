@@ -13,6 +13,16 @@ GOLDEN = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "golden"
 # ACCEPTS rows previously rejected).
 MIN_AGREEMENT = 0.99
 
+# A ratio floor this loose cannot see a real regression. Raising _SKU_MIN_LEN
+# from 5 to 6 doubled the disagreements (1 -> 2) and still cleared 0.99 easily,
+# so this suite would have waved through a change measured to make matching
+# worse. The count is the sensitive instrument; pin it.
+#
+# Raise this ONLY alongside a measurement showing the new disagreements are
+# deliberate improvements, and say which rows they are. Never raise it to make
+# a failing run pass.
+MAX_DISAGREEMENTS = 1
+
 
 def _rows():
     for path in sorted(GOLDEN.glob("audit_*.json")):
@@ -48,6 +58,12 @@ def test_accept_reject_agreement_against_golden():
     assert agreement >= MIN_AGREEMENT, (
         f"agreement {agreement:.4f} < {MIN_AGREEMENT} "
         f"({len(disagreements)} of {total} disagree)\n{sample}"
+    )
+    # The count catches what the ratio cannot: see MAX_DISAGREEMENTS above.
+    assert len(disagreements) <= MAX_DISAGREEMENTS, (
+        f"{len(disagreements)} disagreements, expected at most "
+        f"{MAX_DISAGREEMENTS}. Agreement is still {agreement:.5f}, which is why "
+        f"the ratio floor did not catch this.\n{sample}"
     )
 
 
