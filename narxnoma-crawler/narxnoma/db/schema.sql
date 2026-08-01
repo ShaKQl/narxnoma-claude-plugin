@@ -80,3 +80,60 @@ INSERT INTO store (slug, name, website_url) VALUES
     ('olcha',     'Olcha',     'https://olcha.uz'),
     ('texnomart', 'Texnomart', 'https://texnomart.uz')
 ON CONFLICT (slug) DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Migration 2: canonical products. Appended, never edited into the tables
+-- above -- see the header comment.
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS variant (
+    id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    brand         text NOT NULL,
+    model_tokens  text[] NOT NULL,
+    ram_gb        integer,                 -- NULL is legitimate: Apple omits RAM
+    storage_gb    integer NOT NULL,
+    color         text NOT NULL,           -- hard identity field, never NULL
+    sim_kind      text NOT NULL CHECK (sim_kind IN ('dual', 'esim_only')),
+    display_name  text NOT NULL,           -- generated from the key, never copied
+    slug          text UNIQUE NOT NULL,
+    category      text NOT NULL DEFAULT 'smartphones',
+    created_at    timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS variant_identity
+    ON variant (brand, ram_gb, storage_gb, sim_kind);
+CREATE INDEX IF NOT EXISTS variant_siblings
+    ON variant (brand, storage_gb, ram_gb, sim_kind);   -- colour-sibling lookup
+
+-- min_price is NULLABLE on purpose. Only IN_STOCK offers may set a headline
+-- price, and a variant can legitimately have offers where every one of them is
+-- out of stock. NOT NULL would force us either to publish an out-of-stock price
+-- as if it were buyable, or to delete the row and lose the variant's history.
+CREATE TABLE IF NOT EXISTS variant_price (
+    variant_id            uuid PRIMARY KEY REFERENCES variant(id) ON DELETE CASCADE,
+    min_price             bigint,
+    min_store_id          uuid REFERENCES store(id),
+    min_offer_id          uuid REFERENCES offer(id),
+    median_price          bigint,
+    max_price             bigint,
+    offer_count           integer NOT NULL DEFAULT 0,
+    in_stock_offer_count  integer NOT NULL DEFAULT 0,
+    store_count           integer NOT NULL DEFAULT 0,
+    computed_at           timestamptz NOT NULL DEFAULT now(),
+    CHECK ((min_price IS NULL) = (in_stock_offer_count = 0))
+);
+
+CREATE TABLE IF NOT EXISTS unresolved_offer (
+    offer_id       uuid PRIMARY KEY REFERENCES offer(id) ON DELETE CASCADE,
+    reason         text NOT NULL CHECK (reason <> ''),
+    candidate_ids  uuid[] NOT NULL DEFAULT '{}',
+    recorded_at    timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS unresolved_reason ON unresolved_offer (reason);
+
+DO $$ BEGIN
+    ALTER TABLE offer ADD CONSTRAINT offer_variant_fk
+        FOREIGN KEY (variant_id) REFERENCES variant(id) ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
+INSERT INTO schema_version (version) VALUES (2) ON CONFLICT (version) DO NOTHING;
