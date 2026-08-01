@@ -239,7 +239,60 @@ git commit -m "feat(db): add variant, variant_price and unresolved_offer tables"
 
 ---
 
-### Task 2: Fix `_SKU_MIN_LEN`, measured against the corpus
+### Task 2: Fix `_SKU_MIN_LEN`
+
+> **MEASURED 2026-08-01 — read this before doing anything. The task's premise is wrong.**
+>
+> This task assumed the threshold should be raised. It should not. Measured against the
+> full 14,860-row golden corpus, raising it makes accuracy **worse**:
+>
+> | `_SKU_MIN_LEN` | agreement | disagreements |
+> |---|---|---|
+> | 4 | 99.993% | 1 |
+> | **5 (current)** | **99.993%** | **1** |
+> | 6 | 99.987% | 2 |
+> | 7 | 99.987% | 2 |
+> | 99 (rule disabled) | 99.987% | 2 |
+>
+> At 6 the rule stops discarding 5-character mixed tokens, so spec-blurb fragments such as
+> `120hz` and `200mp` survive as *model tokens* — and then reject a legitimate
+> `Redmi Note 15 Pro` match, because the candidate lacks a token the target invented. That
+> is the marketing-blurb failure `uzum.md` §5a exists to prevent, re-created by loosening
+> the very rule that prevents it.
+>
+> Token-length census of the corpus, which explains why:
+>
+> | length | occurrences | examples |
+> |---|---|---|
+> | 5 | 3,843 | `256gb`, `128gb`, `120hz`, `200mp`, `fold4`, `pro12` |
+> | 6 | 87 | `magic8`, `mg3730`, `bt7510`, `hc5610` |
+> | 7 | 125 | `6500mah`, `x1504va`, `e1504fa`, `mk183ru` |
+> | 11 | 66 | `rf44a5002s9`, `a576bzvesoz`, `vc15k4176hg` |
+>
+> Length 5 is a genuine mix of real designators (`fold4`, `pro12`) and spec junk
+> (`120hz`, `200mp`); 7 and above is almost purely catalogue codes. There is no threshold
+> that separates them, which is why a threshold is the wrong instrument.
+>
+> **So: do not change `_SKU_MIN_LEN`.** The OPPO Reno problem is real in principle —
+> `reno15` is 6 characters, so every Reno is unkeyable — but the corpus contains **zero**
+> `reno*` tokens and only 26 OPPO rows in total, so there is no evidence here to tune
+> against. The correct fix is a *targeted* designator allowlist (a small regex such as
+> `reno\d+`, `magic\d+`, `nova\d+`) applied **before** the SKU-code rule, leaving the
+> threshold alone. That needs its own corpus — record OPPO- and Honor-brand fixtures first.
+>
+> A prior agent recommended raising this to 6 on the basis of "1,021 OPPO Reno listings,
+> 35% of the corpus's OPPO rows". Those numbers do not exist in the corpus; its commands
+> were being denied and it appears to have reported unverified figures. Re-measure before
+> trusting any claim about this rule, including this one — the script is trivial to rewrite
+> and the corpus is right there.
+
+**Revised scope:** verify the measurement above yourself, add a regression test pinning
+that the threshold stays at 5 with a comment carrying the evidence, and record the Reno
+gap as a separate follow-up requiring its own fixtures. Do not change the constant.
+
+---
+
+#### Original task text (superseded by the measurement above), measured against the corpus
 
 **Files:**
 - Modify: `narxnoma-crawler/narxnoma/matching/features.py`
