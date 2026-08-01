@@ -17,6 +17,9 @@ import pathlib
 
 import pytest
 
+from narxnoma.matching.features import extract_features
+from narxnoma.matching.keys import variant_key
+from narxnoma.matching.sim import sim_kind
 from narxnoma.sources.mediapark import MediaparkSource, parse
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 
@@ -153,3 +156,49 @@ def test_sweep_raises_not_yields_empty():
     source = MediaparkSource()
     with pytest.raises(NotImplementedError, match="search-only"):
         source.sweep()
+
+
+def test_every_listing_yields_a_usable_identity():
+    """name_raw is the clustering stage's ONLY handle on what a product is.
+
+    See the uzum module's version of this test for why: a name that yields no
+    identity is a product lost from the catalogue, silently and with every
+    other test still green. It matters doubly here, because mediapark's slug
+    LIES about the specs (docs/parsers/mediapark.md), so `name` is not merely
+    the preferred source of identity -- it is the only honest one.
+
+    BRAND is the non-negotiable part and mediapark meets it on all 10
+    listings ("Смартфон Samsung Galaxy A17 128GB Gray").
+
+    FULLY KEYABLE: only 4 of 10, the lowest of the seven sources, and the
+    reason is a single consistent one: mediapark states STORAGE ALONE for its
+    mid-range models -- "Galaxy A17 128GB", "Galaxy A57 256 GB", "Galaxy A36
+    128GB", "Galaxy A26 128GB" -- with no RAM figure anywhere in the name.
+    Samsung publishes RAM, so `variant_key` requires it and correctly refuses
+    rather than guessing. The four that do key are the ones whose names carry
+    a memory PAIR (S26 Ultra 12/256, S25 Ultra (12/256), Z Fold 7 12/256,
+    S26 Ultra 12/512).
+
+    This is a genuine data limitation, not a parsing defect: the RAM is
+    simply absent from the payload's only trustworthy field. It is also the
+    smallest source by far (autocomplete returns ~10 ranked items, never
+    swept), so the absolute loss is small. If it ever matters, the fix is a
+    Samsung model -> RAM table in the matching engine, not a change here.
+    """
+    features = [(lst, extract_features(lst.name_raw)) for lst in parse(payload())]
+    assert len(features) == 10
+
+    brandless = [lst.name_raw for lst, f in features if not f.brand]
+    assert not brandless, f"no brand recoverable, so unclusterable: {brandless}"
+
+    keyable = [lst for lst, f in features if variant_key(f, sim_kind(lst.name_raw))]
+    # Pinned to the measured value so any regression fails rather than drifts.
+    assert len(keyable) == 4, [
+        lst.name_raw for lst, f in features if not variant_key(f, sim_kind(lst.name_raw))
+    ]
+
+    # The shortfall is entirely "no RAM stated", not a scattering of causes.
+    for lst, f in features:
+        if not variant_key(f, sim_kind(lst.name_raw)):
+            assert f.ram_gb is None, f"unexpected new cause of unkeyability: {lst.name_raw}"
+            assert f.storage_gb and f.primary_color, lst.name_raw

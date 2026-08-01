@@ -2,17 +2,18 @@ import pytest
 
 from narxnoma.cli import main, render_report, render_status, report_exit_code
 from narxnoma.pipeline.harvest import HarvestResult
-from narxnoma.pipeline.report import SourceCoverage
+from narxnoma.pipeline.report import BELOW_FLOOR, LAST_RUN_FAILED, STALE, SourceCoverage
 
 
-def _row(slug, offers, expected_min, is_suspicious):
+def _row(slug, offers, expected_min, reasons=()):
     return SourceCoverage(slug=slug, offers=offers, median_price=None,
                           oldest_seen=None, newest_seen=None, last_run_ok=None,
-                          expected_min=expected_min, is_suspicious=is_suspicious)
+                          expected_min=expected_min, reasons=tuple(reasons),
+                          age_hours=1.0)
 
 
 def test_render_report_marks_suspicious_rows_distinctly():
-    rows = [_row("olcha", 3, 300, True), _row("texnomart", 500, 300, False)]
+    rows = [_row("olcha", 3, 300, [BELOW_FLOOR]), _row("texnomart", 500, 300)]
     out = render_report(rows)
     olcha_line = next(line for line in out.splitlines() if line.startswith("olcha"))
     texnomart_line = next(line for line in out.splitlines() if line.startswith("texnomart"))
@@ -20,12 +21,28 @@ def test_render_report_marks_suspicious_rows_distinctly():
     assert "SUSPICIOUS" not in texnomart_line
 
 
+def test_render_report_names_the_rule_that_fired():
+    """A bare SUSPICIOUS cannot be acted on. "stale" and "last run failed"
+    have different causes and different fixes from "below floor", and the
+    stale case is invisible in the count column -- offers clears its floor.
+    """
+    rows = [_row("olcha", 448, 300, [STALE]),
+            _row("idea", 3, 100, [BELOW_FLOOR, LAST_RUN_FAILED])]
+    out = render_report(rows)
+    olcha_line = next(line for line in out.splitlines() if line.startswith("olcha"))
+    idea_line = next(line for line in out.splitlines() if line.startswith("idea"))
+    assert STALE in olcha_line
+    assert BELOW_FLOOR not in olcha_line
+    assert BELOW_FLOOR in idea_line and LAST_RUN_FAILED in idea_line
+
+
 def test_report_exit_code_nonzero_when_any_source_suspicious():
-    assert report_exit_code([_row("olcha", 3, 300, True), _row("idea", 200, 100, False)]) == 1
+    assert report_exit_code([_row("olcha", 3, 300, [BELOW_FLOOR]),
+                             _row("idea", 200, 100)]) == 1
 
 
 def test_report_exit_code_zero_when_none_suspicious():
-    assert report_exit_code([_row("idea", 200, 100, False)]) == 0
+    assert report_exit_code([_row("idea", 200, 100)]) == 0
 
 
 @pytest.mark.db

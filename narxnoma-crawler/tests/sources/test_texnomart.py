@@ -11,6 +11,9 @@ Fixture recorded live on 2026-07-31 with:
 import json
 import pathlib
 
+from narxnoma.matching.features import extract_features
+from narxnoma.matching.keys import variant_key
+from narxnoma.matching.sim import sim_kind
 from narxnoma.sources.texnomart import parse
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 
@@ -110,3 +113,42 @@ def test_price_fence_drops_the_recorded_accessory():
 
     parsed_keys = {lst.source_key for lst in listings}
     assert "88473" not in parsed_keys
+
+
+def test_every_listing_yields_a_usable_identity():
+    """name_raw is the clustering stage's ONLY handle on what a product is.
+
+    See the uzum module's version of this test for why: a name that yields no
+    identity is a product lost from the catalogue, silently and with every
+    other test still green.
+
+    BRAND is the non-negotiable part and texnomart meets it on all 19
+    listings -- its titles lead with the brand ("OPPO Reno15 5G 12/512GB
+    Aurora White Smartfoni").
+
+    FULLY KEYABLE: 17 of 19. The two that fall short, both investigated
+    rather than assumed:
+      - "Vivo Y11d 4/256GB Platinum" -- "platinum" is not in COLOR_MAP, so no
+        colour resolves and colour is a hard identity field. A vocabulary
+        gap, not a texnomart defect: the name is well formed and every other
+        field extracts.
+      - "OPPO Reno15 5G 12/512GB Aurora White Smartfoni" -- brand, RAM,
+        storage and colour all extract, but `model_tokens` comes out EMPTY,
+        because "reno15" is 7 characters of mixed letters and digits and
+        `extract_features` treats any such token of length >= 5 as an SKU
+        code ("sm-a175f", "a075f") rather than a designator. Written as
+        "Reno 15" the same listing keys fine. That is a matching-engine
+        limitation rather than a data limitation, and it is reported as such
+        -- deliberately NOT fixed here, since changing the SKU heuristic
+        touches every source's identity at once.
+    """
+    features = [(lst, extract_features(lst.name_raw)) for lst in parse(payload())]
+
+    brandless = [lst.name_raw for lst, f in features if not f.brand]
+    assert not brandless, f"no brand recoverable, so unclusterable: {brandless}"
+
+    keyable = [lst for lst, f in features if variant_key(f, sim_kind(lst.name_raw))]
+    # Pinned to the measured value so any regression fails rather than drifts.
+    assert len(keyable) == 17, [
+        lst.name_raw for lst, f in features if not variant_key(f, sim_kind(lst.name_raw))
+    ]

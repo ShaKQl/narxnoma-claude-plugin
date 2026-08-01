@@ -22,6 +22,9 @@ docstring for the probe results in full).
 import json
 import pathlib
 
+from narxnoma.matching.features import extract_features
+from narxnoma.matching.keys import variant_key
+from narxnoma.matching.sim import sim_kind
 from narxnoma.sources.beemarket import PHONE_CATEGORY_SLUGS, _filter_phone_listings, parse
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 
@@ -183,3 +186,31 @@ def test_filter_phone_listings_keeps_only_smartfony():
     assert len(filtered) == 16
     assert all(lst.raw.get("category", {}).get("slug") == "smartfony" for lst in filtered)
     assert "999999003" not in {lst.source_key for lst in filtered}
+
+
+def test_every_listing_yields_a_usable_identity():
+    """name_raw is the clustering stage's ONLY handle on what a product is.
+
+    See the uzum module's version of this test for why: a name that yields no
+    identity is a product lost from the catalogue, silently and with every
+    other test still green.
+
+    beemarket is the cleanest of the seven sources on this measure: brand is
+    recoverable on all 16 listings AND all 16 are fully keyable, with no
+    shortfall to explain. Its titles state brand, model, RAM, storage and
+    colour in a consistent order.
+
+    Both numbers are asserted so a future recording that degrades -- or a
+    change to the name composition in beemarket.py -- fails here instead of
+    quietly halving the catalogue's clusterable share.
+    """
+    features = [(lst, extract_features(lst.name_raw)) for lst in parse(payload())]
+    assert len(features) == 16
+
+    brandless = [lst.name_raw for lst, f in features if not f.brand]
+    assert not brandless, f"no brand recoverable, so unclusterable: {brandless}"
+
+    keyable = [lst for lst, f in features if variant_key(f, sim_kind(lst.name_raw))]
+    assert len(keyable) == 16, [
+        lst.name_raw for lst, f in features if not variant_key(f, sim_kind(lst.name_raw))
+    ]

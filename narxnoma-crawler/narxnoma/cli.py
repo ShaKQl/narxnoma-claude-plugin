@@ -17,18 +17,29 @@ def render_report(rows: list[SourceCoverage]) -> str:
     """Readable coverage table. Suspicious rows get a `*** SUSPICIOUS ***`
     marker so they cannot be skimmed past -- a source that quietly lost most
     of its catalogue is the one failure mode nothing else in this system
-    would otherwise surface."""
+    would otherwise surface.
+
+    The marker NAMES the rules that fired, because the three of them call for
+    three different responses: "never fetched" means the source has never
+    stored anything, "stale" means it stored rows once and stopped refreshing
+    them (the upsert-only trap -- the count still looks healthy), and
+    "last run failed" means the harvest itself errored. A bare SUSPICIOUS
+    would leave an operator to guess which.
+    """
     header = (f"{'slug':<10} {'offers':>7} {'floor':>7} {'median':>10} "
-              f"{'oldest_seen':<20} {'newest_seen':<20} {'last_run_ok':<12} flag")
+              f"{'oldest_seen':<20} {'newest_seen':<20} {'age_h':>7} "
+              f"{'last_run_ok':<12} flag")
     lines = [header, "-" * len(header)]
     for r in rows:
         oldest = r.oldest_seen.isoformat(timespec="seconds") if r.oldest_seen else "-"
         newest = r.newest_seen.isoformat(timespec="seconds") if r.newest_seen else "-"
         median = str(r.median_price) if r.median_price is not None else "-"
+        age = f"{r.age_hours:.1f}" if r.age_hours is not None else "-"
         last_run_ok = "-" if r.last_run_ok is None else str(r.last_run_ok)
-        flag = "*** SUSPICIOUS ***" if r.is_suspicious else ""
+        flag = f"*** SUSPICIOUS: {', '.join(r.reasons)} ***" if r.is_suspicious else ""
         lines.append(f"{r.slug:<10} {r.offers:>7} {r.expected_min:>7} {median:>10} "
-                     f"{oldest:<20} {newest:<20} {last_run_ok:<12} {flag}")
+                     f"{oldest:<20} {newest:<20} {age:>7} "
+                     f"{last_run_ok:<12} {flag}")
     return "\n".join(lines)
 
 

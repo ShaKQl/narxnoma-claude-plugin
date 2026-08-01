@@ -10,6 +10,9 @@ Fixture recorded live on 2026-07-31 with:
 import json
 import pathlib
 
+from narxnoma.matching.features import extract_features
+from narxnoma.matching.keys import variant_key
+from narxnoma.matching.sim import sim_kind
 from narxnoma.sources.olcha import parse
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 
@@ -106,3 +109,38 @@ def test_malformed_items_are_dropped_not_raised():
     assert good_keys <= result_keys
     assert "junk-item-no-name" not in result_keys
     assert "junk-item-no-name-field" not in result_keys
+
+
+def test_every_listing_yields_a_usable_identity():
+    """name_raw is the clustering stage's ONLY handle on what a product is.
+
+    Nothing downstream re-reads the retailer's response: clustering is handed
+    `name_raw` and has to recover an identity from it. A name that cannot
+    yield one is not a slightly worse name -- it is a product that silently
+    drops out of the catalogue, with no key to file it under and no error to
+    notice. The uzum version of this test is what caught a whole source
+    parsing to brandless names while every other test stayed green.
+
+    BRAND is the non-negotiable part and olcha meets it on every listing: its
+    names are fully composed ("Смартфон Xiaomi Redmi Note 17 6/256GB
+    Celestial Purple").
+
+    FULLY KEYABLE: 17 of 20. The three that fall short are the `is_parent: 1`
+    grouping cards -- "Смартфон Xiaomi Redmi Note 17", "Смартфон Honor X5d
+    Plus", "Смартфон Honor X7e" -- which olcha returns alongside their own
+    children (ids 594227, 594122, 594118 are the parents of the other 17
+    rows). A parent card names no memory tier and no colour because it stands
+    for all of them, so `variant_key` correctly refuses it. This is a genuine
+    property of olcha's catalogue, not a parsing defect: the priced variants
+    are all present as separate listings.
+    """
+    features = [(lst, extract_features(lst.name_raw)) for lst in parse(payload())]
+
+    brandless = [lst.name_raw for lst, f in features if not f.brand]
+    assert not brandless, f"no brand recoverable, so unclusterable: {brandless}"
+
+    keyable = [lst for lst, f in features if variant_key(f, sim_kind(lst.name_raw))]
+    # Pinned to the measured value so any regression fails rather than drifts.
+    assert len(keyable) == 17, [
+        lst.name_raw for lst, f in features if not variant_key(f, sim_kind(lst.name_raw))
+    ]

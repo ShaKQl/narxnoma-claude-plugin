@@ -60,7 +60,18 @@ def _parse_item(item: dict) -> Listing | None:
     product_id = item.get("id")
     if not product_id:
         return None
-    name = item.get("name")
+    # `name` is BRANDLESS: idea stores it as the model half only
+    # ('VCC 5252 Black', 'Galaxy S25 Ultra 12/256 Titanium Blue'), while
+    # `title_name` carries the same text with the brand in front
+    # ('Samsung VCC 5252 Black changyutgichi'). Brand is a hard identity
+    # field downstream -- variant_key() returns None without it -- so a
+    # brandless name_raw is not a slightly worse name, it is an offer that
+    # can never be clustered and silently drops out of the catalogue.
+    # Measured on the recorded fixture: with `name`, 0 of 20 listings were
+    # keyable; with `title_name`, 6 of 20 (and 14 of 20 recover a brand).
+    # `title_name` is occasionally absent or empty, hence the fallback --
+    # a brandless name still beats no listing at all.
+    name = (item.get("title_name") or "").strip() or item.get("name")
     price = coerce_price(item.get("current_price"))
 
     return try_build_listing(

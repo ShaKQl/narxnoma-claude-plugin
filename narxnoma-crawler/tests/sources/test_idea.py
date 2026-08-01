@@ -14,6 +14,9 @@ import json
 import pathlib
 
 from narxnoma.matching.brands import BRAND_ALIASES, BRANDS
+from narxnoma.matching.features import extract_features
+from narxnoma.matching.keys import variant_key
+from narxnoma.matching.sim import sim_kind
 from narxnoma.sources.idea import BRAND_QUERIES, PHONE_CATEGORY_IDS, _filter_phone_listings, parse
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 
@@ -148,3 +151,69 @@ def test_filter_phone_listings_keeps_only_category_55():
     assert all(lst.raw.get("category_id") == 55 for lst in filtered)
     dropped_ids = {lst.raw.get("category_id") for lst in listings} - {55}
     assert dropped_ids == {26, 24, 9}
+
+
+def test_name_raw_is_taken_from_title_name_not_name():
+    """idea's `name` field is BRANDLESS and `title_name` is not.
+
+    idea stores the model half in `name` ("VCC 5252 Black", "Galaxy S25 Ultra
+    12/256 Titanium Blue") and the full title in `title_name` ("Samsung VCC
+    5252 Black changyutgichi"). The client read `name`, so every idea listing
+    reached the clustering stage with no brand -- and brand is a hard
+    identity field, so all 20 of them keyed to None and would have dropped
+    out of the catalogue in silence. This pins which field is used.
+    """
+    by_key = {lst.source_key: lst for lst in parse(payload())}
+    items = {str(it["id"]): it for it in payload()["products"]}
+
+    with_title = [k for k, it in items.items() if (it.get("title_name") or "").strip()]
+    assert with_title, "fixture must exercise the title_name path"
+    for key in with_title:
+        assert by_key[key].name_raw == items[key]["title_name"].strip()
+
+    # The raw payload is kept untouched, so `name` is still available to
+    # anything downstream that wants the model half on its own.
+    for key, lst in by_key.items():
+        assert lst.raw["name"] == items[key]["name"]
+
+
+def test_every_listing_yields_a_usable_identity():
+    """name_raw is the clustering stage's ONLY handle on what a product is.
+
+    See the uzum module's version of this test for why: a name that yields no
+    identity is a product lost from the catalogue, silently and with every
+    other test still green. idea is the source that proved the point twice
+    over -- before the title_name fix, 0 of these 20 listings recovered a
+    brand and 0 were keyable, with the whole suite passing.
+
+    Measured over the PHONE listings (the 9 category-55 items -- this is what
+    sweep() actually yields; parse() stays unfiltered on purpose and its
+    other 11 items are Samsung vacuum cleaners, fridges and a TV whose names
+    can never carry phone specs):
+
+      BRAND recoverable: 7 of 9. idea is the ONE source that cannot reach
+        9 of 9, and the reason is in its own data, not in the parsing: for
+        two records -- ids 10516 "Galaxy S25 12/128 Silver Shadow" and 10517
+        "Galaxy S25 Ultra 12/256 Titanium Gray" -- idea's `title_name` is
+        byte-identical to the brandless `name`, so there is no brand anywhere
+        in either text field. (Their `slug` does contain "samsung"; reading
+        identity out of a slug is a change to the client's contract and is
+        reported rather than made here.)
+
+      FULLY KEYABLE: 6 of 9. The 7th is "Galaxy A56 8/128gb Olive" --
+        brand, RAM and storage all extract, but "olive" is not in COLOR_MAP,
+        and colour is a hard identity field. A vocabulary gap.
+
+    Both floors are pinned to today's measurement so a regression fails here.
+    """
+    phones = _filter_phone_listings(parse(payload()))
+    assert len(phones) == 9
+
+    features = [(lst, extract_features(lst.name_raw)) for lst in phones]
+    with_brand = [lst for lst, f in features if f.brand]
+    assert len(with_brand) == 7, [lst.name_raw for lst, f in features if not f.brand]
+
+    keyable = [lst for lst, f in features if variant_key(f, sim_kind(lst.name_raw))]
+    assert len(keyable) == 6, [
+        lst.name_raw for lst, f in features if not variant_key(f, sim_kind(lst.name_raw))
+    ]

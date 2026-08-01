@@ -18,6 +18,9 @@ together); this fixture is just page 0 (20 items, the server-side max
 import json
 import pathlib
 
+from narxnoma.matching.features import extract_features
+from narxnoma.matching.keys import variant_key
+from narxnoma.matching.sim import sim_kind
 from narxnoma.sources.alifshop import parse, phone_category_from_aggregations
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 
@@ -209,3 +212,33 @@ def test_phone_category_largest_doc_count_wins_among_matches():
         }
     }
     assert phone_category_from_aggregations(synthetic) == "Смартфоны Samsung"
+
+
+def test_every_listing_yields_a_usable_identity():
+    """name_raw is the clustering stage's ONLY handle on what a product is.
+
+    See the uzum module's version of this test for why: a name that yields no
+    identity is a product lost from the catalogue, silently and with every
+    other test still green.
+
+    alifshop scores 20 of 20 on both measures -- brand recoverable and fully
+    keyable -- because its moderated titles follow one fixed Russian shape
+    that always names brand, memory and colour: "Смартфон Samsung Galaxy A07
+    4/128 ГБ, черный". Both the plain Russian colour words ("черный",
+    "голубой") and the marketing English ones present in this recording
+    ("Titanium Black", "Awesome Gray", "Light Violet") resolve, which is why
+    there is no shortfall to explain here.
+
+    Both numbers are asserted so a moderation-format change on alifshop's
+    side fails here rather than quietly emptying the clusterable pool.
+    """
+    features = [(lst, extract_features(lst.name_raw)) for lst in parse(payload())]
+    assert len(features) == 20
+
+    brandless = [lst.name_raw for lst, f in features if not f.brand]
+    assert not brandless, f"no brand recoverable, so unclusterable: {brandless}"
+
+    keyable = [lst for lst, f in features if variant_key(f, sim_kind(lst.name_raw))]
+    assert len(keyable) == 20, [
+        lst.name_raw for lst, f in features if not variant_key(f, sim_kind(lst.name_raw))
+    ]

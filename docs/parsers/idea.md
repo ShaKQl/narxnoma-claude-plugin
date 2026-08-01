@@ -46,11 +46,13 @@ either way.
 {
   "products": [
     {
-      "id": 12345,
-      "name": "Honor X9d 12/256 GB Midnight Black",
-      "slug": "honor-x9d-12-256-gb-midnight-black",
-      "url": "https://idea.uz/ru/product/honor-x9d-12-256-gb-midnight-black",
-      "current_price": 5390000        // plain SUM
+      // real item from tests/fixtures/sources/idea.json, trimmed
+      "id": 10506,
+      "name": "Galaxy S25 Ultra 12/256 Titanium Blue",                    // NO BRAND
+      "title_name": "Smartfon Samsung Galaxy S25 Ultra 12/256 Titanium Blue",  // brand included
+      "slug": "smartfon-samsung-galaxy-s25-ultra-12-256-titanium-blue",
+      "url": "https://idea.uz/product/10506-smartfon-samsung-galaxy-s25-ultra-12-256-titanium-blue",
+      "current_price": 16199000       // plain SUM
     }
   ],
   "shops": [], "brands": [], "categories": []
@@ -60,8 +62,38 @@ either way.
 | Field | Meaning |
 |---|---|
 | `current_price` | **use this** — plain SUM |
-| `name` | carries RAM + storage + colour |
+| `name` | RAM + storage + colour, but **no brand** |
+| `title_name` | **use this for the product name** — same text with the brand in front |
 | `url` | **absolute product URL, ready to use** |
+
+### 2a. `name` omits the brand; `title_name` does not
+
+This is the single most important field choice on idea. `name` holds the model
+half only, with the manufacturer stripped out:
+
+| `name` | `title_name` |
+|---|---|
+| `VCC 5252 Black` | `Samsung VCC 5252 Black changyutgichi` |
+| `Galaxy S25 Ultra 12/256 Titanium Blue` | `Smartfon Samsung Galaxy S25 Ultra 12/256 Titanium Blue` |
+| `RT42CB662022WT` | `Sovutgich SAMSUNG RT42CB662022WT` |
+
+Brand is a **hard identity field** downstream: `matching/keys.py::variant_key`
+returns `None` without it, so a brandless name is not a slightly worse name —
+it is an offer that can never be clustered and disappears from the catalogue
+with no error anywhere. Measured on the recorded fixture
+(`tests/fixtures/sources/idea.json`), reading `name` gave **0 of 20** keyable
+listings; reading `title_name` gives 6 of 20 (14 of 20 recover a brand at all).
+
+`narxnoma/sources/idea.py` therefore uses **`title_name`**, falling back to
+`name` only when `title_name` is absent or empty — a brandless name still
+beats no listing. The full raw item, `name` included, is kept in
+`Listing.raw`.
+
+Caveat, observed on the same recording: for a small number of products idea
+stores `title_name` byte-identical to the brandless `name` (ids `10516` and
+`10517`, both Galaxy S25 variants), so those stay brandless. Their `slug`
+does carry `samsung`, which is a possible future fallback but changes the
+client's contract (the slug is derived text, not a stated name).
 
 ## 3. Product URL
 
