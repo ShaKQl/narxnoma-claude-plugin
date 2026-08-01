@@ -44,7 +44,14 @@ def db_conn(dsn):
     with connect(dsn) as conn:
         migrate(conn)
         with conn.cursor() as cur:
-            cur.execute("TRUNCATE raw_offer, offer, harvest_run RESTART IDENTITY CASCADE")
+            # variant must be here too: its slug is UNIQUE, so a test that
+            # commits a variant would collide with the next test inserting the
+            # same identity. CASCADE clears variant_price and unresolved_offer,
+            # which reference it.
+            cur.execute(
+                "TRUNCATE raw_offer, offer, harvest_run, variant"
+                " RESTART IDENTITY CASCADE"
+            )
         conn.commit()
         try:
             yield conn
