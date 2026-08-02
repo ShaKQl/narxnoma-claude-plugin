@@ -1,7 +1,6 @@
 import json
 import pathlib
 
-import pytest
 
 from narxnoma.matching import ACCEPT_THRESHOLD, extract_features, score_match
 

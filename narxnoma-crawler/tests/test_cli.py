@@ -87,7 +87,6 @@ def test_render_status_skipped_is_not_reported_as_ok():
 
 def test_new_subcommands_are_registered():
     """A typo in a subcommand name should fail here, not in a cron job."""
-    import argparse
 
     from narxnoma import cli
 

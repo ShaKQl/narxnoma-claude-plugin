@@ -30,3 +30,49 @@ def test_price_check_constraint_rejects_bad_values(db_conn):
             cur.execute(
                 "INSERT INTO raw_offer (store_id, source_key, name_raw, price, url)"
                 " VALUES (%s, 'k', 'X', 99, 'u')", (store_id,))
+
+
+def test_connect_commits_on_clean_exit(dsn):
+    """A write through connect() must survive the connection closing.
+
+    This was a real, silent bug: psycopg opens an implicit transaction on the
+    first statement -- including the plain read every pipeline stage starts
+    with -- after which the repository's own `with conn.transaction()` blocks
+    nest as savepoints that release without committing. Closing without a
+    commit rolled back everything, while every log line still reported success.
+    """
+    import psycopg
+
+    from narxnoma.db.connection import connect
+
+    with connect(dsn) as conn:
+        with conn.cursor() as cur:          # plain read: opens the implicit tx
+            cur.execute("SELECT count(*) FROM store")
+        with conn.transaction():            # nests as a savepoint
+            with conn.cursor() as cur:
+                cur.execute("INSERT INTO store (slug, name, website_url)"
+                            " VALUES ('committest', 'Commit Test', 'https://x')")
+
+    with psycopg.connect(dsn) as check, check.cursor() as cur:
+        cur.execute("SELECT count(*) FROM store WHERE slug = 'committest'")
+        persisted = cur.fetchone()[0]
+        cur.execute("DELETE FROM store WHERE slug = 'committest'")
+        check.commit()
+    assert persisted == 1, "the write was rolled back when the connection closed"
+
+
+def test_connect_rolls_back_when_the_body_raises(dsn):
+    import psycopg
+
+    from narxnoma.db.connection import connect
+
+    with pytest.raises(RuntimeError):
+        with connect(dsn) as conn:
+            with conn.cursor() as cur:
+                cur.execute("INSERT INTO store (slug, name, website_url)"
+                            " VALUES ('rollbacktest', 'X', 'https://x')")
+            raise RuntimeError("something went wrong mid-cycle")
+
+    with psycopg.connect(dsn) as check, check.cursor() as cur:
+        cur.execute("SELECT count(*) FROM store WHERE slug = 'rollbacktest'")
+        assert cur.fetchone()[0] == 0

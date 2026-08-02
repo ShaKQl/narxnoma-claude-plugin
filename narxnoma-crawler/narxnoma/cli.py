@@ -10,6 +10,7 @@ from narxnoma.db import repository
 from narxnoma.db.connection import connect
 from narxnoma.db.migrate import migrate
 from narxnoma.pipeline.aggregate import recompute_variant_prices
+from narxnoma.pipeline.backfill import DEFAULT_MAX_QUERIES, backfill_search_only_sources
 from narxnoma.pipeline.cluster import cluster_offers
 from narxnoma.pipeline.extract import identify
 from narxnoma.pipeline.quality import quality_report
@@ -77,6 +78,30 @@ def run_clustering(conn) -> tuple[int, int, int]:
     result = cluster_offers(conn, (identify(row) for row in rows))
     recompute_variant_prices(conn)
     return result.attached, result.created_variants, result.unresolved
+
+
+def run_backfill(conn) -> int:
+    """Query every search-only source for variants the catalogue already has."""
+    ids = repository.store_ids(conn)
+    written = 0
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT v.id, v.display_name
+              FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
+             ORDER BY vp.store_count DESC, vp.computed_at
+             LIMIT %s
+        """, (DEFAULT_MAX_QUERIES,))
+        variants = cur.fetchall()
+
+    for source in SOURCES.values():
+        if source.can_sweep or source.slug not in ids:
+            continue
+        result = backfill_search_only_sources(conn, source, ids[source.slug], variants)
+        logging.info("backfill %-10s queried=%d matched=%d offers=%d",
+                     source.slug, result.queried, result.variants_matched,
+                     result.offers_written)
+        written += result.offers_written
+    return written
 
 
 def _stage(name: str, fn, outcomes: dict) -> None:
@@ -151,6 +176,11 @@ def main(argv: list[str] | None = None) -> int:
             _stage("harvest", lambda: results.extend(
                 harvest_all(conn, [SOURCES[s] for s in sorted(SOURCES)])), outcomes)
             _stage("cluster", lambda: run_clustering(conn), outcomes)
+            # Pass B: the sources that cannot be swept are reached by asking
+            # about products the catalogue now knows exist. It runs after
+            # clustering for that reason, and its results are clustered on the
+            # NEXT cycle -- a search hit is a suggestion, not evidence.
+            _stage("backfill", lambda: run_backfill(conn), outcomes)
             rows = coverage_report(conn)
             report = quality_report(conn)
 

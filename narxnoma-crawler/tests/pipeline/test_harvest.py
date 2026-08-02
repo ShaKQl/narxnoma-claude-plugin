@@ -1,6 +1,5 @@
-import pytest
 
-from narxnoma.pipeline.harvest import WRITE_BATCH_SIZE, HarvestResult, harvest_all
+from narxnoma.pipeline.harvest import WRITE_BATCH_SIZE, harvest_all
 from narxnoma.sources.base import Listing
 
 
