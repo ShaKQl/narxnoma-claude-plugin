@@ -481,6 +481,85 @@ def test_name_raw_keeps_a_trailing_plus_model_marker():
     assert name == "Xiaomi Redmi Note 14 Pro+ 12/512"
 
 
+def test_name_raw_bare_sku_memory_blocks_the_card_title_recovery():
+    """A bare memory figure IS a stated memory, and must switch off the
+    last-resort recovery just as "8/256" does.
+
+    _has_memory only ever recognised a slash-separated pair or a
+    unit-bearing figure, so `Память: "128"` looked like NO memory at all --
+    and the recovery then reached past the first comma and appended the
+    card's whole RANGE beside the SKU's own correct figure. Live: card
+    'Смартфон "Apple iPhone" 12, 64/128/256 ГБ, SIM' with Память "128"
+    became 'Смартфон "Apple iPhone" 12 128 64/128 Алый', whose storage read
+    128 while "64" became a MODEL token -- a product that does not exist.
+    """
+    name = _build_name_raw(
+        'Смартфон "Apple iPhone" 12, 64/128/256 ГБ, SIM, чехол в подарок',
+        "", "128", "Алый",
+    )
+    assert "64/128" not in name
+    assert name == 'Смартфон "Apple iPhone" 12 128 Алый'
+    features = extract_features(name)
+    assert features.storage_gb == 128
+    assert "64" not in features.model_tokens
+
+
+def test_name_raw_bare_memory_inside_a_model_value_strips_the_card_range():
+    """The same blindness on section 5b's own gate rather than the recovery.
+
+    The strip of the card-derived prefix is gated on the SKU having stated
+    memory; with `Модель: "17 Pro 256"` the figure is bare, so the gate
+    never fired and the card's range survived in the prefix. Live, that
+    produced 'IPhone / Max 256/512 GB 17 Pro 256 Оранжевый' -- storage 512
+    from the card, "256" demoted to a model token, and three different SKUs
+    (Pro 256, Pro Max 256, Pro 512) merged onto one variant.
+    """
+    name = _build_name_raw(
+        "IPhone 17 Pro / Max 256/512 GB, E-Sim только,  Apple", "17 Pro 256", "", "Оранжевый"
+    )
+    assert "256/512" not in name
+    features = extract_features(name)
+    assert features.storage_gb == 256
+    assert features.model_tokens == frozenset({"17", "pro"})
+
+
+def test_name_raw_does_not_inherit_the_cards_other_bundled_model():
+    """A card bundling two models must not lend the SKU the one it is not.
+
+    'IPhone 17 Pro / Max' bundles the Pro and the Pro Max. _prefix_for_model
+    dropped only the head words the Модель value already contained, so for
+    the plain '17 Pro 256' SKU the word "Max" survived into the prefix and
+    the offer keyed as a Pro MAX. Once a head word belongs to the model, the
+    Модель value owns the rest of the head.
+    """
+    name = _build_name_raw(
+        "IPhone 17 Pro / Max 256/512 GB, E-Sim только,  Apple", "17 Pro 256", "", "Оранжевый"
+    )
+    assert "Max" not in name
+    assert extract_features(name).model_tokens == frozenset({"17", "pro"})
+
+    # ...and the Pro Max SKU on the very same card still keeps its Max.
+    sibling = _build_name_raw(
+        "IPhone 17 Pro / Max 256/512 GB, E-Sim только,  Apple",
+        "17 Pro Max 512", "", "Оранжевый",
+    )
+    assert extract_features(sibling).model_tokens == frozenset({"17", "pro", "max"})
+    assert extract_features(sibling).storage_gb == 512
+
+
+def test_name_raw_recovery_still_fires_when_the_sku_states_nothing():
+    """The recovery is switched off by a STATED memory, not disabled.
+
+    A SKU with no memory characteristic and no figure in its Модель value
+    still has nothing but the card title to go on, which is the case the
+    recovery was built for.
+    """
+    name = _build_name_raw(
+        "Smartfon Samsung Galaxy A16, 4/128 GB, 2 SIM, Super AMOLED", "", "", "Qora"
+    )
+    assert name == "Smartfon Samsung Galaxy A16 4/128 GB Qora"
+
+
 # ---------------------------------------------------------------------------
 # Token handling
 # ---------------------------------------------------------------------------
