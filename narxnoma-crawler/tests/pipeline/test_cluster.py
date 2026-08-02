@@ -5,6 +5,7 @@ from narxnoma.db import repository as repo
 from narxnoma.pipeline.cluster import (
     REASON_AMBIGUOUS,
     REASON_NO_CANDIDATE,
+    REASON_MEMORY_IN_MODEL,
     REASON_NO_IDENTITY,
     cluster_offers,
 )
@@ -194,3 +195,38 @@ def test_display_name_is_generated_not_copied(db_conn):
         name, slug_value = cur.fetchone()
     assert name == "Смартфон Honor X9D 12/256 ГБ, Черный"
     assert slug_value == "honor-x9d-12-256-black"
+
+
+def test_a_memory_figure_in_the_model_tokens_is_refused_not_catalogued(db_conn):
+    """No phone is named "256". A capacity that reached the model tokens is
+    always a parsing failure, so the variant it would mint is a product that
+    does not exist -- and minting it pools genuinely different SKUs behind
+    one headline price, which is the exact defect this platform exists to
+    avoid, reproduced in our own data.
+
+    This is a backstop, not the repair. The uzum card-range leak that made
+    it necessary is fixed at source; the guard stays because the failure is
+    silent by construction -- a wrong variant looks exactly like a right one
+    -- and any source can reintroduce it.
+    """
+    offer_id = seed_offer(
+        db_conn, "Смартфон Apple iPhone 17 256 Pro Max 512 ГБ, Оранжевый", "leak")
+
+    result = cluster_offers(db_conn, identities_for(db_conn))
+
+    assert result.attached == 0
+    assert variant_count(db_conn) == 0
+    assert unresolved_reason(db_conn, offer_id) == REASON_MEMORY_IN_MODEL
+
+
+def test_a_real_model_number_is_not_mistaken_for_a_capacity(db_conn):
+    """The guard keys on capacities only. Model numbers that merely look
+    numeric -- 12, 15, 17, 200 -- must still catalogue normally.
+    """
+    seed_offer(db_conn, "Смартфон Apple iPhone 12 Pro 256 ГБ, Черный", "ok1")
+    seed_offer(db_conn, "Смартфон Honor 200 Pro 12/512 ГБ, Черный", "ok2", store="idea")
+
+    result = cluster_offers(db_conn, identities_for(db_conn))
+
+    assert result.attached == 2
+    assert variant_count(db_conn) == 2

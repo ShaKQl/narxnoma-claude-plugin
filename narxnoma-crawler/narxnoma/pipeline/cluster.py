@@ -39,6 +39,21 @@ class ClusterResult:
 REASON_AMBIGUOUS = "ambiguous: partial key matches several variants"
 REASON_NO_CANDIDATE = "no candidate: partial key matches no existing variant"
 REASON_NO_IDENTITY = "no identity: name yields neither a full nor a usable partial key"
+REASON_MEMORY_IN_MODEL = "bad identity: a memory figure reached the model tokens"
+
+# No phone is named "256". A capacity among the model tokens is always a
+# parsing failure, and the variant it would mint is a product that does not
+# exist -- so genuinely different SKUs pool behind one headline price, which
+# is the incumbent's defect reproduced in our own data.
+#
+# This is a BACKSTOP, not a repair. It was written for a uzum leak (a card's
+# storage RANGE reaching identity, so a 17 Pro 256, a 17 Pro Max 256 and a
+# 17 Pro 512 became one variant priced at 18,349,000 against a median of
+# 31,000,000) which is now fixed in the client. It stays because the failure
+# is silent by construction -- a wrong variant is indistinguishable from a
+# right one without reading the offers behind it -- and any source can
+# reintroduce the same shape.
+_CAPACITIES_GB = frozenset({"32", "64", "128", "256", "512", "1024", "2048"})
 
 
 def _has_usable_partial(identity: OfferIdentity) -> bool:
@@ -71,6 +86,13 @@ def cluster_offers(conn, identities, repo=default_repo) -> ClusterResult:
     for identity in identities:
         if identity.key is None:
             partials.append(identity)
+            continue
+        if _CAPACITIES_GB & set(identity.key.model_tokens):
+            # See REASON_MEMORY_IN_MODEL: refusing costs one offer, while
+            # cataloguing it corrupts a product other offers then join.
+            repo.record_unresolved(conn, identity.offer_id, REASON_MEMORY_IN_MODEL)
+            result.unresolved += 1
+            result._note(REASON_MEMORY_IN_MODEL)
             continue
         variant_id = known.get(identity.key)
         if variant_id is None:
