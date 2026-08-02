@@ -88,6 +88,26 @@ def extract_features(name):
                 continue
             storage = max(a, b); break
 
+    # LONE figure: a capacity with neither a unit nor a partner. Every rule
+    # above needs one or the other, so "Apple iPhone 12 pro 128 Синий" read as
+    # no memory at all and the listing was unkeyable — while
+    # "Apple iPhone 12 128 Алый" read 128 correctly, purely because the model
+    # number happened to sit beside the capacity. Common rather than exotic:
+    # uzum states memory in a per-SKU characteristic whose value is often the
+    # bare figure (Память: "128"), which reaches the name with nothing beside
+    # it. A lone figure is weaker evidence than a pair, so it is admitted only
+    # from PLAUSIBLE_STORAGE_GB and only when NOT followed by a unit marking it
+    # as something else — 64 (МП), 128 (mp) and 512 all appear in blurbs.
+    if storage is None:                       # lone "128" form
+        for m in re.finditer(r"(?<![a-zа-я\d])(\d{2,4})(?!\d)", n):
+            val = int(m.group(1))
+            if val not in PLAUSIBLE_STORAGE_GB:
+                continue
+            if re.match(r"^\s*(mp|мп|mah|мач|hz|гц|mm|мм|w|вт|nm|нм|dpi|ppi|fps)\b",
+                        n[m.end():]):
+                continue
+            storage = val; break
+
     # A bare "12 256" pair normally means RAM/storage. "iPhone 16 256 GB" has the
     # identical shape — see "The phantom-RAM trap" below — so require a real
     # separator in the RAW string, and never infer RAM for Apple.

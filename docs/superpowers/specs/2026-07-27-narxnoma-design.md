@@ -261,6 +261,29 @@ read, not a request-time aggregation.
 Index `(brand, model_tokens, ram_gb, storage_gb, sim_kind)` — this makes the colour-sibling
 lookup powering the variant picker cheap.
 
+> **`display_name` must be injective over the key (measured 2026-08-02).** It is generated
+> from the key so that duplicates are structurally impossible — but it omitted `sim_kind`
+> while `slug` encoded it, so an eSIM-only phone and its dual-SIM sibling, genuinely
+> different products at different prices, rendered byte-identical. 42 live pairs were
+> indistinguishable, including *Смартфон Apple iPhone 17 Pro 256 ГБ, Оранжевый* twice, at
+> 16,985,000 and 17,690,000. **Every field of the key must reach the name.** A generator
+> that drops one reintroduces exactly the confusion it exists to prevent, so the test
+> asserts the invariant directly rather than pinning this one field.
+>
+> `display_name` is also *stored*, and `upsert_variant` uses `ON CONFLICT DO NOTHING`, so a
+> name is written once at creation and never revisited. A correction to the generator would
+> otherwise apply only to products first seen afterwards — the same shape as the
+> `schema.sql` header rule. `refresh_display_names` regenerates them every cycle.
+
+> **Attachments need reconciling, not just creating (measured 2026-08-02).** Clustering
+> loads only offers with `variant_id IS NULL`, so an offer attached in an earlier cycle is
+> never reconsidered. That is right while `name_raw` is stable and wrong the moment a
+> parser fix changes it — which is precisely when the catalogue is most likely to be wrong.
+> The uzum card-range repair rewrote 217 stored names; without a reconcile step every offer
+> behind them would have stayed on the variant the old, incorrect name produced, and no
+> report would have said so. `detach_drifted_offers` only *detaches*: the offer is then
+> re-attached, or refused, by the ordinary rules, so a fix can never invent a new outcome.
+
 ---
 
 ## 7. Web layer
