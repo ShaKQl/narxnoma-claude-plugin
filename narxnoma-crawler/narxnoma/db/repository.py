@@ -225,6 +225,30 @@ def record_unresolved(conn: psycopg.Connection, offer_id: UUID, reason: str,
                 (offer_id, reason, candidate_ids or []))
 
 
+def delete_empty_malformed_variants(conn: psycopg.Connection, is_wellformed) -> int:
+    """Remove variants that hold no offers and could never hold one.
+
+    Deliberately narrow. A variant whose offers have merely gone out of stock
+    is KEPT -- schema.sql makes min_price nullable precisely so we neither
+    publish an unbuyable price nor lose the product's history. This deletes
+    only variants the clustering guard would refuse outright, which can never
+    be attached to again, and which would otherwise serve a product page with
+    no price for a phone that does not exist.
+    """
+    removed = 0
+    with conn.transaction():
+        for key, variant_id in load_variant_keys(conn).items():
+            if is_wellformed(key):
+                continue
+            with conn.cursor() as cur:
+                cur.execute(
+                    "DELETE FROM variant WHERE id = %s"
+                    " AND NOT EXISTS (SELECT 1 FROM offer o WHERE o.variant_id = %s)",
+                    (variant_id, variant_id))
+                removed += cur.rowcount
+    return removed
+
+
 def refresh_display_names(conn: psycopg.Connection) -> int:
     """Regenerate every variant's display_name from its key. Returns rows changed.
 

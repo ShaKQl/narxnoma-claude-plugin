@@ -30,6 +30,7 @@ class QualityReport:
     unresolved: int = 0
     variants: int = 0
     single_offer_variants: int = 0
+    empty_variants: int = 0
     diverging_variants: int = 0
     reasons: list[tuple[str, int]] = field(default_factory=list)
     unresolved_by_store: list[tuple[str, int]] = field(default_factory=list)
@@ -77,6 +78,16 @@ def quality_report(conn) -> QualityReport:
         cur.execute("SELECT count(*) FROM variant_price WHERE offer_count = 1")
         report.single_offer_variants = cur.fetchone()[0]
 
+        # A canonical product no retailer currently lists. Legitimate when a
+        # phone is discontinued, and also the shape residue takes when
+        # clustering moves offers away -- so it is worth watching rather than
+        # acting on blindly. A sudden rise means offers left products en masse.
+        cur.execute("""
+            SELECT count(*) FROM variant v
+             WHERE NOT EXISTS (SELECT 1 FROM offer o WHERE o.variant_id = v.id)
+        """)
+        report.empty_variants = cur.fetchone()[0]
+
         cur.execute("""
             SELECT count(*) FROM variant_price
              WHERE min_price IS NOT NULL AND median_price IS NOT NULL
@@ -100,6 +111,8 @@ def render(report: QualityReport) -> str:
         f"canonical variants{report.variants:>8,}",
         f"  single-offer    {report.single_offer_variants:>8,}   "
         f"(nothing to compare -- an honest limit, not a defect)",
+        f"  no offers at all{report.empty_variants:>8,}   "
+        f"(no retailer lists it now: discontinued, or offers moved away)",
         f"  min far below median{report.diverging_variants:>5,}   "
         f"(>{MIN_DIVERGENCE * 100:.0f}%: the shape of a wrong match dragging a headline down)",
     ]

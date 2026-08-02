@@ -127,6 +127,16 @@ def detach_drifted_offers(conn, repo=default_repo) -> int:
     if drifted:
         logger.info("detached %d offers whose name no longer matches their variant",
                     len(drifted))
+
+    # A malformed variant can never hold an offer again -- is_wellformed
+    # refuses it at every entry point -- so once emptied it is pure residue,
+    # and a catalogue that keeps it serves a product page with no price for a
+    # phone that does not exist. Deleting only the EMPTY ones keeps this
+    # distinct from the deliberate decision to retain a real variant whose
+    # offers have all gone out of stock; those stay, with a NULL price.
+    removed = repo.delete_empty_malformed_variants(conn, is_wellformed)
+    if removed:
+        logger.info("removed %d emptied malformed variants", removed)
     return len(drifted)
 
 

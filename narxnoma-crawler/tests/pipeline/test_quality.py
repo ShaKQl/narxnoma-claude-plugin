@@ -131,3 +131,16 @@ def test_threshold_is_five_percent():
     # identify a fifth of its offers has not succeeded.
     assert MAX_UNRESOLVED_RATE == 0.05
     assert QualityReport().is_alerting is False
+
+
+def test_variants_with_no_offers_are_counted(db_conn):
+    # A canonical product no retailer lists. Legitimate when a phone is
+    # discontinued, and also the shape residue takes when clustering moves
+    # offers away -- so it must be visible rather than silently accumulating.
+    seed(db_conn, HONOR, "solo")
+    run_pipeline(db_conn)
+    assert quality_report(db_conn).empty_variants == 0
+
+    with db_conn.cursor() as cur:
+        cur.execute("UPDATE offer SET variant_id = NULL")
+    assert quality_report(db_conn).empty_variants == 1
