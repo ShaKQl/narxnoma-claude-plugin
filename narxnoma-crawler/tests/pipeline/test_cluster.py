@@ -312,3 +312,44 @@ def test_display_names_are_regenerated_not_frozen_at_creation(db_conn):
 
     # Idempotent: a catalogue already correct must report no changes.
     assert repo.refresh_display_names(db_conn) == 0
+
+
+def test_an_offer_already_sitting_on_a_malformed_variant_is_evicted(db_conn):
+    """The refusal must hold for a variant that predates it.
+
+    An offer whose name still produces the malformed key AGREES with its
+    stored variant, so the drift check saw no contradiction and kept it
+    there. Live, that left one artefact variant --
+    'Смартфон Apple iPhone 128 13 256 ГБ, Черный' -- still holding an offer
+    after every other one had been repaired, because uzum's relevance sweep
+    had not returned that SKU again and its old name_raw survived.
+    """
+    offer_id = seed_offer(db_conn, "Смартфон Apple iPhone 13 128 128/256 ГБ Черный", "old")
+    # Build the malformed variant the way an earlier cycle would have.
+    identity = identities_for(db_conn)[0]
+    assert identity.key is not None and "128" in identity.key.model_tokens
+    variant_id = repo.upsert_variant(db_conn, identity.key)
+    repo.attach_offer_to_variant(db_conn, offer_id, variant_id)
+
+    assert detach_drifted_offers(db_conn) == 1
+    assert attached_variant(db_conn, offer_id) is None
+
+    cluster_offers(db_conn, identities_for(db_conn))
+    assert attached_variant(db_conn, offer_id) is None
+    assert unresolved_reason(db_conn, offer_id) == REASON_MEMORY_IN_MODEL
+
+
+def test_a_partial_key_cannot_resolve_onto_a_malformed_variant(db_conn):
+    """The other way in. Refusing only at creation leaves partial resolution
+    free to attach offers to a malformed variant that already exists.
+    """
+    bad = seed_offer(db_conn, "Смартфон Apple iPhone 13 128 128/256 ГБ Черный", "bad")
+    identity = identities_for(db_conn)[0]
+    variant_id = repo.upsert_variant(db_conn, identity.key)
+    repo.attach_offer_to_variant(db_conn, bad, variant_id)
+
+    # A vague listing whose partial key is compatible with that variant.
+    vague = seed_offer(db_conn, "Apple iPhone 13 128 256 ГБ Черный", "vague", store="idea")
+    cluster_offers(db_conn, [identify(r) for r in repo.load_unattached_offers(db_conn)])
+
+    assert attached_variant(db_conn, vague) is None

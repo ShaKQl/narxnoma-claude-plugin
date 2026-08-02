@@ -56,6 +56,18 @@ REASON_MEMORY_IN_MODEL = "bad identity: a memory figure reached the model tokens
 _CAPACITIES_GB = frozenset({"32", "64", "128", "256", "512", "1024", "2048"})
 
 
+def is_wellformed(key) -> bool:
+    """Could this key describe a real product at all?
+
+    Applied at every point a key can reach the catalogue, not just at
+    creation: an offer may also arrive at a malformed variant by PARTIAL
+    resolution, and one already sitting on a malformed variant agrees with it
+    perfectly, so the drift check alone would keep it there forever. Checking
+    once, in three places, is what makes the refusal actually hold.
+    """
+    return not (_CAPACITIES_GB & set(key.model_tokens))
+
+
 def _has_usable_partial(identity: OfferIdentity) -> bool:
     """Enough to be worth resolving against existing variants.
 
@@ -99,7 +111,12 @@ def detach_drifted_offers(conn, repo=default_repo) -> int:
         stored_key = by_id.get(row["variant_id"])
         if stored_key is None:
             continue
-        if identity.key is not None:
+        if not is_wellformed(stored_key):
+            # Nothing can legitimately sit here -- see is_wellformed. Without
+            # this, an offer whose name still produces the malformed key
+            # AGREES with its variant and is kept indefinitely.
+            drifted.append(identity.offer_id)
+        elif identity.key is not None:
             if identity.key != stored_key:
                 drifted.append(identity.offer_id)
         elif resolve_partial(identity.partial, [stored_key]) is None:
@@ -133,7 +150,7 @@ def cluster_offers(conn, identities, repo=default_repo) -> ClusterResult:
         if identity.key is None:
             partials.append(identity)
             continue
-        if _CAPACITIES_GB & set(identity.key.model_tokens):
+        if not is_wellformed(identity.key):
             # See REASON_MEMORY_IN_MODEL: refusing costs one offer, while
             # cataloguing it corrupts a product other offers then join.
             repo.record_unresolved(conn, identity.offer_id, REASON_MEMORY_IN_MODEL)
@@ -150,7 +167,7 @@ def cluster_offers(conn, identities, repo=default_repo) -> ClusterResult:
     result.created_variants = len(known) - before
 
     # --- pass two: incomplete identities resolve against it -----------------
-    candidates = list(known)
+    candidates = [k for k in known if is_wellformed(k)]
     for identity in partials:
         if not _has_usable_partial(identity):
             repo.record_unresolved(conn, identity.offer_id, REASON_NO_IDENTITY)
