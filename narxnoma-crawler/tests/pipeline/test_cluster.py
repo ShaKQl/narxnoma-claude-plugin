@@ -290,3 +290,25 @@ def test_a_partial_attachment_compatible_with_its_variant_is_left_alone(db_conn)
     assert attached_variant(db_conn, partial) is not None
 
     assert detach_drifted_offers(db_conn) == 0
+
+
+def test_display_names_are_regenerated_not_frozen_at_creation(db_conn):
+    """upsert_variant uses ON CONFLICT DO NOTHING, so a variant's name is
+    written once and never revisited. A correction to the generator would
+    then apply only to products first seen afterwards and leave the existing
+    catalogue on the old wording -- the same shape as the schema.sql header
+    rule, where a change silently applies to fresh data but not production.
+    """
+    seed_offer(db_conn, "Смартфон Honor X9d 12/256 ГБ, черный", "n1")
+    cluster_offers(db_conn, identities_for(db_conn))
+
+    with db_conn.cursor() as cur:
+        cur.execute("UPDATE variant SET display_name = 'stale wording'")
+    assert repo.refresh_display_names(db_conn) == 1
+
+    with db_conn.cursor() as cur:
+        cur.execute("SELECT display_name FROM variant")
+        assert cur.fetchone()[0] == "Смартфон Honor X9D 12/256 ГБ, Черный"
+
+    # Idempotent: a catalogue already correct must report no changes.
+    assert repo.refresh_display_names(db_conn) == 0

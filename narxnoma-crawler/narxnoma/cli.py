@@ -86,6 +86,9 @@ def run_clustering(conn) -> tuple[int, int, int]:
     if detached:
         logging.info("reconciled: detached %d offers whose name no longer matches "
                      "their variant", detached)
+    renamed = repository.refresh_display_names(conn)
+    if renamed:
+        logging.info("reconciled: regenerated %d display names", renamed)
     rows = repository.load_unattached_offers(conn)
     result = cluster_offers(conn, (identify(row) for row in rows))
     recompute_variant_prices(conn)

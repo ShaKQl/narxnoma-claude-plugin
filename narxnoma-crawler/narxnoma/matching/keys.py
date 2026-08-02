@@ -147,12 +147,21 @@ def display_name(key: VariantKey) -> str:
 
     Copying retailer names is exactly how a competitor ended up with
     "Cosmic orange" and "Cosmic Orange" as two separate products.
+
+    EVERY field of the key must reach the name, or the generator reintroduces
+    the confusion it exists to prevent. sim_kind was omitted, so an eSIM-only
+    phone and its dual-SIM sibling -- different products, priced differently --
+    rendered byte-identical; 42 pairs of live variants were indistinguishable,
+    including "Смартфон Apple iPhone 17 Pro 256 ГБ, Оранжевый" twice, at
+    16,985,000 and 17,690,000. test_no_two_distinct_keys_share_a_display_name
+    states the invariant directly.
     """
     brand = BRAND_LABELS.get(key.brand, key.brand.capitalize())
     model = " ".join(_token_label(t) for t in ordered_model_tokens(key.model_tokens))
     color = _COLOR_RU.get(key.color, key.color.capitalize())
     memory = f"{key.ram_gb}/{key.storage_gb}" if key.ram_gb else str(key.storage_gb)
-    return f"Смартфон {brand} {model} {memory} ГБ, {color}"
+    sim = " (eSIM)" if key.sim_kind == "esim_only" else ""
+    return f"Смартфон {brand} {model} {memory} ГБ, {color}{sim}"
 
 
 def slug(key: VariantKey) -> str:

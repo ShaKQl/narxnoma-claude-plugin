@@ -225,6 +225,32 @@ def record_unresolved(conn: psycopg.Connection, offer_id: UUID, reason: str,
                 (offer_id, reason, candidate_ids or []))
 
 
+def refresh_display_names(conn: psycopg.Connection) -> int:
+    """Regenerate every variant's display_name from its key. Returns rows changed.
+
+    display_name is a pure function of the key, but it is STORED, and
+    `upsert_variant` uses ON CONFLICT DO NOTHING -- so a variant's name is
+    written once, at creation, and never revisited. A correction to the
+    generator would then apply only to products first seen afterwards, leaving
+    the existing catalogue on the old wording indefinitely. That is the same
+    shape as the schema.sql header rule: a change that silently applies to
+    fresh data and not to production.
+
+    Adding the eSIM marker was exactly such a correction, and it had 52 live
+    variants to repair.
+    """
+    changed = 0
+    with conn.transaction():
+        for key, variant_id in load_variant_keys(conn).items():
+            with conn.cursor() as cur:
+                cur.execute(
+                    "UPDATE variant SET display_name = %s"
+                    " WHERE id = %s AND display_name IS DISTINCT FROM %s",
+                    (display_name(key), variant_id, display_name(key)))
+                changed += cur.rowcount
+    return changed
+
+
 def load_attached_offers(conn: psycopg.Connection) -> list[dict]:
     """Offers currently attached to a variant, with their latest raw payload.
 
