@@ -329,9 +329,29 @@ def _characteristics(sku: dict) -> dict[str, str]:
 # memory, strip memory figures out of the card-derived spec before
 # combining, or the card's overall storage range masquerades as this SKU's
 # specific tier.
+# The trailing `+` makes the chain greedy across MORE than two figures. A
+# card offering three tiers ("Galaxy S25 Edge 12/256/512") otherwise had
+# exactly two of them consumed, leaving "512" standing in the head -- where
+# the bare-pair scan then read the card's 512 as the capacity and demoted
+# the SKU's own 256 to a model token. That is the leak inverted, not fixed.
+#
+# `-` is a separator too, because uzum sellers write the RAM-ROM pair with a
+# hyphen ("POCO C81 Pro (4-64/4-128)", "4GB-128GB") -- but ONLY when it is
+# TIGHT, with no space on either side. A SPACED hyphen is prose, and treating
+# it as a separator ate the model number: "REALME NOTE 70 - 2 дня работы"
+# matched "70 - 2", so the strip deleted the 70 and left the battery figure
+# standing in for the model ("realme note 6300 /128"). The capacity guard
+# cannot catch that -- 6300 is not a capacity, so the variant looks perfectly
+# well-formed -- and another retailer's Realme Note 70 keys correctly, so the
+# two never merge and the offer pool splits. Slash and plus keep their
+# optional spaces; only the hyphen is restricted, because only the hyphen
+# appears in ordinary prose.
+#
+# The leading `(?<![a-zа-я])` still protects catalogue codes: the "0" of
+# "SM-A075F" is preceded by a letter, so no chain can start inside one.
 _MEMORY_PAIR_RE = re.compile(
-    r"(?<![a-zа-я])\d{1,4}\s*(?:gb|гб|tb|тб)?\s*[/\\+|]\s*"
-    r"\d{1,4}\s*(?:gb|гб|tb|тб)?",
+    r"(?<![a-zа-я])\d{1,4}\s*(?:gb|гб|tb|тб)?"
+    r"(?:(?:\s*[/\\+|]\s*|-)\d{1,4}\s*(?:gb|гб|tb|тб)?)+",
     re.I,
 )
 _MEMORY_SINGLE_RE = re.compile(
@@ -354,6 +374,20 @@ _ORPHAN_SEPARATOR_RE = re.compile(r"(?<!\w)[/\\|+]+")
 # used to reject "4/6" out of "4/6/128Gb" and "2 SIM" when recovering memory
 # from a full card title.
 _MIN_PLAUSIBLE_STORAGE_GB = 32
+
+# RAM sizes retailers actually sell. Used to tell a RAM/storage SPEC from a
+# storage RANGE: "4/128" and "12/256" pair a RAM figure with a capacity and
+# identify one product, while "128/256" and "256/512" pair two capacities
+# and are the card's range across the SKUs it bundles -- they identify
+# nothing, and recovering one puts a coin-toss capacity on a real product.
+_PLAUSIBLE_RAM_GB = frozenset({1, 2, 3, 4, 6, 8, 10, 12, 16, 18, 24})
+
+
+def _is_storage_range(figures: list[int]) -> bool:
+    """True when every figure is a capacity, so this states a range."""
+    return len(figures) > 2 or (
+        len(figures) == 2 and min(figures) not in _PLAUSIBLE_RAM_GB
+    )
 
 
 def _collapse(text: str) -> str:
@@ -380,6 +414,34 @@ def _has_memory(text: str) -> bool:
     return bool(_MEMORY_PAIR_RE.search(text) or _MEMORY_SINGLE_RE.search(text))
 
 
+# A bare capacity, with neither a unit nor a partner figure: `Память: "128"`,
+# `Модель: "17 Pro 256"`. Restricted to real capacities so a model number
+# ("17", "Note 14") is never mistaken for one.
+_BARE_MEMORY_RE = re.compile(r"(?<![a-zа-я\d])(?:32|64|128|256|512|1024|2048)(?!\d)", re.I)
+
+
+def _states_memory(text: str) -> bool:
+    """Does this text state a memory figure IN ANY SHAPE?
+
+    Distinct from `_has_memory`, which only recognises a separated pair or a
+    unit-bearing figure. Both of this module's section-5b decisions ask
+    "did the SKU tell us its own memory?", and for a bare figure `_has_memory`
+    answered no -- so the card's overall RANGE was substituted for a figure
+    the SKU had stated perfectly clearly:
+
+    - the recovery gate appended the range beside the SKU's own capacity,
+      turning `Память: "128"` on a "64/128/256 ГБ" card into
+      `... 12 128 64/128 Алый`, where 64 becomes a MODEL token;
+    - section 5b's strip gate never fired, so `Модель: "17 Pro 256"` on an
+      "IPhone 17 Pro / Max 256/512 GB" card kept the card's range and keyed
+      as 512 GB, merging three different SKUs onto one variant.
+
+    A failure to RECOGNISE a stated figure is not a licence to substitute
+    the card's range for it.
+    """
+    return bool(_has_memory(text) or _BARE_MEMORY_RE.search(text))
+
+
 def _memory_from_title(title: str) -> str:
     """First plausible memory figure anywhere in the FULL card title.
 
@@ -389,10 +451,24 @@ def _memory_from_title(title: str) -> str:
     name with neither RAM nor storage, which the clustering stage cannot
     key -- and the figure was sitting in raw["card_title"] all along.
     """
+    saw_range = False
     for match in _MEMORY_PAIR_RE.finditer(title):
         figures = [int(f) for f in re.findall(r"\d{1,4}", match.group(0))]
-        if figures and max(figures) >= _MIN_PLAUSIBLE_STORAGE_GB:
-            return _collapse(match.group(0))
+        if not figures or max(figures) < _MIN_PLAUSIBLE_STORAGE_GB:
+            continue
+        # A range identifies nothing -- see _is_storage_range. Taking one
+        # would put a coin-toss capacity on a real product, which is the
+        # single defect this project exists to avoid; a name with no
+        # capacity is refused by the clustering stage instead.
+        if _is_storage_range(figures):
+            saw_range = True
+            continue
+        return _collapse(match.group(0))
+    if saw_range:
+        # The single-figure fallback below would otherwise pick one HALF of
+        # the range it just refused -- "128/256GB" yields "256GB" -- which is
+        # the same coin toss with the evidence hidden.
+        return ""
     match = _MEMORY_SINGLE_RE.search(title)
     return _collapse(match.group(0)) if match else ""
 
@@ -412,18 +488,26 @@ def _prefix_for_model(head: str, model_v: str) -> str:
     """The brand-bearing part of the card head, to sit in front of a Модель.
 
     A bare Модель value ("17 Pro Max 256 GB", "A16 8/256") carries no brand
-    of its own, so the head has to supply it. Every head word whose
-    sub-tokens all already appear in the Модель value is dropped, so
-    "IPhone 17 Pro/Pro Max" + "17 Pro Max 256 GB" yields "IPhone" rather
-    than repeating the model, while "Samsung Galaxy A16" + "A16 8/256"
-    keeps "Samsung Galaxy".
+    of its own, so the head has to supply it. The head is kept only UP TO
+    the first word the Модель value already states, so
+    "IPhone 17 Pro/Pro Max" + "17 Pro Max 256 GB" yields "IPhone" while
+    "Samsung Galaxy A16" + "A16 8/256" keeps "Samsung Galaxy".
+
+    Truncating rather than filtering is what stops a card lending a SKU the
+    model it is NOT. uzum bundles siblings on one card -- "IPhone 17 Pro /
+    Max 256/512 GB" carries both the Pro and the Pro Max -- and dropping
+    only the words the Модель repeats left "Max" standing in the prefix of
+    the plain "17 Pro 256" SKU, which then keyed as a Pro Max. Once a head
+    word belongs to the model, everything after it is model territory and
+    the Модель value owns it: it is the per-SKU field, and the head is the
+    shared one.
     """
     model_tokens = {t for t in _SUBTOKEN_RE.split(model_v.lower()) if t}
     kept = []
     for word in _LEAD_NOUN_RE.sub("", head).split():
         subtokens = [t for t in _SUBTOKEN_RE.split(word.lower()) if t]
         if subtokens and all(t in model_tokens for t in subtokens):
-            continue
+            break
         kept.append(word)
     return " ".join(kept)
 
@@ -440,7 +524,7 @@ def _build_name_raw(card_title: str | None, model_v: str, mem_v: str, color_v: s
         # The SKU's own Модель wins outright and is never rewritten.
         spec = model_v
         prefix = _prefix_for_model(head, model_v)
-        if mem_v or _has_memory(model_v):
+        if mem_v or _states_memory(model_v):
             # ...but the card head in front of it must not smuggle the
             # card's overall storage RANGE in beside it (section 5b).
             prefix = _strip_memory(prefix)
@@ -449,7 +533,12 @@ def _build_name_raw(card_title: str | None, model_v: str, mem_v: str, color_v: s
         spec = _strip_memory(head) if mem_v else head
 
     name = _collapse(" ".join(p for p in (prefix, spec, mem_v) if p))
-    if not _has_memory(name):
+
+    # Last resort, and ONLY when this SKU stated no memory of its own. The
+    # card title past the first comma is shared across every SKU the card
+    # bundles, so reaching into it for a capacity the SKU already supplied
+    # replaces a specific figure with a range -- see _states_memory.
+    if not _states_memory(name) and not (mem_v or _states_memory(model_v)):
         recovered = _memory_from_title(full_title)
         if recovered:
             name = _collapse(f"{name} {recovered}")

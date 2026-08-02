@@ -32,6 +32,24 @@ _MAX_PLAUSIBLE_RAM = 24
 _PLAUSIBLE_RAM_GB = frozenset({1, 2, 3, 4, 6, 8, 10, 12, 16, 18, 24})
 _PLAUSIBLE_STORAGE_GB = frozenset({32, 64, 128, 256, 512, 1024, 2048})
 
+# Last-resort: a storage figure standing entirely alone, with neither a unit
+# nor a second adjacent figure. Every rule above needs one or the other, so
+# "Apple iPhone 12 pro 128 Синий" read as no memory at all and the listing
+# became unkeyable -- while "Apple iPhone 12 128 Алый" read 128 correctly,
+# purely because the model number happened to sit next to the capacity.
+#
+# The shape is common rather than exotic: uzum states memory in a per-SKU
+# characteristic whose value is often the bare figure (Память: "128"), and
+# that value reaches the name with nothing beside it.
+_LONE_FIGURE = re.compile(r"(?<![a-zа-я\d])(\d{2,4})(?!\d)")
+
+# A lone figure is much weaker evidence than a pair, so it needs screening a
+# pair does not: these units mark a figure as something else entirely, and
+# 64 (МП), 128 (mp) and 512 are all plausible capacities sitting in blurbs.
+_OTHER_UNIT = re.compile(
+    r"^\s*(mp|мп|mah|мач|hz|гц|mm|мм|w|вт|nm|нм|dpi|ppi|fps|core|ядер)\b"
+)
+
 
 def scan_memory(
     raw: str | None, normalized: str, brand: str | None
@@ -71,6 +89,16 @@ def scan_memory(
             if max(a, b) not in _PLAUSIBLE_STORAGE_GB:
                 continue
             storage = max(a, b)
+            break
+
+    if storage is None:                      # lone "128" form -- see _LONE_FIGURE
+        for m in _LONE_FIGURE.finditer(normalized):
+            val = int(m.group(1))
+            if val not in _PLAUSIBLE_STORAGE_GB:
+                continue
+            if _OTHER_UNIT.match(normalized[m.end():]):
+                continue
+            storage = val
             break
 
     # A bare "12 256" pair normally means RAM/storage -- but "iPhone 16 256 GB"

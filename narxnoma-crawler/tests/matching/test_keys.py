@@ -1,3 +1,6 @@
+from dataclasses import replace
+
+from narxnoma.matching import VariantKey
 from narxnoma.matching.features import extract_features as F
 from narxnoma.matching.keys import (
     display_name, partial_key, resolve_partial, slug, variant_key,
@@ -159,3 +162,44 @@ def test_invalid_sim_kind_is_rejected():
         except ValueError:
             continue
         raise AssertionError(f"variant_key accepted invalid sim_kind {bad!r}")
+
+
+def test_display_name_distinguishes_an_esim_only_variant():
+    """sim_kind is part of the key, so it must be part of the NAME.
+
+    slug() appends "esim" and display_name() did not, so an eSIM-only phone
+    and its dual-SIM sibling -- genuinely different products at genuinely
+    different prices -- rendered byte-identical. Live, that produced 42 pairs
+    of variants a user could not tell apart, including
+    'Смартфон Apple iPhone 17 Pro 256 ГБ, Оранжевый' twice at 16,985,000 and
+    17,690,000.
+
+    Generated names are supposed to make duplicates structurally impossible;
+    a generator that drops a key field reintroduces exactly the confusion it
+    exists to prevent.
+    """
+    dual = VariantKey(brand="apple", model_tokens=frozenset({"17", "pro"}),
+                      ram_gb=None, storage_gb=256, color="orange", sim_kind="dual")
+    esim = replace(dual, sim_kind="esim_only")
+
+    assert display_name(dual) == "Смартфон Apple iPhone 17 Pro 256 ГБ, Оранжевый"
+    assert display_name(esim) != display_name(dual)
+    assert "eSIM" in display_name(esim)
+
+
+def test_no_two_distinct_keys_share_a_display_name():
+    """The invariant behind the test above, stated directly: if two keys
+    differ at all, their generated names must differ too.
+    """
+    base = VariantKey(brand="apple", model_tokens=frozenset({"17", "pro"}),
+                      ram_gb=None, storage_gb=256, color="orange", sim_kind="dual")
+    variations = [
+        base,
+        replace(base, sim_kind="esim_only"),
+        replace(base, storage_gb=512),
+        replace(base, color="blue"),
+        replace(base, model_tokens=frozenset({"17", "pro", "max"})),
+        replace(base, ram_gb=12),
+    ]
+    names = [display_name(k) for k in variations]
+    assert len(set(names)) == len(names), f"collision among {names}"

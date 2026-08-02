@@ -285,6 +285,67 @@ if mem_v:  # sku stated its own memory → it wins outright
 > `_strip_memory` in the crawler is documented as card-derived-text-only for
 > exactly this reason.
 
+> **Measured 2026-08-02 — the `if mem_v:` gate above is not enough.** The
+> sample code asks "did the SKU state its own memory?" by testing whether a
+> memory *pair* or a *unit-bearing* figure is present. uzum's most common
+> shape is neither: `Память: "128"`, `Модель: "17 Pro 256"` — a **bare
+> figure**. Both read as *no memory stated*, so the protection in this
+> section never engaged and the card's range won anyway, on 130 of 2,376
+> live offers. Two separate symptoms, one blind spot:
+>
+> ```
+> card 'Смартфон "Apple iPhone" 12, 64/128/256 ГБ' + Память "128"
+>   -> 'Смартфон "Apple iPhone" 12 128 64/128 Алый'   ← 64 becomes a MODEL token
+> card 'IPhone 17 Pro / Max 256/512 GB' + Модель "17 Pro 256"
+>   -> 'IPhone / Max 256/512 GB 17 Pro 256 Оранжевый' ← keys as 512 GB
+> ```
+>
+> The second merged a 17 Pro 256, a 17 Pro Max 256 and a 17 Pro 512 into one
+> variant with one headline price of 18,349,000 against a median of
+> 31,000,000 — the incumbent's own defect, different products behind one
+> price, reproduced in our data. `_states_memory` now answers the question in
+> every shape, and the last-resort card-title recovery is switched off
+> entirely whenever the SKU stated anything. **A failure to recognise a
+> stated figure is not a licence to substitute the card's range for it.**
+
+### 5c. A RANGE is not a spec
+
+A pair of figures means two different things depending on the figures:
+
+| shape | reading | example |
+|---|---|---|
+| small + capacity | this SKU's RAM and storage | `4/128`, `12/256` |
+| capacity + capacity | the **card's range** across bundled SKUs | `128/256`, `256/512` |
+
+The rule that separates them is whether the smaller figure is a plausible
+**RAM** size. A range identifies nothing, so recovering one puts a coin-toss
+capacity on a real product; the crawler refuses it and lets the clustering
+stage park the offer instead. The single-figure fallback is suppressed in the
+same case, or it simply takes one half of the range it just declined.
+
+Two further shapes were leaking figures into identity, both now handled:
+
+- **chained ranges.** `12/256/512` had exactly two figures consumed, leaving
+  `512` standing in the head — where the bare-pair scan read the card's 512 as
+  the capacity and demoted the SKU's own 256 to a model token. The strip is
+  greedy across the whole chain.
+- **hyphen separators.** Sellers also write the RAM-ROM pair with a hyphen:
+  `POCO C81 Pro (4-64/4-128)` matched no memory pattern at all and was chewed
+  into `POCO C81 Pro (4- -128) 4/64`. Catalogue codes stay safe — the `0` of
+  `SM-A075F` is preceded by a letter, so no chain can begin inside one.
+
+### 5d. A card lends a SKU the model it is NOT
+
+uzum bundles siblings on one card. `IPhone 17 Pro / Max 256/512 GB` carries
+both the Pro and the Pro Max, and the head must supply only the **brand** the
+bare `Модель` value lacks. Filtering out the head words the `Модель` repeats
+is not sufficient: for the plain `17 Pro 256` SKU the word `Max` was not
+repeated, so it survived into the prefix and the offer keyed as a Pro Max.
+
+The head is kept only **up to** the first word the `Модель` value already
+states. Once a head word belongs to the model, everything after it is model
+territory and the per-SKU `Модель` field owns it — the head is the shared one.
+
 ## 6. TRAP 2 — eSIM-only variants
 
 > **V1 crawler note (`narxnoma/sources/uzum.py`).** This whole section is

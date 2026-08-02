@@ -136,3 +136,41 @@ def test_non_apple_unit_bearing_pair_still_reads_ram():
     # The suppression must be brand-scoped, not blanket: brands that DO
     # publish RAM keep it as identity, or 8/256 and 12/256 would merge.
     assert mem("Honor X9d 12/256GB Black", brand="honor") == (12, 256)
+
+
+def test_a_lone_bare_figure_is_read_as_storage():
+    # THE GAP: every rule above needs either a UNIT ("256 GB") or a second
+    # adjacent figure ("12 256"). A storage figure standing alone with
+    # neither was read as nothing at all, so the listing became unkeyable.
+    #
+    # That is not a rare shape. uzum states memory in a per-SKU
+    # characteristic whose value is frequently the bare figure -- Память:
+    # "128" -- and the resulting name "Apple iPhone 12 pro 128 Синий" has no
+    # unit and no adjacent number. It yielded storage=None while
+    # 'Apple iPhone 12 128 Алый' yielded 128, purely because the model
+    # number happened to sit next to the memory figure in the second one.
+    assert mem("Apple iPhone 12 pro 128 Синий", brand="apple") == (None, 128)
+    assert mem("IPhone 17 Pro Max 512 Серебряный", brand="apple") == (None, 512)
+
+
+def test_a_lone_bare_figure_must_be_a_plausible_storage_size():
+    # A lone figure is far weaker evidence than a pair, so it is admitted
+    # only from the plausible-storage set. A model number ("Honor 200",
+    # "Nokia 105") must never be mistaken for a capacity.
+    assert mem("Honor 200 Pro", brand="honor") == (None, None)
+    assert mem("Смартфон Nokia 105", brand=None) == (None, None)
+
+
+def test_a_lone_bare_figure_followed_by_another_unit_is_not_storage():
+    # "64 МП" is a camera, "120 Гц" a refresh rate. Both are plausible
+    # storage NUMBERS sitting in a marketing blurb, and the lone-figure rule
+    # is the one rule loose enough to swallow them.
+    assert mem("Redmi Note 14 Pro 64 МП камера", brand="xiaomi") == (None, None)
+    assert mem("Realme C75 128 mp AI", brand="realme") == (None, None)
+
+
+def test_a_real_pair_still_wins_over_a_lone_figure():
+    # The lone-figure rule is a LAST resort: it may only run when every
+    # stronger rule has already declined. "8/256" must not be overridden by
+    # the bare "64" that follows it.
+    assert mem("Poco X7 8/256 ГБ 64 МП", brand="xiaomi") == (8, 256)

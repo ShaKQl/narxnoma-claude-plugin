@@ -40,7 +40,7 @@ import pathlib
 import pytest
 import requests
 
-from narxnoma.matching import extract_features
+from narxnoma.matching import extract_features, variant_key
 from narxnoma.sources import uzum
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 from narxnoma.sources.uzum import _build_name_raw, _char_kind, parse
@@ -481,6 +481,136 @@ def test_name_raw_keeps_a_trailing_plus_model_marker():
     assert name == "Xiaomi Redmi Note 14 Pro+ 12/512"
 
 
+def test_name_raw_bare_sku_memory_blocks_the_card_title_recovery():
+    """A bare memory figure IS a stated memory, and must switch off the
+    last-resort recovery just as "8/256" does.
+
+    _has_memory only ever recognised a slash-separated pair or a
+    unit-bearing figure, so `Память: "128"` looked like NO memory at all --
+    and the recovery then reached past the first comma and appended the
+    card's whole RANGE beside the SKU's own correct figure. Live: card
+    'Смартфон "Apple iPhone" 12, 64/128/256 ГБ, SIM' with Память "128"
+    became 'Смартфон "Apple iPhone" 12 128 64/128 Алый', whose storage read
+    128 while "64" became a MODEL token -- a product that does not exist.
+    """
+    name = _build_name_raw(
+        'Смартфон "Apple iPhone" 12, 64/128/256 ГБ, SIM, чехол в подарок',
+        "", "128", "Алый",
+    )
+    assert "64/128" not in name
+    assert name == 'Смартфон "Apple iPhone" 12 128 Алый'
+    features = extract_features(name)
+    assert features.storage_gb == 128
+    assert "64" not in features.model_tokens
+
+
+def test_name_raw_bare_memory_inside_a_model_value_strips_the_card_range():
+    """The same blindness on section 5b's own gate rather than the recovery.
+
+    The strip of the card-derived prefix is gated on the SKU having stated
+    memory; with `Модель: "17 Pro 256"` the figure is bare, so the gate
+    never fired and the card's range survived in the prefix. Live, that
+    produced 'IPhone / Max 256/512 GB 17 Pro 256 Оранжевый' -- storage 512
+    from the card, "256" demoted to a model token, and three different SKUs
+    (Pro 256, Pro Max 256, Pro 512) merged onto one variant.
+    """
+    name = _build_name_raw(
+        "IPhone 17 Pro / Max 256/512 GB, E-Sim только,  Apple", "17 Pro 256", "", "Оранжевый"
+    )
+    assert "256/512" not in name
+    features = extract_features(name)
+    assert features.storage_gb == 256
+    assert features.model_tokens == frozenset({"17", "pro"})
+
+
+def test_name_raw_does_not_inherit_the_cards_other_bundled_model():
+    """A card bundling two models must not lend the SKU the one it is not.
+
+    'IPhone 17 Pro / Max' bundles the Pro and the Pro Max. _prefix_for_model
+    dropped only the head words the Модель value already contained, so for
+    the plain '17 Pro 256' SKU the word "Max" survived into the prefix and
+    the offer keyed as a Pro MAX. Once a head word belongs to the model, the
+    Модель value owns the rest of the head.
+    """
+    name = _build_name_raw(
+        "IPhone 17 Pro / Max 256/512 GB, E-Sim только,  Apple", "17 Pro 256", "", "Оранжевый"
+    )
+    assert "Max" not in name
+    assert extract_features(name).model_tokens == frozenset({"17", "pro"})
+
+    # ...and the Pro Max SKU on the very same card still keeps its Max.
+    sibling = _build_name_raw(
+        "IPhone 17 Pro / Max 256/512 GB, E-Sim только,  Apple",
+        "17 Pro Max 512", "", "Оранжевый",
+    )
+    assert extract_features(sibling).model_tokens == frozenset({"17", "pro", "max"})
+    assert extract_features(sibling).storage_gb == 512
+
+
+def test_name_raw_strips_a_chained_memory_range_whole():
+    """A card listing three tiers leaves the last one behind.
+
+    The strip consumed exactly two figures, so "12/256/512" lost "12/256"
+    and left "512" standing in the head. Live, that made
+    'Samsung Galaxy S25 Edge 512 12/256 Голубой' -- the bare-pair scan then
+    read the card's 512 as the capacity and demoted the SKU's own 256 to a
+    model token, which is the leak inverted rather than fixed.
+    """
+    name = _build_name_raw(
+        "Samsung Galaxy S25 Edge 12/256/512, гарантия 1 год, зарегистрирован в IMIE",
+        "", "12/256", "Голубой",
+    )
+    assert name == "Samsung Galaxy S25 Edge 12/256 Голубой"
+    features = extract_features(name)
+    assert (features.ram_gb, features.storage_gb) == (12, 256)
+    assert "512" not in features.model_tokens
+
+
+def test_name_raw_strips_a_hyphen_separated_memory_range():
+    """uzum sellers also write the RAM-ROM pair with a hyphen.
+
+    "(4-64/4-128)" matched no memory pattern at all, so the strip chewed out
+    the middle and left "POCO C81 Pro (4- -128) 4/64" -- the card's 128 then
+    beat the SKU's own 64 as the capacity.
+    """
+    name = _build_name_raw("POCO C81 Pro (4-64/4-128)", "4/64", "", "Черный")
+    assert name == "POCO C81 Pro 4/64 Черный"
+    features = extract_features(name)
+    assert (features.ram_gb, features.storage_gb) == (4, 64)
+
+
+def test_name_raw_refuses_to_recover_a_range_from_the_card_title():
+    """The recovery may only take a SPEC, never a RANGE.
+
+    A pair is a RAM/storage spec when its smaller figure is a plausible RAM
+    size ("4/128", "12/256"); when both figures are capacities ("128/256",
+    "256/512") it is the card's range across the SKUs it bundles, and it
+    identifies nothing. This SKU states no memory of its own and the card
+    offers only a range, so the honest result is a name with no capacity --
+    which the clustering stage then refuses, rather than publishing a price
+    under a product picked by coin toss.
+    """
+    name = _build_name_raw(
+        "Смартфон Apple iPhone 13, 128/256GB, SIM+eSIM, чехол в подарок", "", "", "Синий"
+    )
+    assert "128/256" not in name
+    assert extract_features(name).storage_gb is None
+    assert variant_key(extract_features(name), "dual") is None
+
+
+def test_name_raw_recovery_still_fires_when_the_sku_states_nothing():
+    """The recovery is switched off by a STATED memory, not disabled.
+
+    A SKU with no memory characteristic and no figure in its Модель value
+    still has nothing but the card title to go on, which is the case the
+    recovery was built for.
+    """
+    name = _build_name_raw(
+        "Smartfon Samsung Galaxy A16, 4/128 GB, 2 SIM, Super AMOLED", "", "", "Qora"
+    )
+    assert name == "Smartfon Samsung Galaxy A16 4/128 GB Qora"
+
+
 # ---------------------------------------------------------------------------
 # Token handling
 # ---------------------------------------------------------------------------
@@ -575,3 +705,30 @@ def test_non_401_http_error_is_not_retried(monkeypatch):
     with pytest.raises(requests.HTTPError):
         source._fetch_payload("Samsung", 0)
     assert len(mints) == 1
+
+
+def test_a_spaced_hyphen_is_prose_not_a_memory_separator():
+    """The hyphen separator must be TIGHT, or it eats the model number.
+
+    Found in branch review. Widening the separator class to catch uzum's
+    "(4-64/4-128)" also matched "70 - 2" in
+    "REALME NOTE 70 - 2 дня работы от одной зарядки", so the strip deleted
+    the model number and left the battery figure behind: the offer keyed as
+    'realme note 6300 /128', with 6300 мАч standing in for the model. Two
+    live offers were affected, and the capacity guard cannot catch it --
+    6300 is not a capacity, so the variant looks perfectly well-formed.
+
+    Worse than a lost offer: another retailer's Realme Note 70 keys
+    correctly, so the two never merge and the offer pool splits.
+    """
+    card = "Новый Смартфон REALME NOTE 70 - 2 дня работы от одной зарядки, 6300 мАч"
+    name = _build_name_raw(card, "", "4/128", "Черный")
+    assert "70" in extract_features(name).model_tokens
+    assert extract_features(name).storage_gb == 128
+
+
+def test_a_tight_hyphen_is_still_a_memory_separator():
+    """The case the widening was for must keep working."""
+    name = _build_name_raw("POCO C81 Pro (4-64/4-128)", "4/64", "", "Черный")
+    assert name == "POCO C81 Pro 4/64 Черный"
+    assert extract_features("Samsung Galaxy A17 4GB-128GB Qora").storage_gb == 128
