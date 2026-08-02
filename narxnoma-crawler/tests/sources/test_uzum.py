@@ -40,7 +40,7 @@ import pathlib
 import pytest
 import requests
 
-from narxnoma.matching import extract_features
+from narxnoma.matching import extract_features, variant_key
 from narxnoma.sources import uzum
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
 from narxnoma.sources.uzum import _build_name_raw, _char_kind, parse
@@ -545,6 +545,57 @@ def test_name_raw_does_not_inherit_the_cards_other_bundled_model():
     )
     assert extract_features(sibling).model_tokens == frozenset({"17", "pro", "max"})
     assert extract_features(sibling).storage_gb == 512
+
+
+def test_name_raw_strips_a_chained_memory_range_whole():
+    """A card listing three tiers leaves the last one behind.
+
+    The strip consumed exactly two figures, so "12/256/512" lost "12/256"
+    and left "512" standing in the head. Live, that made
+    'Samsung Galaxy S25 Edge 512 12/256 Голубой' -- the bare-pair scan then
+    read the card's 512 as the capacity and demoted the SKU's own 256 to a
+    model token, which is the leak inverted rather than fixed.
+    """
+    name = _build_name_raw(
+        "Samsung Galaxy S25 Edge 12/256/512, гарантия 1 год, зарегистрирован в IMIE",
+        "", "12/256", "Голубой",
+    )
+    assert name == "Samsung Galaxy S25 Edge 12/256 Голубой"
+    features = extract_features(name)
+    assert (features.ram_gb, features.storage_gb) == (12, 256)
+    assert "512" not in features.model_tokens
+
+
+def test_name_raw_strips_a_hyphen_separated_memory_range():
+    """uzum sellers also write the RAM-ROM pair with a hyphen.
+
+    "(4-64/4-128)" matched no memory pattern at all, so the strip chewed out
+    the middle and left "POCO C81 Pro (4- -128) 4/64" -- the card's 128 then
+    beat the SKU's own 64 as the capacity.
+    """
+    name = _build_name_raw("POCO C81 Pro (4-64/4-128)", "4/64", "", "Черный")
+    assert name == "POCO C81 Pro 4/64 Черный"
+    features = extract_features(name)
+    assert (features.ram_gb, features.storage_gb) == (4, 64)
+
+
+def test_name_raw_refuses_to_recover_a_range_from_the_card_title():
+    """The recovery may only take a SPEC, never a RANGE.
+
+    A pair is a RAM/storage spec when its smaller figure is a plausible RAM
+    size ("4/128", "12/256"); when both figures are capacities ("128/256",
+    "256/512") it is the card's range across the SKUs it bundles, and it
+    identifies nothing. This SKU states no memory of its own and the card
+    offers only a range, so the honest result is a name with no capacity --
+    which the clustering stage then refuses, rather than publishing a price
+    under a product picked by coin toss.
+    """
+    name = _build_name_raw(
+        "Смартфон Apple iPhone 13, 128/256GB, SIM+eSIM, чехол в подарок", "", "", "Синий"
+    )
+    assert "128/256" not in name
+    assert extract_features(name).storage_gb is None
+    assert variant_key(extract_features(name), "dual") is None
 
 
 def test_name_raw_recovery_still_fires_when_the_sku_states_nothing():

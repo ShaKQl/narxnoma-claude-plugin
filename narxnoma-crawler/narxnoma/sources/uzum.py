@@ -329,9 +329,19 @@ def _characteristics(sku: dict) -> dict[str, str]:
 # memory, strip memory figures out of the card-derived spec before
 # combining, or the card's overall storage range masquerades as this SKU's
 # specific tier.
+# The trailing `+` makes the chain greedy across MORE than two figures. A
+# card offering three tiers ("Galaxy S25 Edge 12/256/512") otherwise had
+# exactly two of them consumed, leaving "512" standing in the head -- where
+# the bare-pair scan then read the card's 512 as the capacity and demoted
+# the SKU's own 256 to a model token. That is the leak inverted, not fixed.
+#
+# `-` is in the separator class because uzum sellers write the RAM-ROM pair
+# with a hyphen too ("POCO C81 Pro (4-64/4-128)"). The leading
+# `(?<![a-zа-я])` still protects catalogue codes: the "0" of "SM-A075F" is
+# preceded by a letter, so no chain can start inside one.
 _MEMORY_PAIR_RE = re.compile(
-    r"(?<![a-zа-я])\d{1,4}\s*(?:gb|гб|tb|тб)?\s*[/\\+|]\s*"
-    r"\d{1,4}\s*(?:gb|гб|tb|тб)?",
+    r"(?<![a-zа-я])\d{1,4}\s*(?:gb|гб|tb|тб)?"
+    r"(?:\s*[/\\+|-]\s*\d{1,4}\s*(?:gb|гб|tb|тб)?)+",
     re.I,
 )
 _MEMORY_SINGLE_RE = re.compile(
@@ -354,6 +364,20 @@ _ORPHAN_SEPARATOR_RE = re.compile(r"(?<!\w)[/\\|+]+")
 # used to reject "4/6" out of "4/6/128Gb" and "2 SIM" when recovering memory
 # from a full card title.
 _MIN_PLAUSIBLE_STORAGE_GB = 32
+
+# RAM sizes retailers actually sell. Used to tell a RAM/storage SPEC from a
+# storage RANGE: "4/128" and "12/256" pair a RAM figure with a capacity and
+# identify one product, while "128/256" and "256/512" pair two capacities
+# and are the card's range across the SKUs it bundles -- they identify
+# nothing, and recovering one puts a coin-toss capacity on a real product.
+_PLAUSIBLE_RAM_GB = frozenset({1, 2, 3, 4, 6, 8, 10, 12, 16, 18, 24})
+
+
+def _is_storage_range(figures: list[int]) -> bool:
+    """True when every figure is a capacity, so this states a range."""
+    return len(figures) > 2 or (
+        len(figures) == 2 and min(figures) not in _PLAUSIBLE_RAM_GB
+    )
 
 
 def _collapse(text: str) -> str:
@@ -417,10 +441,24 @@ def _memory_from_title(title: str) -> str:
     name with neither RAM nor storage, which the clustering stage cannot
     key -- and the figure was sitting in raw["card_title"] all along.
     """
+    saw_range = False
     for match in _MEMORY_PAIR_RE.finditer(title):
         figures = [int(f) for f in re.findall(r"\d{1,4}", match.group(0))]
-        if figures and max(figures) >= _MIN_PLAUSIBLE_STORAGE_GB:
-            return _collapse(match.group(0))
+        if not figures or max(figures) < _MIN_PLAUSIBLE_STORAGE_GB:
+            continue
+        # A range identifies nothing -- see _is_storage_range. Taking one
+        # would put a coin-toss capacity on a real product, which is the
+        # single defect this project exists to avoid; a name with no
+        # capacity is refused by the clustering stage instead.
+        if _is_storage_range(figures):
+            saw_range = True
+            continue
+        return _collapse(match.group(0))
+    if saw_range:
+        # The single-figure fallback below would otherwise pick one HALF of
+        # the range it just refused -- "128/256GB" yields "256GB" -- which is
+        # the same coin toss with the evidence hidden.
+        return ""
     match = _MEMORY_SINGLE_RE.search(title)
     return _collapse(match.group(0)) if match else ""
 
