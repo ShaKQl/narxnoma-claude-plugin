@@ -11,6 +11,7 @@ from narxnoma.db.connection import connect
 from narxnoma.db.migrate import migrate
 from narxnoma.pipeline.aggregate import recompute_variant_prices
 from narxnoma.pipeline.backfill import DEFAULT_MAX_QUERIES, backfill_search_only_sources
+from narxnoma.pipeline import cluster
 from narxnoma.pipeline.cluster import cluster_offers
 from narxnoma.pipeline.extract import identify
 from narxnoma.pipeline.quality import quality_report
@@ -73,7 +74,18 @@ def render_status(result: HarvestResult) -> str:
 
 
 def run_clustering(conn) -> tuple[int, int, int]:
-    """extract -> cluster -> aggregate. Returns (attached, created, unresolved)."""
+    """reconcile -> extract -> cluster -> aggregate. Returns (attached, created,
+    unresolved).
+
+    The reconcile step runs first so that an offer whose name has changed since
+    it was attached is back in the unattached pool before clustering loads it.
+    Without it a source fix can correct `name_raw` and still leave every
+    affected offer sitting on the variant the old, wrong name produced.
+    """
+    detached = cluster.detach_drifted_offers(conn)
+    if detached:
+        logging.info("reconciled: detached %d offers whose name no longer matches "
+                     "their variant", detached)
     rows = repository.load_unattached_offers(conn)
     result = cluster_offers(conn, (identify(row) for row in rows))
     recompute_variant_prices(conn)

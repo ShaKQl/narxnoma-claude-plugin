@@ -8,6 +8,7 @@ from narxnoma.pipeline.cluster import (
     REASON_MEMORY_IN_MODEL,
     REASON_NO_IDENTITY,
     cluster_offers,
+    detach_drifted_offers,
 )
 from narxnoma.pipeline.extract import identify
 from narxnoma.sources.base import Listing
@@ -230,3 +231,62 @@ def test_a_real_model_number_is_not_mistaken_for_a_capacity(db_conn):
 
     assert result.attached == 2
     assert variant_count(db_conn) == 2
+
+
+def test_an_offer_whose_name_now_says_something_else_is_re_examined(db_conn):
+    """A parser fix must be able to heal the catalogue it already wrote.
+
+    Clustering only ever loads offers with variant_id IS NULL, so an offer
+    attached in an earlier cycle is never reconsidered. That is right while
+    name_raw is stable -- and wrong the moment a source fix changes it,
+    which is exactly when the catalogue is most likely to be wrong. The
+    uzum card-range repair rewrote 217 stored names; without this the
+    offers behind them would have sat on their old, incorrect variants
+    indefinitely, and no report would have said so.
+    """
+    offer_id = seed_offer(db_conn, "Смартфон Honor X9d 12/256 ГБ, черный", "drift")
+    cluster_offers(db_conn, identities_for(db_conn))
+    original = attached_variant(db_conn, offer_id)
+    assert original is not None
+
+    # The source is corrected and the next harvest stores a different name.
+    with db_conn.cursor() as cur:
+        cur.execute("UPDATE offer SET name_raw = %s WHERE id = %s",
+                    ("Смартфон Honor X9d 12/512 ГБ, черный", offer_id))
+
+    detached = detach_drifted_offers(db_conn)
+    assert detached == 1
+    cluster_offers(db_conn, identities_for(db_conn))
+
+    moved = attached_variant(db_conn, offer_id)
+    assert moved is not None and moved != original
+    with db_conn.cursor() as cur:
+        cur.execute("SELECT storage_gb FROM variant WHERE id = %s", (moved,))
+        assert cur.fetchone()[0] == 512
+
+
+def test_an_unchanged_catalogue_detaches_nothing(db_conn):
+    """Reconciliation runs every cycle, so a steady state must be a no-op --
+    otherwise it churns every offer through detach and re-attach each run.
+    """
+    seed_offer(db_conn, "Смартфон Honor X9d 12/256 ГБ, черный", "a")
+    seed_offer(db_conn, "Смартфон Apple iPhone 17 Pro 256 ГБ, Синий", "b", store="idea")
+    cluster_offers(db_conn, identities_for(db_conn))
+
+    assert detach_drifted_offers(db_conn) == 0
+    assert detach_drifted_offers(db_conn) == 0
+
+
+def test_a_partial_attachment_compatible_with_its_variant_is_left_alone(db_conn):
+    """An offer attached by partial resolution has no full key of its own, so
+    "re-derive and compare" cannot judge it. It is kept while it remains
+    COMPATIBLE with the variant it sits on, and only detached when the name
+    now contradicts it -- otherwise every cycle would tear down and rebuild
+    every partial attachment.
+    """
+    seed_offer(db_conn, "Смартфон Honor X9d 12/256 ГБ, черный", "full")
+    partial = seed_offer(db_conn, "Honor X9d 256 ГБ черный", "part", store="idea")
+    cluster_offers(db_conn, identities_for(db_conn))
+    assert attached_variant(db_conn, partial) is not None
+
+    assert detach_drifted_offers(db_conn) == 0

@@ -225,6 +225,33 @@ def record_unresolved(conn: psycopg.Connection, offer_id: UUID, reason: str,
                 (offer_id, reason, candidate_ids or []))
 
 
+def load_attached_offers(conn: psycopg.Connection) -> list[dict]:
+    """Offers currently attached to a variant, with their latest raw payload.
+
+    The mirror of `load_unattached_offers`, and the input to the drift check:
+    an attachment written in an earlier cycle is only trustworthy while the
+    name it was derived from is unchanged. See `cluster.detach_drifted_offers`.
+    """
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT o.id, o.name_raw, o.variant_id,
+                   (SELECT r.payload FROM raw_offer r
+                     WHERE r.store_id = o.store_id AND r.source_key = o.source_key
+                     ORDER BY r.observed_at DESC LIMIT 1)
+              FROM offer o
+             WHERE o.variant_id IS NOT NULL
+        """)
+        return [{"id": oid, "name_raw": name, "variant_id": vid, "raw": payload}
+                for oid, name, vid, payload in cur.fetchall()]
+
+
+def detach_offer(conn: psycopg.Connection, offer_id: UUID) -> None:
+    """Return an offer to the unattached pool so clustering reconsiders it."""
+    with conn.transaction():
+        with conn.cursor() as cur:
+            cur.execute("UPDATE offer SET variant_id = NULL WHERE id = %s", (offer_id,))
+
+
 def load_unattached_offers(conn: psycopg.Connection) -> list[dict]:
     """Offers not currently attached to a variant, with their latest raw payload.
 

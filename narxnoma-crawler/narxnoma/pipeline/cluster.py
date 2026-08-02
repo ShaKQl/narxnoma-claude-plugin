@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 
 from narxnoma.db import repository as default_repo
 from narxnoma.matching import resolve_partial
-from narxnoma.pipeline.extract import OfferIdentity
+from narxnoma.pipeline.extract import OfferIdentity, identify
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +65,52 @@ def _has_usable_partial(identity: OfferIdentity) -> bool:
     """
     p = identity.partial
     return bool(p.brand and p.storage_gb and p.model_tokens)
+
+
+def detach_drifted_offers(conn, repo=default_repo) -> int:
+    """Detach offers whose stored variant contradicts what their name now says.
+
+    Clustering only ever loads offers with `variant_id IS NULL`, so an offer
+    attached in an earlier cycle is never reconsidered. That is correct while
+    `name_raw` is stable — and wrong the moment a source fix changes it, which
+    is precisely when the catalogue is most likely to be wrong. The uzum
+    card-range repair rewrote 217 stored names; without this the offers behind
+    them would have sat on their old, incorrect variants indefinitely, and
+    nothing in the system would have reported it.
+
+    Detaching is all this does. The offer returns to the normal pass and is
+    re-attached, or refused, by the same rules as any other — so a fix can only
+    move an offer to the right product or park it, never invent a new outcome.
+
+    Two cases are deliberately distinguished:
+
+    - a **full** key that maps to a different variant is a plain contradiction;
+    - a **partial** key is judged by compatibility instead, because an offer
+      attached by partial resolution never had a full key to compare. Tearing
+      those down unconditionally would churn every partial attachment through
+      detach and re-attach on every single cycle.
+    """
+    known = repo.load_variant_keys(conn)
+    by_id = {vid: key for key, vid in known.items()}
+
+    drifted = []
+    for row in repo.load_attached_offers(conn):
+        identity = identify(row)
+        stored_key = by_id.get(row["variant_id"])
+        if stored_key is None:
+            continue
+        if identity.key is not None:
+            if identity.key != stored_key:
+                drifted.append(identity.offer_id)
+        elif resolve_partial(identity.partial, [stored_key]) is None:
+            drifted.append(identity.offer_id)
+
+    for offer_id in drifted:
+        repo.detach_offer(conn, offer_id)
+    if drifted:
+        logger.info("detached %d offers whose name no longer matches their variant",
+                    len(drifted))
+    return len(drifted)
 
 
 def cluster_offers(conn, identities, repo=default_repo) -> ClusterResult:
