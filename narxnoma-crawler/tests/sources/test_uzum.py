@@ -705,3 +705,30 @@ def test_non_401_http_error_is_not_retried(monkeypatch):
     with pytest.raises(requests.HTTPError):
         source._fetch_payload("Samsung", 0)
     assert len(mints) == 1
+
+
+def test_a_spaced_hyphen_is_prose_not_a_memory_separator():
+    """The hyphen separator must be TIGHT, or it eats the model number.
+
+    Found in branch review. Widening the separator class to catch uzum's
+    "(4-64/4-128)" also matched "70 - 2" in
+    "REALME NOTE 70 - 2 дня работы от одной зарядки", so the strip deleted
+    the model number and left the battery figure behind: the offer keyed as
+    'realme note 6300 /128', with 6300 мАч standing in for the model. Two
+    live offers were affected, and the capacity guard cannot catch it --
+    6300 is not a capacity, so the variant looks perfectly well-formed.
+
+    Worse than a lost offer: another retailer's Realme Note 70 keys
+    correctly, so the two never merge and the offer pool splits.
+    """
+    card = "Новый Смартфон REALME NOTE 70 - 2 дня работы от одной зарядки, 6300 мАч"
+    name = _build_name_raw(card, "", "4/128", "Черный")
+    assert "70" in extract_features(name).model_tokens
+    assert extract_features(name).storage_gb == 128
+
+
+def test_a_tight_hyphen_is_still_a_memory_separator():
+    """The case the widening was for must keep working."""
+    name = _build_name_raw("POCO C81 Pro (4-64/4-128)", "4/64", "", "Черный")
+    assert name == "POCO C81 Pro 4/64 Черный"
+    assert extract_features("Samsung Galaxy A17 4GB-128GB Qora").storage_gb == 128

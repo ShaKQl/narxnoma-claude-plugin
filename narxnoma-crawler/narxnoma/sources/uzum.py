@@ -335,13 +335,23 @@ def _characteristics(sku: dict) -> dict[str, str]:
 # the bare-pair scan then read the card's 512 as the capacity and demoted
 # the SKU's own 256 to a model token. That is the leak inverted, not fixed.
 #
-# `-` is in the separator class because uzum sellers write the RAM-ROM pair
-# with a hyphen too ("POCO C81 Pro (4-64/4-128)"). The leading
-# `(?<![a-zа-я])` still protects catalogue codes: the "0" of "SM-A075F" is
-# preceded by a letter, so no chain can start inside one.
+# `-` is a separator too, because uzum sellers write the RAM-ROM pair with a
+# hyphen ("POCO C81 Pro (4-64/4-128)", "4GB-128GB") -- but ONLY when it is
+# TIGHT, with no space on either side. A SPACED hyphen is prose, and treating
+# it as a separator ate the model number: "REALME NOTE 70 - 2 дня работы"
+# matched "70 - 2", so the strip deleted the 70 and left the battery figure
+# standing in for the model ("realme note 6300 /128"). The capacity guard
+# cannot catch that -- 6300 is not a capacity, so the variant looks perfectly
+# well-formed -- and another retailer's Realme Note 70 keys correctly, so the
+# two never merge and the offer pool splits. Slash and plus keep their
+# optional spaces; only the hyphen is restricted, because only the hyphen
+# appears in ordinary prose.
+#
+# The leading `(?<![a-zа-я])` still protects catalogue codes: the "0" of
+# "SM-A075F" is preceded by a letter, so no chain can start inside one.
 _MEMORY_PAIR_RE = re.compile(
     r"(?<![a-zа-я])\d{1,4}\s*(?:gb|гб|tb|тб)?"
-    r"(?:\s*[/\\+|-]\s*\d{1,4}\s*(?:gb|гб|tb|тб)?)+",
+    r"(?:(?:\s*[/\\+|]\s*|-)\d{1,4}\s*(?:gb|гб|tb|тб)?)+",
     re.I,
 )
 _MEMORY_SINGLE_RE = re.compile(
