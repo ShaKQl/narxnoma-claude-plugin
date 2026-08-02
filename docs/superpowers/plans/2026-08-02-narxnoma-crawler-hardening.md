@@ -180,12 +180,36 @@ def test_max_pages_stops_a_runaway_paginator():
     assert len(got) == 5
 
 
-def test_an_empty_page_ends_the_sweep():
-    # HTTP 200 with no items is how a retailer signals the end -- and also how
-    # a rescoped endpoint signals it has nothing. Stopping is right; noticing
-    # the catalogue shrank is EXPECTED_MIN_OFFERS' job, not this loop's.
-    fetch, calls = pages({"keys": ["a"], "last": 9}, {"keys": [], "last": 9})
+def test_next_page_is_the_sole_authority_on_stopping():
+    """A page that PARSES to nothing must NOT end the sweep.
+
+    Found in pre-flight. The obvious design -- stop when parse_page returns
+    an empty list -- silently changes every client's behaviour: a page whose
+    items are all dropped by the price fence or a category filter would end
+    the sweep and lose every following page. texnomart's own fixture already
+    drops an item below the fence, and Task 3 adds a filter that can empty a
+    whole page of accessories.
+
+    Only next_page decides. A client that wants an empty payload to stop --
+    uzum, whose offset pagination has no last_page to compare -- says so by
+    returning None from its own next_page.
+    """
+    fetch, calls = pages({"keys": [], "last": 3},
+                         {"keys": ["b"], "last": 3},
+                         {"keys": ["c"], "last": 3})
     got = [x.source_key for x in paginate(fetch, parse_page, next_page)]
+    assert got == ["b", "c"], "an empty page must not truncate the sweep"
+    assert calls == [1, 2, 3]
+
+
+def test_a_client_can_still_stop_on_an_empty_payload():
+    # uzum paginates by offset with no last_page, so an empty payload IS its
+    # end signal -- expressed in its own next_page, not assumed by the loop.
+    def stop_when_empty(payload, page):
+        return page + 1 if payload["keys"] else None
+
+    fetch, calls = pages({"keys": ["a"], "last": 9}, {"keys": [], "last": 9})
+    got = [x.source_key for x in paginate(fetch, parse_page, stop_when_empty)]
     assert got == ["a"]
     assert calls == [1, 2]
 
@@ -236,8 +260,12 @@ def paginate(fetch_page, parse_page, next_page, first_page: int = 1,
     cost a whole source in a live run, and a retry minutes later succeeded.
 
     `fetch_page(page) -> payload`, `parse_page(payload) -> list[Listing]`,
-    `next_page(payload, page) -> int | None`; returning None ends the sweep, as
-    does a page that parses to nothing.
+    `next_page(payload, page) -> int | None`. **next_page is the only thing
+    that ends the sweep.** A page that parses to nothing does NOT: its items
+    may simply have been dropped by the price fence or a category filter, and
+    stopping there would lose every following page. A client whose end signal
+    really is an empty payload (uzum, paginating by offset with no last_page)
+    expresses that in its own next_page.
 
     A page that fails all its attempts RAISES. That is deliberate: swallowing it
     would let a half-swept catalogue be recorded as a success, which is the one
@@ -261,10 +289,10 @@ def paginate(fetch_page, parse_page, next_page, first_page: int = 1,
                 # struggling API at full speed.
                 pause()
 
-        listings = parse_page(payload)
-        if not listings:
-            return
-        yield from listings
+        # NOT `if not listings: return`. A page whose items were all dropped
+        # by the price fence or a category filter would end the sweep and lose
+        # every following page. next_page decides; see the docstring.
+        yield from parse_page(payload)
 
         following = next_page(payload, page)
         if following is None:
@@ -427,26 +455,46 @@ git commit -m "refactor(sources): move every sweep onto the shared paginate()"
 
 ---
 
-### Task 3: texnomart is cataloguing things that are not phones
+### Task 3: two sources are cataloguing things that are not phones
 
 **Files:**
-- Modify: `narxnoma-crawler/narxnoma/sources/texnomart.py`
-- Modify: `docs/parsers/texnomart.md`
-- Test: `narxnoma-crawler/tests/sources/test_texnomart.py`
+- Create: `narxnoma-crawler/narxnoma/sources/not_a_phone.py`
+- Modify: `narxnoma-crawler/narxnoma/sources/texnomart.py`, `narxnoma-crawler/narxnoma/sources/alifshop.py`
+- Modify: `docs/parsers/texnomart.md`, `docs/parsers/alifshop.md`
+- Test: `narxnoma-crawler/tests/sources/test_not_a_phone.py` (create), and the two source test files
 
 **Interfaces:**
 - Consumes: `paginate` (Task 1).
-- Produces: `is_phone_listing(listing) -> bool` in `texnomart.py`, applied in `sweep()` only.
+- Produces: `is_phone_listing(listing) -> bool` in `sources/not_a_phone.py`, applied in `sweep()` only, by both clients.
 
-**Measured, not assumed.** texnomart is the only swept source with no category filter. Of its 467 live offers, **142 (30.4%) are not phones** — tablets, laptops, adapters, cases. And they do not merely pollute `unresolved_offer`: a tablet has a brand, a memory pair and a colour, so it forms a **full key** and becomes a canonical product. **15 non-phone variants are in the catalogue right now, all from texnomart**, including:
+**Measured, not assumed — and it is TWO sources, not one.** The pre-flight scan for this task expected texnomart alone and found alifshop is worse.
+
+*texnomart* is the only swept source with no category filter at all. Of its 467 live offers, **142 (30.4%) are not phones**. They do not merely pollute `unresolved_offer`: a tablet carries a brand, a memory pair and a colour, so it forms a **full key** and becomes a canonical product.
+
+*alifshop* has a category facet — but `sweep()` falls back to an **unfiltered** sweep when no bucket starts with `смартфон`, and for a brand like ASUS no such bucket exists. So the widened brand list in Task 4 makes this strictly worse. **38 alifshop laptop offers are attached as products right now.**
+
+**26 non-phone variants are in the live catalogue**, and the brand attribution shows why they are not merely cosmetic:
 
 ```
-Смартфон Samsung A11 Plus 6/128 ГБ, Серый     <- Galaxy Tab A11+
-Смартфон Huawei 11 SE 8/128 ГБ, Серый         <- MatePad 11 SE
-Смартфон Apple iPhone 11 A16 128 ГБ, Синий    <- an iPad
+Смартфон Samsung A11 Plus 6/128 ГБ, Серый        <- Galaxy Tab A11+      (texnomart)
+Смартфон Apple iPhone 11 A16 128 ГБ, Синий       <- an iPad              (texnomart)
+Смартфон ASUS 15 2 6 N150 P1 8/512 ГБ, Серый     <- VivoBook            (alifshop)
+Смартфон Vivo 1 16X 3050 I7 16/1024 ГБ, Черный   <- a VivoBook read as brand VIVO
+Смартфон Huawei 16 2024 D16 I5 8/512 ГБ, Серый   <- a MateBook
 ```
 
-texnomart's items carry **no category field at all** — verified against the recorded fixture — so unlike idea (`category_id`) and beemarket (a category endpoint) there is no structured signal. The only usable evidence is the product-type noun the retailer puts in the name: `Plansheti`, `Noutbuki`, `adapteri`. That is weaker evidence than a category id, so the rule must be a **denylist of product-type nouns, not an allowlist of phone words** — an allowlist would silently drop any phone whose name lacks the expected noun, and losing real phones is worse than admitting the odd accessory.
+`"VivoBook"` contains `"vivo"`, so a laptop is filed under a phone brand. `"8 ГБ / SSD 512 ГБ"` parses as ram=8, storage=512 — indistinguishable from a phone's spec.
+
+Neither retailer gives a usable structured signal here: texnomart items carry **no category field at all** (verified against the recorded fixture), and alifshop's facet is absent for non-phone brands. The only evidence left is the product-type noun in the name, which is weaker than a category id — so the rule must be a **denylist of product-type nouns, never an allowlist of phone words**. An allowlist would silently drop any phone whose name lacks the expected noun, and losing a real phone is worse than admitting an accessory the price fence and the matcher still get a chance to reject.
+
+**One false positive the pre-flight caught, and it is instructive.** `стекло` means "glass" — a screen protector, but also a COLOUR:
+
+```
+Смартфон OPPO A3 (6/128) Черное стекло     <- "black glass", a real phone
+Cмартфон Motorola G75 8/256 GB Черное стекло
+```
+
+A bare `стекл\w*` drops three real phones. The rule must require the accessory sense: `защитное стекло`, or `стекло` **not** preceded by a colour word. The same trap will exist for other material words used as colour names; when in doubt, leave the word out — this filter's failure mode must be admitting noise, never losing phones.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -534,19 +582,35 @@ Add to `narxnoma-crawler/narxnoma/sources/texnomart.py`:
 _NOT_A_PHONE = re.compile(
     r"\b("
     r"plansh\w*|планшет\w*|noutbuk\w*|ноутбук\w*|"
+    r"vivobook|zenbook|matebook|chromebook|macbook|ideapad|thinkpad|"
     r"adapter\w*|адаптер\w*|zaryadk\w*|зарядн\w*|"
-    r"chexol\w*|чехол\w*|shisha\w*|стекл\w*|plyonka\w*|плёнк\w*|пленк\w*|"
+    r"chexol\w*|чехол\w*|plyonka\w*|плёнк\w*|пленк\w*|"
     r"quloqchin\w*|наушник\w*|kabel\w*|кабел\w*|powerbank|"
     r"televizor\w*|телевизор\w*|soat\w*|watch|часы|"
-    r"matepad|ipad|galaxy tab|pad\s|tab\s"
+    r"matepad|ipad|galaxy tab"
     r")\b",
     re.I,
 )
 
+# "стекло" is a screen protector -- and ALSO a colour. "Смартфон OPPO A3
+# (6/128) Черное стекло" is a real phone in black glass, and a bare
+# `стекл\w*` dropped three of them. Only the accessory sense counts, so the
+# word must be qualified. When in doubt about a material word, leave it out:
+# this filter's failure mode must be admitting noise, never losing a phone.
+_PROTECTOR = re.compile(r"(защитн\w*\s+стекл\w*|стекл\w*\s+защитн\w*|"
+                        r"himoya\w*\s+shisha\w*)", re.I)
+
 
 def is_phone_listing(listing) -> bool:
-    """False for the accessories and non-phone devices texnomart mixes in."""
-    return not _NOT_A_PHONE.search(listing.name_raw or "")
+    """False for the accessories and non-phone devices these sources mix in.
+
+    Shared by texnomart (no category field at all) and alifshop (whose
+    category facet is absent for non-phone brands, so its sweep falls back to
+    unfiltered). Applied in sweep() only -- parse() stays a faithful pure
+    function of one response.
+    """
+    name = listing.name_raw or ""
+    return not (_NOT_A_PHONE.search(name) or _PROTECTOR.search(name))
 ```
 
 Then apply it in `sweep()` only — `parse()` stays unfiltered:
@@ -577,6 +641,23 @@ Then apply it in `sweep()` only — `parse()` stays unfiltered:
 Run: `cd narxnoma-crawler && python -m pytest tests/sources/test_texnomart.py -v`
 Expected: PASS.
 
+- [ ] **Step 4b: Apply it to alifshop too, and log the unfiltered fallback**
+
+In `narxnoma-crawler/narxnoma/sources/alifshop.py`, filter `sweep()`'s output through `is_phone_listing` exactly as texnomart does, and make the facet fallback loud:
+
+```python
+        if bucket is None:
+            # No "Смартфоны ..." bucket exists for this brand -- ASUS and
+            # Huawei sell laptops here, so the unfiltered fallback sweeps
+            # them all. is_phone_listing is what stops them reaching the
+            # catalogue; this line is what tells an operator it happened.
+            logger.warning(
+                "alifshop: no phone category bucket for %r -- sweeping "
+                "unfiltered and relying on is_phone_listing", brand)
+```
+
+This matters more after Task 4: a wider brand list means more brands with no phone bucket.
+
 - [ ] **Step 5: Measure it against the live catalogue before trusting it**
 
 ```bash
@@ -594,7 +675,24 @@ print(f'dropped {len(d)} of {len(rows)}')
 "
 ```
 
-**Read every dropped name.** Expected around 140 of 467. If a real phone appears in that list, the rule is wrong — narrow it and re-measure. Report the count and any judgement calls.
+Run it for **both** `texnomart` and `alifshop`, and additionally against every source, to check the rule drops nothing currently catalogued as a real phone:
+
+```bash
+python -c "
+import psycopg, sys; sys.path.insert(0,'.')
+from narxnoma.sources.not_a_phone import is_phone_listing
+from narxnoma.sources.base import Listing
+with psycopg.connect('postgresql://narxnoma@127.0.0.1:55432/narxnoma') as c, c.cursor() as cur:
+    cur.execute('SELECT s.slug, o.name_raw, o.variant_id FROM offer o JOIN store s ON s.id=o.store_id')
+    rows = cur.fetchall()
+fp = [(s,n) for s,n,v in rows
+      if v is not None and not is_phone_listing(Listing(s,'k',n,1000000,'u','IN_STOCK'))]
+print('currently CATALOGUED offers the rule would drop:', len(fp))
+[print('  ',s,n[:72]) for s,n in fp]
+"
+```
+
+**Read every name in both lists.** Expected: ~140 of texnomart's 467 and ~38 of alifshop's, and the catalogued-drop list should contain **only** the 26 known non-phone variants' offers. Any real phone in it means the rule is wrong — narrow it and re-measure. The pre-flight already caught one such case (`Черное стекло`); assume there are more.
 
 - [ ] **Step 6: Correct `docs/parsers/texnomart.md`**
 
@@ -623,6 +721,12 @@ git commit -m "fix(texnomart): stop cataloguing tablets and accessories as phone
 **The contract nobody wrote down.** `BRANDS` was built as a **recognition** vocabulary, where a missing brand degrades one name. It now doubles as a **crawl frontier** for idea, alifshop and uzum, which have no catalogue browse — and there a missing brand means **zero offers, permanently**. Those two roles have opposite failure modes, and only one of them is documented.
 
 Current vocabulary is 16 brands + 3 aliases. Absent, and therefore invisible to three sources: **itel, nokia, oneplus, nubia, blackview, doogee, ulefone, tcl, alcatel, lava, micromax**. The Uzbek market genuinely carries itel and Nokia in volume.
+
+> **Task 3 must land before this one.** Widening the frontier makes alifshop's
+> unfiltered fallback fire for more brands — it already sweeps ASUS laptops
+> into the catalogue because no `Смартфоны ASUS` bucket exists. Adding brands
+> without `is_phone_listing` in place amplifies a known defect. Adding TCL in
+> particular pulls in televisions.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -1335,7 +1439,19 @@ git commit -m "docs: schedule the live contract tests weekly"
 
 **Type consistency.** `paginate` is defined in Task 1 and consumed in Tasks 2 and 3 with the same signature. `build_query` changes signature in Task 7 and has exactly one caller, `backfill_search_only_sources`, updated in the same task. `variants_to_backfill` returns `(UUID, VariantKey)` and `run_backfill` unpacks it as `(vid, _)` consistently. `VariantKey` field names match `narxnoma/matching/keys.py`.
 
-**Ordering.** Task 1 precedes Task 2 because the helper must exist. Task 3 uses `paginate` and so follows Task 2. Tasks 4–8 are independent of each other and of 1–3, and may be reordered freely — Task 6 is the one worth pulling forward if uzum work is planned, since it is the least fixture-covered code in the project.
+**Ordering.** Task 1 precedes Task 2 because the helper must exist. Task 3 uses `paginate` and so follows Task 2. **Task 3 must precede Task 4** — widening the crawl frontier makes alifshop's unfiltered fallback fire for more brands, amplifying a defect Task 3 fixes. Tasks 5–8 are independent and may be reordered freely; Task 6 is worth pulling forward if any uzum work is planned, since it is the least fixture-covered code in the project.
+
+## Pre-flight scan (run 2026-08-02, before dispatching Task 1)
+
+Every plan in this project has had real defects found by its pre-flight scan; this one had three, all fixed above.
+
+1. **`paginate` stopping on an empty parse would have truncated sweeps.** The first draft ended the loop when `parse_page` returned nothing. That silently changes every client: a page whose items are all dropped by the price fence or a category filter would end the sweep and lose every following page — and Task 3 deliberately adds a filter that can empty a page. `next_page` is now the sole authority, with a test pinning that an empty page does not truncate.
+
+2. **Task 3 was scoped to the wrong number of sources.** It assumed texnomart alone. Measuring found **alifshop is worse** — its category facet is absent for non-phone brands, so `sweep()` falls back to unfiltered and **38 laptop offers are attached as products right now**. Total non-phone variants in the live catalogue: **26, across both sources**, including a VivoBook filed under brand `vivo` and a MateBook under `huawei`. The filter is now shared, and Task 3 gained a dependency edge before Task 4.
+
+3. **The denylist regex dropped real phones.** `стекл\w*` matches "Черное стекло" — *black glass*, a colour, not a screen protector. Three real phones. The rule now requires the accessory sense, with the general lesson recorded: when in doubt about a material word, leave it out, because this filter's failure mode must be admitting noise rather than losing phones.
+
+Verified clean during the same scan: `paginate`'s home in `base.py` has `logger` and `Iterator` already imported and no circular import with `http.py`; every name Task 7 reaches for in `matching/keys.py` exists; `VariantKey` is exported from `narxnoma.matching`; uzum's `Listing.raw` carries `product_id` as Task 6 assumes.
 
 ## Follow-on plans
 
