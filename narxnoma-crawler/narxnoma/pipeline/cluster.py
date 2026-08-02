@@ -1,0 +1,112 @@
+"""Stage 3: offers become canonical products — or are refused, with a reason.
+
+This is the whole competitive thesis. Everything else in this project is
+plumbing around the rule implemented here:
+
+    an offer is attached to a canonical product only when exactly one product
+    can possibly be the right one.
+
+The incumbent pools colour variants together, so on 23% of its multi-store
+pages the headline price belongs to a different colour than the page's own
+title — worst measured case 9.3% understated. That is not a bug in their
+matcher; it is what happens when an ambiguous offer gets attached anyway
+because attaching produces a fuller-looking catalogue. We refuse instead, and
+count the refusals, because a wrong price is worse than a missing one.
+"""
+import logging
+from dataclasses import dataclass, field
+
+from narxnoma.db import repository as default_repo
+from narxnoma.matching import resolve_partial
+from narxnoma.pipeline.extract import OfferIdentity
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ClusterResult:
+    attached: int = 0
+    created_variants: int = 0
+    unresolved: int = 0
+    reasons: dict[str, int] = field(default_factory=dict)
+
+    def _note(self, reason: str) -> None:
+        self.reasons[reason] = self.reasons.get(reason, 0) + 1
+
+
+# Reasons are deliberately coarse and stable, so their counts mean something
+# when tracked over time. The specifics go in the row itself.
+REASON_AMBIGUOUS = "ambiguous: partial key matches several variants"
+REASON_NO_CANDIDATE = "no candidate: partial key matches no existing variant"
+REASON_NO_IDENTITY = "no identity: name yields neither a full nor a usable partial key"
+
+
+def _has_usable_partial(identity: OfferIdentity) -> bool:
+    """Enough to be worth resolving against existing variants.
+
+    Brand and storage are the floor. Without them a partial key is compatible
+    with far too much, and "resolves to exactly one" would start being true by
+    accident rather than by evidence.
+    """
+    p = identity.partial
+    return bool(p.brand and p.storage_gb and p.model_tokens)
+
+
+def cluster_offers(conn, identities, repo=default_repo) -> ClusterResult:
+    """Attach offers to canonical variants, refusing anything ambiguous.
+
+    Full keys are processed before partials, in the same pass, because a
+    partial must be able to resolve against a variant this very run created —
+    otherwise the first offer of a new phone would park itself as unresolvable
+    against a catalogue that was about to contain it.
+    """
+    result = ClusterResult()
+    identities = list(identities)
+
+    known = repo.load_variant_keys(conn)
+    before = len(known)
+
+    # --- pass one: complete identities define the catalogue -----------------
+    partials = []
+    for identity in identities:
+        if identity.key is None:
+            partials.append(identity)
+            continue
+        variant_id = known.get(identity.key)
+        if variant_id is None:
+            variant_id = repo.upsert_variant(conn, identity.key)
+            known[identity.key] = variant_id
+        repo.attach_offer_to_variant(conn, identity.offer_id, variant_id)
+        result.attached += 1
+
+    result.created_variants = len(known) - before
+
+    # --- pass two: incomplete identities resolve against it -----------------
+    candidates = list(known)
+    for identity in partials:
+        if not _has_usable_partial(identity):
+            repo.record_unresolved(conn, identity.offer_id, REASON_NO_IDENTITY)
+            result.unresolved += 1
+            result._note(REASON_NO_IDENTITY)
+            continue
+
+        match = resolve_partial(identity.partial, candidates)
+        if match is not None:
+            repo.attach_offer_to_variant(conn, identity.offer_id, known[match])
+            result.attached += 1
+            continue
+
+        # resolve_partial returns None for both zero and two-or-more. The
+        # difference matters to whoever reads the quality report: zero is a
+        # catalogue gap, several is a genuinely under-specified listing.
+        compatible = [known[k] for k in candidates
+                      if resolve_partial(identity.partial, [k]) is not None]
+        reason = REASON_AMBIGUOUS if len(compatible) > 1 else REASON_NO_CANDIDATE
+        repo.record_unresolved(conn, identity.offer_id, reason, compatible)
+        result.unresolved += 1
+        result._note(reason)
+
+    logger.info(
+        "clustered: %d attached, %d variants created, %d unresolved",
+        result.attached, result.created_variants, result.unresolved)
+    return result
