@@ -81,3 +81,69 @@ def test_render_status_skipped_is_not_reported_as_ok():
     assert status != "ok"
     assert status == "SKIPPED (search-only, skipped)"
     assert result.skipped is True
+
+
+# --- Plan 3: the clustering subcommands -----------------------------------
+
+def test_new_subcommands_are_registered():
+    """A typo in a subcommand name should fail here, not in a cron job."""
+    import argparse
+
+    from narxnoma import cli
+
+    for command in ("cluster", "aggregate", "quality", "cycle"):
+        with pytest.raises(SystemExit) as exc:
+            cli.main([command, "--nonsense"])
+        assert exc.value.code == 2, f"{command} is not a registered subcommand"
+
+
+def test_cycle_isolates_a_failing_stage(monkeypatch):
+    """A clustering failure must not lose the harvest that preceded it.
+
+    Those offers are already durably written; re-running the whole cycle would
+    re-fetch several thousand listings from retailers for nothing.
+    """
+    from narxnoma import cli
+
+    calls = []
+
+    def boom(conn):
+        calls.append("cluster")
+        raise RuntimeError("clustering blew up")
+
+    monkeypatch.setattr(cli, "run_clustering", boom)
+    monkeypatch.setattr(cli, "harvest_all", lambda conn, sources: calls.append("harvest") or [])
+    monkeypatch.setattr(cli, "migrate", lambda conn: None)
+    monkeypatch.setattr(cli, "coverage_report", lambda conn: [])
+    monkeypatch.setattr(cli, "quality_report", lambda conn: _FakeQuality())
+
+    class _NullConn:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *a):
+            return False
+
+    monkeypatch.setattr(cli, "connect", lambda: _NullConn())
+
+    monkeypatch.setattr(cli, "render_quality", lambda r: "")
+    monkeypatch.setattr(cli, "render_report", lambda rows: "")
+
+    code = cli.main(["cycle"])
+
+    assert "harvest" in calls, "harvest must still have run"
+    assert "cluster" in calls, "clustering must have been attempted"
+    assert code == 1, "a failed stage must make the cycle exit non-zero"
+
+
+class _FakeQuality:
+    is_alerting = False
+    total_offers = 0
+    attached = 0
+    unresolved = 0
+    variants = 0
+    single_offer_variants = 0
+    diverging_variants = 0
+    reasons: list = []
+    unresolved_by_store: list = []
+    unresolved_rate = 0.0

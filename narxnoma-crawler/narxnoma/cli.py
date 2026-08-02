@@ -6,8 +6,14 @@ import argparse
 import logging
 import sys
 
+from narxnoma.db import repository
 from narxnoma.db.connection import connect
 from narxnoma.db.migrate import migrate
+from narxnoma.pipeline.aggregate import recompute_variant_prices
+from narxnoma.pipeline.cluster import cluster_offers
+from narxnoma.pipeline.extract import identify
+from narxnoma.pipeline.quality import quality_report
+from narxnoma.pipeline.quality import render as render_quality
 from narxnoma.pipeline.harvest import HarvestResult, harvest_all
 from narxnoma.pipeline.report import SourceCoverage, coverage_report
 from narxnoma.sources import SOURCES
@@ -65,6 +71,30 @@ def render_status(result: HarvestResult) -> str:
     return "ok"
 
 
+def run_clustering(conn) -> tuple[int, int, int]:
+    """extract -> cluster -> aggregate. Returns (attached, created, unresolved)."""
+    rows = repository.load_unattached_offers(conn)
+    result = cluster_offers(conn, (identify(row) for row in rows))
+    recompute_variant_prices(conn)
+    return result.attached, result.created_variants, result.unresolved
+
+
+def _stage(name: str, fn, outcomes: dict) -> None:
+    """Run one stage, recording its outcome without letting it kill the rest.
+
+    A clustering failure must not lose the harvest that preceded it: the
+    offers are already durably written, and re-running the cycle would just
+    re-fetch several thousand listings from retailers for nothing.
+    """
+    try:
+        fn()
+        outcomes[name] = True
+    except Exception as exc:  # noqa: BLE001 - stage isolation is the point
+        logging.exception("stage %s failed", name)
+        outcomes[name] = False
+        logging.error("%-10s FAILED: %s", name, exc)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="narxnoma")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -73,6 +103,13 @@ def main(argv: list[str] | None = None) -> int:
                          help="limit to these sources (repeatable)")
     sub.add_parser("report", help="print per-source coverage and freshness; "
                                   "exits non-zero if any source is suspicious")
+    sub.add_parser("cluster", help="identify offers and attach them to canonical "
+                                   "products, refusing anything ambiguous")
+    sub.add_parser("aggregate", help="recompute each variant's price rollup")
+    sub.add_parser("quality", help="matcher health; exits non-zero if the "
+                                   "unresolved rate is above the threshold")
+    sub.add_parser("cycle", help="harvest, then cluster, aggregate and report "
+                                 "quality, isolating each stage")
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -83,6 +120,52 @@ def main(argv: list[str] | None = None) -> int:
             rows = coverage_report(conn)
         print(render_report(rows))
         return report_exit_code(rows)
+
+    if args.command == "cluster":
+        with connect() as conn:
+            migrate(conn)
+            attached, created, unresolved = run_clustering(conn)
+        logging.info("attached=%d new_variants=%d unresolved=%d",
+                     attached, created, unresolved)
+        return 0
+
+    if args.command == "aggregate":
+        with connect() as conn:
+            migrate(conn)
+            written = recompute_variant_prices(conn)
+        logging.info("variant_price rows written: %d", written)
+        return 0
+
+    if args.command == "quality":
+        with connect() as conn:
+            migrate(conn)
+            report = quality_report(conn)
+        print(render_quality(report))
+        return 1 if report.is_alerting else 0
+
+    if args.command == "cycle":
+        outcomes: dict[str, bool] = {}
+        with connect() as conn:
+            migrate(conn)
+            results: list = []
+            _stage("harvest", lambda: results.extend(
+                harvest_all(conn, [SOURCES[s] for s in sorted(SOURCES)])), outcomes)
+            _stage("cluster", lambda: run_clustering(conn), outcomes)
+            rows = coverage_report(conn)
+            report = quality_report(conn)
+
+        for r in results:
+            logging.info("%-10s seen=%-6d kept=%-6d %s",
+                         r.slug, r.seen, r.kept, render_status(r))
+        print(render_report(rows))
+        print()
+        print(render_quality(report))
+
+        # The exit code reflects the worst outcome across the whole cycle.
+        failed_stage = not all(outcomes.values())
+        failed_source = any(not r.ok and not r.skipped for r in results)
+        return 1 if (failed_stage or failed_source
+                     or report_exit_code(rows) or report.is_alerting) else 0
 
     # harvest
     chosen = [SOURCES[s] for s in (args.source or sorted(SOURCES))]
