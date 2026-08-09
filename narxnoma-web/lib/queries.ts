@@ -22,6 +22,7 @@ export interface VariantHit {
   store_count: number;
   computed_at: string;
   latest_offer_at: string | null;
+  image_url: string | null;
   brand_rank: number;
   pos: number;
 }
@@ -41,7 +42,7 @@ export interface SearchResult {
     brands: FacetValue[];
     colors: FacetValue[];
     rams: (number | null)[];
-    ramCounts: Map<string, number>;
+    ramCounts: Record<string, number>;
     priceBands: { lo: number; hi: number; count: number }[];
     priceMin: number | null;
     priceMax: number | null;
@@ -195,6 +196,10 @@ export async function searchVariants(
             vp.min_price, vp.median_price, vp.max_price,
             vp.offer_count, vp.in_stock_offer_count, vp.store_count, vp.computed_at,
             (SELECT max(o.last_seen) FROM offer o WHERE o.variant_id = v.id) AS latest_offer_at,
+            (SELECT o.image_url FROM offer o
+              WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
+                AND o.availability = 'IN_STOCK'
+              ORDER BY o.price LIMIT 1) AS image_url,
             CASE WHEN lower(v.brand) = $${qIdx} THEN 0
                  WHEN lower(v.brand) LIKE $${qIdx} || '%' THEN 1 ELSE 2 END AS brand_rank,
             strpos(lower(v.display_name), $${qIdx}) AS pos
@@ -284,7 +289,13 @@ export async function searchVariants(
       brands,
       colors,
       rams: rams.map((r) => r.value),
-      ramCounts: new Map(rams.map((r) => [String(r.value), Number(r.count)])),
+      // Plain object, NOT a Map: SearchResult crosses both RSC (initial SSR)
+      // and the /api/search JSON endpoint, and Maps serialize to {} in JSON,
+      // which then throws on .get() client-side (the facet-click bug
+      // 2026-08-10).
+      ramCounts: Object.fromEntries(
+        rams.map((r) => [String(r.value), Number(r.count)])
+      ),
       priceBands: bands,
       priceMin: priceLo,
       priceMax: priceHi,
@@ -363,6 +374,7 @@ export interface PriceRow {
   min_offer_name: string | null;
   min_offer_url: string | null;
   min_store_name: string | null;
+  hero_image_url: string | null;
 }
 
 export interface VariantPage {
@@ -388,7 +400,8 @@ export async function getVariantPage(slug: string): Promise<VariantPage> {
  vp.min_offer_id,
  (SELECT o.name_raw FROM offer o WHERE o.id = vp.min_offer_id) AS min_offer_name,
             (SELECT o.url FROM offer o WHERE o.id = vp.min_offer_id) AS min_offer_url,
-            (SELECT s.name FROM store s WHERE s.id = vp.min_store_id) AS min_store_name
+            (SELECT s.name FROM store s WHERE s.id = vp.min_store_id) AS min_store_name,
+            (SELECT o.image_url FROM offer o WHERE o.id = vp.min_offer_id) AS hero_image_url
        FROM variant_price vp WHERE vp.variant_id = $1`,
     [v.id]
   );
@@ -496,6 +509,10 @@ export async function getFeatured(): Promise<VariantHit[]> {
             vp.min_price, vp.median_price, vp.max_price,
             vp.offer_count, vp.in_stock_offer_count, vp.store_count, vp.computed_at,
             (SELECT max(o.last_seen) FROM offer o WHERE o.variant_id = v.id) AS latest_offer_at,
+            (SELECT o.image_url FROM offer o
+              WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
+                AND o.availability = 'IN_STOCK'
+              ORDER BY o.price LIMIT 1) AS image_url,
             0 AS brand_rank, 0 AS pos
        FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
       WHERE vp.store_count >= 2 AND vp.min_price IS NOT NULL

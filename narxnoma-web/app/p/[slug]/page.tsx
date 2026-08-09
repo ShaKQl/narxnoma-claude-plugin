@@ -8,6 +8,7 @@ import {
   timeAgoRu,
 } from "@/lib/format";
 import { getVariantPage } from "@/lib/queries";
+import SafeImg from "@/components/SafeImg";
 
 const SWATCH_HEX: Record<string, string> = {
   black: "#211c16",
@@ -86,6 +87,13 @@ export default async function ProductPage({
         )}
 
         <section className="product">
+          {pr?.hero_image_url && (
+            <SafeImg
+              className="product-hero"
+              src={pr.hero_image_url}
+              alt={v.display_name}
+            />
+          )}
           <h1>{v.display_name}</h1>
           <div className="subline">
             {v.ram_gb != null && <b>{v.ram_gb} ГБ ОЗУ</b>}
@@ -222,6 +230,13 @@ export default async function ProductPage({
                     return (
                       <div className="offer" key={o.id}>
                         <span className="o-name">
+                          {o.image_url && (
+                            <SafeImg
+                              className="o-thumb"
+                              src={o.image_url}
+                              thumb
+                            />
+                          )}
                           {o.name_raw}
                           <span className="avail" style={{ marginLeft: 8, ...(av.cls === "in-stock" ? {} : {}) }}>
                             {av.label}
