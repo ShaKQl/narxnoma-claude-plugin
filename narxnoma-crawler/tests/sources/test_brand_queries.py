@@ -20,3 +20,19 @@ def test_brand_queries_is_derived_from_the_canonical_vocabulary_not_hardcoded():
     assert set(BRAND_QUERIES) == set(BRANDS) | set(BRAND_ALIASES)
     assert list(BRAND_QUERIES) == sorted(BRAND_QUERIES)
     assert isinstance(BRAND_QUERIES, tuple)
+
+
+def test_brands_sold_in_uzbekistan_are_reachable():
+    """BRAND_QUERIES is the ENTIRE catalogue reach of idea, alifshop and
+    uzum -- none has a browsable category endpoint. A brand missing here is
+    not a degraded name, it is zero offers, permanently. itel and Nokia sell
+    in volume in this market and neither was reachable.
+    """
+    for brand in ("itel", "nokia", "oneplus", "nubia", "tcl"):
+        assert brand in BRAND_QUERIES, f"{brand} is unreachable by three sources"
+
+
+def test_queries_stay_derived_from_the_matching_vocabulary():
+    # Hand-maintaining a second list is how the two drift apart.
+    from narxnoma.matching.brands import BRAND_ALIASES, BRANDS
+    assert set(BRAND_QUERIES) == set(BRANDS) | set(BRAND_ALIASES)

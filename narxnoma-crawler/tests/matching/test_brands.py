@@ -36,3 +36,10 @@ def test_every_alias_target_is_a_known_brand():
 def test_every_brand_has_a_label():
     for b in BRANDS:
         assert canonical_brand(b) in BRAND_LABELS
+
+
+def test_new_brands_are_recognised_in_real_listing_shapes():
+    from narxnoma.matching import extract_features
+    assert extract_features("itel A70 4/128 GB Black").brand == "itel"
+    assert extract_features("Nokia 110 4G Dual SIM Blue").brand == "nokia"
+    assert extract_features("OnePlus Nord 4 12/256 Green").brand == "oneplus"

@@ -5,11 +5,26 @@ memory.py (who publishes RAM), features.py (alias resolution) and keys.py
 (key completeness + display label).
 """
 
+# TWO ROLES, WITH OPPOSITE FAILURE MODES -- read this before removing an entry.
+#
+# 1. RECOGNITION vocabulary for extract_features. A brand missing here degrades
+#    ONE listing's identity.
+# 2. CRAWL FRONTIER, via narxnoma.sources.brand_queries. idea, alifshop and
+#    uzum have no browsable catalogue endpoint, so this list is their ENTIRE
+#    reach. A brand missing here is not a degraded name -- it is ZERO OFFERS,
+#    permanently, from three of seven sources, and nothing in the system
+#    reports the absence of something never looked for.
+#
+# So this list is cheap to extend and expensive to trim. Adding a brand nobody
+# sells costs one wasted query per cycle; omitting one costs its whole catalogue.
+
 # Order matters: matched as substrings, so sub-brands come before parents.
 BRANDS: list[str] = [
     "apple", "samsung", "honor", "xiaomi", "vivo", "oppo", "realme",
     "tecno", "infinix", "nothing", "google", "asus", "huawei",
     "motorola", "zte", "meizu",
+    "itel", "nokia", "oneplus", "nubia", "tcl", "blackview", "doogee",
+    "ulefone",
 ]
 
 BRAND_ALIASES: dict[str, str] = {
@@ -39,6 +54,14 @@ BRAND_LABELS: dict[str, str] = {
     "motorola": "Motorola",
     "zte": "ZTE",
     "meizu": "Meizu",
+    "itel": "Itel",
+    "nokia": "Nokia",
+    "oneplus": "OnePlus",
+    "nubia": "Nubia",
+    "tcl": "TCL",
+    "blackview": "Blackview",
+    "doogee": "Doogee",
+    "ulefone": "Ulefone",
 }
 
 
