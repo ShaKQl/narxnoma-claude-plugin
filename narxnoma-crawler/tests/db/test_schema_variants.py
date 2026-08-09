@@ -43,11 +43,19 @@ def test_apple_variant_may_have_no_ram(db_conn):
         assert cur.fetchone()[0]
 
 
-def test_colour_is_mandatory(db_conn):
-    # Colour is a hard identity field: unknown colour never equals any colour.
-    with db_conn.cursor() as cur, pytest.raises(psycopg.errors.NotNullViolation):
-        cur.execute(INSERT_VARIANT, ("honor", ["x9d"], 12, 256, None, "dual",
-                                     "x", "honor-x9d-12-256-nocolour"))
+def test_non_phone_variant_may_omit_colour_and_sim(db_conn):
+    # Plan 5 (categories): TVs, laptops, ACs, fridges, washers, ovens carry
+    # no colour/SIM identity, so both hard phone-identity fields are now
+    # nullable at the schema level. The smartphone rule (colour is required)
+    # is enforced by the matching layer, not the schema.
+    with db_conn.cursor() as cur:
+        cur.execute(
+            "INSERT INTO variant (brand, model_tokens, ram_gb, storage_gb, color,"
+            " sim_kind, display_name, slug, category)"
+            " VALUES (%s, %s, NULL, 55, NULL, NULL, %s, %s, 'televisions') RETURNING id",
+            ("samsung", ["ue55"], "Телевизор Samsung UE55", "samsung-ue55"),
+        )
+        assert cur.fetchone()[0]
 
 
 def test_sim_kind_rejects_unknown(db_conn):

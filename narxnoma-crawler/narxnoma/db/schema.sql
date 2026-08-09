@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS variant (
     model_tokens  text[] NOT NULL,
     ram_gb        integer,                 -- NULL is legitimate: Apple omits RAM
     storage_gb    integer NOT NULL,
-    color         text NOT NULL,           -- hard identity field, never NULL
+    color         text NOT NULL,           -- hard identity field for PHONES
     sim_kind      text NOT NULL CHECK (sim_kind IN ('dual', 'esim_only')),
     display_name  text NOT NULL,           -- generated from the key, never copied
     slug          text UNIQUE NOT NULL,
@@ -103,6 +103,14 @@ CREATE INDEX IF NOT EXISTS variant_identity
     ON variant (brand, ram_gb, storage_gb, sim_kind);
 CREATE INDEX IF NOT EXISTS variant_siblings
     ON variant (brand, storage_gb, ram_gb, sim_kind);   -- colour-sibling lookup
+
+-- Plan 5 (categories, 2026-08-10): non-phone categories (televisions,
+-- laptops, ACs, fridges, washers, ovens) carry no colour/SIM identity, so
+-- both hard identity fields become nullable. Idempotent by construction:
+-- DROP NOT NULL on an already-nullable column is a no-op, and the sim_kind
+-- CHECK passes for NULL (UNKNOWN). Existing phone rows are untouched.
+ALTER TABLE variant ALTER COLUMN color DROP NOT NULL;
+ALTER TABLE variant ALTER COLUMN sim_kind DROP NOT NULL;
 
 -- min_price is NULLABLE on purpose. Only IN_STOCK offers may set a headline
 -- price, and a variant can legitimately have offers where every one of them is
