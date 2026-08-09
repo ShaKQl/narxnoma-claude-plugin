@@ -3,6 +3,8 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Iterator, Protocol, runtime_checkable
 
+from narxnoma.sources.http import pause
+
 logger = logging.getLogger(__name__)
 
 # A price outside this range is a unit bug, not a bargain. alifshop reports
@@ -113,3 +115,65 @@ class Source(Protocol):
 
     def search(self, query: str) -> Iterator[Listing]:
         """Listings matching a query. Used for sources that cannot be swept."""
+
+
+# A runaway paginator -- a retailer whose reported last_page grows with every
+# request, or a next_page that never returns None -- would loop until the cron
+# killed it. Well above the largest real catalogue observed (beemarket, 28
+# pages; uzum, ~14 per brand).
+MAX_PAGES = 200
+
+# Per-PAGE retries. The unit matters: retrying the whole sweep would re-fetch
+# every page already yielded and already written to the database in
+# WRITE_BATCH_SIZE chunks by harvest_source.
+PAGE_RETRIES = 2
+
+
+def paginate(fetch_page, parse_page, next_page, first_page: int = 1,
+             max_pages: int = MAX_PAGES,
+             retries: int = PAGE_RETRIES) -> Iterator[Listing]:
+    """Walk a paginated endpoint, surviving a transient failure on one page.
+
+    Six clients hand-rolled this loop and not one of them retried, so a single
+    bad response lost that source's entire cycle -- a beemarket 502 really did
+    cost a whole source in a live run, and a retry minutes later succeeded.
+
+    `fetch_page(page) -> payload`, `parse_page(payload) -> list[Listing]`,
+    `next_page(payload, page) -> int | None`. **next_page is the only thing
+    that ends the sweep.** A page that parses to nothing does NOT: its items
+    may simply have been dropped by the price fence or a category filter, and
+    stopping there would lose every following page. A client whose end signal
+    really is an empty payload (uzum, paginating by offset with no last_page)
+    expresses that in its own next_page.
+
+    A page that fails all its attempts RAISES. That is deliberate: swallowing it
+    would let a half-swept catalogue be recorded as a success, which is the one
+    failure mode `EXPECTED_MIN_OFFERS` and `harvest_run.ok` exist to catch.
+    Everything yielded before the failure is already durable, so the caller
+    keeps it.
+    """
+    page = first_page
+    for _ in range(max_pages):
+        payload = None
+        for attempt in range(retries + 1):
+            try:
+                payload = fetch_page(page)
+                break
+            except Exception:
+                if attempt == retries:
+                    raise
+                logger.warning("page %d failed (attempt %d/%d), retrying",
+                               page, attempt + 1, retries + 1)
+                # Back off before trying again -- a retry loop must not hit a
+                # struggling API at full speed.
+                pause()
+
+        # NOT `if not listings: return`. A page whose items were all dropped
+        # by the price fence or a category filter would end the sweep and lose
+        # every following page. next_page decides; see the docstring.
+        yield from parse_page(payload)
+
+        following = next_page(payload, page)
+        if following is None:
+            return
+        page = following
