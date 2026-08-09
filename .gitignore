@@ -10,7 +10,7 @@ venv/
 # Node / Next.js
 node_modules/
 .next/
-out/
+/out/
 .turbo/
 
 # Secrets and local config
