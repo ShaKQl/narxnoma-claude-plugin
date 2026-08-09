@@ -54,7 +54,7 @@ FIXTURE = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "sources" /
 # exact card-range-vs-SKU trap docs/parsers/uzum.md section 5b warns about.
 KNOWN_SOURCE_KEY = "6998861"
 KNOWN_PRICE = 3068010            # sellPrice, in SUM -- NOT fullPrice (10000000)
-KNOWN_URL = "https://uzum.uz/ru/product/1978967?skuId=6998861"
+KNOWN_URL = "https://uzum.uz/ru/product/1978967"
 KNOWN_NAME_RAW = "Smartfon Samsung Galaxy A17 4G 8/256GB Qora"
 
 
@@ -99,6 +99,19 @@ def test_known_product_parses_exactly():
     assert KNOWN_SOURCE_KEY in by_key
     assert by_key[KNOWN_SOURCE_KEY].price == KNOWN_PRICE
     assert by_key[KNOWN_SOURCE_KEY].url == KNOWN_URL
+
+
+def test_url_never_carries_skuid():
+    """The outbound-link bug (2026-08-10): uzum's 302 meta-refresh builds
+    id.uzum.uz/api/auth/redirect?redirectUrl=<product>?skuId=<id> with the
+    nested query raw, and the auth endpoint answers that malformed parameter
+    with a conflict JSON. The human-facing URL is the canonical product page;
+    SKU identity stays in source_key.
+    """
+    for lst in parse(payload()):
+        assert "?" not in lst.url, lst.url
+        assert lst.url.startswith("https://uzum.uz/ru/product/"), lst.url
+        assert lst.source_key in ("6998861", "6998862") or lst.source_key.isdigit()
 
 
 def test_known_product_uses_sellprice_not_fullprice():

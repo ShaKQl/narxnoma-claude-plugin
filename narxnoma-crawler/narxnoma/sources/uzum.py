@@ -130,7 +130,14 @@ logger = logging.getLogger(__name__)
 
 AUTH_URL = "https://id.uzum.uz/api/auth/token"
 GRAPHQL_URL = "https://graphql.uzum.uz/"
-PRODUCT_URL = "https://uzum.uz/ru/product/{product_id}?skuId={sku_id}"
+# Canonical product URL WITHOUT skuId. uzum's own 302 meta-refresh builds
+# id.uzum.uz/api/auth/redirect?redirectUrl=<product>?skuId=<id> with the
+# nested query raw (never encoded), and the auth endpoint answers that
+# malformed parameter with a conflict JSON -- the broken-link bug reported
+# against the site. The clean URL produces a clean redirect + access_token
+# cookie and lands on the product page (all SKUs listed there). SKU identity
+# lives in source_key, not in the human-facing URL.
+PRODUCT_URL = "https://uzum.uz/ru/product/{product_id}"
 
 # 15271 = Смартфоны Android, 15272 = Смартфоны Apple iPhone (iOS) -- see
 # docs/parsers/uzum.md section 3. Relevance search mixes in cases, chargers
