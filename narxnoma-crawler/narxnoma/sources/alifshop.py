@@ -46,6 +46,7 @@ from typing import Iterator
 from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
 from narxnoma.sources.brand_queries import BRAND_QUERIES
 from narxnoma.sources.http import polite_session, post_json
+from narxnoma.sources.not_a_phone import is_phone_listing
 
 logger = logging.getLogger(__name__)
 
@@ -227,9 +228,8 @@ class AlifshopSource:
                 payload = self._fetch(query, 0, category=category)
             else:
                 logger.warning(
-                    "alifshop: no phone category bucket found for brand query %r; "
-                    "falling back to unfiltered sweep",
-                    query,
+                    "alifshop: no phone category bucket for %r -- sweeping "
+                    "unfiltered and relying on is_phone_listing", query,
                 )
                 payload = first_payload
 
@@ -239,6 +239,8 @@ class AlifshopSource:
             def parse_page(payload):
                 for listing in parse(payload):
                     if listing.source_key in seen:
+                        continue
+                    if not is_phone_listing(listing):
                         continue
                     seen.add(listing.source_key)
                     yield listing

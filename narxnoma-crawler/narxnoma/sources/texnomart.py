@@ -10,6 +10,7 @@ from typing import Iterator
 
 from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
 from narxnoma.sources.http import get_json, polite_session
+from narxnoma.sources.not_a_phone import is_phone_listing
 
 API_URL = "https://gw.texnomart.uz/api/common/v1/search/result"
 PRODUCT_URL = "https://texnomart.uz/product/detail/{id}/"
@@ -87,8 +88,23 @@ class TexnomartSource:
         yield from paginate(fetch, parse, following)
 
     def sweep(self) -> Iterator[Listing]:
-        """Every phone texnomart returns for the generic query 'smartfon'."""
-        yield from self._paginate(SWEEP_QUERY)
+        """Every phone texnomart returns for the generic query 'smartfon'.
+
+        The filter is crawl POLICY and lives here, not in parse(): parse must
+        stay a faithful pure function of one response.
+        """
+        kept = dropped = 0
+        for listing in self._paginate(SWEEP_QUERY):
+            if is_phone_listing(listing):
+                kept += 1
+                yield listing
+            else:
+                dropped += 1
+        # Logged rather than silent: if a texnomart naming change made this
+        # rule match everything, the sweep would empty and only this line
+        # would say why.
+        logger.info("texnomart sweep: %d phones kept, %d non-phones dropped",
+                    kept, dropped)
 
     def search(self, query: str) -> Iterator[Listing]:
         yield from self._paginate(query)
