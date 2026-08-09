@@ -113,6 +113,7 @@ def test_cycle_isolates_a_failing_stage(monkeypatch):
     monkeypatch.setattr(cli, "run_clustering", boom)
     monkeypatch.setattr(cli, "harvest_all", lambda conn, sources: calls.append("harvest") or [])
     monkeypatch.setattr(cli, "migrate", lambda conn: None)
+    monkeypatch.setattr(cli.repository, "try_advisory_lock", lambda conn, key: True)
     monkeypatch.setattr(cli, "coverage_report", lambda conn: [])
     monkeypatch.setattr(cli, "quality_report", lambda conn: _FakeQuality())
 
@@ -146,3 +147,17 @@ class _FakeQuality:
     reasons: list = []
     unresolved_by_store: list = []
     unresolved_rate = 0.0
+
+
+def test_cycle_refuses_to_run_twice_at_once(db_conn, dsn, monkeypatch):
+    import psycopg
+    from narxnoma.cli import CYCLE_LOCK_KEY, main
+    from narxnoma.db.repository import try_advisory_lock
+
+    holder = psycopg.connect(dsn)
+    try:
+        assert try_advisory_lock(holder, CYCLE_LOCK_KEY) is True
+        monkeypatch.setenv("NARXNOMA_DSN", dsn)
+        assert main(["cycle"]) == 1
+    finally:
+        holder.close()

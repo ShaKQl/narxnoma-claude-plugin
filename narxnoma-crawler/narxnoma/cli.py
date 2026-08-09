@@ -20,6 +20,12 @@ from narxnoma.pipeline.harvest import HarvestResult, harvest_all
 from narxnoma.pipeline.report import SourceCoverage, coverage_report
 from narxnoma.sources import SOURCES
 
+# A cycle makes 400+ requests at up to a 90-second read timeout; two of them
+# overlapping double our request rate at every retailer at once. The advisory
+# lock is session-scoped, so Postgres releases it automatically if the
+# process dies however it dies -- no cleanup logic to get wrong.
+CYCLE_LOCK_KEY = 20260802
+
 
 def render_report(rows: list[SourceCoverage]) -> str:
     """Readable coverage table. Suspicious rows get a `*** SUSPICIOUS ***`
@@ -187,6 +193,12 @@ def main(argv: list[str] | None = None) -> int:
         outcomes: dict[str, bool] = {}
         with connect() as conn:
             migrate(conn)
+            if not repository.try_advisory_lock(conn, CYCLE_LOCK_KEY):
+                logging.error(
+                    "another cycle is already running; refusing to start a "
+                    "second one. Two concurrent cycles double our request rate "
+                    "at every retailer at once.")
+                return 1
             results: list = []
             _stage("harvest", lambda: results.extend(
                 harvest_all(conn, [SOURCES[s] for s in sorted(SOURCES)])), outcomes)

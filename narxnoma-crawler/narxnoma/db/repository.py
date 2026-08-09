@@ -319,3 +319,17 @@ def load_unattached_offers(conn: psycopg.Connection) -> list[dict]:
         """)
         return [{"id": oid, "name_raw": name, "raw": payload}
                 for oid, name, payload in cur.fetchall()]
+
+
+def try_advisory_lock(conn: psycopg.Connection, key: int) -> bool:
+    """Take a session-scoped advisory lock, or return False immediately.
+
+    Session-scoped rather than transaction-scoped on purpose: the lock must
+    outlive every transaction a cycle runs, and must be released even if the
+    process is killed. Postgres drops it when the connection closes, however
+    that happens -- a lock TABLE would need explicit crash cleanup, and that
+    cleanup is where this kind of guard usually fails.
+    """
+    with conn.cursor() as cur:
+        cur.execute("SELECT pg_try_advisory_lock(%s)", (key,))
+        return bool(cur.fetchone()[0])
