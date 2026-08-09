@@ -8,7 +8,7 @@ the caller's query text.
 """
 from typing import Iterator
 
-from narxnoma.sources.base import Listing, coerce_price, try_build_listing
+from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
 from narxnoma.sources.http import get_json, polite_session
 
 API_URL = "https://gw.texnomart.uz/api/common/v1/search/result"
@@ -72,22 +72,19 @@ class TexnomartSource:
 
     def _paginate(self, query: str) -> Iterator[Listing]:
         session = self._get_session()
-        page = 1
-        last_page = 1
-        while page <= last_page:
-            # TODO(plan-3): no per-page error handling -- a transient failure
-            # on any one page loses the rest of the sweep. Same gap as
-            # olcha; deferred until partial-progress recovery is built once.
-            payload = get_json(
+
+        def fetch(page):
+            return get_json(
                 session,
                 API_URL,
                 params={"q": query, "page": page, "limit": LIMIT},
             )
-            for listing in parse(payload):
-                yield listing
+
+        def following(payload, page):
             pagination = ((payload or {}).get("data") or {}).get("pagination") or {}
-            last_page = pagination.get("total_page", last_page)
-            page += 1
+            return page + 1 if page < pagination.get("total_page", page) else None
+
+        yield from paginate(fetch, parse, following)
 
     def sweep(self) -> Iterator[Listing]:
         """Every phone texnomart returns for the generic query 'smartfon'."""

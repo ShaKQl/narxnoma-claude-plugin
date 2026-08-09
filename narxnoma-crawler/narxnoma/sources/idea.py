@@ -159,6 +159,8 @@ class IdeaSource:
         PHONE_CATEGORY_IDS and _filter_phone_listings.
         """
         seen: set[str] = set()
+        # No pagination: idea returns one full response per brand query, so
+        # there is no page loop to hoist onto base.paginate().
         for query in BRAND_QUERIES:
             for listing in _filter_phone_listings(self._fetch(query)):
                 if listing.source_key in seen:

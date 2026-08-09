@@ -122,7 +122,7 @@ import requests
 
 from narxnoma.config import load_settings
 from narxnoma.matching.normalize import normalize
-from narxnoma.sources.base import Listing, coerce_price, try_build_listing
+from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
 from narxnoma.sources.brand_queries import BRAND_QUERIES
 from narxnoma.sources.http import pause, polite_session, post_json
 
@@ -692,14 +692,21 @@ class UzumSource:
         return payload
 
     def _walk(self, text: str) -> Iterator[Listing]:
-        offset = 0
-        while offset <= OFFSET_CAP:
-            payload = self._fetch_payload(text, offset)
-            raw_items = _items(payload)
-            if not raw_items:
-                break
-            yield from parse(payload)
-            offset += PAGE_LIMIT
+        def fetch(offset):
+            return self._fetch_payload(text, offset)
+
+        def following(payload, offset):
+            # Two end signals: the offset cap (docs say results run out
+            # before it for most brands) and the items running out -- uzum
+            # has no last_page, so an empty payload IS its end marker
+            # (base.paginate's rule: the client whose end signal is an
+            # empty payload expresses that in its own next_page).
+            nxt = offset + PAGE_LIMIT
+            if nxt > OFFSET_CAP:
+                return None
+            return nxt if _items(payload) else None
+
+        yield from paginate(fetch, parse, following, first_page=0)
 
     def sweep(self) -> Iterator[Listing]:
         """Every phone uzum returns across a fixed list of brand queries,
@@ -710,10 +717,7 @@ class UzumSource:
         """
         seen: set[str] = set()
         for brand in BRAND_QUERIES:
-            # TODO(plan-3): no per-page error handling -- a transient
-            # failure on any one page loses the rest of this brand's sweep.
-            # Same gap as olcha/texnomart/idea/beemarket/alifshop; deferred
-            # until partial-progress recovery is built once.
+            # Per-page retries live in base.paginate() via _walk.
             for listing in self._walk(brand):
                 if listing.source_key in seen:
                     continue

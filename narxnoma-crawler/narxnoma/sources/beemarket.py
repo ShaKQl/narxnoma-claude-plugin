@@ -44,7 +44,7 @@ import logging
 from collections import Counter
 from typing import Iterator
 
-from narxnoma.sources.base import Listing, coerce_price, try_build_listing
+from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
 from narxnoma.sources.http import get_json, polite_session
 
 logger = logging.getLogger(__name__)
@@ -181,38 +181,24 @@ class BeemarketSource:
         to the end. See module docstring for why this hits the
         category-scoped endpoint rather than the documented generic search.
         """
-        session = self._get_session()
-        page = 1
-        last_page = 1
-        while page <= last_page:
-            # TODO(plan-3): no per-page error handling -- a transient
-            # failure on any one page loses the rest of the sweep. Same gap
-            # as olcha/texnomart/idea; deferred until partial-progress
-            # recovery is built once.
-            payload = get_json(
-                session,
-                SWEEP_API_URL,
-                params={"page": page, "is_bshop": 1},
-            )
-            listings = _filter_phone_listings(parse(payload))
-            for listing in listings:
-                yield listing
-            data = (payload or {}).get("data") or {}
-            last_page = data.get("last_page", last_page)
-            page += 1
+        yield from self._walk(SWEEP_API_URL, {"is_bshop": 1},
+                              _filter_phone_listings)
 
     def search(self, query: str) -> Iterator[Listing]:
+        yield from self._walk(API_URL, {"q": query, "is_bshop": 1})
+
+    def _walk(self, url, params, post_filter=None) -> Iterator[Listing]:
         session = self._get_session()
-        page = 1
-        last_page = 1
-        while page <= last_page:
-            payload = get_json(
-                session,
-                API_URL,
-                params={"q": query, "is_bshop": 1, "page": page},
-            )
-            for listing in parse(payload):
-                yield listing
+
+        def fetch(page):
+            return get_json(session, url, params={**params, "page": page})
+
+        def parse_page(payload):
+            listings = parse(payload)
+            return post_filter(listings) if post_filter else listings
+
+        def following(payload, page):
             data = (payload or {}).get("data") or {}
-            last_page = data.get("last_page", last_page)
-            page += 1
+            return page + 1 if page < data.get("last_page", page) else None
+
+        yield from paginate(fetch, parse_page, following)

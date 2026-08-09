@@ -7,7 +7,7 @@ catalogue client-side rather than hitting a different endpoint.
 """
 from typing import Iterator
 
-from narxnoma.sources.base import Listing, coerce_price, try_build_listing
+from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
 from narxnoma.sources.http import get_json, polite_session
 
 API_URL = "https://mobile.olcha.uz/api/v2/products"
@@ -79,23 +79,19 @@ class OlchaSource:
     def sweep(self) -> Iterator[Listing]:
         """Every phone in olcha's telefony category, walking pagination to the end."""
         session = self._get_session()
-        page = 1
-        last_page = 1
-        while page <= last_page:
-            # TODO(plan-3): no per-page error handling -- a transient failure
-            # on any one page (e.g. page 12 of 23) loses the whole sweep.
-            # Partial-progress recovery (retry/resume) is deferred; the next
-            # six clients inherit this same gap until it's built once, here.
-            payload = get_json(
+
+        def fetch(page):
+            return get_json(
                 session,
                 API_URL,
                 params={"page": page, "per_page": PER_PAGE, "category": CATEGORY},
             )
-            for listing in parse(payload):
-                yield listing
+
+        def following(payload, page):
             paginator = ((payload or {}).get("data") or {}).get("paginator") or {}
-            last_page = paginator.get("last_page", last_page)
-            page += 1
+            return page + 1 if page < paginator.get("last_page", page) else None
+
+        yield from paginate(fetch, parse, following)
 
     def search(self, query: str) -> Iterator[Listing]:
         """olcha has no search endpoint; filter the already-swept catalogue by name."""

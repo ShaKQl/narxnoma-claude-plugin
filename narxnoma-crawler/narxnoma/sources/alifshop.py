@@ -43,7 +43,7 @@ nothing.
 import logging
 from typing import Iterator
 
-from narxnoma.sources.base import Listing, coerce_price, try_build_listing
+from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
 from narxnoma.sources.brand_queries import BRAND_QUERIES
 from narxnoma.sources.http import polite_session, post_json
 
@@ -233,22 +233,23 @@ class AlifshopSource:
                 )
                 payload = first_payload
 
-            page = 0
-            n_pages = 1
-            while page < n_pages and page < MAX_PAGES:
-                # TODO(plan-3): no per-page error handling -- a transient
-                # failure on any one page loses the rest of this brand's
-                # sweep. Same gap as olcha/texnomart/idea/beemarket;
-                # deferred until partial-progress recovery is built once.
+            def fetch(page):
+                return self._fetch(query, page, category=category)
+
+            def parse_page(payload):
                 for listing in parse(payload):
                     if listing.source_key in seen:
                         continue
                     seen.add(listing.source_key)
                     yield listing
-                n_pages = (payload or {}).get("n_pages") or n_pages
-                page += 1
-                if page < n_pages and page < MAX_PAGES:
-                    payload = self._fetch(query, page, category=category)
+
+            def following(payload, page):
+                n_pages = (payload or {}).get("n_pages") or 1
+                nxt = page + 1
+                return nxt if nxt < n_pages and nxt < MAX_PAGES else None
+
+            yield from paginate(fetch, parse_page, following, first_page=0,
+                                max_pages=MAX_PAGES)
 
     def search(self, query: str) -> Iterator[Listing]:
         payload = self._fetch(query, 0)
