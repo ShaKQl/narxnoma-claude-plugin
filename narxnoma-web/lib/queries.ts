@@ -265,6 +265,10 @@ export async function searchVariants(
       [...bw.params, lo, hi + STEP, nb]
     );
     for (const r of bandRes) {
+      // width_bucket yields NULL for variants whose min_price is NULL
+      // (out-of-stock-only); they have no price and must not appear in a
+      // price band as garbage (measured: "2 500 000сум — 1сум", 303 rows).
+      if (r.bucket == null) continue;
       const bLo = lo + (Number(r.bucket) - 1) * STEP;
       bands.push({ lo: bLo, hi: bLo + STEP - 1, count: Number(r.n) });
     }
