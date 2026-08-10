@@ -81,16 +81,20 @@ def identify(offer_row: Mapping[str, Any]) -> OfferIdentity:
     payload, used only for a SIM signal the name cannot carry.
     """
     name_raw = offer_row.get("name_raw") or ""
-    features = extract_features(name_raw)
+
+    # The category the offer was harvested under (Plan 5). Defaults to
+    # smartphones for offers written before the column existed.
+    category = offer_row.get("category") or "smartphones"
+
+    # Category selects the identity model, so it must be known BEFORE features
+    # are read: a television's catalogue code is its identity, and the phone
+    # reading discards exactly that token.
+    features = extract_features(name_raw, category)
 
     # An explicit statement beats an inference. A name that merely omits "eSIM"
     # is silent, not evidence of a dual-SIM device.
     sim_text = _sim_text_from_raw(offer_row.get("raw"))
     kind = sim_kind(sim_text) if sim_text else sim_kind(name_raw)
-
-    # The category the offer was harvested under (Plan 5). Defaults to
-    # smartphones for offers written before the column existed.
-    category = offer_row.get("category") or "smartphones"
 
     return OfferIdentity(
         offer_id=offer_row.get("id"),

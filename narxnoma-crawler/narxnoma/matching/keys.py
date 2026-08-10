@@ -7,7 +7,12 @@ must be resolved unambiguously or parked.
 """
 from dataclasses import dataclass
 
-from narxnoma.matching.brands import BRAND_LABELS, BRANDS_WITHOUT_PUBLISHED_RAM
+from narxnoma.matching.brands import (
+    BRAND_LABELS,
+    BRANDS_WITHOUT_PUBLISHED_RAM,
+    brand_label,
+)
+from narxnoma.matching.categories import ordered_non_phone_tokens
 from narxnoma.matching.features import Features
 
 SIM_KINDS = ("dual", "esim_only", "unknown")
@@ -212,8 +217,13 @@ def display_name(key: VariantKey) -> str:
     (a laptop's 512GB SSD does; a fridge's capacity does not).
     """
     prefix = CATEGORY_PREFIX.get(key.category, key.category.capitalize())
-    brand = BRAND_LABELS.get(key.brand, key.brand.capitalize())
-    model = " ".join(_token_label(t) for t in ordered_model_tokens(key.model_tokens))
+    brand = brand_label(key.brand, key.category)
+    order = (
+        ordered_non_phone_tokens
+        if key.category in NON_PHONE_CATEGORIES
+        else ordered_model_tokens
+    )
+    model = " ".join(_token_label(t) for t in order(key.model_tokens))
     if key.category in NON_PHONE_CATEGORIES:
         parts = [prefix, brand, model]
         if key.storage_gb:
@@ -226,7 +236,12 @@ def display_name(key: VariantKey) -> str:
 
 
 def slug(key: VariantKey) -> str:
-    parts = [key.brand, *ordered_model_tokens(key.model_tokens)]
+    order = (
+        ordered_non_phone_tokens
+        if key.category in NON_PHONE_CATEGORIES
+        else ordered_model_tokens
+    )
+    parts = [key.brand, *order(key.model_tokens)]
     if key.ram_gb:
         parts.append(str(key.ram_gb))
     if key.storage_gb:

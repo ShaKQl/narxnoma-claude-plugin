@@ -18,6 +18,7 @@ from dataclasses import dataclass, field
 
 from narxnoma.db import repository as default_repo
 from narxnoma.matching import resolve_partial
+from narxnoma.matching.categories import is_accessory
 from narxnoma.pipeline.extract import OfferIdentity, identify
 
 logger = logging.getLogger(__name__)
@@ -40,6 +41,7 @@ REASON_AMBIGUOUS = "ambiguous: partial key matches several variants"
 REASON_NO_CANDIDATE = "no candidate: partial key matches no existing variant"
 REASON_NO_IDENTITY = "no identity: name yields neither a full nor a usable partial key"
 REASON_MEMORY_IN_MODEL = "bad identity: a memory figure reached the model tokens"
+REASON_ACCESSORY = "not the product: an accessory listed in the product's category"
 
 # No phone is named "256". A capacity among the model tokens is always a
 # parsing failure, and the variant it would mint is a product that does not
@@ -55,6 +57,14 @@ REASON_MEMORY_IN_MODEL = "bad identity: a memory figure reached the model tokens
 # reintroduce the same shape.
 _CAPACITIES_GB = frozenset({"32", "64", "128", "256", "512", "1024", "2048"})
 
+# Categories where a bare capacity figure among the model tokens is evidence of
+# a parsing failure. That inference holds only where the figure COULD be a
+# memory size: a phone or a laptop. Outside those, the same digits are ordinary
+# product facts -- 32 and 64 are television diagonals, and a "Телевизор MoonX
+# 32" is a real product whose diagonal is the only thing distinguishing it.
+# Applying the phone guard to televisions refused exactly those listings.
+_CAPACITY_GUARDED_CATEGORIES = frozenset({"smartphones", "laptops"})
+
 
 def is_wellformed(key) -> bool:
     """Could this key describe a real product at all?
@@ -65,6 +75,8 @@ def is_wellformed(key) -> bool:
     perfectly, so the drift check alone would keep it there forever. Checking
     once, in three places, is what makes the refusal actually hold.
     """
+    if getattr(key, "category", "smartphones") not in _CAPACITY_GUARDED_CATEGORIES:
+        return bool(key.model_tokens)
     return not (_CAPACITIES_GB & set(key.model_tokens))
 
 
@@ -166,6 +178,13 @@ def cluster_offers(conn, identities, repo=default_repo) -> ClusterResult:
             repo.record_unresolved(conn, identity.offer_id, REASON_MEMORY_IN_MODEL)
             result.unresolved += 1
             result._note(REASON_MEMORY_IN_MODEL)
+            continue
+        if is_accessory(identity.features.normalized, identity.key.category):
+            # A laptop bag swept from the laptop feed keys as cleanly as a
+            # laptop does, so nothing further down would ever reject it.
+            repo.record_unresolved(conn, identity.offer_id, REASON_ACCESSORY)
+            result.unresolved += 1
+            result._note(REASON_ACCESSORY)
             continue
         variant_id = known.get(identity.key)
         if variant_id is None:

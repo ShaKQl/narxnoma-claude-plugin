@@ -2,7 +2,17 @@
 import re
 from dataclasses import dataclass
 
-from narxnoma.matching.brands import BRAND_ALIASES, BRANDS, canonical_brand
+from narxnoma.matching.brands import (
+    BRAND_ALIASES,
+    BRANDS,
+    NON_PHONE_BRANDS,
+    canonical_brand,
+)
+from narxnoma.matching.categories import (
+    CATEGORIES_WITH_MEMORY,
+    head_for_model,
+    is_model_token,
+)
 from narxnoma.matching.colors import COLOR_MAP, QUALIFIERS, colors_in_order, primary_color
 from narxnoma.matching.memory import scan_memory
 from narxnoma.matching.normalize import normalize
@@ -35,6 +45,63 @@ _BRAND_PROBE_ORDER: list[str] = list(BRAND_ALIASES) + BRANDS
 _SKU_MIN_LEN = 5
 _PREFIX_NOISE = re.compile(r"\b(смартфон|smartfon\w*)\b")
 
+# Probed with WORD BOUNDARIES, unlike the phone list below, which is a plain
+# substring scan. The appliance vocabulary contains genuinely short names --
+# "lg", "arg", "hp" -- and a substring scan finds "arg" inside "charger" and
+# "large". A trailing digit still counts as a boundary so the glued "Hp15-fd00"
+# that idea and olcha both publish is recognised.
+_NON_PHONE_PROBE_ORDER: list[str] = list(BRAND_ALIASES) + NON_PHONE_BRANDS
+_NON_PHONE_BRAND_RE: dict[str, re.Pattern[str]] = {
+    b: re.compile(rf"\b{re.escape(b)}(?=\b|\d)") for b in _NON_PHONE_PROBE_ORDER
+}
+
+
+def _detect_brand(n: str, category: str) -> str | None:
+    """Brand from a normalised name.
+
+    The phone path is left EXACTLY as it was -- a substring scan in the
+    documented probe order -- because 14,860 golden rows pin its behaviour and
+    this change is not the place to move it.
+    """
+    if category == "smartphones":
+        for b in _BRAND_PROBE_ORDER:
+            if b in n:
+                return canonical_brand(b)
+        return None
+    for b in _NON_PHONE_PROBE_ORDER:
+        if _NON_PHONE_BRAND_RE[b].search(n):
+            return canonical_brand(b)
+    return None
+
+
+def _non_phone_model_tokens(
+    name: str | None, brand: str | None, reserved: set[str]
+) -> set[str]:
+    """Identity tokens for a TV, laptop, fridge, AC, washer or oven.
+
+    Reads the HEAD of the title only (see categories.head_for_model): a
+    laptop's specification follows a delimiter and is not part of its name.
+    Memory and colour were already taken from the whole title by the caller,
+    so truncating here costs no identity field.
+    """
+    head = normalize(head_for_model(name or ""))
+    tokens = set(head.split())
+    known_brands = set(_NON_PHONE_PROBE_ORDER)
+    out: set[str] = set()
+    for t in tokens:
+        # The brand is an axis of the key already; repeating it inside
+        # model_tokens would let "LG" and "LG LG" become two products.
+        if t in known_brands or canonical_brand(t) == brand:
+            continue
+        if t in NON_MODEL_TOKENS or t in COLOR_MAP or t in QUALIFIERS:
+            continue
+        if t in reserved:
+            continue
+        if not is_model_token(t):
+            continue
+        out.add(t)
+    return out
+
 
 @dataclass(frozen=True)
 class Features:
@@ -47,16 +114,19 @@ class Features:
     normalized: str
 
 
-def extract_features(name: str | None) -> Features:
+def extract_features(name: str | None, category: str = "smartphones") -> Features:
+    """Normalised name -> structured identity.
+
+    `category` selects the identity model. It defaults to smartphones so every
+    existing caller, test and golden-corpus row keeps the exact behaviour it
+    had; the non-phone branch is additive. See categories.py for why a
+    television cannot be read with a phone's rules.
+    """
     normalized = normalize(name)
     n = _PREFIX_NOISE.sub("", normalized).strip()
     n = re.sub(r"\s+", " ", n)
 
-    brand = None
-    for b in _BRAND_PROBE_ORDER:
-        if b in n:
-            brand = canonical_brand(b)
-            break
+    brand = _detect_brand(n, category)
 
     ram, storage, stated_ram = scan_memory(name, n, brand)
 
@@ -65,13 +135,39 @@ def extract_features(name: str | None) -> Features:
     colors = frozenset(colors_in_order(tokens))
     primary = primary_color(tokens)
 
+    # stated_ram is reserved as well as ram -- see the note on the phone path
+    # below for why. Both branches share the set.
+    reserved_figures = {
+        str(storage or ""), str(ram or ""), str(stated_ram or ""),
+        "5g", "4g", "0",
+    }
+
+    if category != "smartphones":
+        if category not in CATEGORIES_WITH_MEMORY:
+            # Not "unknown" -- ABSENT. A television has no RAM and no SSD, so a
+            # figure that looks like one is a diagonal or a litre capacity that
+            # happened to land in the plausible-storage set.
+            ram = storage = None
+            reserved_figures = {"5g", "4g", "0"}
+        return Features(
+            brand=brand,
+            ram_gb=ram,
+            storage_gb=storage,
+            colors=colors,
+            primary_color=primary,
+            model_tokens=frozenset(
+                _non_phone_model_tokens(name, brand, reserved_figures)
+            ),
+            normalized=n,
+        )
+
     # stated_ram is reserved as well as ram. For Apple, ram is suppressed to
     # None (Apple publishes no RAM), but the figure the reseller wrote is
     # still a memory figure -- without reserving it, "iPhone 17 Pro 12/256GB"
     # keeps "12" as a MODEL token and keys as apple-12-17-pro-256-silver,
     # which splits the product exactly as the RAM did and additionally
     # hard-rejects the listing on the reverse model-token check.
-    reserved = {str(storage or ""), str(ram or ""), str(stated_ram or ""), "5g", "4g", "0"}
+    reserved = reserved_figures
     model_tokens: set[str] = set()
     for t in token_set:
         if t in NON_MODEL_TOKENS or t in COLOR_MAP or t in QUALIFIERS or t in reserved:

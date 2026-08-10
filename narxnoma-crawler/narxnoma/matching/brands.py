@@ -31,6 +31,60 @@ BRAND_ALIASES: dict[str, str] = {
     "iphone": "apple",
     "redmi": "xiaomi",
     "poco": "xiaomi",
+    "macbook": "apple",
+}
+
+# Brands that appear ONLY outside smartphones: TV, appliance and laptop makers.
+#
+# MEASURED, not guessed. Every entry here was read off the live catalogue: the
+# 2,076 non-phone offers were normalised, their category noun stripped, and the
+# remaining head token counted. Each token below was then confirmed by eye
+# against three real listings as a manufacturer rather than a descriptor --
+# which is why "полуавтомат" (28 hits), "двухкамерный", "сплит-система" and
+# "игровой" are NOT here: they describe the appliance, they do not make it.
+#
+# Kept SEPARATE from BRANDS on purpose. BRANDS doubles as the crawl frontier
+# (see above), and querying uzum/alifshop/idea for "bosch" under a *phone*
+# sweep would spend requests on a brand that sells no phones. These are
+# recognition-only; the category sweeps reach them by category, not by brand.
+APPLIANCE_BRANDS: list[str] = [
+    # TV / large appliance
+    "artel", "premier", "hisense", "shivaki", "ziffler", "wellstars",
+    "toshiba", "panasonic", "hikvision", "alpicool", "texnowell",
+    "avalon", "brando", "moonx", "mytech", "meiga", "immer", "sonor",
+    "volto", "konig", "rosso", "rulls", "vesta", "frame", "litv",
+    "haier", "midea", "bosch", "beko", "indesit", "whirlpool", "gorenje",
+    "electrolux", "ariston", "siemens", "candy", "roison", "ferre",
+    "sony", "philips", "sharp", "supra", "yasin", "goldstar",
+    "7tech", "arg", "lg",
+    # laptops
+    "lenovo", "acer", "msi", "dell", "bikon", "gigabyte", "razer",
+    "hp",
+]
+
+#: Recognition vocabulary for non-phone categories: appliance makers plus the
+#: phone brands that also sell TVs, laptops and white goods (Samsung, Apple,
+#: Xiaomi, Honor, Huawei, ASUS, TCL all do).
+NON_PHONE_BRANDS: list[str] = APPLIANCE_BRANDS + BRANDS
+
+APPLIANCE_BRAND_LABELS: dict[str, str] = {
+    "artel": "Artel", "premier": "Premier", "hisense": "Hisense",
+    "shivaki": "Shivaki", "ziffler": "Ziffler", "wellstars": "WellStars",
+    "toshiba": "Toshiba", "panasonic": "Panasonic", "hikvision": "Hikvision",
+    "alpicool": "Alpicool", "texnowell": "Texnowell", "avalon": "Avalon",
+    "brando": "Brando", "moonx": "MoonX", "mytech": "Mytech",
+    "meiga": "Meiga", "immer": "Immer", "sonor": "Sonor", "volto": "Volto",
+    "konig": "Konig", "rosso": "Rosso", "rulls": "Rulls", "vesta": "Vesta",
+    "frame": "Frame", "litv": "LiTV", "haier": "Haier", "midea": "Midea",
+    "bosch": "Bosch", "beko": "Beko", "indesit": "Indesit",
+    "whirlpool": "Whirlpool", "gorenje": "Gorenje",
+    "electrolux": "Electrolux", "ariston": "Ariston", "siemens": "Siemens",
+    "candy": "Candy", "roison": "Roison", "ferre": "Ferre", "sony": "Sony",
+    "philips": "Philips", "sharp": "Sharp", "supra": "Supra",
+    "yasin": "Yasin", "goldstar": "Goldstar", "7tech": "7Tech",
+    "arg": "ARG", "lg": "LG", "lenovo": "Lenovo", "acer": "Acer",
+    "msi": "MSI", "dell": "Dell", "bikon": "BIKON", "gigabyte": "Gigabyte",
+    "razer": "Razer", "hp": "HP",
 }
 
 # Brands that never print RAM in consumer product names. For these, RAM is
@@ -68,3 +122,21 @@ BRAND_LABELS: dict[str, str] = {
 def canonical_brand(token: str) -> str:
     """Collapse a sub-brand to its parent ('redmi' -> 'xiaomi')."""
     return BRAND_ALIASES.get(token, token)
+
+
+def brand_label(brand: str, category: str = "smartphones") -> str:
+    """Display label for a brand, in the context of a category.
+
+    Category matters for exactly one entry, and getting it wrong is visible to
+    every user: BRAND_LABELS maps "apple" to "Apple iPhone", because for phones
+    the word "iPhone" is stripped as a NON_MODEL_TOKEN and has to be put back.
+    A MacBook is also brand "apple", so the phone label would render
+    "Ноутбук Apple iPhone MacBook Air" on a laptop page.
+    """
+    if category != "smartphones":
+        if brand in APPLIANCE_BRAND_LABELS:
+            return APPLIANCE_BRAND_LABELS[brand]
+        if brand == "apple":
+            return "Apple"
+        return BRAND_LABELS.get(brand, brand.capitalize())
+    return BRAND_LABELS.get(brand, brand.capitalize())
