@@ -82,6 +82,34 @@ def get_json(session: requests.Session, url: str, **kwargs) -> dict:
         raise NonJsonResponse(url, response.status_code, response.text[:200]) from exc
 
 
+def get_text(session: requests.Session, url: str, **kwargs) -> str:
+    """Fetch a document body as text. For asaxiy, the one HTML source.
+
+    Deliberately separate from get_json rather than a flag on it: the two
+    have different failure modes. A JSON endpoint answering with HTML is a
+    WAF challenge and must raise (NonJsonResponse); an HTML endpoint
+    answering with HTML is Tuesday. Sharing the timeout and the
+    always-runs-even-on-failure pause is the part worth sharing.
+
+    `response.text` decodes using the charset the server declares, which
+    asaxiy does state (`text/html; charset=UTF-8`). Without that header
+    requests would fall back to latin-1 for text/* per RFC 2616 and quietly
+    mojibake every Cyrillic name -- so a missing charset is worth failing on
+    rather than guessing through.
+    """
+    settings = _get_settings()
+    timeout = (settings.connect_timeout, settings.read_timeout)
+    # See get_json: the delay must not be skipped on failure.
+    try:
+        response = session.get(url, timeout=timeout, **kwargs)
+        response.raise_for_status()
+    finally:
+        pause()
+    if response.encoding is None:
+        raise ValueError(f"no charset declared for {url}; refusing to guess the encoding")
+    return response.text
+
+
 def post_json(session: requests.Session, url: str, **kwargs) -> dict:
     settings = _get_settings()
     timeout = (settings.connect_timeout, settings.read_timeout)

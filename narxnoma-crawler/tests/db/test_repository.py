@@ -14,7 +14,7 @@ def listing(key="k1", price=2_723_000, name="Смартфон Xiaomi Redmi Note 
 def test_store_ids_returns_all_seeded_stores(db_conn):
     ids = repo.store_ids(db_conn)
     assert set(ids) == {"uzum", "alifshop", "beemarket", "idea",
-                        "mediapark", "olcha", "texnomart"}
+                        "mediapark", "olcha", "texnomart", "asaxiy"}
 
 
 def test_raw_offer_is_append_only(db_conn):

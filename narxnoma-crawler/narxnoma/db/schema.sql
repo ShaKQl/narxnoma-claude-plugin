@@ -152,3 +152,21 @@ EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
 INSERT INTO schema_version (version) VALUES (2) ON CONFLICT (version) DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Migration 3: asaxiy.uz, the eighth source.
+--
+-- Appended rather than added to the migration-1 seed list above, per the
+-- header: that INSERT already ran in production, and `ON CONFLICT (slug) DO
+-- NOTHING` makes re-running it a no-op for the seven rows that exist -- but
+-- the row for an EIGHTH store would only ever be inserted on a database
+-- fresh enough to be running migration 1 for the first time. On production
+-- it would silently never appear, harvest_all would report "store not
+-- seeded", and the source would look broken for a reason nothing points at.
+-- ---------------------------------------------------------------------------
+
+INSERT INTO store (slug, name, website_url) VALUES
+    ('asaxiy', 'Asaxiy', 'https://asaxiy.uz')
+ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO schema_version (version) VALUES (3) ON CONFLICT (version) DO NOTHING;

@@ -50,6 +50,7 @@ verified by running the parser end to end and opening the resulting links.
 | [olcha.md](olcha.md) | olcha.uz | REST GET, full catalogue | none | 52/66 |
 | [texnomart.md](texnomart.md) | texnomart.uz | REST GET, single card | none | 50/66 |
 | [mediapark.md](mediapark.md) | mediapark.uz | REST GET, autocomplete | none | 46/66 |
+| [asaxiy.md](asaxiy.md) | asaxiy.uz | **server-rendered HTML** | none | — † |
 | [_matching-engine.md](_matching-engine.md) | — | shared name→product matcher | — | — |
 
 > **Narxnoma is an aggregator.** The two internal systems documented in the original
@@ -59,14 +60,27 @@ verified by running the parser end to end and opening the resulting links.
 
 \* phones matched out of 66 active smartphones, as of 2026-07-24.
 
+† asaxiy was added on 2026-08-10, after that survey. Measured on its own terms:
+693 offers across all seven categories, 96.8% of them attached to a canonical
+product — the highest attachment rate of the eight.
+
 ## The one thing to understand first
 
-None of these sites can be scraped from HTML — every one is a JavaScript SPA that
-renders an empty shell. A headless-browser attempt across five of them succeeded on
-exactly one. **The durable path is always the private JSON API the SPA itself calls.**
+Almost none of these sites can be scraped from HTML — nearly every one is a
+JavaScript SPA that renders an empty shell. A headless-browser attempt across five
+of them succeeded on exactly one. **The durable path is usually the private JSON API
+the SPA itself calls.**
 
 To find it for a new site: open the site, DevTools → Network → Fetch/XHR, type a
 search, and look for the request whose response contains prices. Copy it as cURL.
+
+**Check for the exception before assuming the rule.** asaxiy.uz has no catalogue
+JSON endpoint at all — its only `/ajax/*` routes are login and filter plumbing —
+and it server-renders a complete, fully-priced product grid into the initial HTML
+document. Looking for an API there finds nothing and concludes, wrongly, that the
+site cannot be crawled. See [asaxiy.md](asaxiy.md), including why the identity is
+still read from machine-generated `data-` attributes rather than from prose, and
+why the lighter XHR fragment is the wrong thing to fetch.
 
 ## Two shapes of retailer
 

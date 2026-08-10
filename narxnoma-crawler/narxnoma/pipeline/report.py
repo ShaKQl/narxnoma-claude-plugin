@@ -54,6 +54,12 @@ EXPECTED_MIN_OFFERS = {
     "alifshop": 200,     # per-brand sweep
     "uzum": 200,         # per-brand GraphQL sweep
     "mediapark": 0,      # search-only, never swept
+    # Measured live 2026-08-10 by counting every leaf asaxiy sweeps: 233
+    # phones + 57 TVs + 90 laptops + 113 ACs + 107 fridges + 132 washers + 18
+    # cookers = 750. asaxiy is a broad-range shop (books, toys, groceries) with
+    # a narrower electronics range than the specialists, so this floor is set
+    # against its own measured size, not against olcha's.
+    "asaxiy": 400,
 }
 
 
