@@ -186,14 +186,59 @@ listings.
 Relevance search mixes in cases, chargers and (genuinely) vacuum cleaners. Filter
 client-side on the card's `category.id`:
 
-| id | title |
-|---|---|
-| `15271` | Смартфоны Android |
-| `15272` | Смартфоны Apple iPhone (iOS) |
+| id | title | our category |
+|---|---|---|
+| `15271` | Смартфоны Android | smartphones |
+| `15272` | Смартфоны Apple iPhone (iOS) | smartphones |
+| `12601` | Телевизоры | televisions |
+| `12520` | Ноутбуки | laptops |
+| `14373` | Сплит-системы | acs |
+| `82` | Холодильники | fridges |
+| `83` | Морозильники | fridges |
+| `15291` | Полуавтоматические стиральные машины | washers |
+| `15296` | Автоматические стиральные машины | washers |
+| `11` | Духовые шкафы | ovens |
+| `13` | Газовые плиты | ovens |
 
 `showOnlyOriginalSKUs: "TRUE"` narrows 262 → 60 results but does **not** cleanly
 strip grey-market resellers (the "IMEI зарегистрированы" cards survive it). Not a
 useful lever — skip it.
+
+### The query frontier is per CATEGORY, not per brand
+
+**Verified live 2026-08-10.** Phones sweep by brand. Nothing else can, and using
+the brand list for a category sweep is why uzum held 2,381 phones and **zero**
+air conditioners, fridges, washers and ovens:
+
+- the brands that sell white goods here — Artel, Premier, Shivaki, LG, Hisense —
+  sell no phones, so they were never in the brand list to be queried;
+- and for Samsung, which sells both, relevance ranks phones first while
+  pagination caps at `offset` ≈ 1000, so a fridge never surfaces.
+
+Measured, one page of 72 each:
+
+| query | in-category | what else came back |
+|---|---|---|
+| `televizor` | 72/72 | — |
+| `noutbuk` | 72/72 | — |
+| `konditsioner` | 72/72 | — |
+| `kir yuvish mashinasi` | 72/72 | — |
+| `duxovka` | 45/45 | — |
+| `холодильник` | 72/72 | — |
+| `artel` | **0/72** | remote controls, vacuum filters, electric kettles |
+
+So the noun does the work and brand queries are a supplement, not the frontier.
+See `narxnoma/sources/brand_queries.py`.
+
+**Two traps this measurement caught, both of which had silently cost a whole
+product type:**
+
+1. `газовая плита` is category **13**, not 11. Gas cookers were being fetched
+   and then filtered out, because the config listed only `11` for ovens.
+2. `muzlatgich` — the Uzbek for "refrigerator" — resolves to **83
+   Морозильники** (freezers) on uzum, not to 82. `холодильник` and `sovutgich`
+   are the words that reach 82. Other retailers do use "Muzlatgichi" for a
+   fridge, so the word stays in the frontier; it simply must not lead it.
 
 ## 4. Response shape
 

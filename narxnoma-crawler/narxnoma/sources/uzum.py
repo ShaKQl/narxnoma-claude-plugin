@@ -124,7 +124,7 @@ import requests
 from narxnoma.config import load_settings
 from narxnoma.matching.normalize import normalize
 from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
-from narxnoma.sources.brand_queries import BRAND_QUERIES
+from narxnoma.sources.brand_queries import queries_for
 from narxnoma.sources.http import pause, polite_session, post_json
 
 logger = logging.getLogger(__name__)
@@ -147,14 +147,25 @@ PHONE_CATEGORY_IDS = frozenset({15271, 15272})
 
 # Plan 5: category -> uzum category.id set, verified live 2026-08-10 by
 # querying makeSearch per product type and reading catalogCard.category.id.
+#
+# Re-verified live 2026-08-10 while fixing the category frontier. Two
+# corrections, both found by reading catalogCard.category off a real response:
+#   - ovens held only 11 (Духовые шкафы). "газовая плита" is category 13
+#     (Газовые плиты) and is a different id, so every gas cooker uzum sells was
+#     filtered out of a sweep that had gone and fetched it. The other sources
+#     already harvest gas cookers into `ovens`.
+#   - fridges gains 83 (Морозильники). The Uzbek "muzlatgich" resolves to
+#     FREEZERS on uzum, not refrigerators -- "холодильник"/"sovutgich" are the
+#     words that reach id 82 -- and freezers belong with fridges here for the
+#     same reason cookers belong with ovens.
 CATEGORY_IDS = {
     "smartphones": PHONE_CATEGORY_IDS,
     "televisions": {12601},
     "laptops": {12520},
     "acs": {14373},
-    "fridges": {82},
+    "fridges": {82, 83},
     "washers": {15291, 15296},
-    "ovens": {11},
+    "ovens": {11, 13},
 }
 
 PAGE_LIMIT = 72
@@ -734,16 +745,25 @@ class UzumSource:
         yield from paginate(fetch, lambda payload: parse(payload, category), following, first_page=0)
 
     def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
-        """Every phone uzum returns across a fixed list of brand queries,
+        """Every item uzum returns across this category's query frontier,
         paginating each until its items run out or offset hits OFFSET_CAP
         (see module docstring for why offset can't just run unbounded).
-        Deduplicated by source_key (SKU id) across brand queries, since the
-        same SKU can surface under more than one brand query.
+        Deduplicated by source_key (SKU id) across queries, since the same SKU
+        can surface under more than one query.
+
+        Phones sweep by BRAND; everything else sweeps by the product NOUN.
+        Using the brand frontier for a category left uzum holding zero air
+        conditioners, fridges, washers and ovens: the brands that sell white
+        goods here sell no phones and so were never queried, and for Samsung,
+        which sells both, relevance ranks phones first and pagination caps at
+        offset 1000 so a fridge never surfaced. Measured live, "konditsioner"
+        returns 72 of 72 in-category while "artel" returns remote controls,
+        vacuum filters and electric kettles. See sources/brand_queries.py.
         """
         seen: set[str] = set()
-        for brand in BRAND_QUERIES:
+        for query in queries_for(category):
             # Per-page retries live in base.paginate() via _walk.
-            for listing in self._walk(brand, category):
+            for listing in self._walk(query, category):
                 if listing.source_key in seen:
                     continue
                 seen.add(listing.source_key)

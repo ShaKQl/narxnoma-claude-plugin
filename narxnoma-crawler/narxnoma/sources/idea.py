@@ -17,8 +17,10 @@ from collections import Counter
 from dataclasses import replace
 from typing import Iterator
 
+import requests
+
 from narxnoma.sources.base import Listing, coerce_price, try_build_listing
-from narxnoma.sources.brand_queries import BRAND_QUERIES
+from narxnoma.sources.brand_queries import BRAND_QUERIES, queries_for  # noqa: F401  (BRAND_QUERIES re-exported: it is idea's phone frontier and tests pin it here)
 from narxnoma.sources.http import get_json, polite_session
 
 logger = logging.getLogger(__name__)
@@ -170,22 +172,45 @@ class IdeaSource:
         return parse(payload)
 
     def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
-        """Every item idea returns across a fixed list of brand queries.
+        """Every item idea returns across this category's query frontier.
 
         There is no pagination and no full-catalogue endpoint, so this
-        merges one search call per brand and deduplicates by source_key --
-        the same product can appear under more than one brand query.
+        merges one search call per query and deduplicates by source_key --
+        the same product can appear under more than one query.
         Only listings whose category_id is in the target category's set are
         kept, and each is tagged with the sweep's category.
+
+        Phones sweep by BRAND, everything else by the product NOUN. With no
+        pagination at all, the frontier IS this source's entire reach, so a
+        phone-brand frontier left idea holding 238 phones against 18 non-phone
+        listings in total. See sources/brand_queries.py.
         """
         ids = CATEGORY_IDS.get(category)
         if ids is None:
             raise ValueError(f"unknown category {category!r}")
         seen: set[str] = set()
-        # No pagination: idea returns one full response per brand query, so
+        # No pagination: idea returns one full response per query, so
         # there is no page loop to hoist onto base.paginate().
-        for query in BRAND_QUERIES:
-            for listing in _filter_by_category(self._fetch(query), ids):
+        for query in queries_for(category):
+            try:
+                found = self._fetch(query)
+            except requests.HTTPError as exc:
+                # idea answers a search with NO RESULTS with 404, not with an
+                # empty list -- observed live on "lg", which sells no phones
+                # here. One barren query must not cost the whole category: the
+                # frontier deliberately contains terms that only some
+                # categories match.
+                #
+                # Narrow on purpose. Only 404 is tolerated, and only per query;
+                # a 500 or a connection error still raises and still fails the
+                # run loudly, because "every query returned nothing" and "the
+                # source is down" must not look the same. A source that ends up
+                # yielding nothing is still caught by EXPECTED_MIN_OFFERS.
+                if exc.response is not None and exc.response.status_code == 404:
+                    logger.info("idea: no results for %r (404), continuing", query)
+                    continue
+                raise
+            for listing in _filter_by_category(found, ids):
                 if listing.source_key in seen:
                     continue
                 seen.add(listing.source_key)

@@ -8,6 +8,7 @@ import sys
 
 from narxnoma.db import repository
 from narxnoma.db.connection import connect
+from narxnoma.matching.keys import CATEGORIES
 from narxnoma.db.migrate import migrate
 from narxnoma.pipeline.aggregate import recompute_variant_prices
 from narxnoma.pipeline.backfill import DEFAULT_MAX_QUERIES, backfill_search_only_sources
@@ -153,6 +154,13 @@ def main(argv: list[str] | None = None) -> int:
     harvest = sub.add_parser("harvest", help="sweep retailers into the database")
     harvest.add_argument("--source", action="append", choices=sorted(SOURCES),
                          help="limit to these sources (repeatable)")
+    # One category at a time is how a stalled or newly-configured category gets
+    # re-run without re-fetching the other six -- a full sweep is 400+ requests
+    # and 8-13 minutes, so re-running everything to fix ovens is wasteful and
+    # discourages fixing ovens.
+    harvest.add_argument("--category", action="append", choices=sorted(CATEGORIES),
+                         help="limit to these categories (repeatable; "
+                              "default: every category)")
     sub.add_parser("report", help="print per-source coverage and freshness; "
                                   "exits non-zero if any source is suspicious")
     sub.add_parser("cluster", help="identify offers and attach them to canonical "
@@ -235,7 +243,7 @@ def main(argv: list[str] | None = None) -> int:
 
     with connect() as conn:
         migrate(conn)
-        results = harvest_all(conn, chosen)
+        results = harvest_all(conn, chosen, categories=args.category)
         rows = coverage_report(conn)
 
     for r in results:

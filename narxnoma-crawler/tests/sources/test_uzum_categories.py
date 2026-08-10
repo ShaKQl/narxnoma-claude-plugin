@@ -4,15 +4,23 @@ from narxnoma.sources.uzum import CATEGORY_IDS, parse
 
 
 def test_category_ids_cover_all_supported_categories():
-    # Verified live 2026-08-10 via makeSearch per product type.
+    # Verified live 2026-08-10 via makeSearch per product type, then RE-verified
+    # the same day while fixing the category crawl frontier. Two ids were
+    # missing, both confirmed by reading catalogCard.category off a live
+    # response:
+    #   13 Газовые плиты  -- "газовая плита" returns 72/72 under id 13, not 11,
+    #      so every gas cooker uzum sells was fetched and then filtered out.
+    #   83 Морозильники   -- the Uzbek "muzlatgich" resolves to FREEZERS here
+    #      ("холодильник"/"sovutgich" reach id 82), and freezers belong with
+    #      fridges for the same reason cookers belong with ovens.
     assert CATEGORY_IDS == {
         "smartphones": {15271, 15272},
         "televisions": {12601},
         "laptops": {12520},
         "acs": {14373},
-        "fridges": {82},
+        "fridges": {82, 83},
         "washers": {15291, 15296},
-        "ovens": {11},
+        "ovens": {11, 13},
     }
 
 

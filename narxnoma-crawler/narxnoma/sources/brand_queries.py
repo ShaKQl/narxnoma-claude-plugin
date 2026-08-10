@@ -29,3 +29,75 @@ for determinism.
 from narxnoma.matching.brands import BRAND_ALIASES, BRANDS
 
 BRAND_QUERIES: tuple[str, ...] = tuple(sorted(set(BRANDS) | set(BRAND_ALIASES)))
+
+# --- category frontier -------------------------------------------------------
+#
+# BRAND_QUERIES is a PHONE frontier, and using it for a category sweep is why
+# uzum held 2,381 phones and ZERO air conditioners, fridges, washers or ovens:
+# the sweep queried "apple", "samsung", "xiaomi" ... and then filtered the
+# results down to category id 82. Two things defeat that.
+#
+# 1. The brands that sell white goods here -- Artel, Premier, Shivaki, LG,
+#    Hisense, Bosch -- sell no phones, so they are not in BRAND_QUERIES at all
+#    and were never queried.
+# 2. Even for Samsung, which sells both, relevance ranks phones first and
+#    pagination caps at offset 1000, so a fridge never surfaces.
+#
+# A category sweep therefore needs its own frontier: the product noun the
+# retailer's own customers type, in Russian and Uzbek (Latin), plus the brands
+# that actually sell in that category. The noun does the work -- one query
+# reaches the whole category -- and the brand queries are there for products
+# whose titles omit the noun entirely, which the live catalogue does contain
+# ("Artel UA43H3502 Android TV", "SAMSUNG RB29FERNDSA 290L Sovutgichi").
+#
+# Deliberately NOT the full appliance vocabulary: 50 brands x 6 categories is
+# 300 queries a cycle for a handful of extra listings. These are the brands
+# measured as actually present in each category in the live catalogue.
+_WHITE_GOODS = ("artel", "premier", "shivaki", "samsung", "lg", "bosch")
+
+CATEGORY_QUERIES: dict[str, tuple[str, ...]] = {
+    "televisions": (
+        "televizor", "телевизор",
+        "artel", "premier", "samsung", "lg", "hisense", "shivaki", "vesta",
+    ),
+    "laptops": (
+        "noutbuk", "ноутбук", "laptop",
+        "asus", "acer", "hp", "lenovo", "apple", "msi", "dell",
+    ),
+    "acs": (
+        "konditsioner", "кондиционер", "split",
+        "artel", "premier", "shivaki", "lg", "hisense", "midea",
+    ),
+    # "muzlatgich" is LAST on purpose: on uzum it resolves to freezers, not
+    # refrigerators (verified live). "холодильник" and "sovutgich" are the
+    # words that reach the refrigerator category, while other retailers do use
+    # "Muzlatgichi" for a fridge, so it stays in the frontier.
+    "fridges": (
+        "холодильник", "sovutgich", "muzlatgich",
+        *_WHITE_GOODS,
+    ),
+    "washers": (
+        "kir yuvish mashinasi", "стиральная машина",
+        *_WHITE_GOODS,
+    ),
+    "ovens": (
+        "duxovka", "духовой шкаф", "газовая плита", "pech",
+        *_WHITE_GOODS,
+    ),
+}
+
+
+def queries_for(category: str) -> tuple[str, ...]:
+    """The crawl frontier for one category.
+
+    Phones keep the brand frontier they have always used; every other category
+    gets the noun-led frontier above. A source that filters its results by a
+    category id still needs this, because filtering can only remove what the
+    query already returned.
+    """
+    if category == "smartphones":
+        return BRAND_QUERIES
+    try:
+        return CATEGORY_QUERIES[category]
+    except KeyError:
+        raise ValueError(f"no crawl frontier for category {category!r}") from None

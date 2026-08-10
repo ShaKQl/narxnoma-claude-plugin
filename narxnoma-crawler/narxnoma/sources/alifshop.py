@@ -45,7 +45,7 @@ from dataclasses import replace
 from typing import Iterator
 
 from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
-from narxnoma.sources.brand_queries import BRAND_QUERIES
+from narxnoma.sources.brand_queries import queries_for
 from narxnoma.sources.http import polite_session, post_json
 from narxnoma.sources.not_a_phone import is_phone_listing
 
@@ -249,7 +249,12 @@ class AlifshopSource:
         if keyword is None:
             raise ValueError(f"unknown category {category!r}")
         seen: set[str] = set()
-        for query in BRAND_QUERIES:
+        # Phones sweep by BRAND, everything else by the product NOUN: the
+        # brands that sell white goods here (Artel, Premier, Shivaki, LG) sell
+        # no phones, so the phone frontier never asked for them at all. The
+        # bucket discovery below still runs per query and still refuses to fall
+        # back to an unfiltered sweep for a non-phone category.
+        for query in queries_for(category):
             first_payload = self._fetch(query, 0)
             bucket = category_from_aggregations(first_payload, keyword)
             if bucket:

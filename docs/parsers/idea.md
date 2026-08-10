@@ -155,6 +155,26 @@ emptying or polluting the catalogue.
   ```
 - `Accept-Language: uz` is what the site sends; `ru` also works but returns Russian
   names, which changes what the matcher sees. Pick one and keep it stable.
+- **A search with no results answers `404`, not an empty list.** Observed live
+  2026-08-10 on `search=lg` and `search=hp` — idea sells neither as phones. This
+  matters because the category frontier deliberately contains terms only some
+  categories match, so a barren query is normal rather than exceptional. `sweep()`
+  therefore tolerates a 404 **per query** and continues.
+
+  The tolerance is deliberately narrow: only `404`, and only for one query. A `500`
+  or a connection error still raises and still fails the run, because *"every query
+  returned nothing"* and *"the source is down"* must not look the same — that is the
+  silently-empty-catalogue failure `EXPECTED_MIN_OFFERS` exists to catch. Before this,
+  one 404 aborted `sweep()` and cost idea its **entire** category harvest; source
+  isolation kept the other six sources alive, which is exactly how it was noticed.
+
+## 4b. The sweep frontier is per category
+
+idea has **no pagination and no catalogue endpoint**, so the query list is not an
+optimisation — it is the source's entire reach. Sweeping non-phone categories with
+the phone brand list left idea holding 238 phones against **18 non-phone listings in
+total**. Non-phone categories now sweep by product noun; see
+`narxnoma/sources/brand_queries.py`.
 
 ## 6. Result
 
