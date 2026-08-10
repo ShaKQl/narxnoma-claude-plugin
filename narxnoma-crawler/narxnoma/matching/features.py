@@ -5,8 +5,10 @@ from dataclasses import dataclass
 from narxnoma.matching.brands import (
     BRAND_ALIASES,
     BRANDS,
+    NON_PHONE_ALIASES,
     NON_PHONE_BRANDS,
     canonical_brand,
+    canonical_non_phone_brand,
 )
 from narxnoma.matching.categories import (
     CATEGORIES_WITH_MEMORY,
@@ -51,9 +53,30 @@ _PREFIX_NOISE = re.compile(r"\b(смартфон|smartfon\w*)\b")
 # "lg", "arg", "hp" -- and a substring scan finds "arg" inside "charger" and
 # "large". A trailing digit still counts as a boundary so the glued "Hp15-fd00"
 # that idea and olcha both publish is recognised.
-_NON_PHONE_PROBE_ORDER: list[str] = list(BRAND_ALIASES) + NON_PHONE_BRANDS
+#
+# ...except for these, where the same allowance reads a brand out of somebody
+# else's SKU. Adding "bq" for BQ's televisions relabelled two ASUS laptops:
+#     "Ноутбук ASUS VivoBook X1502VA-BQ827 / i7-13620H / DDR4 16GB / ..."
+#     "ASUS Vivobook 15 X1502VA-BQ982 i7-13620H/16/512GB Cool Silver"
+# "-BQ827" is ASUS's own suffix, normalize() splits the hyphen to "bq827", and
+# the trailing-digit boundary matched it -- so both machines were keyed as a BQ
+# and merged with each other. Caught by reading every multi-store variant the
+# change produced, which is the only thing that can catch a substitution: the
+# result looked exactly like a healthy two-store match.
+#
+# A strict boundary still finds the televisions ("Телевизор BQ 43FS36B" has
+# "bq" as its own token) and no longer finds the ASUS suffix. Two characters
+# is the real problem -- there are simply more SKUs containing "bq" than
+# containing "hofmann" -- but "hp" and "lg" are two characters as well and
+# their digit-glued forms are measured and real, so this is an opt-out per
+# brand rather than a rule about length.
+_NO_DIGIT_GLUE: frozenset[str] = frozenset({"bq"})
+
+_NON_PHONE_PROBE_ORDER: list[str] = list(NON_PHONE_ALIASES) + NON_PHONE_BRANDS
 _NON_PHONE_BRAND_RE: dict[str, re.Pattern[str]] = {
-    b: re.compile(rf"\b{re.escape(b)}(?=\b|\d)") for b in _NON_PHONE_PROBE_ORDER
+    b: re.compile(rf"\b{re.escape(b)}\b" if b in _NO_DIGIT_GLUE
+                  else rf"\b{re.escape(b)}(?=\b|\d)")
+    for b in _NON_PHONE_PROBE_ORDER
 }
 
 
@@ -71,12 +94,13 @@ def _detect_brand(n: str, category: str) -> str | None:
         return None
     for b in _NON_PHONE_PROBE_ORDER:
         if _NON_PHONE_BRAND_RE[b].search(n):
-            return canonical_brand(b)
+            return canonical_non_phone_brand(b)
     return None
 
 
 def _non_phone_model_tokens(
-    name: str | None, brand: str | None, reserved: set[str]
+    name: str | None, brand: str | None, reserved: set[str],
+    category: str = "laptops",
 ) -> set[str]:
     """Identity tokens for a TV, laptop, fridge, AC, washer or oven.
 
@@ -84,15 +108,19 @@ def _non_phone_model_tokens(
     laptop's specification follows a delimiter and is not part of its name.
     Memory and colour were already taken from the whole title by the caller,
     so truncating here costs no identity field.
+
+    `category` reaches the two processor rules and nothing else -- a CPU name
+    is a specification on a computer and a model name on an air conditioner.
+    See categories.CATEGORIES_WITH_CPU.
     """
     head = normalize(head_for_model(name or ""))
-    tokens = set(cut_at_processor(head.split()))
+    tokens = set(cut_at_processor(head.split(), category))
     known_brands = set(_NON_PHONE_PROBE_ORDER)
     out: set[str] = set()
     for t in tokens:
         # The brand is an axis of the key already; repeating it inside
         # model_tokens would let "LG" and "LG LG" become two products.
-        if t in known_brands or canonical_brand(t) == brand:
+        if t in known_brands or canonical_non_phone_brand(t) == brand:
             continue
         if t in NON_MODEL_TOKENS or t in COLOR_MAP or t in QUALIFIERS:
             continue
@@ -117,7 +145,7 @@ def _non_phone_model_tokens(
             # safe -- a product genuinely named in Cyrillic keeps its brand and
             # any Latin tokens, and becomes unkeyable only if it has none.
             continue
-        if not is_model_token(t):
+        if not is_model_token(t, category):
             continue
         out.add(t)
     return _collapse_to_catalogue_code(out)
@@ -219,7 +247,7 @@ def extract_features(name: str | None, category: str = "smartphones") -> Feature
             colors=colors,
             primary_color=primary,
             model_tokens=frozenset(
-                _non_phone_model_tokens(name, brand, reserved_figures)
+                _non_phone_model_tokens(name, brand, reserved_figures, category)
             ),
             normalized=n,
         )

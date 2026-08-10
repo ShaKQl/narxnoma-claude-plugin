@@ -146,6 +146,24 @@ NON_MODEL: frozenset[str] = (
     CATEGORY_NOUNS | DESCRIPTORS | MARKETING | UNITS | PROCESSORS
 )
 
+#: The same, for a category that has no processor. See CATEGORIES_WITH_CPU.
+NON_MODEL_WITHOUT_CPU: frozenset[str] = (
+    CATEGORY_NOUNS | DESCRIPTORS | MARKETING | UNITS
+)
+
+# Categories where a PROCESSORS word is a specification rather than a name.
+# Only a computer has a CPU; on an air conditioner the same words are the
+# model. Measured 2026-08-10 across all 5,132 non-laptop non-phone offers:
+# exactly 8 (0.16%) contain a PROCESSORS word, and every one is an air
+# conditioner whose LINE NAME collides with a chip --
+#     "Кондиционер Rulls ARC 12 Inverter"     (Intel Arc)     6 offers, 2 stores
+#     "Кондиционер Sitronic Vega Inverter 18" (Radeon Vega)   2 offers
+# -- and all 8 were unresolved, so scoping this re-keys nothing that already
+# clustered. cut_at_processor made it worse than a plain stopword would: it
+# truncates positionally, so "Rulls ARC 12" lost its capacity as well as its
+# name and could not form a key at all.
+CATEGORIES_WITH_CPU: frozenset[str] = frozenset({"laptops"})
+
 # Categories where a RAM/storage figure is a real specification. A laptop has
 # 16 GB and a 512 GB SSD; a television, fridge, oven, washer or air conditioner
 # has neither.
@@ -182,7 +200,7 @@ def head_for_model(name: str) -> str:
     return _SPEC_DELIMITERS.split(name, 1)[0]
 
 
-def cut_at_processor(tokens: list[str]) -> list[str]:
+def cut_at_processor(tokens: list[str], category: str = "laptops") -> list[str]:
     """Drop everything from the first processor word onward.
 
     The "/" fence catches most laptop specifications, but retailers that omit
@@ -195,7 +213,13 @@ def cut_at_processor(tokens: list[str]) -> list[str]:
     part numbers after it ("x1", "26100", "5") are indistinguishable from real
     model codes by shape -- which is why PROCESSORS lists only the words and
     this function handles the rest positionally.
+
+    Positional truncation is only right where the word really is a spec
+    boundary. On a category with no processor it is a name, and cutting there
+    discards the rest of the name too -- see CATEGORIES_WITH_CPU.
     """
+    if category not in CATEGORIES_WITH_CPU:
+        return tokens
     for i, t in enumerate(tokens):
         if t in PROCESSORS:
             return tokens[:i]
@@ -284,7 +308,7 @@ def is_accessory(name: str | None, category: str = "smartphones") -> bool:
     return bool(_ACCESSORY.search(name))
 
 
-def is_model_token(token: str) -> bool:
+def is_model_token(token: str, category: str = "laptops") -> bool:
     """True when a token may stand as part of a non-phone product's identity.
 
     Deliberately permissive about SHAPE and strict about VOCABULARY: any word
@@ -292,8 +316,15 @@ def is_model_token(token: str) -> bool:
     word or unit. Shape cannot separate "wgk264zxme" (identity) from "ddr5"
     (specification) -- both are letters plus digits -- so the vocabulary does
     the work, and every entry in it was measured against live titles.
+
+    `category` decides one thing: whether the PROCESSORS words are part of
+    that vocabulary. They are a specification on a computer and a model name
+    on everything else -- see CATEGORIES_WITH_CPU. The default keeps the
+    stricter laptop vocabulary, so a caller that does not pass a category
+    gets exactly the behaviour this function always had.
     """
-    if not token or token in NON_MODEL:
+    stoplist = NON_MODEL if category in CATEGORIES_WITH_CPU else NON_MODEL_WITHOUT_CPU
+    if not token or token in stoplist:
         return False
     # A bare unit-suffixed figure is a spec: "43дюйма", "512gb", "1200об".
     if re.fullmatch(r"\d+(?:gb|гб|tb|тб|кг|kg|л|lt|см|cm|вт|w|hz|гц|об|rpm|дюйм\w*)", token):

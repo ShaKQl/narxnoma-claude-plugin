@@ -327,6 +327,73 @@ alphabetical ordering would render the display name as `Samsung 7 Fold`.
 > shop must be a model token.** When auditing, list every name that reduces to the same
 > `model_tokens` and check none of them are actually different phones.
 
+### Brand vocabulary outside phones (added 2026-08-10)
+
+Non-phone categories use a second recognition vocabulary, `APPLIANCE_BRANDS`,
+kept separate because `BRANDS` doubles as the **phone crawl frontier** — a
+fridge maker added there spends a wasted query per cycle at three retailers.
+It is grown by a repeatable measured pass, run three times so far:
+
+> Count the unrecognised head token across every *unresolved* non-phone title,
+> then confirm each candidate against three real listings as a manufacturer
+> rather than a descriptor.
+
+The third pass (873 unresolved offers, prompted by adding asaxiy) added 21
+makers and 5 aliases. Four things it taught that the first two did not:
+
+**A brand can be in the vocabulary and still never match.** `biryusa` was
+present in the *Latin* spelling and its display label was already `"Бирюса"` —
+but every listing writes it in Cyrillic, and `normalize()` correctly leaves an
+all-Cyrillic token alone (there is no Latin in it to fold). The two spellings
+never met and 20 offers were unkeyable. **A brand that appears in a non-Latin
+script needs that spelling as an alias, not just as a label.**
+
+**Code prefixes are aliases when — and only when — some listing spells the
+brand out.** `prm → premier` and `shiv → shivaki` were added because uzum
+publishes both forms of the same product ("Холодильник Premier PRM-250TFDF/W",
+"SHIVAKI SHIV-WM 1108 Sentaku") while idea publishes the bare code. `lrf` and
+`gtw` look identical in shape and were **not** added: no listing anywhere names
+their maker, and guessing a brand is how two different products become one page.
+
+**Short brands must not use the trailing-digit boundary.** The non-phone probe
+matches `\b<brand>(?=\b|\d)`, where the digit allowance exists so idea's and
+olcha's glued `"Hp15-fd00"` is recognised. Adding two-character `bq` for BQ's
+televisions relabelled two **ASUS** laptops — `X1502VA-BQ827` is ASUS's own
+SKU suffix, `normalize()` splits the hyphen to `bq827`, and the digit counted
+as a boundary. Both machines became a BQ and merged with each other. `bq` now
+requires a strict `\bbq\b`, which still finds the televisions.
+
+That regression is the point of the workflow, not an aside: it was invisible to
+every aggregate — attachment rose, a two-store comparison appeared, the
+unresolved rate fell. **It was found only by reading every multi-store variant
+the change produced, offer by offer.** See the README's standing lesson; this
+is its sharper form: *aggregate metrics cannot see a substitution.*
+
+### A CPU name is a specification on a computer and a model name elsewhere
+
+`PROCESSORS` (intel, ryzen, arc, vega, …) is a stoplist, and `cut_at_processor`
+additionally truncates the title *positionally* from the first such word — a
+laptop's name ends where its spec begins.
+
+Both are scoped to `CATEGORIES_WITH_CPU = {"laptops"}`. Measured across all
+5,132 non-laptop non-phone offers, exactly 8 (0.16%) contain a `PROCESSORS`
+word, and every one is an air conditioner whose product **line** collides with
+a chip:
+
+```
+"Кондиционер Rulls ARC 12 Inverter"       (Intel Arc)    6 offers, 2 stores
+"Кондиционер Sitronic Vega Inverter 18"   (Radeon Vega)  2 offers
+```
+
+Positional truncation made it worse than a plain stopword would: `"Rulls ARC 12"`
+lost its capacity along with its name and could form no key at all. All 8 were
+unresolved, so the scoping re-keyed nothing that had already clustered.
+
+Note that half-fixing this would have been worse than leaving it: dropping
+`cut_at_processor` while keeping `vega` in the stoplist yields
+`"Кондиционер Sitronic 18"`, which merges every Sitronic 18 — the failure this
+whole module exists to prevent.
+
 ### Colour map — base words only
 
 ```python

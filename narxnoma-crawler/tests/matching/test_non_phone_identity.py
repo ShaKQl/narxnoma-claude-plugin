@@ -88,6 +88,61 @@ def test_descriptors_never_split_one_product_in_two():
     assert variant_key(a, "dual", "fridges") == variant_key(b, "dual", "fridges")
 
 
+def test_a_cpu_word_is_a_spec_on_a_laptop_and_a_name_on_an_air_conditioner():
+    """Measured across all 5,132 non-laptop non-phone offers: 8 carry a
+    PROCESSORS word, and every one is an air conditioner whose product LINE
+    collides with a chip. cut_at_processor truncates positionally, so
+    "Rulls ARC 12" lost its capacity as well as its name and could form no
+    key at all -- 6 offers across uzum and alifshop, all unresolved."""
+    ac = extract_features("Кондиционер Rulls ARC 12 Inverter", category="acs")
+    assert ac.brand == "rulls"
+    assert "arc" in ac.model_tokens and "12" in ac.model_tokens
+
+    sitronic = extract_features("Кондиционер Sitronic Vega Inverter 18", category="acs")
+    assert sitronic.brand == "sitronic"
+    assert "vega" in sitronic.model_tokens
+
+    # And the laptop rule is untouched: a CPU still ends the name there.
+    laptop = extract_features(
+        "Ноутбук Acer Aspire Snapdragon X1 26100", category="laptops")
+    assert laptop.model_tokens == frozenset({"aspire"})
+
+
+def test_two_air_conditioners_of_one_line_do_not_merge():
+    """Why the CPU stoplist could not simply be dropped for acs: with "vega"
+    stripped but the capacity kept, every Sitronic 18 would key alike."""
+    vega = variant_key(
+        extract_features("Кондиционер Sitronic Vega Inverter 18", "acs"), "dual", "acs")
+    other = variant_key(
+        extract_features("Кондиционер Sitronic Alba Inverter 18", "acs"), "dual", "acs")
+    assert vega is not None and other is not None
+    assert vega != other
+
+
+def test_bq_is_a_brand_despite_being_two_characters():
+    """Short tokens are a blind spot in head-token counting, not in reality.
+    BQ's 55FU32B is carried by asaxiy, uzum and alifshop."""
+    f = extract_features("Телевизор BQ 55FU32B 4K UHD webOS", category="televisions")
+    assert f.brand == "bq"
+    assert "55fu32b" in f.model_tokens
+
+
+@pytest.mark.parametrize("name", [
+    "Ноутбук ASUS VivoBook X1502VA-BQ827 / i7-13620H / DDR4 16GB / SSD 512GB / 15.6\"",
+    "ASUS Vivobook 15 X1502VA-BQ982 i7-13620H/16/512GB Cool Silver Noutbuki",
+])
+def test_bq_does_not_read_itself_out_of_an_asus_sku(name):
+    """The regression adding BQ caused, and the reason short brands opt out of
+    the trailing-digit boundary.
+
+    "-BQ827" is ASUS's own suffix. normalize() splits the hyphen to "bq827",
+    the digit counted as a word boundary, and both machines were relabelled BQ
+    -- and merged with each other. Nothing aggregate could see it: it looked
+    exactly like a healthy two-store match.
+    """
+    assert extract_features(name, category="laptops").brand == "asus"
+
+
 @pytest.mark.parametrize("word", ["pro", "air", "max", "plus", "neo"])
 def test_designators_are_kept_because_they_name_the_product(word):
     # A MacBook Air is not a MacBook Pro. These read as marketing on a phone,
