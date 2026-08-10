@@ -42,6 +42,7 @@ shape. Category filtering is crawl policy, not parsing, so it lives in
 """
 import logging
 from collections import Counter
+from dataclasses import replace
 from typing import Iterator
 
 from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
@@ -58,10 +59,23 @@ API_URL = "https://market.beeline.uz/api/web/search"
 # issues; it is undocumented by the retailer (not in docs/parsers/beemarket.md)
 # but was confirmed live on 2026-07-31 to return only the smartfony category.
 SWEEP_CATEGORY_SLUG = "smartfony"
-SWEEP_API_URL = f"https://market.beeline.uz/api/web/categories/{SWEEP_CATEGORY_SLUG}/products"
+SWEEP_API_URL = "https://market.beeline.uz/api/web/categories/{slug}/products"
 
 PRODUCT_URL = "https://market.beeline.uz/{category_slug}/{slug}"
 DEFAULT_CATEGORY_SLUG = "smartfony"
+
+# Plan 5: category -> beemarket category.slug, verified live 2026-08-10 from
+# /api/web/categories/list (smartfony id=1 top-level; the rest are leaves under
+# Elektronika / Крупная бытовая техника).
+CATEGORY_SLUGS = {
+    "smartphones": "smartfony",
+    "televisions": "televisions",           # id 68
+    "laptops": "laptops",                   # id 113
+    "acs": "air-conditioners",              # id 86
+    "fridges": "refrigerators",             # id 52
+    "washers": "washing-machines",          # id 50
+    "ovens": "built-in-ovens",              # id 136
+}
 
 # category.slug is BeeMarket's only human-readable category signal (unlike
 # idea's undocumented numeric category_id). Observed live on 2026-07-31 by
@@ -75,10 +89,8 @@ DEFAULT_CATEGORY_SLUG = "smartfony"
 # and confirmed against /api/web/categories/list: "smartfony" (id 1) is a
 # top-level category with no active_children, i.e. the sole phone category
 # -- there is no separate feature-phone or tablet category to also include.
-# Only smartfony is a phone category; V1 is smartphones only. sweep() logs
-# the full category distribution every run (see _filter_phone_listings) so
-# a retailer renaming or splitting this category is visible in the logs
-# instead of silently emptying or polluting the catalogue.
+# Only smartfony is a phone category. The phone slug list still drives the
+# smartphones filter; non-phone sweeps trust the category-scoped endpoint.
 PHONE_CATEGORY_SLUGS = frozenset({"smartfony"})
 
 _HEADERS = {
@@ -177,12 +189,23 @@ class BeemarketSource:
         return self._session
 
     def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
-        """Every phone in BeeMarket's smartfony category, walking pagination
-        to the end. See module docstring for why this hits the
-        category-scoped endpoint rather than the documented generic search.
+        """Every item in one category, walking pagination to the end.
+
+        Phones hit the smartfony category endpoint and are additionally run
+        through the phone filter (defense in depth). Non-phone categories
+        trust their category-scoped endpoint (the slugs in CATEGORY_SLUGS are
+        verified live leaves, so no phone filter applies). Every listing is
+        tagged with the sweep's category.
         """
-        yield from self._walk(SWEEP_API_URL, {"is_bshop": 1},
-                              _filter_phone_listings)
+        slug = CATEGORY_SLUGS.get(category)
+        if slug is None:
+            raise ValueError(f"unknown category {category!r}")
+        url = SWEEP_API_URL.format(slug=slug)
+        post_filter = _filter_phone_listings if category == "smartphones" else None
+        for listing in self._walk(url, {"is_bshop": 1}, post_filter):
+            if listing.category != category:
+                listing = replace(listing, category=category)
+            yield listing
 
     def search(self, query: str) -> Iterator[Listing]:
         yield from self._walk(API_URL, {"q": query, "is_bshop": 1})
