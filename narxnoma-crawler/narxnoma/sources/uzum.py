@@ -116,6 +116,7 @@ import logging
 import re
 import time
 import uuid
+from dataclasses import replace
 from typing import Iterator
 
 import requests
@@ -143,6 +144,18 @@ PRODUCT_URL = "https://uzum.uz/ru/product/{product_id}"
 # docs/parsers/uzum.md section 3. Relevance search mixes in cases, chargers
 # and (genuinely) vacuum cleaners; this is the only usable signal to drop them.
 PHONE_CATEGORY_IDS = frozenset({15271, 15272})
+
+# Plan 5: category -> uzum category.id set, verified live 2026-08-10 by
+# querying makeSearch per product type and reading catalogCard.category.id.
+CATEGORY_IDS = {
+    "smartphones": PHONE_CATEGORY_IDS,
+    "televisions": {12601},
+    "laptops": {12520},
+    "acs": {14373},
+    "fridges": {82},
+    "washers": {15291, 15296},
+    "ovens": {11},
+}
 
 PAGE_LIMIT = 72
 # Pagination caps at offset ~= 1000 -- beyond that `items` is always empty
@@ -597,7 +610,7 @@ def _parse_sku(card: dict, sku: dict) -> Listing | None:
     )
 
 
-def parse(payload: dict) -> list[Listing]:
+def parse(payload: dict, category: str = "smartphones") -> list[Listing]:
     """Turn one raw makeSearch response into Listings. Pure function, no I/O.
 
     Unlike idea/beemarket, category filtering happens inside parse() itself
@@ -615,15 +628,20 @@ def parse(payload: dict) -> list[Listing]:
                         payload.get("errors"))
         return []
 
+    ids = CATEGORY_IDS.get(category)
+    if ids is None:
+        raise ValueError(f"unknown category {category!r}")
     listings: list[Listing] = []
     for item in _items(payload):
         card = (item or {}).get("catalogCard") or {}
         category_id = (card.get("category") or {}).get("id")
-        if category_id not in PHONE_CATEGORY_IDS:
+        if category_id not in ids:
             continue
         for sku in card.get("skuList") or []:
             lst = _parse_sku(card, sku)
             if lst is not None:
+                if lst.category != category:
+                    lst = replace(lst, category=category)
                 listings.append(lst)
     return listings
 
@@ -698,7 +716,7 @@ class UzumSource:
             raise UzumGraphQLError(f"uzum graphql errors for {text!r}@{offset}: {errors!r}")
         return payload
 
-    def _walk(self, text: str) -> Iterator[Listing]:
+    def _walk(self, text: str, category: str = "smartphones") -> Iterator[Listing]:
         def fetch(offset):
             return self._fetch_payload(text, offset)
 
@@ -713,7 +731,7 @@ class UzumSource:
                 return None
             return nxt if _items(payload) else None
 
-        yield from paginate(fetch, parse, following, first_page=0)
+        yield from paginate(fetch, lambda payload: parse(payload, category), following, first_page=0)
 
     def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
         """Every phone uzum returns across a fixed list of brand queries,
@@ -725,7 +743,7 @@ class UzumSource:
         seen: set[str] = set()
         for brand in BRAND_QUERIES:
             # Per-page retries live in base.paginate() via _walk.
-            for listing in self._walk(brand):
+            for listing in self._walk(brand, category):
                 if listing.source_key in seen:
                     continue
                 seen.add(listing.source_key)
