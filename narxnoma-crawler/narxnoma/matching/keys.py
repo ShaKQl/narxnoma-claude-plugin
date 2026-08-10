@@ -12,6 +12,35 @@ from narxnoma.matching.features import Features
 
 SIM_KINDS = ("dual", "esim_only", "unknown")
 
+# Product categories the crawler can sweep. V1 was smartphones only; Plan 5
+# (2026-08-10) extends to the other big electronics lines each source sells.
+CATEGORIES = (
+    "smartphones",
+    "televisions",
+    "laptops",
+    "acs",
+    "fridges",
+    "washers",
+    "ovens",
+)
+
+# RU display prefix per category, used by display_name() (crawler UI language
+# is Russian; the web layer localises separately).
+CATEGORY_PREFIX = {
+    "smartphones": "Смартфон",
+    "televisions": "Телевизор",
+    "laptops": "Ноутбук",
+    "acs": "Кондиционер",
+    "fridges": "Холодильник",
+    "washers": "Стиральная машина",
+    "ovens": "Духовой шкаф",
+}
+
+# Categories whose identity is NOT the phone signature. Phones key on
+# brand+model+RAM+storage+colour+sim; a TV, fridge or oven keys on
+# brand+model alone (colour/capacity/usage are not identity).
+NON_PHONE_CATEGORIES = frozenset(CATEGORIES) - {"smartphones"}
+
 _COLOR_RU = {
     "black": "Черный", "white": "Белый", "silver": "Серебристый",
     "gray": "Серый", "gold": "Золотой", "blue": "Синий", "red": "Красный",
@@ -37,9 +66,10 @@ class VariantKey:
     brand: str
     model_tokens: frozenset[str]
     ram_gb: int | None        # None is legitimate for brands that omit RAM
-    storage_gb: int
-    color: str
-    sim_kind: str
+    storage_gb: int | None    # None outside smartphones (a TV has no storage)
+    color: str | None         # None outside smartphones (colour is not identity)
+    sim_kind: str | None      # None outside smartphones (no SIM)
+    category: str = "smartphones"
 
 
 @dataclass(frozen=True)
@@ -50,27 +80,45 @@ class PartialKey:
     storage_gb: int | None
     color: str | None
     sim_kind: str
+    category: str = "smartphones"
 
 
-def variant_key(f: Features, sim_kind: str) -> VariantKey | None:
+def _check_category(category: str) -> None:
+    if category not in CATEGORIES:
+        raise ValueError(f"category must be one of {CATEGORIES}, got {category!r}")
+
+
+def variant_key(f: Features, sim_kind: str, category: str = "smartphones") -> VariantKey | None:
     """A complete canonical identity, or None if any identity field is unknown.
 
     RAM is required only for brands that publish it. Apple does not, and
     extract_memory deliberately refuses to infer it -- so requiring RAM here
     would make every iPhone permanently unkeyable.
+
+    Non-phone categories (TVs, laptops, ACs, fridges, washers, ovens) key on
+    brand + model alone; colour, SIM, RAM and storage are NOT identity for
+    them (a TV's black bezel doesn't distinguish products, and requiring a
+    memory figure would make most appliances unkeyable).
     """
-    if sim_kind not in SIM_KINDS:
-        raise ValueError(f"sim_kind must be one of {SIM_KINDS}, got {sim_kind!r}")
-    if not (f.brand and f.model_tokens and f.storage_gb and f.primary_color):
+    _check_category(category)
+    if not (f.brand and f.model_tokens):
+        return None
+    if category in NON_PHONE_CATEGORIES:
+        return VariantKey(
+            brand=f.brand,
+            model_tokens=f.model_tokens,
+            ram_gb=None,
+            storage_gb=f.storage_gb or None,
+            color=None,
+            sim_kind=None,
+            category=category,
+        )
+    if not f.storage_gb or not f.primary_color:
         return None
     if f.brand not in BRANDS_WITHOUT_PUBLISHED_RAM and not f.ram_gb:
         return None
-    # An unmarked SIM configuration is the ordinary dual-SIM phone. uzum.md §6
-    # documents eSIM-only variants as ALWAYS explicitly marked, in three
-    # different encodings, so silence means dual rather than genuinely unknown.
-    # Normalising here is also what keeps slug() injective: "unknown" and
-    # "dual" produce different VariantKeys but identical slugs, so two keys
-    # would claim one URL. ("esim_only" keeps its distinguishing -esim suffix.)
+    if sim_kind not in SIM_KINDS:
+        raise ValueError(f"sim_kind must be one of {SIM_KINDS}, got {sim_kind!r}")
     if sim_kind == "unknown":
         sim_kind = "dual"
     return VariantKey(
@@ -80,10 +128,12 @@ def variant_key(f: Features, sim_kind: str) -> VariantKey | None:
         storage_gb=f.storage_gb,
         color=f.primary_color,
         sim_kind=sim_kind,
+        category=category,
     )
 
 
-def partial_key(f: Features, sim_kind: str) -> PartialKey:
+def partial_key(f: Features, sim_kind: str, category: str = "smartphones") -> PartialKey:
+    _check_category(category)
     return PartialKey(
         brand=f.brand,
         model_tokens=f.model_tokens,
@@ -91,6 +141,7 @@ def partial_key(f: Features, sim_kind: str) -> PartialKey:
         storage_gb=f.storage_gb,
         color=f.primary_color,
         sim_kind=sim_kind,
+        category=category,
     )
 
 
@@ -155,20 +206,38 @@ def display_name(key: VariantKey) -> str:
     including "Смартфон Apple iPhone 17 Pro 256 ГБ, Оранжевый" twice, at
     16,985,000 and 17,690,000. test_no_two_distinct_keys_share_a_display_name
     states the invariant directly.
+
+    Non-phone categories: "Телевизор Samsung UE55 Неодим" -- colour/SIM are
+    absent from the key, and storage only appears when the spec carries one
+    (a laptop's 512GB SSD does; a fridge's capacity does not).
     """
+    prefix = CATEGORY_PREFIX.get(key.category, key.category.capitalize())
     brand = BRAND_LABELS.get(key.brand, key.brand.capitalize())
     model = " ".join(_token_label(t) for t in ordered_model_tokens(key.model_tokens))
+    if key.category in NON_PHONE_CATEGORIES:
+        parts = [prefix, brand, model]
+        if key.storage_gb:
+            parts.append(f"{key.storage_gb} ГБ")
+        return " ".join(parts)
     color = _COLOR_RU.get(key.color, key.color.capitalize())
     memory = f"{key.ram_gb}/{key.storage_gb}" if key.ram_gb else str(key.storage_gb)
     sim = " (eSIM)" if key.sim_kind == "esim_only" else ""
-    return f"Смартфон {brand} {model} {memory} ГБ, {color}{sim}"
+    return f"{prefix} {brand} {model} {memory} ГБ, {color}{sim}"
 
 
 def slug(key: VariantKey) -> str:
     parts = [key.brand, *ordered_model_tokens(key.model_tokens)]
     if key.ram_gb:
         parts.append(str(key.ram_gb))
-    parts += [str(key.storage_gb), key.color]
+    if key.storage_gb:
+        parts.append(str(key.storage_gb))
+    if key.color:
+        parts.append(key.color)
     if key.sim_kind == "esim_only":
         parts.append("esim")
+    # Non-phone slugs are category-prefixed so a TV and a laptop can never
+    # claim the same URL. Phone slugs are left unchanged for DB compatibility
+    # (the existing ~1,400 rows key on the current format).
+    if key.category in NON_PHONE_CATEGORIES:
+        parts.insert(0, key.category)
     return "-".join(parts)
