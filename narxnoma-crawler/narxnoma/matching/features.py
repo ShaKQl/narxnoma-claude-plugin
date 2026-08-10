@@ -10,6 +10,7 @@ from narxnoma.matching.brands import (
 )
 from narxnoma.matching.categories import (
     CATEGORIES_WITH_MEMORY,
+    cut_at_processor,
     head_for_model,
     is_model_token,
 )
@@ -85,7 +86,7 @@ def _non_phone_model_tokens(
     so truncating here costs no identity field.
     """
     head = normalize(head_for_model(name or ""))
-    tokens = set(head.split())
+    tokens = set(cut_at_processor(head.split()))
     known_brands = set(_NON_PHONE_PROBE_ORDER)
     out: set[str] = set()
     for t in tokens:
@@ -97,10 +98,72 @@ def _non_phone_model_tokens(
             continue
         if t in reserved:
             continue
+        if _CYRILLIC_WORD.fullmatch(t):
+            # An appliance's model name is written in Latin -- "Shaxrisabz",
+            # "Naomi Pro", "Frost", "HD276FND". A Cyrillic WORD in the title is
+            # descriptive: a colour or finish the palette does not know
+            # ("Матовый", "Асфальт", "Мокрый"), or a Russian abbreviation for
+            # the appliance type ("Кп" for комбинированная плита, "Гп" for
+            # газовая плита).
+            #
+            # MEASURED: those three finish words alone split one fridge into
+            # three products -- "Artel Frost HD276FND", "... Матовый ...", and
+            # "... Асфальт Мокрый ..." -- at three different prices. Colour is
+            # deliberately NOT identity outside phones, so a colour word that
+            # merely escaped the palette must not become identity by accident.
+            #
+            # Enumerating every finish word cannot work: retailers invent them.
+            # The script is the reliable signal, and the failure direction is
+            # safe -- a product genuinely named in Cyrillic keeps its brand and
+            # any Latin tokens, and becomes unkeyable only if it has none.
+            continue
         if not is_model_token(t):
             continue
         out.add(t)
-    return out
+    return _collapse_to_catalogue_code(out)
+
+
+_CYRILLIC_WORD = re.compile(r"[а-я]+")
+
+# A manufacturer's catalogue code identifies exactly one product -- that is
+# what it is FOR. Seven characters is the floor measured across the live
+# catalogue: every real code observed is at least eight ("HD276FND",
+# "B392SMBB", "RT62K7110SL", "UE55DU7100UXUZ", "ARTSID3AW12BE"), while the
+# spec fragments that must not be mistaken for one are shorter ("i7", "16s",
+# "1255u", "a315", "ddr5").
+_CODE_MIN_LEN = 7
+
+
+def _is_catalogue_code(token: str) -> bool:
+    return (
+        len(token) >= _CODE_MIN_LEN
+        and any(c.isdigit() for c in token)
+        and any(c.isalpha() for c in token)
+    )
+
+
+def _collapse_to_catalogue_code(tokens: set[str]) -> set[str]:
+    """When a title states a catalogue code, the code IS the identity.
+
+    Retailers decorate the same code differently, and every decoration became
+    a separate product. All of these are ONE Samsung fridge:
+
+        "Холодильник Samsung RB29FERNDSA"
+        "Холодильник Samsung 290L RB29FERNDSA"     (capacity)
+        "Холодильник Samsung Inox RT62K7110SL"     (finish, in Latin)
+        "Холодильник LG Apzqcis Gn B392SMBB"       (an internal code fragment)
+        "Кондиционер Artel Everest ARTSID3AW12BE"  (product line)
+
+    Measured before this rule: 1,235 pairs where one variant's tokens were a
+    strict subset of another's in the same brand and category. The code cannot
+    collide -- two different products never share one -- so collapsing onto it
+    can only merge listings that genuinely are the same product.
+
+    A title with NO code keeps all its tokens: "Телевизор MoonX 32" and
+    "Кондиционер Midea Naomi Pro 09" have nothing else to be identified by.
+    """
+    codes = {t for t in tokens if _is_catalogue_code(t)}
+    return codes or tokens
 
 
 @dataclass(frozen=True)

@@ -156,13 +156,25 @@ def load_variant_keys(conn: psycopg.Connection) -> dict[VariantKey, UUID]:
     the answer must be exact. One is an attachment; two is a refusal.
     """
     with conn.cursor() as cur:
+        # `category` is part of the key and MUST be read back. Omitting it made
+        # every stored variant claim to be a smartphone, which is silent and
+        # expensive: display_name took the phone branch and dereferenced a NULL
+        # colour, is_wellformed applied the phone capacity guard to television
+        # diagonals, and the `known` map in cluster_offers could never match a
+        # freshly-built non-phone key -- so every TV, fridge and laptop was a
+        # candidate for being created a second time on every cycle.
+        # The write side of this was fixed earlier (upsert_variant omitted the
+        # column); the read side was missed.
         cur.execute(
-            "SELECT id, brand, model_tokens, ram_gb, storage_gb, color, sim_kind"
+            "SELECT id, brand, model_tokens, ram_gb, storage_gb, color, sim_kind,"
+            " coalesce(category, 'smartphones')"
             " FROM variant")
         return {
             VariantKey(brand=brand, model_tokens=frozenset(tokens), ram_gb=ram,
-                       storage_gb=storage, color=color, sim_kind=sim): vid
-            for vid, brand, tokens, ram, storage, color, sim in cur.fetchall()
+                       storage_gb=storage, color=color, sim_kind=sim,
+                       category=category): vid
+            for vid, brand, tokens, ram, storage, color, sim, category
+            in cur.fetchall()
         }
 
 
@@ -248,6 +260,34 @@ def delete_empty_malformed_variants(conn: psycopg.Connection, is_wellformed) -> 
                     (variant_id, variant_id))
                 removed += cur.rowcount
     return removed
+
+
+def delete_orphan_variants(conn: psycopg.Connection) -> int:
+    """Remove variants that no offer references at all.
+
+    NOT the same as a variant whose offers are out of stock. An offer row is
+    never deleted -- the tables are append-and-upsert -- so a variant with zero
+    offers can only be the residue of RE-KEYING: a parser or vocabulary change
+    moved every offer to a differently-named variant and left the old row
+    behind. schema.sql's decision to keep a real variant with a NULL price
+    covers out-of-stock, which still has offers pointing at it; this covers a
+    row that can never be reached again.
+
+    Measured after the category-identity change: 928 of 1,263 laptop variants
+    held no offers. They do not render -- every listing query inner-joins
+    variant_price, which aggregate deletes alongside them -- but they make the
+    variant count meaningless as a health signal, and the quality report's
+    "no offers at all" line is meant to be a small number worth reading.
+
+    Safe to run every cycle: upsert_variant recreates any of these on demand
+    from its deterministic slug, so deleting one is at worst undone next run.
+    """
+    with conn.transaction():
+        with conn.cursor() as cur:
+            cur.execute(
+                "DELETE FROM variant v"
+                " WHERE NOT EXISTS (SELECT 1 FROM offer o WHERE o.variant_id = v.id)")
+            return cur.rowcount
 
 
 def refresh_display_names(conn: psycopg.Connection) -> int:

@@ -113,8 +113,29 @@ UNITS: frozenset[str] = frozenset({
     "ips", "va", "tn",
 })
 
+# Processors and graphics. A laptop's CPU is a specification, not its name --
+# and it only reaches the tokens when the retailer omits the "/" delimiter that
+# usually fences the spec off. Measured: "Ноутбук Acer Aspire Snapdragon X1
+# 26100" became a different product from "Ноутбук Acer Aspire".
+#
+# Bare part numbers ("1334U", "26100", "N4405") are deliberately NOT listed:
+# they are indistinguishable from real model codes by shape, and the vendor
+# words below are enough to catch the titles that carry them.
+# "apple" is a BRAND, and "m1".."m4" are the identity of a MacBook -- an Air M4
+# is not an Air M2. Both are deliberately absent for the same reason "pro" and
+# "air" are absent from MARKETING.
+PROCESSORS: frozenset[str] = frozenset({
+    "intel", "amd", "qualcomm", "mediatek", "nvidia",
+    "snapdragon", "ryzen", "core", "celeron", "pentium", "athlon", "atom",
+    "i3", "i5", "i7", "i9", "u5", "u7", "u9",
+    "rtx", "gtx", "geforce", "radeon", "iris", "arc", "vega", "graphics",
+    "processor", "процессор", "видеокарта", "graphic",
+})
+
 #: Everything a non-phone model token must not be.
-NON_MODEL: frozenset[str] = CATEGORY_NOUNS | DESCRIPTORS | MARKETING | UNITS
+NON_MODEL: frozenset[str] = (
+    CATEGORY_NOUNS | DESCRIPTORS | MARKETING | UNITS | PROCESSORS
+)
 
 # Categories where a RAM/storage figure is a real specification. A laptop has
 # 16 GB and a 512 GB SSD; a television, fridge, oven, washer or air conditioner
@@ -150,6 +171,26 @@ def head_for_model(name: str) -> str:
     if not name:
         return ""
     return _SPEC_DELIMITERS.split(name, 1)[0]
+
+
+def cut_at_processor(tokens: list[str]) -> list[str]:
+    """Drop everything from the first processor word onward.
+
+    The "/" fence catches most laptop specifications, but retailers that omit
+    it run the spec straight on from the name:
+
+        "Ноутбук Acer Aspire Snapdragon X1 26100"
+        "Ноутбук ASUS Vivobook 17 X1704VA Core 5-120U 16GB 512GB"
+
+    A vendor word is a reliable marker that the name has ended, whereas the
+    part numbers after it ("x1", "26100", "5") are indistinguishable from real
+    model codes by shape -- which is why PROCESSORS lists only the words and
+    this function handles the rest positionally.
+    """
+    for i, t in enumerate(tokens):
+        if t in PROCESSORS:
+            return tokens[:i]
+    return tokens
 
 
 # Product-line names. Identity treats every model token alike, but a NAME has

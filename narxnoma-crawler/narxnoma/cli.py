@@ -97,6 +97,12 @@ def run_clustering(conn) -> tuple[int, int, int]:
         logging.info("reconciled: regenerated %d display names", renamed)
     rows = repository.load_unattached_offers(conn)
     result = cluster_offers(conn, (identify(row) for row in rows))
+    # After re-attachment, not before: a variant emptied by the reconcile above
+    # is often refilled by the clustering that follows, and deleting it first
+    # would churn its id (and its URL) for no reason.
+    orphaned = repository.delete_orphan_variants(conn)
+    if orphaned:
+        logging.info("removed %d variants no offer references any more", orphaned)
     recompute_variant_prices(conn)
     return result.attached, result.created_variants, result.unresolved
 
