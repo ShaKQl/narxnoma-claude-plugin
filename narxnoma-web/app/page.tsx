@@ -26,12 +26,13 @@ export default async function HomePage() {
   const catMap = new Map<string, { count: number; stores: number; min_price: number | null }>();
   for (const b of brandRows) {
     const cur = catMap.get(b.category) ?? { count: 0, stores: 0, min_price: null };
-    cur.count += b.count;
-    cur.stores = Math.max(cur.stores, b.stores);
+    // count(*) comes back as a bigint string from pg -- sum numerically,
+    // not by string concatenation.
+    cur.count += Number(b.count);
+    cur.stores = Math.max(cur.stores, Number(b.stores));
+    const p = b.min_price != null ? Number(b.min_price) : null;
     cur.min_price =
-      cur.min_price == null || (b.min_price != null && b.min_price < cur.min_price)
-        ? b.min_price
-        : cur.min_price;
+      cur.min_price == null || (p != null && p < cur.min_price) ? p : cur.min_price;
     catMap.set(b.category, cur);
   }
   // Deliberate order, not Map-insertion order: the grid is the front door and

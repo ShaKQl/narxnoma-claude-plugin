@@ -113,11 +113,13 @@ export default async function ProductPage({
             {[
               v.ram_gb != null ? `${v.ram_gb} ГБ ОЗУ` : null,
               v.storage_gb != null ? `${v.storage_gb} ГБ` : null,
-              v.sim_kind === "dual"
-                ? "2 SIM / eSIM"
-                : v.sim_kind === "esim_only"
-                  ? "eSIM"
-                  : null,
+              v.category === "smartphones"
+                ? v.sim_kind === "dual"
+                  ? "2 SIM / eSIM"
+                  : v.sim_kind === "esim_only"
+                    ? "eSIM"
+                    : null
+                : null,
             ]
               .filter(Boolean)
               .join(" · ")}

@@ -27,9 +27,11 @@ function specChips(v: VariantHit, lang: string) {
 
   if (v.ram_gb != null) chips.push(`${v.ram_gb} ${ram}`);
   if (v.storage_gb != null) chips.push(`${v.storage_gb} ${gb}`);
-  if (v.color) chips.push(colorRu(v.color));
-  if (v.sim_kind === "dual") chips.push("2 SIM");
-  else if (v.sim_kind === "esim_only") chips.push("eSIM");
+  if (v.color && v.category === "smartphones") chips.push(colorRu(v.color));
+  if (v.category === "smartphones") {
+    if (v.sim_kind === "dual") chips.push("2 SIM");
+    else if (v.sim_kind === "esim_only") chips.push("eSIM");
+  }
 
   return chips.map((c) => (
     <span className="spec" key={c}>
