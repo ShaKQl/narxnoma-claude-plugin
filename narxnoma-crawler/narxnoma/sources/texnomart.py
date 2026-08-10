@@ -8,13 +8,41 @@ the caller's query text.
 """
 from typing import Iterator
 
+import logging
+from dataclasses import replace
 from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
 from narxnoma.sources.http import get_json, polite_session
 from narxnoma.sources.not_a_phone import is_phone_listing
 
+logger = logging.getLogger(__name__)
+
 API_URL = "https://gw.texnomart.uz/api/common/v1/search/result"
 PRODUCT_URL = "https://texnomart.uz/product/detail/{id}/"
 SWEEP_QUERY = "smartfon"
+
+# Plan 5: category -> texnomart search query word + the product-type noun a
+# kept listing must carry. texnomart has no item category field, so a
+# non-phone sweep queries the category word and then ALLOW-lists (keeps only
+# titles containing that word) instead of running the phone denylist -- the
+# denylist would drop every "Телевизор"/"Ноутбук" title.
+CATEGORY_QUERY = {
+    "smartphones": "smartfon",
+    "televisions": "televizor",
+    "laptops": "noutbuk",
+    "acs": "konditsioner",
+    "fridges": "xolodilnik",
+    "washers": "stiraln",
+    "ovens": "duxovka",
+}
+CATEGORY_KEEP_WORD = {
+    "smartphones": None,  # phones use is_phone_listing instead
+    "televisions": "televizor",
+    "laptops": "noutbuk",
+    "acs": "konditsioner",
+    "fridges": "muzlatgich",
+    "washers": "kir yuvish",
+    "ovens": "duxovka",
+}
 LIMIT = 20
 
 _HEADERS = {
@@ -88,23 +116,34 @@ class TexnomartSource:
         yield from paginate(fetch, parse, following)
 
     def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
-        """Every phone texnomart returns for the generic query 'smartfon'.
+        """Every item texnomart returns for the category's query word.
 
         The filter is crawl POLICY and lives here, not in parse(): parse must
-        stay a faithful pure function of one response.
+        stay a faithful pure function of one response. Phones use the denylist
+        (is_phone_listing); non-phone categories allow-list -- keep only names
+        carrying the category's product-type noun -- so a TV sweep never
+        admits a phone and never drops a TV.
         """
+        query = CATEGORY_QUERY.get(category)
+        if query is None:
+            raise ValueError(f"unknown category {category!r}")
+        keep_word = CATEGORY_KEEP_WORD.get(category)
         kept = dropped = 0
-        for listing in self._paginate(SWEEP_QUERY):
-            if is_phone_listing(listing):
+        for listing in self._paginate(query):
+            if category == "smartphones":
+                keep = is_phone_listing(listing)
+            else:
+                keep = keep_word and keep_word.casefold() in listing.name_raw.casefold()
+            if keep:
+                if listing.category != category:
+                    listing = replace(listing, category=category)
                 kept += 1
                 yield listing
             else:
                 dropped += 1
-        # Logged rather than silent: if a texnomart naming change made this
-        # rule match everything, the sweep would empty and only this line
-        # would say why.
-        logger.info("texnomart sweep: %d phones kept, %d non-phones dropped",
-                    kept, dropped)
+        logger.info("texnomart sweep (%s): %d kept, %d dropped",
+                    category, kept, dropped)
+
 
     def search(self, query: str) -> Iterator[Listing]:
         yield from self._paginate(query)
