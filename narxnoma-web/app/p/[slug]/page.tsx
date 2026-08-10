@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { colorRu } from "@/lib/colors";
-import {
-  availabilityRu,
-  formatPrice,
-  pluralRu,
-  timeAgoRu,
-} from "@/lib/format";
+import { langFromCookie, plural, price, t, timeAgo } from "@/lib/i18n";
 import { getVariantPage } from "@/lib/queries";
 import SafeImg from "@/components/SafeImg";
 
@@ -28,7 +24,7 @@ const SWATCH_HEX: Record<string, string> = {
   yellow: "#d9b93f",
 };
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -40,7 +36,7 @@ export async function generateMetadata({
   return {
     title: page.variant ? page.variant.display_name : "Товар не найден",
     description: page.price?.min_price
-      ? `Цены на «${page.variant?.display_name}» в магазинах Узбекистана: от ${formatPrice(page.price.min_price)} в ${page.price.store_count} магазинах.`
+      ? `Цены на «${page.variant?.display_name}» в магазинах Узбекистана.`
       : undefined,
   };
 }
@@ -51,6 +47,7 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const lang = langFromCookie((await cookies()).get("lang")?.value);
   const page = await getVariantPage(slug);
   if (!page.variant) notFound();
 
@@ -66,25 +63,32 @@ export default async function ProductPage({
   const cheapestInStock = page.offers.find((o) => o.availability === "IN_STOCK");
   const cheapestUnknown = page.offers.find((o) => o.availability === "UNKNOWN");
 
+  const avail = (a: string) => {
+    if (a === "IN_STOCK") return { label: t(lang, "p.inStock"), cls: "in-stock" };
+    if (a === "OUT_OF_STOCK") return { label: t(lang, "p.outStock"), cls: "out-of-stock" };
+    return { label: t(lang, "p.unknown"), cls: "unknown" };
+  };
+  const catLabel = (c: string) =>
+    c === "smartphones" ? t(lang, "cat.smartphones") : c;
+
   return (
     <main>
       <div className="page">
         <div className="breadcrumbs">
-          <a href="/">Главная</a>
+          <a href="/">{lang === "uz" ? "Bosh sahifa" : "Главная"}</a>
           {" · "}
-          <a href={`/c/${v.category}`}>{v.category === "smartphones" ? "Смартфоны" : v.category}</a>
+          <a href={`/c/${v.category}`}>{catLabel(v.category)}</a>
           {" · "}
           <a href={`/c/${v.category}/${v.brand}`}>{v.brand}</a>
           {" · "}
           <span>{v.color ? colorRu(v.color) : "—"}</span>
         </div>
 
-        {stale && (
-          <div className="banner">
-            Цены проверены {timeAgoRu(newest)} — магазины могли успеть их
-            изменить. Мы показываем только то, что видели сами.
-          </div>
-        )}
+        {stale &&
+          (() => {
+            const ago = timeAgo(lang, newest!);
+            return <div className="banner">{t(lang, "p.stale", { t: ago })}</div>;
+          })()}
 
         <section className="product">
           {pr?.hero_image_url && (
@@ -99,21 +103,32 @@ export default async function ProductPage({
             {v.ram_gb != null && <b>{v.ram_gb} ГБ ОЗУ</b>}
             {" · "}
             <b>{v.storage_gb} ГБ</b>
-            {" · "}
-            {v.sim_kind === "dual" ? "2 SIM / eSIM" : "только eSIM"}
+            {v.sim_kind && (
+              <>
+                {" · "}
+                {v.sim_kind === "dual" ? "2 SIM / eSIM" : "eSIM"}
+              </>
+            )}
           </div>
 
           <div className="headline">
             <div>
               <div className="from">
-                от {pr ? pluralRu(pr.store_count, "магазина", "магазинов", "магазинов") : ""}{" "}
-                {pr && pr.store_count > 0 ? "· дешевле всего в" : ""}
+                {lang === "uz" ? "dan" : "от"}{" "}
+                {pr ? plural(lang, pr.store_count, "do'kon", "магазина", "магазинов", "магазинов") : ""}{" "}
+                {pr && pr.store_count > 0
+                  ? lang === "uz"
+                    ? "· eng arzoni"
+                    : "· дешевле всего в"
+                  : ""}
               </div>
-              <div className="big">{formatPrice(pr?.min_price ?? null)}</div>
+              <div className="big">{price(lang, pr?.min_price ?? null)}</div>
             </div>
             {pr?.min_offer_name && (
               <div className="provenance">
-                Цена принадлежит конкретному предложению:{" "}
+                {lang === "uz"
+                  ? "Narx aniq taklifga tegishli:"
+                  : "Цена принадлежит конкретному предложению:"}{" "}
                 <span className="q">
                   «{pr.min_offer_name}»{pr.min_store_name ? ` — ${pr.min_store_name}` : ""}
                 </span>
@@ -121,7 +136,7 @@ export default async function ProductPage({
                   <>
                     {" "}
                     <a href={`/api/out/${pr.min_offer_id ?? ""}`} style={{ textDecoration: "underline" }}>
-                      проверить в магазине
+                      {t(lang, "p.checkInStore")}
                     </a>
                   </>
                 )}
@@ -131,7 +146,7 @@ export default async function ProductPage({
 
           {page.siblings.length > 1 && (
             <div className="sibling-picker">
-              <h3>Другие цвета этой модели</h3>
+              <h3>{t(lang, "p.otherColors")}</h3>
               <div className="siblings">
                 {page.siblings.map((sib) => {
                   const cur = sib.id === v.id;
@@ -153,16 +168,16 @@ export default async function ProductPage({
                       {colorRu(sib.color)}
                       {sib.in_stock_offer_count > 0 ? (
                         <>
-                          <span className="sib-price">{formatPrice(sib.min_price)}</span>
+                          <span className="sib-price">{price(lang, sib.min_price)}</span>
                           {delta != null && !cur && (
                             <span className={`sib-delta ${delta < 0 ? "delta-down" : "delta-up"}`}>
                               {delta < 0 ? "−" : "+"}
-                              {formatPrice(Math.abs(delta))}
+                              {price(lang, Math.abs(delta))}
                             </span>
                           )}
                         </>
                       ) : (
-                        <span className="sib-soldout">нет в продаже</span>
+                        <span className="sib-soldout">{t(lang, "p.outOfStock")}</span>
                       )}
                     </a>
                   );
@@ -174,16 +189,17 @@ export default async function ProductPage({
 
         <section className="compare">
           <div className="compare-head">
-            <span>Магазин</span>
-            <span>Цена от</span>
-            <span>Диапазон предложений</span>
-            <span>Наличие и проверка</span>
+            <span>{lang === "uz" ? "Do'kon" : "Магазин"}</span>
+            <span>{lang === "uz" ? "Narx dan" : "Цена от"}</span>
+            <span>{lang === "uz" ? "Takliflar oralig'i" : "Диапазон предложений"}</span>
+            <span>{lang === "uz" ? "Mavjudligi" : "Наличие и проверка"}</span>
           </div>
 
           {page.stores.length === 0 && (
             <div className="empty" style={{ border: "none" }}>
-              Ни одно предложение по этой модели пока не найдено. Загляните позже —
-              каталог обновляется автоматически.
+              {lang === "uz"
+                ? "Bu model bo'yicha hozircha taklif yo'q. Keyinroq qarang — katalog avtomatik yangilanadi."
+                : "Ни одно предложение по этой модели пока не найдено. Загляните позже — каталог обновляется автоматически."}
             </div>
           )}
 
@@ -201,32 +217,34 @@ export default async function ProductPage({
                     <span className="store-badge">{s.store_slug}</span>
                     {s.store_name}
                   </span>
-                  <span className="store-cell-price">{formatPrice(s.min_p)}</span>
+                  <span className="store-cell-price">{price(lang, s.min_p)}</span>
                   <span className="store-cell-range">
                     {s.min_p != null && s.max_p != null && s.max_p > s.min_p
-                      ? `${formatPrice(s.min_p)} — ${formatPrice(s.max_p)}`
+                      ? `${price(lang, s.min_p)} — ${price(lang, s.max_p)}`
                       : s.median_p != null
-                        ? `медиана ${formatPrice(s.median_p)}`
+                        ? `${lang === "uz" ? "mediana" : "медиана"} ${price(lang, s.median_p)}`
                         : "—"}
                   </span>
                   <span className="store-cell-avail">
                     {hasStock ? (
-                      <span className="avail in-stock">в наличии</span>
+                      <span className="avail in-stock">{t(lang, "p.inStock")}</span>
                     ) : unkCount > 0 ? (
-                      <span className="avail unknown">наличие не указано</span>
+                      <span className="avail unknown">{t(lang, "p.unknown")}</span>
                     ) : (
-                      <span className="avail out-of-stock">нет в наличии</span>
+                      <span className="avail out-of-stock">{t(lang, "p.outStock")}</span>
                     )}
                     <span className="seen">
-                      {pluralRu(s.offers, "предложение", "предложения", "предложений")}
+                      {plural(lang, s.offers, "taklif", "предложение", "предложения", "предложений")}
                       {" · "}
-                      {s.last_seen ? `проверено ${timeAgoRu(s.last_seen)}` : ""}
+                      {s.last_seen
+                        ? `${lang === "uz" ? "oldin tekshirildi " : "проверено "} ${timeAgo(lang, s.last_seen)}`
+                        : ""}
                     </span>
                   </span>
                 </summary>
                 <div className="offers">
                   {storeOffers.map((o) => {
-                    const av = availabilityRu(o.availability);
+                    const av = avail(o.availability);
                     return (
                       <div className="offer" key={o.id}>
                         <span className="o-name">
@@ -238,14 +256,14 @@ export default async function ProductPage({
                             />
                           )}
                           {o.name_raw}
-                          <span className="avail" style={{ marginLeft: 8, ...(av.cls === "in-stock" ? {} : {}) }}>
+                          <span className={`avail ${av.cls}`} style={{ marginLeft: 8 }}>
                             {av.label}
                           </span>
                         </span>
-                        <span className="o-price">{formatPrice(o.price)}</span>
+                        <span className="o-price">{price(lang, o.price)}</span>
                         {o.url && (
                           <a className="o-go" href={`/api/out/${o.id}`} rel="nofollow noopener">
-                            В магазин →
+                            {lang === "uz" ? "Do'konga →" : "В магазин →"}
                           </a>
                         )}
                       </div>
@@ -260,17 +278,18 @@ export default async function ProductPage({
         <p style={{ color: "var(--muted-2)", fontSize: 13, paddingBottom: 40 }}>
           {cheapestInStock ? (
             <>
-              Дешевле всего — {cheapestInStock.store_name}: «
-              {cheapestInStock.name_raw}» за {formatPrice(cheapestInStock.price)}.
+              {lang === "uz"
+                ? `Eng arzoni — ${cheapestInStock.store_name}: «${cheapestInStock.name_raw}» ${price(lang, cheapestInStock.price)}.`
+                : `Дешевле всего — ${cheapestInStock.store_name}: «${cheapestInStock.name_raw}» за ${price(lang, cheapestInStock.price)}.`}
             </>
           ) : cheapestUnknown ? (
             <>
-              Самая низкая цена — {cheapestUnknown.store_name}: «
-              {cheapestUnknown.name_raw}» за {formatPrice(cheapestUnknown.price)}.
-              Магазин не указывает наличие.
+              {lang === "uz"
+                ? `Eng past narx — ${cheapestUnknown.store_name}: «${cheapestUnknown.name_raw}» ${price(lang, cheapestUnknown.price)}. Do'kon mavjudligini ko'rsatmaydi.`
+                : `Самая низкая цена — ${cheapestUnknown.store_name}: «${cheapestUnknown.name_raw}» за ${price(lang, cheapestUnknown.price)}. Магазин не указывает наличие.`}
             </>
           ) : (
-            "Предложений в наличии нет."
+            (lang === "uz" ? "Sotuvda taklif yo'q." : "Предложений в наличии нет.")
           )}
         </p>
       </div>

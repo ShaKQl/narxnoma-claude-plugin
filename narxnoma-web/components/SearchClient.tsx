@@ -4,14 +4,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Facets from "./Facets";
 import SearchBox from "./SearchBox";
 import VariantCard from "./VariantCard";
-import { pluralRu } from "@/lib/format";
+import { useLang } from "./LangProvider";
+import { plural, t } from "@/lib/i18n";
 import type { SearchResult } from "@/lib/queries";
 
-const SORTS: { key: string; label: string }[] = [
-  { key: "relevance", label: "по релевантности" },
-  { key: "price_asc", label: "сначала дешевле" },
-  { key: "price_desc", label: "сначала дороже" },
-  { key: "stores", label: "по числу магазинов" },
+const SORTS: { key: string }[] = [
+  { key: "relevance" },
+  { key: "price_asc" },
+  { key: "price_desc" },
+  { key: "stores" },
 ];
 
 /**
@@ -29,6 +30,7 @@ export default function SearchClient({
   initialQs: string;
   initialRawQ: string;
 }) {
+  const lang = useLang();
   const [res, setRes] = useState<SearchResult>(initialResult);
   const [qs, setQs] = useState(initialQs);
   const [loading, setLoading] = useState(false);
@@ -95,7 +97,7 @@ export default function SearchClient({
       </div>
       <div className="search-layout">
         <details className="facets-mobile">
-          <summary>Фильтры</summary>
+          <summary>{t(lang, "facet.filters")}</summary>
           <Facets
             f={res.facets}
             applied={res.applied}
@@ -114,11 +116,11 @@ export default function SearchClient({
           <div className="result-head">
             <h2>
               {res.applied.q
-                ? `«${initialRawQ}» — ${pluralRu(res.total, "результат", "результата", "результатов")}`
-                : pluralRu(res.total, "модель", "модели", "моделей")}
-              {loading && <span className="count"> · обновляем…</span>}
+                ? `«${initialRawQ}» — ${plural(lang, res.total, "natija", "результат", "результата", "результатов")}`
+                : plural(lang, res.total, "model", "модель", "модели", "моделей")}
+              {loading && <span className="count"> · {t(lang, "res.updating")}</span>}
             </h2>
-            <span className="count">обновлено из базы</span>
+            <span className="count">{t(lang, "stat.updated")}</span>
           </div>
           <div className="sort-bar">
             {SORTS.map((s) => (
@@ -134,7 +136,7 @@ export default function SearchClient({
                 }
                 type="button"
               >
-                {s.label}
+                {t(lang, `sort.${s.key}`)}
               </button>
             ))}
           </div>
@@ -143,11 +145,8 @@ export default function SearchClient({
 
           {res.hits.length === 0 ? (
             <div className="empty">
-              <p>По запросу «{initialRawQ}» ничего не найдено.</p>
-              <p style={{ marginTop: 8 }}>
-                Попробуйте другое написание — например, «iPhone 17» или «Redmi
-                Note 15».
-              </p>
+              <p>{t(lang, "res.empty", { q: initialRawQ })}</p>
+              <p style={{ marginTop: 8 }}>{t(lang, "res.emptyHint")}</p>
             </div>
           ) : (
             <>

@@ -1,7 +1,8 @@
 "use client";
 
 import { COLORS, colorRu } from "@/lib/colors";
-import { formatPrice } from "@/lib/format";
+import { price, t } from "@/lib/i18n";
+import { useLang } from "./LangProvider";
 import type { SearchResult } from "@/lib/queries";
 
 function toggle(list: string[], v: string): string[] {
@@ -27,6 +28,7 @@ export default function Facets({
   className?: string;
 }) {
   const sp = new URLSearchParams(q);
+  const lang = useLang();
 
   const patch = (p: Record<string, string | null>) => {
     for (const [k, v] of Object.entries(p)) {
@@ -57,15 +59,15 @@ export default function Facets({
   return (
     <aside className={`facets ${className}`.trim()}>
       <div className="facet-group">
-        <h3>Только сравнимые</h3>
+        <h3>{t(lang, "facet.onlyComparable")}</h3>
         <label className="facet-row">
           <input type="checkbox" checked={applied.multiStore} onChange={setMulti} />
-          <span className="f-label">2+ магазина</span>
+          <span className="f-label">{t(lang, "facet.multi")}</span>
         </label>
       </div>
 
       <div className="facet-group">
-        <h3>Бренд</h3>
+        <h3>{t(lang, "facet.brand")}</h3>
         {f.brands.map((b) => (
           <label className="facet-row" key={b.value}>
             <input
@@ -80,7 +82,7 @@ export default function Facets({
       </div>
 
       <div className="facet-group">
-        <h3>Цвет</h3>
+        <h3>{t(lang, "facet.color")}</h3>
         {f.colors.map((c) => {
           const key = String(c.value);
           return (
@@ -99,7 +101,7 @@ export default function Facets({
       </div>
 
       <div className="facet-group">
-        <h3>Оперативная память</h3>
+        <h3>{t(lang, "facet.ram")}</h3>
         {f.rams.map((r) => {
           const key = r == null ? "none" : String(r);
           return (
@@ -110,7 +112,7 @@ export default function Facets({
                 onChange={() => setRam(key)}
               />
               <span className="f-label">
-                {r == null ? "не указана" : `${r} ГБ`}
+                {r == null ? t(lang, "facet.none") : `${r} ГБ`}
               </span>
               <span className="f-count">{f.ramCounts[key] ?? 0}</span>
             </label>
@@ -120,7 +122,7 @@ export default function Facets({
 
       {f.priceBands.length > 0 && (
         <div className="facet-group">
-          <h3>Цена</h3>
+          <h3>{t(lang, "facet.price")}</h3>
           {f.priceBands.map((b) => (
             <label className="facet-row" key={b.lo}>
               <input
@@ -129,7 +131,7 @@ export default function Facets({
                 onChange={() => setBand(b.lo)}
               />
               <span className="f-label">
-                {formatPrice(b.lo)} — {formatPrice(b.hi)}
+                {price(lang, b.lo)} — {price(lang, b.hi)}
               </span>
               <span className="f-count">{b.count}</span>
             </label>

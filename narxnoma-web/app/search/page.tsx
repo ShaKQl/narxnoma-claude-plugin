@@ -3,7 +3,7 @@ import SearchClient from "@/components/SearchClient";
 import { parseSearchParams } from "@/lib/searchParams";
 import { searchVariants } from "@/lib/queries";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = { title: "Поиск" };
 

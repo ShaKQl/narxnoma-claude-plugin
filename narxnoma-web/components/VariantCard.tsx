@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { colorRu } from "@/lib/colors";
-import { formatPrice, pluralRu } from "@/lib/format";
+import { price, plural } from "@/lib/i18n";
+import { useLang } from "./LangProvider";
 import type { VariantHit } from "@/lib/queries";
 
 /**
@@ -12,6 +13,7 @@ import type { VariantHit } from "@/lib/queries";
  * collapse to the brand placeholder.
  */
 export default function VariantCard({ v }: { v: VariantHit }) {
+  const lang = useLang();
   const delta =
     v.median_price != null && v.min_price != null
       ? v.median_price - v.min_price
@@ -23,7 +25,7 @@ export default function VariantCard({ v }: { v: VariantHit }) {
         {v.store_count >= 2 && (
           <span className="stores-n">
             <b>{v.store_count}</b>{" "}
-            {pluralRu(v.store_count, "магазин", "магазина", "магазинов")}
+            {plural(lang, v.store_count, "do'kon", "магазин", "магазина", "магазинов")}
           </span>
         )}
       </div>
@@ -62,12 +64,12 @@ export default function VariantCard({ v }: { v: VariantHit }) {
       </div>
       <div className="card-price-row">
         <span className="price">
-          <span className="from">от&nbsp;</span>
-          {formatPrice(v.min_price)}
+          <span className="from">{lang === "uz" ? "dan " : "от "}</span>
+          {price(lang, v.min_price)}
         </span>
         {delta != null && delta > 0 && (
           <span className="stores-n">
-            медиана <b>{formatPrice(v.median_price)}</b>
+            {lang === "uz" ? "mediana" : "медиана"} <b>{price(lang, v.median_price)}</b>
           </span>
         )}
       </div>

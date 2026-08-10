@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { formatPrice } from "@/lib/format";
+import { useLang } from "./LangProvider";
+import { price, t } from "@/lib/i18n";
 
 interface Suggestion {
   slug: string;
@@ -19,6 +20,7 @@ export default function SearchBox({
   big?: boolean;
 }) {
   const router = useRouter();
+  const lang = useLang();
   const [q, setQ] = useState(initial);
   const [sugg, setSugg] = useState<Suggestion[]>([]);
   const [open, setOpen] = useState(false);
@@ -69,17 +71,21 @@ export default function SearchBox({
           onChange={(e) => setQ(e.target.value)}
           onFocus={() => q.trim().length >= 2 && setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
-          placeholder="Смартфон, модель или бренд — например, iPhone 17"
-          aria-label="Название товара"
+          placeholder={
+            lang === "uz"
+              ? "Smartfon, model yoki brend — masalan, iPhone 17"
+              : "Смартфон, модель или бренд — например, iPhone 17"
+          }
+          aria-label={t(lang, "search.ph")}
           autoFocus={big}
         />
-        <button type="submit">Найти</button>
+        <button type="submit">{t(lang, "search.go")}</button>
       </form>
       {open && (sugg.length > 0 || brands.length > 0) && (
         <div className="suggest">
           {brands.length > 0 && (
             <>
-              <div className="s-brand">Бренды</div>
+              <div className="s-brand">{lang === "uz" ? "Brendlar" : "Бренды"}</div>
               {brands.map((b) => (
                 <a key={b} href={`/search?q=${encodeURIComponent(b)}`}>
                   <span className="s-name">{b}</span>
@@ -92,7 +98,8 @@ export default function SearchBox({
               <span className="s-name">{s.display_name}</span>
               <span className="s-meta">
                 {" "}
-                · от {formatPrice(s.min_price)} · {s.store_count} магазинов
+                · {lang === "uz" ? "dan" : "от"} {price(lang, s.min_price)} ·{" "}
+                {s.store_count} {lang === "uz" ? "do'kon" : "магазинов"}
               </span>
             </a>
           ))}

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { formatPrice, pluralRu } from "@/lib/format";
+import { cookies } from "next/headers";
+import { langFromCookie, plural, price, t } from "@/lib/i18n";
 import { getBrandsByCategory } from "@/lib/queries";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -20,17 +21,22 @@ export default async function CategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
+  const lang = langFromCookie((await cookies()).get("lang")?.value);
   const rows = (await getBrandsByCategory()).filter(
     (r) => r.category === category
   );
+  const catLabel = (c: string) =>
+    c === "smartphones" ? t(lang, "cat.smartphones") : c;
   return (
     <main>
       <div className="page">
         <section className="sec">
-          <h1>{category === "smartphones" ? "Смартфоны" : category}</h1>
+          <h1>{catLabel(category)}</h1>
           <p className="sub">
-            {pluralRu(rows.length, "бренд", "бренда", "брендов")} — цены из 7
-            магазинов Узбекистана, каждая проверяется автоматически.
+            {plural(lang, rows.length, "brend", "бренд", "бренда", "брендов")} —{" "}
+            {lang === "uz"
+              ? "O'zbekistonning 7 do'konidagi narxlar, har biri avtomatik tekshiriladi."
+              : "цены из 7 магазинов Узбекистана, каждая проверяется автоматически."}
           </p>
           <div className="brand-grid">
             {rows.map((b) => (
@@ -41,8 +47,9 @@ export default async function CategoryPage({
               >
                 <span className="b-name">{b.brand}</span>
                 <span className="b-meta">
-                  {pluralRu(b.count, "модель", "модели", "моделей")}
-                  {b.min_price != null && ` · от ${formatPrice(b.min_price)}`}
+                  {plural(lang, b.count, "model", "модель", "модели", "моделей")}
+                  {b.min_price != null &&
+                    ` · ${lang === "uz" ? "dan" : "от"} ${price(lang, b.min_price)}`}
                 </span>
               </Link>
             ))}
