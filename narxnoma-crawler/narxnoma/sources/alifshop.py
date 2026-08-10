@@ -41,6 +41,7 @@ falls back to the old unfiltered sweep for that brand rather than yielding
 nothing.
 """
 import logging
+from dataclasses import replace
 from typing import Iterator
 
 from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
@@ -172,6 +173,41 @@ def phone_category_from_aggregations(payload: dict) -> str | None:
     return best["key"]
 
 
+# Plan 5: category -> the string alifshop's category facet uses to name that
+# bucket (verified live 2026-08-10). We match by the fragment shown, then
+# pick the largest doc_count bucket among matches.
+CATEGORY_BUCKET_KEYWORD = {
+    "smartphones": "смартфон",
+    "televisions": "телевизор",
+    "laptops": "ноутбук",
+    "acs": "кондиционер",
+    "fridges": "холодильник",
+    "washers": "стиральн",
+    "ovens": "духов",
+}
+
+
+def category_from_aggregations(payload: dict, keyword: str) -> str | None:
+    """Pick the matching bucket out of a response's category facet.
+
+    Same discovery contract as phone_category_from_aggregations but for any
+    category fragment: the bucket keys are display strings, so the value is
+    discovered per query rather than hardcoded. The largest doc_count bucket
+    whose key contains the (casefolded) fragment wins.
+    """
+    terms = (((payload or {}).get("aggregations") or {}).get("category") or {}).get("terms") or []
+    matches = [
+        term for term in terms
+        if isinstance(term, dict)
+        and isinstance(term.get("key"), str)
+        and keyword.casefold() in term["key"].casefold()
+    ]
+    if not matches:
+        return None
+    best = max(matches, key=lambda term: term.get("doc_count") or 0)
+    return best["key"]
+
+
 class AlifshopSource:
     slug = "alifshop"
     can_sweep = True
@@ -196,53 +232,60 @@ class AlifshopSource:
         return post_json(session, API_URL, json=body)
 
     def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
-        """Every phone alifshop returns across a fixed list of brand
-        queries, walking pagination up to n_pages or MAX_PAGES per brand
-        (see module docstring). Deduplicated by source_key across brand
-        queries -- not across sellers -- since the same listing can
-        surface under more than one brand query (e.g. a "Redmi" phone
-        matching both the "xiaomi" and "redmi" queries), but distinct
-        seller offers of the same phone must each survive as their own
-        listing.
+        """Every item alifshop returns across a fixed list of brand queries,
+        walking pagination up to n_pages or MAX_PAGES per brand.
 
         Per brand: fetch page 0 unfiltered (one request, doubles as both
         the first page of items and the aggregation used to find the
-        phones bucket -- see phone_category_from_aggregations), then
-        re-request page 0 *with* the discovered `category` and paginate
-        that filtered result set. That costs one extra request per brand
-        and removes roughly two-thirds of the sweep's non-phone noise
-        (measured: "Samsung" 1,034 -> 690 items, 52 -> 35 pages). If no
-        phone-like bucket is found, log a warning naming the brand and
-        fall back to the unfiltered sweep, so a retailer renaming its
-        buckets degrades to the old behaviour rather than to an empty
-        catalogue.
+        category's bucket -- see category_from_aggregations), then re-request
+        page 0 *with* the discovered `category` bucket and paginate that
+        filtered result set. If no matching bucket is found, fall back to the
+        unfiltered sweep. The phone denylist (is_phone_listing) applies ONLY
+        to the smartphones sweep -- running it on a TV sweep would drop every
+        "телевизор"/"ноутбук" title. Every listing is tagged with the sweep's
+        category.
         """
+        keyword = CATEGORY_BUCKET_KEYWORD.get(category)
+        if keyword is None:
+            raise ValueError(f"unknown category {category!r}")
         seen: set[str] = set()
         for query in BRAND_QUERIES:
             first_payload = self._fetch(query, 0)
-            category = phone_category_from_aggregations(first_payload)
-            if category:
+            bucket = category_from_aggregations(first_payload, keyword)
+            if bucket:
                 logger.info(
-                    "alifshop: narrowing brand query %r to category %r", query, category
+                    "alifshop: narrowing brand query %r (>=%s bucket) to %r",
+                    query, category, bucket,
                 )
-                payload = self._fetch(query, 0, category=category)
-            else:
+                payload = self._fetch(query, 0, category=bucket)
+            elif category == "smartphones":
                 logger.warning(
-                    "alifshop: no phone category bucket for %r -- sweeping "
-                    "unfiltered and relying on is_phone_listing", query,
+                    "alifshop: no %s category bucket for %r -- sweeping unfiltered",
+                    category, query,
                 )
                 payload = first_payload
+            else:
+                # Honesty over coverage: falling back to the unfiltered sweep
+                # for a NON-phone category would tag phones (from an "apple"
+                # brand query, say) as TVs/ACs. Skip the brand instead.
+                logger.warning(
+                    "alifshop: no %s category bucket for %r -- skipping brand (no unfiltered fallback for non-phone categories)",
+                    category, query,
+                )
+                continue
 
             def fetch(page):
-                return self._fetch(query, page, category=category)
+                return self._fetch(query, page, category=bucket)
 
             def parse_page(payload):
                 for listing in parse(payload):
                     if listing.source_key in seen:
                         continue
-                    if not is_phone_listing(listing):
+                    if category == "smartphones" and not is_phone_listing(listing):
                         continue
                     seen.add(listing.source_key)
+                    if listing.category != category:
+                        listing = replace(listing, category=category)
                     yield listing
 
             def following(payload, page):
@@ -252,6 +295,7 @@ class AlifshopSource:
 
             yield from paginate(fetch, parse_page, following, first_page=0,
                                 max_pages=MAX_PAGES)
+
 
     def search(self, query: str) -> Iterator[Listing]:
         payload = self._fetch(query, 0)
