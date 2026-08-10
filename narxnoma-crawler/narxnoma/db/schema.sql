@@ -170,3 +170,14 @@ INSERT INTO store (slug, name, website_url) VALUES
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO schema_version (version) VALUES (3) ON CONFLICT (version) DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Migration 4: radius.uz, the ninth source. Appended for the same reason
+-- migration 3 was -- see the comment there.
+-- ---------------------------------------------------------------------------
+
+INSERT INTO store (slug, name, website_url) VALUES
+    ('radius', 'Radius', 'https://radius.uz')
+ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO schema_version (version) VALUES (4) ON CONFLICT (version) DO NOTHING;

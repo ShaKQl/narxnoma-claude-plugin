@@ -1,0 +1,1108 @@
+{
+ "data": {
+  "category": {
+   "slug": "smartfony",
+   "products": {
+    "totalCount": 77,
+    "pageInfo": {
+     "hasNextPage": true,
+     "endCursor": "YXJyYXljb25uZWN0aW9uOjE5"
+    },
+    "edges": [
+     {
+      "node": {
+       "id": "UHJvZHVjdDo3Mzk0",
+       "name": "HUAWEI Nova Y61",
+       "slug": "huawei-nova-y61",
+       "isAvailable": true,
+       "brand": {
+        "name": "Huawei"
+       },
+       "category": {
+        "slug": "smartfony-huawei"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTEwNDI="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTEwNDI=",
+         "name": "HUAWEI Nova Y61 4/64GB Черный",
+         "sku": "nova Y61",
+         "priceAmount": 1959000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/f58301e86deb450bbfcc20b5380ac1da.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTEwNTA=",
+         "name": "HUAWEI Nova Y61 6/64GB Черный",
+         "sku": "SKU-11050",
+         "priceAmount": 1397000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/f58301e86deb450bbfcc20b5380ac1da.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTEwNjY=",
+         "name": "HUAWEI Nova Y61 6/64GB Зеленый",
+         "sku": "SKU-11066",
+         "priceAmount": 1397000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/37c758eb7ec342fe88145b420b7a24c9.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 1397000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/37c758eb7ec342fe88145b420b7a24c9.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo3MzU5",
+       "name": "HUAWEI Nova Y61 Cиний",
+       "slug": "huawei-nova-y61-cinii",
+       "isAvailable": true,
+       "brand": {
+        "name": "Huawei"
+       },
+       "category": {
+        "slug": "smartfony-huawei"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTA5NzQ="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTEwNDA=",
+         "name": "HUAWEI Nova Y61 6/64GB Cиний",
+         "sku": "SKU-11040",
+         "priceAmount": 1397000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/d574e45c04034fb6a73fa1afa5c5973e.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 1397000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/d574e45c04034fb6a73fa1afa5c5973e.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo2Mzc2",
+       "name": "Honor 200 Lite 5G",
+       "slug": "honor-200-lite-5g",
+       "isAvailable": true,
+       "brand": {
+        "name": "Honor"
+       },
+       "category": {
+        "slug": "smartfony-honor"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6OTcwNw=="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6OTcwNw==",
+         "name": "Honor 200 Lite 5G 8/256GB Cyan Lake",
+         "sku": "SKU-9707",
+         "priceAmount": 3677000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/bd9437e15fca4816a1f05cd8b27de793.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 3677000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/bd9437e15fca4816a1f05cd8b27de793.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4ODgw",
+       "name": "S26 5G base",
+       "slug": "s26-base",
+       "isAvailable": true,
+       "brand": {
+        "name": "Samsung"
+       },
+       "category": {
+        "slug": "smartfony-samsung"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTI5MDU="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI5MDY=",
+         "name": "Смартфон Samsung Galaxy S26 5G 12/256GB Black (Черный)",
+         "sku": "SM-S942BZKCSOZ",
+         "priceAmount": 11699000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/e09634f99b3e4aa1bd44b46c185f3814.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI5MDU=",
+         "name": "Смартфон Samsung Galaxy S26 5G 12/256GB White (Белый)",
+         "sku": "SM-S942BZWCSOZ",
+         "priceAmount": 11699000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/59def7cdf5d8439e8706a2cde2ca33cb.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI5MDc=",
+         "name": "Смартфон Samsung Galaxy S26 5G 12/512GB Black (Черный)",
+         "sku": "SM-S942BZKQSOZ",
+         "priceAmount": 13199000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/e09634f99b3e4aa1bd44b46c185f3814.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI5MDg=",
+         "name": "Смартфон Samsung Galaxy S26 5G 12/256GB Cobalt Violet (Фиолетовый)",
+         "sku": "SM-S942BZVCSOZ",
+         "priceAmount": 11699000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/c532523eff884e6eae7e18ba9f365362.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 11699000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/ae4892e37d90497e8f382e04af1c438d.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDozNzEw",
+       "name": "Samsung Galaxy A26",
+       "slug": "samsung-galaxy-a26",
+       "isAvailable": true,
+       "brand": {
+        "name": "Samsung"
+       },
+       "category": {
+        "slug": "smartfony-samsung"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6NjI4NA=="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6NjI4NA==",
+         "name": "Смартфон Samsung Galaxy A26 5G 8/256GB Black (Черный)",
+         "sku": "SM-A266BZKHSOZ",
+         "priceAmount": 5148000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/c857e20c7abf4b129034d0b55ee6f578.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6NjI4NQ==",
+         "name": "Смартфон Samsung Galaxy A26 5G 6/128GB White (Белый)",
+         "sku": "SM-A266BZWDSOZ",
+         "priceAmount": 4428000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/8294e254dca444c5800a4bcd9f6a91b9.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6ODQ0NA==",
+         "name": "Смартфон Samsung Galaxy A26 5G 8/256GB Light Green (Зеленый)",
+         "sku": "SM-A266BLGHSOZ",
+         "priceAmount": 4199000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/1b1e4bf7165e4592a141b3773ee17f81.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 3599000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/065dfcb1b9cb4b34a4dcaacac277ed1d.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo1NDk0",
+       "name": "Samsung Galaxy A36",
+       "slug": "samsung-galaxy-a36",
+       "isAvailable": true,
+       "brand": {
+        "name": "Samsung"
+       },
+       "category": {
+        "slug": "smartfony-samsung"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6ODQzNA=="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6ODQzNA==",
+         "name": "Смартфон Samsung Galaxy A36 5G 8/256GB White (Белый)",
+         "sku": "SM-A366EZAGSOZ",
+         "priceAmount": 4783000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/f268115610d449bb82d9745dd4097bfe.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 4141000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/a4713872d8a54c289717b8a4c2c76966.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4NDc5",
+       "name": "Xiaomi Redmi 15 EU",
+       "slug": "xiaomi-redmi-15-eu",
+       "isAvailable": true,
+       "brand": {
+        "name": "Xiaomi"
+       },
+       "category": {
+        "slug": "smartfony-redmi"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTIzNDI="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTIzNDI=",
+         "name": "Смартфон Xiaomi Redmi 15 EU 6/128GB Midnight Black (Черный)",
+         "sku": "SKU-12342",
+         "priceAmount": 2199000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/d32b43ff3eab45c1acafe3d122352e01.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTIzNDM=",
+         "name": "Смартфон Xiaomi Redmi 15 EU 8/256GB Midnight Black (Черный)",
+         "sku": "SKU-12343",
+         "priceAmount": 2699000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/d32b43ff3eab45c1acafe3d122352e01.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTIzNDU=",
+         "name": "Смартфон Xiaomi Redmi 15 EU 8/128GB Midnight Black (Черный)",
+         "sku": "SKU-12345",
+         "priceAmount": 2299000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/d32b43ff3eab45c1acafe3d122352e01.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 2199000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/56f95463f3ef442280a098304e8c98e6.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4NDc4",
+       "name": "Xiaomi Redmi 15 EU Titan",
+       "slug": "xiaomi-redmi-15-eu-titan",
+       "isAvailable": true,
+       "brand": {
+        "name": "Xiaomi"
+       },
+       "category": {
+        "slug": "smartfony-redmi"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTIzNDA="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTIzNDA=",
+         "name": "Смартфон Xiaomi Redmi 15 EU 6/128GB Titan Gray (Серый)",
+         "sku": "SKU-12340",
+         "priceAmount": 2199000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/4d042029695e4dd09f65ac4fd57a1357.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTIzNDc=",
+         "name": "Смартфон Xiaomi Redmi 15 EU 8/256GB Titan Gray (Серый)",
+         "sku": "SKU-12347",
+         "priceAmount": 2699000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/4d042029695e4dd09f65ac4fd57a1357.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 2199000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/37972c80df5e416f850ca05a11212ade.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo0OTc5",
+       "name": "ZTE Blade A55",
+       "slug": "zte-blade-a55",
+       "isAvailable": true,
+       "brand": {
+        "name": "ZTE"
+       },
+       "category": {
+        "slug": "smartfony-zte"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTA5MzI="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTEwNzY=",
+         "name": "ZTE Blade A55 4/64 Black",
+         "sku": "SKU-11076",
+         "priceAmount": 1616000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/5beff2c6c5c24a448841e2eabf92e21a.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 1616000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/6cd57a7bc12b42a3a0d698f04880a384.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4NjY3",
+       "name": "ZTE Blade A76",
+       "slug": "zte-blade-a76",
+       "isAvailable": true,
+       "brand": {
+        "name": "ZTE"
+       },
+       "category": {
+        "slug": "smartfony-zte"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTI1ODk="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI1ODk=",
+         "name": "ZTE Blade A76 4/128 Серый",
+         "sku": "SKU-12589",
+         "priceAmount": 1591000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/0d5466b92b9b44899c505ca819274a54.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 1591000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/0d5466b92b9b44899c505ca819274a54.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo0OTc0",
+       "name": "realme C25Y",
+       "slug": "realme-c25y",
+       "isAvailable": true,
+       "brand": {
+        "name": "Realme"
+       },
+       "category": {
+        "slug": "smartfony-realme"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6NzgwMw=="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTA4NTI=",
+         "name": "realme C25Y 4/64GB серый",
+         "sku": "SKU-10852",
+         "priceAmount": 1306000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/2c55155c2ab841e9ac3480d763a4f12d.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTA4NTM=",
+         "name": "realme C25Y 4/128GB серый",
+         "sku": "SKU-10853",
+         "priceAmount": 1641000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/2c55155c2ab841e9ac3480d763a4f12d.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTA4NTU=",
+         "name": "realme C25Y 4/64GB синий",
+         "sku": "SKU-10855",
+         "priceAmount": 1306000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/b9a598fb1592405c82133675636b475b.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 1162000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/3a428c1b976a4aa28207e793eb2a9ddc.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo3Mjc5",
+       "name": "vivo Y15s",
+       "slug": "vivo-y15s",
+       "isAvailable": true,
+       "brand": {
+        "name": "Vivo"
+       },
+       "category": {
+        "slug": "smartfony"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTA4NjE="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTA4NjI=",
+         "name": "vivo Y15s 3/32GB зеленый",
+         "sku": "SKU-10862",
+         "priceAmount": 1212000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/62831ad3af2d4500a799fe942e98649a.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 1212000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/62831ad3af2d4500a799fe942e98649a.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo3MzYx",
+       "name": "Смартфон Honor 400 Lite Velvet",
+       "slug": "smartfon-honor-400-lite-velvet",
+       "isAvailable": true,
+       "brand": {
+        "name": "Honor"
+       },
+       "category": {
+        "slug": "smartfony-honor"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTA5Nzc="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTA5Nzc=",
+         "name": "Смартфон Honor 400 Lite 5G 8/256GB Velvet Black (Черный)",
+         "sku": "SKU-10977",
+         "priceAmount": 3549000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/05955d68c31f48f6bd7427152d4de39f.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTEwMTQ=",
+         "name": "Смартфон Honor 400 Lite 5G 8/256GB Velvet Grey (Серый)",
+         "sku": "SKU-11014",
+         "priceAmount": 3549000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/e84a76f6623e4723a1657ac968ae0505.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 3549000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/5280048840994338b17c9bc0ff5a305f.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MjEz",
+       "name": "Смартфон Honor 600",
+       "slug": "smartfon-honor-600",
+       "isAvailable": true,
+       "brand": {
+        "name": "Honor"
+       },
+       "category": {
+        "slug": "smartfony-honor"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTMyOTM="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMyOTM=",
+         "name": "Смартфон Honor 600 8/256GB Black (Черный)",
+         "sku": null,
+         "priceAmount": 7299000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 7,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/53d695f29fe34e24af5192c1af428bb5.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMyOTE=",
+         "name": "Смартфон Honor 600 8/256GB Orange (Оранжевый)",
+         "sku": null,
+         "priceAmount": 7299000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 12,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/fc220b03265e49ca883528a9f66a9c3e.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 7299000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/26518199c7f14567b4575700a793f27d.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4OTQ1",
+       "name": "Смартфон Honor 600 Lite",
+       "slug": "smartfon-honor-600-lite",
+       "isAvailable": true,
+       "brand": {
+        "name": "Honor"
+       },
+       "category": {
+        "slug": "smartfony-honor"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTI5ODY="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI5ODY=",
+         "name": "Смартфон Honor 600 Lite 8/256GB Black (Черный)",
+         "sku": null,
+         "priceAmount": 5199000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 5,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/3606ac7dcbde46ecac13381f75e63f97.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI5ODc=",
+         "name": "Смартфон Honor 600 Lite 8/256GB Gold (Золотой)",
+         "sku": null,
+         "priceAmount": 5199000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 8,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/b6659d99fc4548969c13b3ee1498f94b.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI5ODk=",
+         "name": "Смартфон Honor 600 Lite 8/256GB Grey (Серый)",
+         "sku": null,
+         "priceAmount": 5199000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 9,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/3dcd5a7a44464f9583fc3d3ff2c5c1bd.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 5199000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/3dcd5a7a44464f9583fc3d3ff2c5c1bd.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MjE1",
+       "name": "Смартфон Honor 600 Pro",
+       "slug": "smartfon-honor-600-pro",
+       "isAvailable": true,
+       "brand": {
+        "name": "Honor"
+       },
+       "category": {
+        "slug": "smartfony-honor"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTMyOTU="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMyOTU=",
+         "name": "Смартфон Honor 600 Pro 12/512GB Orange (Оранжевый)",
+         "sku": null,
+         "priceAmount": 11499000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 3,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/fb655ad997484545b1bd6ffecfabd822.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 11499000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/099a9aeebeed4fcbb137ea58303a2614.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MzI0",
+       "name": "Смартфон Honor Play T10",
+       "slug": "smartfon-honor-play-t10",
+       "isAvailable": true,
+       "brand": {
+        "name": "Honor"
+       },
+       "category": {
+        "slug": "smartfony-honor"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTM0MzE="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTM0MzE=",
+         "name": "Смартфон Honor Play T10 4/64GB Black (Черный)",
+         "sku": "5504AJKV",
+         "priceAmount": 1599000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 10,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/fe3b7522b1bd4375b1c62a6abe5c1b04.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTM0MzA=",
+         "name": "Смартфон Honor Play T10 4/64GB Silver (Серебряный)",
+         "sku": "5504AJKW",
+         "priceAmount": 1599000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 10,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/a8952d5640924c7d92bb7f6347ffd0c4.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 1599000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/daeb9d18b40644a986844f78dcbeef2f.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4NTM4",
+       "name": "Смартфон Honor X7d",
+       "slug": "smartfon-honor-x7d",
+       "isAvailable": true,
+       "brand": {
+        "name": "Honor"
+       },
+       "category": {
+        "slug": "smartfony-honor"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTI0Mjc="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI0MjY=",
+         "name": "Смартфон Honor X7d 6/128GB Gold (Золотой)",
+         "sku": "SKU-12426",
+         "priceAmount": 2649000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/38263a297c8e446195cd241f28fc4697.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI0Mjc=",
+         "name": "Смартфон Honor X7d 6/128GB Black (Черный)",
+         "sku": "SKU-12427",
+         "priceAmount": 2649000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/9b9de50020a94c57a4b8a4f749442bd6.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI0Mjg=",
+         "name": "Смартфон Honor X7d 8/256GB Silver (Серебряный)",
+         "sku": "SKU-12428",
+         "priceAmount": 3199000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/bfec03bcb9364c10baaf8edb2f15c308.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI0Mjk=",
+         "name": "Смартфон Honor X7d 8/256GB Black (Черный)",
+         "sku": "SKU-12429",
+         "priceAmount": 3199000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/9b9de50020a94c57a4b8a4f749442bd6.webp"
+         }
+        },
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTI0MzA=",
+         "name": "Смартфон Honor X7d 6/128GB Silver (Серебряный)",
+         "sku": "SKU-12430",
+         "priceAmount": 2649000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/bfec03bcb9364c10baaf8edb2f15c308.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 2649000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/03b047540479468893cd9584b85a48ee.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MzI1",
+       "name": "Смартфон Honor X7e",
+       "slug": "smartfon-honor-x7e",
+       "isAvailable": true,
+       "brand": {
+        "name": "Honor"
+       },
+       "category": {
+        "slug": "smartfony-honor"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTM0MzI="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTM0MzI=",
+         "name": "Смартфон Honor X7e 6/256GB Midnight Black (Черный)",
+         "sku": "5109BXJW",
+         "priceAmount": 3499000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 9,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/6ffe05ae828e469a9781160819a38342.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 3499000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/8c497051fd114ec8a03a1dfc38bbb672.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MzI2",
+       "name": "Смартфон Honor X7e Light",
+       "slug": "smartfon-honor-x7e-light",
+       "isAvailable": true,
+       "brand": {
+        "name": "Honor"
+       },
+       "category": {
+        "slug": "smartfony-honor"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTM0MzM="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTM0MzM=",
+         "name": "Смартфон Honor X7e 6/256GB Light Blue (Cиний)",
+         "sku": "5109CHYW",
+         "priceAmount": 3499000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 9,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/557a60ad0c7e4abe8c01426a0f86dd24.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 3499000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/3af6fa28018e47dea23a4ee468b807e2.webp"
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}

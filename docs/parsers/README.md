@@ -51,6 +51,7 @@ verified by running the parser end to end and opening the resulting links.
 | [texnomart.md](texnomart.md) | texnomart.uz | REST GET, single card | none | 50/66 |
 | [mediapark.md](mediapark.md) | mediapark.uz | REST GET, autocomplete | none | 46/66 |
 | [asaxiy.md](asaxiy.md) | asaxiy.uz | **server-rendered HTML** | none | — † |
+| [radius.md](radius.md) | radius.uz | Saleor GraphQL, single card | none | — † |
 | [_matching-engine.md](_matching-engine.md) | — | shared name→product matcher | — | — |
 
 > **Narxnoma is an aggregator.** The two internal systems documented in the original
@@ -60,9 +61,15 @@ verified by running the parser end to end and opening the resulting links.
 
 \* phones matched out of 66 active smartphones, as of 2026-07-24.
 
-† asaxiy was added on 2026-08-10, after that survey. Measured on its own terms:
-693 offers across all seven categories, 96.8% of them attached to a canonical
-product — the highest attachment rate of the eight.
+† asaxiy (2026-08-10) and radius (2026-08-11) were added after that survey, so
+they have no 66-phone score. Measured on their own terms: asaxiy 693 offers at
+96.8% attached; radius 274 offers at 98.9%.
+
+> **A small source is not a weak source.** radius contributes 2.2% of the
+> catalogue's offers and 4.8% of its *comparisons* — 212 of its products are
+> carried by someone else, and 54 of those had only one price before it
+> arrived. Judge a candidate source by the second prices it creates, not by
+> its row count. See [radius.md §8](radius.md#8-measured-result).
 
 ## The one thing to understand first
 

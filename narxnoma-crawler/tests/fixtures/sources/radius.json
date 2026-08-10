@@ -1,0 +1,730 @@
+{
+ "data": {
+  "category": {
+   "slug": "konditsionery",
+   "products": {
+    "totalCount": 17,
+    "pageInfo": {
+     "hasNextPage": false,
+     "endCursor": "YXJyYXljb25uZWN0aW9uOjE2"
+    },
+    "edges": [
+     {
+      "node": {
+       "id": "UHJvZHVjdDo1MTk1",
+       "name": "Кондиционер Artel ARTSID2CW12BE Iceberg Inv",
+       "slug": "konditsioner-artel-artsid2cw12be-iceberg-inv",
+       "isAvailable": true,
+       "brand": {
+        "name": "Artel"
+       },
+       "category": {
+        "slug": "konditsionery-artel"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6ODA0Ng=="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6ODA0Ng==",
+         "name": "Кондиционер Artel ARTSID2CW12BE Iceberg 12 Inv",
+         "sku": "ARTSID2CW12BE",
+         "priceAmount": 5388000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/c34f20bc7b3e40a3add13e2ae336ef01.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 5388000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/87706fc081524acbbb00b5ddf45cba6d.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MTc4",
+       "name": "Кондиционер Artel ARTSIZ1AW12BE Shahrisabz-S FDI",
+       "slug": "konditsioner-artel-artsiz1aw12be-shahrisabz-s-fdi",
+       "isAvailable": true,
+       "brand": {
+        "name": "Artel"
+       },
+       "category": {
+        "slug": "konditsionery-artel"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTMyNTQ="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMyNTQ=",
+         "name": "Кондиционер Artel ARTSIZ1AW12BE Shahrisabz-S 12 FDI",
+         "sku": "ARTSIZ1AW12BE",
+         "priceAmount": 5988000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 5,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/d66248f408294c5fa4d328ff65993695.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 5988000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/63c05616aa4b4074853d150ef8553559.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo3MjU1",
+       "name": "Кондиционер Artel Baraka ARTSIQ3BW12BE Inv",
+       "slug": "konditsioner-artel-baraka-artsiq3bw12be-inv",
+       "isAvailable": true,
+       "brand": {
+        "name": "Artel"
+       },
+       "category": {
+        "slug": "konditsionery-artel"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTA4MzI="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTA4MzI=",
+         "name": "Кондиционер Artel Baraka ARTSIQ3BW12BE Inv (Белый)",
+         "sku": "ARTSIQ3BW12BE",
+         "priceAmount": 8268000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/eecaae7c5df946b3803fe0e999d732b7.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 8268000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/bb9821d2bf3a44b793af0f6c4d374337.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4MjAz",
+       "name": "Кондиционер Artel Everest ARTSID3AW12BE Inv",
+       "slug": "konditsioner-artel-everest-artsid3aw12be-inv",
+       "isAvailable": true,
+       "brand": {
+        "name": "Artel"
+       },
+       "category": {
+        "slug": "konditsionery-artel"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTE5ODc="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTE5ODc=",
+         "name": "Кондиционер Artel Everest ARTSID3AW12BE Inv",
+         "sku": "ARTSID3AW12BE Inv V5",
+         "priceAmount": 7188000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/f005adadc7a740cab67806ef8c501c05.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 7188000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/2b91b85b51cc416ca52760c2aa9ca416.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo1MjAw",
+       "name": "Кондиционер Artel Marvarid ARTSIM4AW12HE",
+       "slug": "konditsioner-artel-marvarid-artsim4aw12he",
+       "isAvailable": true,
+       "brand": {
+        "name": "Artel"
+       },
+       "category": {
+        "slug": "konditsionery-artel"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6ODA1MQ=="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6ODA1MQ==",
+         "name": "Кондиционер Artel Marvarid ARTSIM4AW12HE",
+         "sku": "ARTSIM4AW12HE",
+         "priceAmount": 5988000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/d43cab04878741efa5cb3c39dcb54650.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 5988000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/40d4f5de5b254706a0be5f0960d9ed03.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4MjQx",
+       "name": "Кондиционер Avalon AVLSIQ1AW12BE Inv",
+       "slug": "konditsioner-avalon-avlsiq1aw12be-inv",
+       "isAvailable": true,
+       "brand": {
+        "name": "Avalon"
+       },
+       "category": {
+        "slug": "konditsionery-avalon"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTIwMjY="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTIwMjY=",
+         "name": "Кондиционер Avalon AVLSIQ1AW12BE Brugge Inv R32",
+         "sku": "AVLSIQ1AW12BE Inv",
+         "priceAmount": 9468000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/dc8d3e196b6a4478b7e190cac5b29606.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 9468000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/c19ad86aa4a64e71a1d11d5dc79ec778.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo2MDcz",
+       "name": "Кондиционер Premier Genius Inv 12 BL",
+       "slug": "konditsioner-premier-genius-inv-12-bl",
+       "isAvailable": true,
+       "brand": {
+        "name": "Premier"
+       },
+       "category": {
+        "slug": "konditsionery-premier"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6OTIyMw=="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6OTIyMw==",
+         "name": "Кондиционер Premier Genius Inv 12 BL",
+         "sku": "PRMGE-12SNR1-INV-BL",
+         "priceAmount": 9828000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/f43b080c68ef48b293d53f5ac405ceb1.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 9828000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/84ef8abdd73748b199d421ee693e7bc2.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MDMx",
+       "name": "Кондиционер Premier New Calido GMCC DC inverter PTC Heater 140V R32",
+       "slug": "konditsioner-premier-new-calido-gmcc-dc-inverter-ptc-heater-140v-r32",
+       "isAvailable": true,
+       "brand": {
+        "name": "Premier"
+       },
+       "category": {
+        "slug": "konditsionery-premier"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTMwODY="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMwODY=",
+         "name": "Кондиционер Premier New Calido GMCC 12DC inverter PTC Heater 140V R32",
+         "sku": "PRM-12CASPA-INV/W",
+         "priceAmount": 5148000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 16,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/a6aff042691d4a9d82ae4f328ef26e8a.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 5148000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/1e15c36bc8644f62afdbcba2081e89fd.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MDMw",
+       "name": "Кондиционер Premier New Eluna GMCC DC inverter PTC Heater 140V R32",
+       "slug": "konditsioner-premier-new-eluna-gmcc-dc-inverter-ptc-heater-140v-r32",
+       "isAvailable": true,
+       "brand": {
+        "name": "Premier"
+       },
+       "category": {
+        "slug": "konditsionery-premier"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTMwODU="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMwODU=",
+         "name": "Кондиционер Premier New Eluna GMCC 12DC inverter PTC Heater 140V R32",
+         "sku": "PRM-12ELSPA-INV/W",
+         "priceAmount": 5148000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 32,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/d27782cdcf7945559e9375292ac9d48b.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 5148000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/50fb03c9567a44449a362885094abbb9.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5Mjg1",
+       "name": "Кондиционер Premier New Harmonia GMCC 18DC inverter PTC Heater 140V R32",
+       "slug": "konditsioner-premier-new-harmonia-gmcc-18dc-inverter-ptc-heater-140v-r32",
+       "isAvailable": true,
+       "brand": {
+        "name": "Premier"
+       },
+       "category": {
+        "slug": "konditsionery-premier"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTMzODI="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMzODI=",
+         "name": "Кондиционер Premier New Harmonia GMCC 18DC inverter PTC Heater 140V R32",
+         "sku": "PRM-18HRSPA-INV/WS",
+         "priceAmount": 7428000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 26,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/31101cec018f49b29871c665b6aa7fde.avif"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 7428000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/854f97ba1449406bb33c46e2ade4fbae.avif"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MTc1",
+       "name": "Кондиционер Premier New Magnate GMCC 12 FullDC inverter PTC Heater 140V R32 B",
+       "slug": "konditsioner-premier-new-magnate-gmcc-12-fulldc-inverter-ptc-heater-140v-r32-b",
+       "isAvailable": true,
+       "brand": {
+        "name": "Premier"
+       },
+       "category": {
+        "slug": "konditsionery-premier"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTMyNTE="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMyNTE=",
+         "name": "Кондиционер Premier New Magnate GMCC 12 FullDC inverter PTC Heater 140V R32 Black",
+         "sku": "PREMIER PRM-12MGSPA-INV/B",
+         "priceAmount": 5388000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 22,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/355ddf09062847ebb815268c503feedf.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 5388000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/ac743dd7299e43aebaf9bf26a700fa4f.jpg"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MTcz",
+       "name": "Кондиционер Premier New Sereno GMCC 12 FullDC inverter PTC Heater 140V R32",
+       "slug": "konditsioner-premier-new-sereno-gmcc-12-fulldc-inverter-ptc-heater-140v-r32",
+       "isAvailable": true,
+       "brand": {
+        "name": "Premier"
+       },
+       "category": {
+        "slug": "konditsionery-premier"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTMyNDk="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMyNDk=",
+         "name": "Кондиционер Premier New Sereno GMCC 12 FullDC inverter PTC Heater 140V R32 White",
+         "sku": "PRM-12SRSPA-INV/WS",
+         "priceAmount": 5148000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/992038a0ed434061ae18479b0cc316a7.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 5148000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/992038a0ed434061ae18479b0cc316a7.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4MjI2",
+       "name": "Кондиционер Premier PRMCR-12SNR1-INV",
+       "slug": "konditsioner-premier-prmcr-12snr1-inv",
+       "isAvailable": true,
+       "brand": {
+        "name": "Premier"
+       },
+       "category": {
+        "slug": "konditsionery-premier"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTIwMTA="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTIwMTA=",
+         "name": "Кондиционер Premier PRMCR-12SNR1-INV",
+         "sku": "PRMCR-12SNR1-INV",
+         "priceAmount": 7068000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/bdf25baf83f84468aea23875ffeb11d2.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 7068000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/bdf25baf83f84468aea23875ffeb11d2.png"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo4MTQ0",
+       "name": "Кондиционер Samsung AR09TXHQASINUA Inv",
+       "slug": "konditsioner-samsung-ar09txhqasinua-inv",
+       "isAvailable": true,
+       "brand": {
+        "name": "Samsung"
+       },
+       "category": {
+        "slug": "konditsionery-samsung"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTE5Mjg="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTE5Mjg=",
+         "name": "Кондиционер Samsung AR09TXHQASINUA Inv",
+         "sku": "AR09TXHQASINUA",
+         "priceAmount": 4788000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/b5c344ba2ade420e8d983db126be7522.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 4788000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/b5c344ba2ade420e8d983db126be7522.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo1MTkz",
+       "name": "Кондиционер Shivaki Breeze SHVSIH2BW12BE 12 Inv",
+       "slug": "konditsioner-shivaki-breeze-shvsih2bw12be-12-inv",
+       "isAvailable": true,
+       "brand": {
+        "name": "Shivaki"
+       },
+       "category": {
+        "slug": "konditsionery-shivaki"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6ODA0NA=="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6ODA0NA==",
+         "name": "Кондиционер Shivaki SHVSIH2BW12BE Breeze 12 Inv",
+         "sku": "SHVSIH2BW12BE",
+         "priceAmount": 7428000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/cd60c5d141da4ee1be435d5a31a57a73.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 7428000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/cddbfefe4acb46bd8848dc32426e511b.webp"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo3MjU0",
+       "name": "Кондиционер Shivaki SHVSIJ2AW18BE Sensei Inv.",
+       "slug": "konditsioner-shivaki-shvsij2aw18be-sensei-inv",
+       "isAvailable": true,
+       "brand": {
+        "name": "Shivaki"
+       },
+       "category": {
+        "slug": "konditsionery-shivaki"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTA4MzE="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTA4MzE=",
+         "name": "Кондиционер Shivaki SHVSIJ2AW18BE Sensei Inv.",
+         "sku": "SHVSIJ2AW18BE Inv",
+         "priceAmount": 10788000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 50,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/915246de18cc42abb5c772554307a0f6.png"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 10788000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/915246de18cc42abb5c772554307a0f6.png"
+       }
+      }
+     },
+     {
+      "node": {
+       "id": "UHJvZHVjdDo5MTc5",
+       "name": "Кондиционер Shivaki SHVSIQ2AW12BE Emura 12 Inv R32",
+       "slug": "konditsioner-shivaki-shvsiq2aw12be-emura-12-inv-r32",
+       "isAvailable": true,
+       "brand": {
+        "name": "Shivaki"
+       },
+       "category": {
+        "slug": "konditsionery-shivaki"
+       },
+       "defaultVariant": {
+        "id": "UHJvZHVjdFZhcmlhbnQ6MTMyNTU="
+       },
+       "variants": [
+        {
+         "id": "UHJvZHVjdFZhcmlhbnQ6MTMyNTU=",
+         "name": "Кондиционер Shivaki SHVSIQ2AW12BE Emura 12 Inv R32",
+         "sku": "SHVSIQ2AW12BE",
+         "priceAmount": 6828000.0,
+         "currency": "UZS",
+         "isAvailable": true,
+         "quantityAvailable": 35,
+         "thumbnail": {
+          "url": "https://new.api.radius.uz/thumbnails/200/images/product/9fa3cdf1b36d44dca8285ee54a7c1c5e.webp"
+         }
+        }
+       ],
+       "pricing": {
+        "priceRange": {
+         "start": {
+          "amount": 6828000.0,
+          "currency": "UZS"
+         }
+        }
+       },
+       "thumbnail": {
+        "url": "https://new.api.radius.uz/thumbnails/200/images/product/9fa3cdf1b36d44dca8285ee54a7c1c5e.webp"
+       }
+      }
+     }
+    ]
+   }
+  }
+ }
+}

@@ -60,6 +60,12 @@ EXPECTED_MIN_OFFERS = {
     # a narrower electronics range than the specialists, so this floor is set
     # against its own measured size, not against olcha's.
     "asaxiy": 400,
+    # Measured live 2026-08-11 from radius's own category tree: 84 phones + 22
+    # fridges + 18 TVs + 17 ACs + 17 washers + 16 laptops + 13 cookers = 187.
+    # The smallest source by a wide margin, and the floor says so -- a floor
+    # copied from a bigger shop would never fire, which is the one thing a
+    # floor must not do.
+    "radius": 120,
 }
 
 
