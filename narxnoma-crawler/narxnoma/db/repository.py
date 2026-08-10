@@ -176,12 +176,12 @@ def upsert_variant(conn: psycopg.Connection, key: VariantKey) -> UUID:
     with conn.transaction():
         with conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO variant (brand, model_tokens, ram_gb, storage_gb,"
-                " color, sim_kind, display_name, slug)"
-                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                " ON CONFLICT (slug) DO NOTHING RETURNING id",
-                (key.brand, sorted(key.model_tokens), key.ram_gb, key.storage_gb,
-                 key.color, key.sim_kind, display_name(key), slug(key)))
+                            "INSERT INTO variant (brand, model_tokens, ram_gb, storage_gb,"
+                            " color, sim_kind, category, display_name, slug)"
+                            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                            " ON CONFLICT (slug) DO NOTHING RETURNING id",
+                            (key.brand, sorted(key.model_tokens), key.ram_gb, key.storage_gb,
+                             key.color, key.sim_kind, key.category, display_name(key), slug(key)))
             row = cur.fetchone()
             if row is not None:
                 return row[0]
