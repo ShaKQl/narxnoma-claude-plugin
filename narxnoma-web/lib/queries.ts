@@ -10,9 +10,13 @@ export interface VariantHit {
   brand: string;
   display_name: string;
   ram_gb: number | null;
-  storage_gb: number;
-  color: string;
-  sim_kind: string;
+  // Nullable outside smartphones by design: a television has no storage, no
+  // colour identity and no SIM. The columns were relaxed to NULL when
+  // categories landed; these types still claimed non-null, which is how a
+  // refrigerator card came to print "eSIM".
+  storage_gb: number | null;
+  color: string | null;
+  sim_kind: string | null;
   category: string;
   min_price: number | null;
   median_price: number | null;
@@ -294,14 +298,22 @@ export async function searchVariants(
     pages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
     facets: {
       brands,
-      colors,
-      rams: rams.map((r) => r.value),
+      // Colour and RAM are PHONE facets. Outside smartphones both columns are
+      // NULL by design, so an unfiltered GROUP BY yields a single null bucket
+      // that renders as an empty, unclickable chip on every television and
+      // fridge result page. Dropping the null bucket makes the facet list
+      // category-aware without needing to know the category: a result set with
+      // no colours simply offers no colour filter.
+      colors: colors.filter((c) => c.value != null),
+      rams: rams.map((r) => r.value).filter((v) => v != null),
       // Plain object, NOT a Map: SearchResult crosses both RSC (initial SSR)
       // and the /api/search JSON endpoint, and Maps serialize to {} in JSON,
       // which then throws on .get() client-side (the facet-click bug
       // 2026-08-10).
       ramCounts: Object.fromEntries(
-        rams.map((r) => [String(r.value), Number(r.count)])
+        rams
+          .filter((r) => r.value != null)
+          .map((r) => [String(r.value), Number(r.count)])
       ),
       priceBands: bands,
       priceMin: priceLo,
@@ -363,9 +375,13 @@ export interface VariantRow {
   brand: string;
   display_name: string;
   ram_gb: number | null;
-  storage_gb: number;
-  color: string;
-  sim_kind: string;
+  // Nullable outside smartphones by design: a television has no storage, no
+  // colour identity and no SIM. The columns were relaxed to NULL when
+  // categories landed; these types still claimed non-null, which is how a
+  // refrigerator card came to print "eSIM".
+  storage_gb: number | null;
+  color: string | null;
+  sim_kind: string | null;
   category: string;
 }
 
@@ -470,9 +486,16 @@ export async function getVariantPage(slug: string): Promise<VariantPage> {
 export async function getBrandsByCategory(): Promise<
   { category: string; brand: string; count: number; min_price: number | null; stores: number }[]
 > {
+  // ::int on both aggregates, deliberately. node-pg returns bigint as a
+  // STRING, and the home page SUMS these per category to size its category
+  // tiles -- so `cur.count += b.count` concatenated "12" and "5" into "125"
+  // instead of adding them, and the min_price comparison compared strings.
+  // Same trap the price-band code already hit; casting in SQL fixes it at the
+  // source rather than at each call site. Every value here fits in int4:
+  // prices are fenced at 100,000,000.
   return query(
-    `SELECT v.category, v.brand, count(*) AS count,
-            min(vp.min_price) AS min_price, max(vp.store_count) AS stores
+    `SELECT v.category, v.brand, count(*)::int AS count,
+            min(vp.min_price)::int AS min_price, max(vp.store_count)::int AS stores
        FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
       GROUP BY v.category, v.brand
       ORDER BY v.category, count DESC`
@@ -544,9 +567,15 @@ export async function getFeaturedPerCategory(
                  WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
                    AND o.availability = 'IN_STOCK'
                  ORDER BY o.price LIMIT 1) AS image_url,
+               -- Carried by most retailers first, then most widely stocked,
+               -- and only then cheapest. Ordering by price alone fills an
+               -- appliance row with the cheapest no-name units in the
+               -- catalogue, which is the opposite of a shop window.
                ROW_NUMBER() OVER (
                  PARTITION BY v.category
-                 ORDER BY vp.store_count DESC, vp.min_price ASC
+                 ORDER BY vp.store_count DESC,
+                          vp.in_stock_offer_count DESC,
+                          vp.min_price ASC
                ) AS rn
           FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
          WHERE vp.min_price IS NOT NULL
@@ -556,12 +585,56 @@ export async function getFeaturedPerCategory(
   );
   const groups = new Map<string, VariantHit[]>();
   for (const r of rows) {
-    const { category, rn: _rn, ...hit } = r;
-    const arr = groups.get(category) ?? [];
+    // `category` stays ON the hit as well as keying the group: VariantHit
+    // declares it, and a card that needs to know what it is showing (spec
+    // chips, links) would otherwise read undefined.
+    const { rn: _rn, ...hit } = r;
+    const arr = groups.get(r.category) ?? [];
     arr.push(hit as VariantHit);
-    groups.set(category, arr);
+    groups.set(r.category, arr);
   }
   return [...groups.entries()].map(([category, hits]) => ({ category, hits }));
+}
+
+/** A category's products, most widely carried first.
+ *
+ *  The category page used to borrow getFeaturedPerCategory, which ranks every
+ *  category at once and then throws away all but one — so a category holding
+ *  492 televisions showed eight of them and a list of brand tiles. This asks
+ *  for one category directly and asks for enough of it to look like a shop.
+ */
+export async function getCategoryProducts(
+  category: string,
+  limit: number = 24
+): Promise<VariantHit[]> {
+  return query<VariantHit>(
+    `SELECT v.id, v.slug, v.brand, v.display_name, v.ram_gb, v.storage_gb,
+            v.color, v.sim_kind, v.category,
+            vp.min_price, vp.median_price, vp.max_price,
+            vp.offer_count, vp.in_stock_offer_count, vp.store_count, vp.computed_at,
+            (SELECT max(o.last_seen) FROM offer o WHERE o.variant_id = v.id) AS latest_offer_at,
+            (SELECT o.image_url FROM offer o
+              WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
+                AND o.availability = 'IN_STOCK'
+              ORDER BY o.price LIMIT 1) AS image_url,
+            0 AS brand_rank, 0 AS pos
+       FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
+      WHERE v.category = $1 AND vp.min_price IS NOT NULL
+      ORDER BY vp.store_count DESC, vp.in_stock_offer_count DESC, vp.min_price ASC
+      LIMIT $2`,
+    [category, limit]
+  );
+}
+
+/** How many priced products a category holds, for the page heading. */
+export async function getCategoryCount(category: string): Promise<number> {
+  const rows = await query<{ n: string }>(
+    `SELECT count(*) AS n
+       FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
+      WHERE v.category = $1 AND vp.min_price IS NOT NULL`,
+    [category]
+  );
+  return Number(rows[0]?.n ?? 0);
 }
 
 export async function getSearchSuggestions(q: string) {

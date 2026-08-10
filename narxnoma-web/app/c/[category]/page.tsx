@@ -3,7 +3,11 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import VariantCard from "@/components/VariantCard";
 import { langFromCookie, plural, t } from "@/lib/i18n";
-import { getBrandsByCategory, getFeaturedPerCategory } from "@/lib/queries";
+import {
+  getBrandsByCategory,
+  getCategoryCount,
+  getCategoryProducts,
+} from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +17,18 @@ export async function generateMetadata({
   params: Promise<{ category: string }>;
 }): Promise<Metadata> {
   const { category } = await params;
-  return { title: category === "smartphones" ? "Смартфоны" : category };
+  // The slug is not a title: a non-phone category rendered as "televisions"
+  // in the browser tab and in every search-engine result.
+  const RU: Record<string, string> = {
+    smartphones: "Смартфоны",
+    televisions: "Телевизоры",
+    laptops: "Ноутбуки",
+    acs: "Кондиционеры",
+    fridges: "Холодильники",
+    washers: "Стиральные машины",
+    ovens: "Духовые шкафы и плиты",
+  };
+  return { title: `${RU[category] ?? category} — Narxnoma` };
 }
 
 export default async function CategoryPage({
@@ -23,12 +38,12 @@ export default async function CategoryPage({
 }) {
   const { category } = await params;
   const lang = langFromCookie((await cookies()).get("lang")?.value);
-  const [perCategory, brandRows] = await Promise.all([
-    getFeaturedPerCategory(8),
+  const [featured, total, brandRows] = await Promise.all([
+    getCategoryProducts(category, 24),
+    getCategoryCount(category),
     getBrandsByCategory(),
   ]);
   const rows = brandRows.filter((r) => r.category === category);
-  const featured = (perCategory.find((g) => g.category === category)?.hits ?? []).slice(0, 8);
   const catLabel = (c: string) => {
     const v = t(lang, `cat.${c}`);
     return v && !v.startsWith("cat.") ? v : c;
@@ -54,7 +69,7 @@ export default async function CategoryPage({
             <>
               <div className="row-head" style={{ marginTop: 12 }}>
                 <h2 style={{ fontSize: 17, fontWeight: 700 }}>
-                  {lang === "uz" ? `Ommabop ${catLabel(category).toLowerCase()}` : `Популярные ${catLabel(category).toLowerCase()}`}
+                  {plural(lang, total, "mahsulot", "товар", "товара", "товаров")}
                 </h2>
                 <Link href={`/search?category=${category}`} className="more-link">
                   {lang === "uz" ? "Barchasini ko'rish →" : "Смотреть все →"}

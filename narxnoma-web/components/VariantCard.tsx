@@ -7,6 +7,38 @@ import { useLang } from "./LangProvider";
 import type { VariantHit } from "@/lib/queries";
 
 /**
+ * Spec chips for one card.
+ *
+ * Phones carry a full signature — RAM, storage, colour, dual/eSIM — and every
+ * field is identity. Nothing outside phones does: a television has no storage
+ * and no SIM, and its colour is deliberately not part of its identity, so
+ * those columns are NULL. Rendering the phone chips regardless printed an
+ * empty "ГБ" and, because the SIM chip was a bare ternary with no null branch,
+ * the words "eSIM" on a refrigerator.
+ *
+ * A chip is shown only where the value exists. Nothing is invented, and a
+ * category with no structured spec simply shows none — the catalogue code in
+ * the product name is what identifies it.
+ */
+function specChips(v: VariantHit, lang: string) {
+  const chips: string[] = [];
+  const ram = lang === "uz" ? "GB operativ" : "ГБ ОЗУ";
+  const gb = lang === "uz" ? "GB" : "ГБ";
+
+  if (v.ram_gb != null) chips.push(`${v.ram_gb} ${ram}`);
+  if (v.storage_gb != null) chips.push(`${v.storage_gb} ${gb}`);
+  if (v.color) chips.push(colorRu(v.color));
+  if (v.sim_kind === "dual") chips.push("2 SIM");
+  else if (v.sim_kind === "esim_only") chips.push("eSIM");
+
+  return chips.map((c) => (
+    <span className="spec" key={c}>
+      {c}
+    </span>
+  ));
+}
+
+/**
  * Product image is hotlinked from the retailer's CDN — never stored locally
  * (storage would scale with catalogue size; hotlinks do not). no-referrer +
  * lazy keep retailer CDNs and the user's bandwidth happy. Broken images
@@ -51,16 +83,7 @@ export default function VariantCard({ v }: { v: VariantHit }) {
         </div>
       )}
       <div className="card-name">{v.display_name}</div>
-      <div className="specs">
-        {v.ram_gb != null && <span className="spec">{v.ram_gb} ГБ ОЗУ</span>}
-        <span className="spec">{v.storage_gb} ГБ</span>
-        {v.color && <span className="spec">{colorRu(v.color)}</span>}
-        {v.sim_kind === "dual" ? (
-          <span className="spec">2 SIM</span>
-        ) : (
-          <span className="spec">eSIM</span>
-        )}
-      </div>
+      <div className="specs">{specChips(v, lang)}</div>
       <div className="card-price-row">
         <span className="price">
           <span className="from">{lang === "uz" ? "dan " : "от "}</span>

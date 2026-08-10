@@ -80,8 +80,15 @@ export default async function ProductPage({
           <a href={`/c/${v.category}`}>{catLabel(v.category)}</a>
           {" · "}
           <a href={`/c/${v.category}/${v.brand}`}>{v.brand}</a>
-          {" · "}
-          <span>{v.color ? colorRu(v.color) : "—"}</span>
+          {/* Colour is identity only for phones. Outside them it is NULL, and
+              the old "—" placeholder left a dangling "· —" on every
+              television, fridge and laptop breadcrumb. */}
+          {v.color && (
+            <>
+              {" · "}
+              <span>{colorRu(v.color)}</span>
+            </>
+          )}
         </div>
 
         {stale &&
@@ -99,16 +106,21 @@ export default async function ProductPage({
             />
           )}
           <h1>{v.display_name}</h1>
+          {/* Built by joining only the specs this product actually HAS.
+              Outside phones, storage/colour/SIM are NULL by design, and the
+              old fixed layout rendered a bare " · ГБ" for every television. */}
           <div className="subline">
-            {v.ram_gb != null && <b>{v.ram_gb} ГБ ОЗУ</b>}
-            {" · "}
-            <b>{v.storage_gb} ГБ</b>
-            {v.sim_kind && (
-              <>
-                {" · "}
-                {v.sim_kind === "dual" ? "2 SIM / eSIM" : "eSIM"}
-              </>
-            )}
+            {[
+              v.ram_gb != null ? `${v.ram_gb} ГБ ОЗУ` : null,
+              v.storage_gb != null ? `${v.storage_gb} ГБ` : null,
+              v.sim_kind === "dual"
+                ? "2 SIM / eSIM"
+                : v.sim_kind === "esim_only"
+                  ? "eSIM"
+                  : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </div>
 
           <div className="headline">

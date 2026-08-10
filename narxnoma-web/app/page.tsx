@@ -16,7 +16,9 @@ export default async function HomePage() {
   const lang = langFromCookie((await cookies()).get("lang")?.value);
   const [stats, perCategory, brandRows] = await Promise.all([
     getHomeStats(),
-    getFeaturedPerCategory(4),
+    // Six per row rather than four: the catalogue now carries thousands of
+    // non-phone products, and a four-item row made every category look thin.
+    getFeaturedPerCategory(6),
     getBrandsByCategory(),
   ]);
 
@@ -32,12 +34,23 @@ export default async function HomePage() {
         : cur.min_price;
     catMap.set(b.category, cur);
   }
-  const categoryRows = [...catMap.entries()].map(([category, v]) => ({
-    category,
-    count: v.count,
-    stores: v.stores,
-    min_price: v.min_price,
-  }));
+  // Deliberate order, not Map-insertion order: the grid is the front door and
+  // should read like an aisle list, largest range first.
+  const CATEGORY_ORDER = [
+    "smartphones", "laptops", "televisions",
+    "fridges", "washers", "acs", "ovens",
+  ];
+  const categoryRows = [...catMap.entries()]
+    .map(([category, v]) => ({
+      category,
+      count: v.count,
+      stores: v.stores,
+      min_price: v.min_price,
+    }))
+    .sort(
+      (a, b) =>
+        CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category)
+    );
 
   // Group brands by category for the brand section.
   const brandGroups = new Map<string, typeof brandRows>();
@@ -117,11 +130,23 @@ export default async function HomePage() {
           </div>
           {[...brandGroups.entries()].map(([cat, list]) => (
             <div key={cat} style={{ marginTop: 8 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 600, margin: "18px 0 8px" }}>
-                {t(lang, `cat.${cat}`)}
-              </h3>
+              <div className="row-head" style={{ margin: "18px 0 8px" }}>
+                <h3 style={{ fontSize: 15, fontWeight: 600 }}>
+                  {t(lang, `cat.${cat}`)}
+                </h3>
+                {list.length > 12 && (
+                  <Link href={`/c/${cat}`} className="more-link">
+                    {lang === "uz"
+                      ? `Yana ${list.length - 12} ta brend →`
+                      : `Ещё ${list.length - 12} →`}
+                  </Link>
+                )}
+              </div>
               <div className="brand-grid">
-                {list.map((b) => (
+                {/* Capped: the catalogue now carries ~60 non-phone brands, and
+                    rendering every one of them turned the front page into a
+                    wall of tiles. The category page lists the rest. */}
+                {list.slice(0, 12).map((b) => (
                   <Link
                     key={b.brand}
                     className="brand-tile"
