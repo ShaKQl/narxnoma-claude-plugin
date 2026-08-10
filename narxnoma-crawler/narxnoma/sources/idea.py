@@ -14,6 +14,7 @@ and docs/parsers/idea.md.
 """
 import logging
 from collections import Counter
+from dataclasses import replace
 from typing import Iterator
 
 from narxnoma.sources.base import Listing, coerce_price, try_build_listing
@@ -49,6 +50,18 @@ QUANTITY = 100
 # run (see _filter_phone_listings) so drift is visible instead of silently
 # emptying or polluting the catalogue.
 PHONE_CATEGORY_IDS = frozenset({55})
+
+# Plan 5: category -> idea category_id set, verified live 2026-08-10 by
+# searching each product type and reading the returned categories histogram.
+CATEGORY_IDS = {
+    "smartphones": PHONE_CATEGORY_IDS,
+    "televisions": {9},
+    "laptops": {73},
+    "acs": {15},
+    "fridges": {24},
+    "washers": {131, 132, 23},
+    "ovens": {179, 107, 17},
+}
 
 _HEADERS = {
     "Accept": "application/json",
@@ -122,6 +135,13 @@ def _filter_phone_listings(listings: list[Listing]) -> list[Listing]:
     ]
 
 
+def _filter_by_category(listings: list[Listing], category_ids: set[int]) -> list[Listing]:
+    """Keep only listings whose category_id is in the target set (Plan 5)."""
+    keep = frozenset(category_ids)
+    return [listing for listing in listings
+            if listing.raw.get("category_id") in keep]
+
+
 class IdeaSource:
     slug = "idea"
     can_sweep = True
@@ -150,22 +170,27 @@ class IdeaSource:
         return parse(payload)
 
     def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
-        """Every phone idea returns across a fixed list of brand queries.
+        """Every item idea returns across a fixed list of brand queries.
 
         There is no pagination and no full-catalogue endpoint, so this
         merges one search call per brand and deduplicates by source_key --
         the same product can appear under more than one brand query.
-        Non-phone categories (appliances) are filtered out here; see
-        PHONE_CATEGORY_IDS and _filter_phone_listings.
+        Only listings whose category_id is in the target category's set are
+        kept, and each is tagged with the sweep's category.
         """
+        ids = CATEGORY_IDS.get(category)
+        if ids is None:
+            raise ValueError(f"unknown category {category!r}")
         seen: set[str] = set()
         # No pagination: idea returns one full response per brand query, so
         # there is no page loop to hoist onto base.paginate().
         for query in BRAND_QUERIES:
-            for listing in _filter_phone_listings(self._fetch(query)):
+            for listing in _filter_by_category(self._fetch(query), ids):
                 if listing.source_key in seen:
                     continue
                 seen.add(listing.source_key)
+                if listing.category != category:
+                    listing = replace(listing, category=category)
                 yield listing
 
     def search(self, query: str) -> Iterator[Listing]:
