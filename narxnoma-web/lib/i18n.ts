@@ -62,8 +62,8 @@ const DICT: Record<string, { ru: string; uz: string }> = {
   },
   "p.checkInStore": { ru: "проверить в магазине", uz: "do'konda tekshirish" },
   "p.stale": {
-    ru: "Цены проверены {t} назад — магазины могли успеть их изменить. Мы показываем только то, что видели сами.",
-    uz: "Narxlar {t} oldin tekshirilgan — do'konlar ularni o'zgartirgan bo'lishi mumkin. Biz faqat o'zimiz ko'rgan narsani ko'rsatamiz.",
+    ru: "Цены проверены {t} — магазины могли успеть их изменить. Мы показываем только то, что видели сами.",
+    uz: "Narxlar {t} tekshirilgan — do'konlar ularni o'zgartirgan bo'lishi mumkin. Biz faqat o'zimiz ko'rgan narsani ko'rsatamiz.",
   },
   "footer.line": {
     ru: "Нархнома — агрегатор цен. Мы ничего не продаём: цена каждого предложения ведёт на страницу магазина, где вы можете проверить её сами.",
