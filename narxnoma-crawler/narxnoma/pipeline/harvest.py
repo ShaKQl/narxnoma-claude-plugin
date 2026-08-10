@@ -112,7 +112,16 @@ def harvest_source(conn, source, store_id, repo=default_repo,
                              kept=kept, error=str(exc))
 
 
-def harvest_all(conn, sources, repo=default_repo) -> list[HarvestResult]:
+def harvest_all(conn, sources, repo=default_repo,
+                 categories: list[str] | None = None) -> list[HarvestResult]:
+    """Sweep each source across every category (defaults to all Plan 5
+    categories). A search-only source is skipped; a store that is not seeded
+    is reported as failed. Results are aggregated per source across the
+    categories swept (a source is ok only if every category succeeded).
+    """
+    if categories is None:
+        from narxnoma.matching.keys import CATEGORIES
+        categories = list(CATEGORIES)
     ids = repo.store_ids(conn)
     results = []
     for source in sources:
@@ -132,5 +141,16 @@ def harvest_all(conn, sources, repo=default_repo) -> list[HarvestResult]:
         if store_id is None:
             results.append(HarvestResult(source.slug, ok=False, error="store not seeded"))
             continue
-        results.append(harvest_source(conn, source, store_id, repo=repo))
+        seen = kept = 0
+        ok = True
+        error = None
+        for category in categories:
+            r = harvest_source(conn, source, store_id, repo=repo, category=category)
+            seen += r.seen
+            kept += r.kept
+            if not r.ok:
+                ok = False
+                error = r.error or error
+        results.append(HarvestResult(source.slug, ok=ok, seen=seen, kept=kept,
+                                     error=error))
     return results

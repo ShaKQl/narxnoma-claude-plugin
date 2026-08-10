@@ -119,6 +119,7 @@ interface SearchParams {
   priceLo: number | null;
   priceHi: number | null;
   multiStore: boolean;
+  category: string | null;
 }
 
 function baseWhere(p: SearchParams, excludeFacet?: "brands" | "colors" | "rams") {
@@ -158,6 +159,11 @@ function baseWhere(p: SearchParams, excludeFacet?: "brands" | "colors" | "rams")
   if (p.multiStore) {
     clauses.push("vp.store_count >= 2");
   }
+  if (p.category) {
+    clauses.push(`v.category = $${i}`);
+    params.push(p.category);
+    i += 1;
+  }
   return { where: clauses.length ? `WHERE ${clauses.join(" AND ")}` : "", params };
 }
 
@@ -174,6 +180,7 @@ export async function searchVariants(
     priceLo: raw.priceLo,
     priceHi: raw.priceHi,
     multiStore: raw.multiStore,
+    category: raw.category,
   };
   const { where, params } = baseWhere(p);
   // The SELECT's brand-rank/pos expressions need the query itself as a

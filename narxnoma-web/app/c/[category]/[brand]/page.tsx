@@ -31,6 +31,7 @@ export default async function BrandPage({
     priceLo: null,
     priceHi: null,
     multiStore: false,
+    category,
     sort: "relevance",
     page: 1,
   });

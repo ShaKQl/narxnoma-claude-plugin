@@ -59,7 +59,7 @@ def a_listing(key):
 def test_harvest_writes_raw_and_offers():
     repo = FakeRepo()
     results = harvest_all(conn=None, sources=[FakeSource([a_listing("a"), a_listing("b")])],
-                          repo=repo)
+                          repo=repo, categories=["smartphones"])
     assert [r.ok for r in results] == [True]
     assert results[0].kept == 2
     assert len(repo.raw) == 2 and len(repo.upserts) == 2
@@ -70,7 +70,7 @@ def test_one_failing_source_does_not_abort_the_cycle():
     good = FakeSource([a_listing("a")])
     bad = FakeSource(boom=True)
     bad.slug = "idea"
-    results = harvest_all(conn=None, sources=[bad, good], repo=repo)
+    results = harvest_all(conn=None, sources=[bad, good], repo=repo, categories=["smartphones"])
     by_slug = {r.slug: r for r in results}
     assert by_slug["idea"].ok is False
     assert "503" in by_slug["idea"].error
@@ -81,7 +81,7 @@ def test_one_failing_source_does_not_abort_the_cycle():
 def test_failure_is_recorded_against_the_run():
     repo = FakeRepo()
     bad = FakeSource(boom=True)
-    harvest_all(conn=None, sources=[bad], repo=repo)
+    harvest_all(conn=None, sources=[bad], repo=repo, categories=["smartphones"])
     assert repo.runs[0]["ok"] is False
     assert repo.runs[0]["error"]
 
@@ -105,7 +105,7 @@ class RaisingSweepSource:
 def test_can_sweep_false_is_skipped_not_caught():
     repo = FakeRepo()
     source = RaisingSweepSource()
-    results = harvest_all(conn=None, sources=[source], repo=repo)
+    results = harvest_all(conn=None, sources=[source], repo=repo, categories=["smartphones"])
     assert results[0].slug == "mediapark"
     assert results[0].ok is True
     assert results[0].kept == 0
@@ -139,7 +139,7 @@ def test_start_run_failure_does_not_abort_the_cycle():
     bad = FakeSource([a_listing("a")])
     bad.slug = "idea"
     good = FakeSource([a_listing("b")])
-    results = harvest_all(conn=None, sources=[bad, good], repo=repo)
+    results = harvest_all(conn=None, sources=[bad, good], repo=repo, categories=["smartphones"])
     by_slug = {r.slug: r for r in results}
     assert by_slug["idea"].ok is False
     assert "db connection reset" in by_slug["idea"].error
@@ -158,7 +158,7 @@ def test_finish_run_failure_is_swallowed_not_raised():
     # rather than letting that second exception escape.
     repo = FinishRunAlwaysBoomsRepo()
     bad = FakeSource(boom=True)
-    results = harvest_all(conn=None, sources=[bad], repo=repo)
+    results = harvest_all(conn=None, sources=[bad], repo=repo, categories=["smartphones"])
     assert results[0].ok is False
     assert "503" in results[0].error
 
@@ -171,7 +171,7 @@ def test_large_sweep_is_written_in_batches():
     repo = FakeRepo()
     total = WRITE_BATCH_SIZE * 2 + 200
     listings = [a_listing(f"item-{i}") for i in range(total)]
-    results = harvest_all(conn=None, sources=[FakeSource(listings)], repo=repo)
+    results = harvest_all(conn=None, sources=[FakeSource(listings)], repo=repo, categories=["smartphones"])
 
     assert results[0].ok is True
     assert results[0].kept == total
@@ -204,7 +204,7 @@ def test_partial_sweep_keeps_the_batch_already_flushed():
     # written by the time the source raises, even though the sweep never
     # finishes and the run is recorded as failed overall.
     repo = FakeRepo()
-    results = harvest_all(conn=None, sources=[PartialSweepThenBoomSource()], repo=repo)
+    results = harvest_all(conn=None, sources=[PartialSweepThenBoomSource()], repo=repo, categories=["smartphones"])
 
     assert results[0].ok is False
     assert "503" in results[0].error

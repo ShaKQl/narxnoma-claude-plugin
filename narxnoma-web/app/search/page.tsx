@@ -21,6 +21,7 @@ export default async function SearchPage({
     priceLo: p.priceLo,
     priceHi: p.priceHi,
     multiStore: p.multiStore,
+    category: p.category,
     sort: p.sort,
     page: p.page,
   });

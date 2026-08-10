@@ -10,6 +10,7 @@ export interface ParsedSearch {
   priceLo: number | null;
   priceHi: number | null;
   multiStore: boolean;
+  category: string | null;
   sort: SortKey;
   page: number;
   /** URLSearchParams string carrying every applied filter (for /api/search). */
@@ -47,6 +48,7 @@ export function parseSearchParams(
   const priceHi =
     priceLo != null && !Number.isNaN(priceLo) ? priceLo + 2_499_999 : null;
   const multiStore = get("multi") === "1";
+  const category = get("category") || null;
   const sortRaw = get("sort") as SortKey;
   const sort: SortKey = SORTS.includes(sortRaw) ? sortRaw : "relevance";
   const page = Math.max(1, Number(get("page")) || 1);
@@ -70,6 +72,7 @@ export function parseSearchParams(
     priceLo,
     priceHi,
     multiStore,
+    category,
     sort,
     page,
     qs: qs.toString(),

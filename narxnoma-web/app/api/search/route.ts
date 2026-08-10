@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
       priceLo: p.priceLo,
       priceHi: p.priceHi,
       multiStore: p.multiStore,
+      category: p.category,
       sort: p.sort,
       page: p.page,
     });
