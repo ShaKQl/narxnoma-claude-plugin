@@ -715,7 +715,7 @@ class UzumSource:
 
         yield from paginate(fetch, parse, following, first_page=0)
 
-    def sweep(self) -> Iterator[Listing]:
+    def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
         """Every phone uzum returns across a fixed list of brand queries,
         paginating each until its items run out or offset hits OFFSET_CAP
         (see module docstring for why offset can't just run unbounded).

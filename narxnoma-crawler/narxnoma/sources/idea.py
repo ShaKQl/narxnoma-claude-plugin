@@ -149,7 +149,7 @@ class IdeaSource:
         )
         return parse(payload)
 
-    def sweep(self) -> Iterator[Listing]:
+    def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
         """Every phone idea returns across a fixed list of brand queries.
 
         There is no pagination and no full-catalogue endpoint, so this

@@ -176,7 +176,7 @@ class BeemarketSource:
             )
         return self._session
 
-    def sweep(self) -> Iterator[Listing]:
+    def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
         """Every phone in BeeMarket's smartfony category, walking pagination
         to the end. See module docstring for why this hits the
         category-scoped endpoint rather than the documented generic search.

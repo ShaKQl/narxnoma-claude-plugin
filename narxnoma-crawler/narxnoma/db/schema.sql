@@ -32,11 +32,13 @@ CREATE TABLE IF NOT EXISTS raw_offer (
     availability text NOT NULL DEFAULT 'UNKNOWN'
         CHECK (availability IN ('IN_STOCK', 'OUT_OF_STOCK', 'UNKNOWN')),
     image_url    text,
-    payload      jsonb,
-    observed_at  timestamptz NOT NULL DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS raw_offer_store_key_time
-    ON raw_offer (store_id, source_key, observed_at DESC);
+        payload      jsonb,
+        observed_at  timestamptz NOT NULL DEFAULT now()
+    );
+    -- Plan 5: which category sweep produced this observation (defaults smartphones).
+    ALTER TABLE raw_offer ADD COLUMN IF NOT EXISTS category text NOT NULL DEFAULT 'smartphones';
+    CREATE INDEX IF NOT EXISTS raw_offer_store_key_time
+        ON raw_offer (store_id, source_key, observed_at DESC);
 
 -- Current state, one row per retailer listing. variant_id is filled in Plan 3.
 CREATE TABLE IF NOT EXISTS offer (
@@ -50,12 +52,14 @@ CREATE TABLE IF NOT EXISTS offer (
     availability text NOT NULL DEFAULT 'UNKNOWN'
         CHECK (availability IN ('IN_STOCK', 'OUT_OF_STOCK', 'UNKNOWN')),
     image_url    text,
-    first_seen   timestamptz NOT NULL DEFAULT now(),
-    last_seen    timestamptz NOT NULL DEFAULT now(),
-    UNIQUE (store_id, source_key)
-);
-CREATE INDEX IF NOT EXISTS offer_last_seen ON offer (last_seen DESC);
-CREATE INDEX IF NOT EXISTS offer_variant ON offer (variant_id) WHERE variant_id IS NOT NULL;
+        first_seen   timestamptz NOT NULL DEFAULT now(),
+        last_seen    timestamptz NOT NULL DEFAULT now(),
+        UNIQUE (store_id, source_key)
+    );
+    -- Plan 5: which category sweep produced this offer (defaults smartphones).
+    ALTER TABLE offer ADD COLUMN IF NOT EXISTS category text NOT NULL DEFAULT 'smartphones';
+    CREATE INDEX IF NOT EXISTS offer_last_seen ON offer (last_seen DESC);
+    CREATE INDEX IF NOT EXISTS offer_variant ON offer (variant_id) WHERE variant_id IS NOT NULL;
 
 -- One row per source per cycle. Makes a silently-dead source visible.
 CREATE TABLE IF NOT EXISTS harvest_run (

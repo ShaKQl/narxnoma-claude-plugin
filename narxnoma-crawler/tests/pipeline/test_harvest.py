@@ -11,7 +11,7 @@ class FakeSource:
         self._listings = listings or []
         self._boom = boom
 
-    def sweep(self):
+    def sweep(self, category: str = "smartphones"):
         if self._boom:
             raise RuntimeError("upstream 503")
         yield from self._listings
@@ -95,7 +95,7 @@ class RaisingSweepSource:
     slug = "mediapark"
     can_sweep = False
 
-    def sweep(self):
+    def sweep(self, category: str = "smartphones"):
         raise AssertionError("sweep() must not be called when can_sweep is False")
 
     def search(self, query):
@@ -190,7 +190,7 @@ class PartialSweepThenBoomSource:
     slug = "olcha"
     can_sweep = True
 
-    def sweep(self):
+    def sweep(self, category: str = "smartphones"):
         for i in range(WRITE_BATCH_SIZE + 100):
             yield a_listing(f"item-{i}")
         raise RuntimeError("upstream 503 mid-sweep")

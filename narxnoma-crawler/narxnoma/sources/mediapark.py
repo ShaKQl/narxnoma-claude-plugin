@@ -127,7 +127,7 @@ class MediaparkSource:
             )
         return self._session
 
-    def sweep(self) -> Iterator[Listing]:
+    def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
         """Always raises -- mediapark has no full-catalogue endpoint.
 
         Deliberately not an empty generator: see module docstring for why

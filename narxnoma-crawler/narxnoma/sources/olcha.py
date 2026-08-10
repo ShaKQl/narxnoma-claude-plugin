@@ -76,7 +76,7 @@ class OlchaSource:
             )
         return self._session
 
-    def sweep(self) -> Iterator[Listing]:
+    def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
         """Every phone in olcha's telefony category, walking pagination to the end."""
         session = self._get_session()
 

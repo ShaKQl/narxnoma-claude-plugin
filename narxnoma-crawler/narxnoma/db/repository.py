@@ -63,7 +63,7 @@ def record_raw_offers(conn: psycopg.Connection, store_id: UUID,
     log price history is later derived from, not a cache of current state."""
     rows = [
         (store_id, listing.source_key, listing.name_raw, listing.price, listing.url,
-         listing.availability, listing.image_url,
+         listing.availability, listing.image_url, listing.category,
          Jsonb(_scrub_nuls(listing.raw), dumps=_dump_json))
         for listing in listings
     ]
@@ -73,8 +73,8 @@ def record_raw_offers(conn: psycopg.Connection, store_id: UUID,
         with conn.cursor() as cur:
             cur.executemany(
                 "INSERT INTO raw_offer"
-                " (store_id, source_key, name_raw, price, url, availability, image_url, payload)"
-                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", rows)
+                " (store_id, source_key, name_raw, price, url, availability, image_url, category, payload)"
+                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", rows)
     return len(rows)
 
 
@@ -105,19 +105,20 @@ def upsert_offers(conn: psycopg.Connection, store_id: UUID,
         with conn.cursor() as cur:
             for listing in listings:
                 cur.execute(
-                    "INSERT INTO offer"
-                    " (store_id, source_key, name_raw, price, url, availability, image_url)"
-                    " VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                    " ON CONFLICT (store_id, source_key) DO UPDATE SET"
-                    "   name_raw = EXCLUDED.name_raw,"
-                    "   price = EXCLUDED.price,"
-                    "   url = EXCLUDED.url,"
-                    "   availability = EXCLUDED.availability,"
-                    "   image_url = EXCLUDED.image_url,"
-                    "   last_seen = now()"
-                    " RETURNING (xmax = 0) AS was_inserted",
-                    (store_id, listing.source_key, listing.name_raw, listing.price,
-                     listing.url, listing.availability, listing.image_url))
+                                    "INSERT INTO offer"
+                                    " (store_id, source_key, name_raw, price, url, availability, image_url, category)"
+                                    " VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                                    " ON CONFLICT (store_id, source_key) DO UPDATE SET"
+                                    "   name_raw = EXCLUDED.name_raw,"
+                                    "   price = EXCLUDED.price,"
+                                    "   url = EXCLUDED.url,"
+                                    "   availability = EXCLUDED.availability,"
+                                    "   image_url = EXCLUDED.image_url,"
+                                    "   category = EXCLUDED.category,"
+                                    "   last_seen = now()"
+                                    " RETURNING (xmax = 0) AS was_inserted",
+                                    (store_id, listing.source_key, listing.name_raw, listing.price,
+                                     listing.url, listing.availability, listing.image_url, listing.category))
                 if cur.fetchone()[0]:
                     inserted += 1
                 else:
@@ -284,15 +285,15 @@ def load_attached_offers(conn: psycopg.Connection) -> list[dict]:
     """
     with conn.cursor() as cur:
         cur.execute("""
-            SELECT o.id, o.name_raw, o.variant_id,
+            SELECT o.id, o.name_raw, o.variant_id, o.category,
                    (SELECT r.payload FROM raw_offer r
                      WHERE r.store_id = o.store_id AND r.source_key = o.source_key
                      ORDER BY r.observed_at DESC LIMIT 1)
               FROM offer o
              WHERE o.variant_id IS NOT NULL
         """)
-        return [{"id": oid, "name_raw": name, "variant_id": vid, "raw": payload}
-                for oid, name, vid, payload in cur.fetchall()]
+        return [{"id": oid, "name_raw": name, "variant_id": vid, "category": cat, "raw": payload}
+                for oid, name, vid, cat, payload in cur.fetchall()]
 
 
 def detach_offer(conn: psycopg.Connection, offer_id: UUID) -> None:
@@ -310,15 +311,16 @@ def load_unattached_offers(conn: psycopg.Connection) -> list[dict]:
     """
     with conn.cursor() as cur:
         cur.execute("""
-            SELECT o.id, o.name_raw,
+            SELECT o.id, o.name_raw, o.category,
                    (SELECT r.payload FROM raw_offer r
                      WHERE r.store_id = o.store_id AND r.source_key = o.source_key
                      ORDER BY r.observed_at DESC LIMIT 1)
               FROM offer o
              WHERE o.variant_id IS NULL
         """)
-        return [{"id": oid, "name_raw": name, "raw": payload}
-                for oid, name, payload in cur.fetchall()]
+        return [{"id": oid, "name_raw": name, "category": cat, "raw": payload}
+                for oid, name, cat, payload in cur.fetchall()]
+
 
 
 def try_advisory_lock(conn: psycopg.Connection, key: int) -> bool:

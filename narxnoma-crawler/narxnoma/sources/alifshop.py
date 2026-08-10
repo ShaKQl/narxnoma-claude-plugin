@@ -195,7 +195,7 @@ class AlifshopSource:
             body["category"] = category
         return post_json(session, API_URL, json=body)
 
-    def sweep(self) -> Iterator[Listing]:
+    def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
         """Every phone alifshop returns across a fixed list of brand
         queries, walking pagination up to n_pages or MAX_PAGES per brand
         (see module docstring). Deduplicated by source_key across brand

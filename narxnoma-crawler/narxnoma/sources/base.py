@@ -55,6 +55,9 @@ class Listing:
     url: str
     availability: str = "UNKNOWN"
     image_url: str | None = None
+    #: Which category sweep produced this listing (Plan 5). Defaults to
+    #: smartphones so none of the existing V1 clients need to change.
+    category: str = "smartphones"
     raw: dict[str, Any] = field(default_factory=dict, compare=False, hash=False)
 
     def __post_init__(self) -> None:
@@ -107,7 +110,7 @@ class Source(Protocol):
     #: through `search()` alone.
     can_sweep: bool
 
-    def sweep(self) -> Iterator[Listing]:
+    def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
         """Every phone the retailer will show us, without a target list.
 
         Raises NotImplementedError when `can_sweep` is False.

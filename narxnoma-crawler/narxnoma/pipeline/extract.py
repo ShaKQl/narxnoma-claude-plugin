@@ -88,10 +88,14 @@ def identify(offer_row: Mapping[str, Any]) -> OfferIdentity:
     sim_text = _sim_text_from_raw(offer_row.get("raw"))
     kind = sim_kind(sim_text) if sim_text else sim_kind(name_raw)
 
+    # The category the offer was harvested under (Plan 5). Defaults to
+    # smartphones for offers written before the column existed.
+    category = offer_row.get("category") or "smartphones"
+
     return OfferIdentity(
         offer_id=offer_row.get("id"),
         features=features,
         sim_kind=kind,
-        key=variant_key(features, kind),
-        partial=partial_key(features, kind),
+        key=variant_key(features, kind, category),
+        partial=partial_key(features, kind, category),
     )

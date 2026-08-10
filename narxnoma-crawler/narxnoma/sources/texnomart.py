@@ -87,7 +87,7 @@ class TexnomartSource:
 
         yield from paginate(fetch, parse, following)
 
-    def sweep(self) -> Iterator[Listing]:
+    def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
         """Every phone texnomart returns for the generic query 'smartfon'.
 
         The filter is crawl POLICY and lives here, not in parse(): parse must

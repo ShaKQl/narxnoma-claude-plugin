@@ -62,8 +62,9 @@ def _flush_batch(conn, repo, store_id, batch: list) -> int:
     return len(batch)
 
 
-def harvest_source(conn, source, store_id, repo=default_repo) -> HarvestResult:
-    """Sweep one source and persist what it yields, in WRITE_BATCH_SIZE chunks.
+def harvest_source(conn, source, store_id, repo=default_repo,
+                   category: str = "smartphones") -> HarvestResult:
+    """Sweep one source (for one category) and persist what it yields.
 
     The entire function body -- including start_run and both finish_run
     calls -- lives inside the try block. Nothing here may propagate out to
@@ -78,7 +79,7 @@ def harvest_source(conn, source, store_id, repo=default_repo) -> HarvestResult:
         run_id = repo.start_run(conn, store_id)
 
         batch: list = []
-        for listing in source.sweep():
+        for listing in source.sweep(category=category):
             listings_seen += 1
             batch.append(listing)
             if len(batch) >= WRITE_BATCH_SIZE:
