@@ -528,6 +528,42 @@ export async function getFeatured(): Promise<VariantHit[]> {
   );
 }
 
+/** Top `per` products from EACH category (by store count, then price). Lets
+ *  the home page show a slice of every category, not just phones. */
+export async function getFeaturedPerCategory(
+  per: number = 4
+): Promise<{ category: string; hits: VariantHit[] }[]> {
+  const rows = await query<{ category: string; rn: number } & VariantHit>(
+    `WITH ranked AS (
+        SELECT v.id, v.slug, v.brand, v.display_name, v.ram_gb, v.storage_gb,
+               v.color, v.sim_kind, v.category,
+               vp.min_price, vp.median_price, vp.max_price,
+               vp.offer_count, vp.in_stock_offer_count, vp.store_count, vp.computed_at,
+               (SELECT max(o.last_seen) FROM offer o WHERE o.variant_id = v.id) AS latest_offer_at,
+               (SELECT o.image_url FROM offer o
+                 WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
+                   AND o.availability = 'IN_STOCK'
+                 ORDER BY o.price LIMIT 1) AS image_url,
+               ROW_NUMBER() OVER (
+                 PARTITION BY v.category
+                 ORDER BY vp.store_count DESC, vp.min_price ASC
+               ) AS rn
+          FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
+         WHERE vp.min_price IS NOT NULL
+    )
+    SELECT * FROM ranked WHERE rn <= $1 ORDER BY category, rn`,
+    [per]
+  );
+  const groups = new Map<string, VariantHit[]>();
+  for (const r of rows) {
+    const { category, rn: _rn, ...hit } = r;
+    const arr = groups.get(category) ?? [];
+    arr.push(hit as VariantHit);
+    groups.set(category, arr);
+  }
+  return [...groups.entries()].map(([category, hits]) => ({ category, hits }));
+}
+
 export async function getSearchSuggestions(q: string) {
   const qNorm = normalizeQuery(q);
   if (!qNorm) return { variants: [], brands: [] };

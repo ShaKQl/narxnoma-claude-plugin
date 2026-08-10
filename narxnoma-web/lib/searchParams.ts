@@ -60,6 +60,7 @@ export function parseSearchParams(
   if (rams.length) qs.set("ram", rams.join(","));
   if (priceLo != null) qs.set("price", String(priceLo));
   if (multiStore) qs.set("multi", "1");
+  if (category) qs.set("category", category);
   qs.set("sort", sort);
   if (page > 1) qs.set("page", String(page));
 

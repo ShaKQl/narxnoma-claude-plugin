@@ -23,11 +23,11 @@ const STORES = "Uzum, Alif Shop, BeeMarket, Idea, Mediapark, Olcha, Texnomart";
 
 export const metadata: Metadata = {
   title: {
-    default: "Нархнома — сравнение цен на смартфоны в Узбекистане",
+    default: "Нархнома — сравнение цен на технику в Узбекистане",
     template: "%s · Нархнома",
   },
   description:
-    "Введите название смартфона и сравните цены Uzum, Alif Shop, BeeMarket, Idea, Mediapark, Olcha и Texnomart. Рядом с каждой ценой — точная формулировка магазина, чтобы вы сами могли проверить совпадение.",
+    "Введите название техники — смартфона, телевизора, ноутбука — и сравните цены Uzum, Alif Shop, BeeMarket, Idea, Mediapark, Olcha и Texnomart. Рядом с каждой ценой — точная формулировка магазина, чтобы вы сами могли проверить совпадение.",
 };
 
 export default async function RootLayout({
@@ -50,7 +50,7 @@ export default async function RootLayout({
               </a>
               <nav className="topnav-links">
                 <a href="/search">{t(lang, "nav.search")}</a>
-                <a href="/c/smartphones">{t(lang, "nav.catalog")}</a>
+                <a href="/catalog">{t(lang, "nav.catalog")}</a>
                 <a href="/stores">{t(lang, "nav.stores")}</a>
                 <a href="/about">{t(lang, "nav.about")}</a>
                 <LangSwitcher />

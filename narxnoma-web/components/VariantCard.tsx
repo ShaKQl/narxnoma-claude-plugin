@@ -24,7 +24,6 @@ export default function VariantCard({ v }: { v: VariantHit }) {
         <span className="card-brand">{v.brand}</span>
         {v.store_count >= 2 && (
           <span className="stores-n">
-            <b>{v.store_count}</b>{" "}
             {plural(lang, v.store_count, "do'kon", "магазин", "магазина", "магазинов")}
           </span>
         )}

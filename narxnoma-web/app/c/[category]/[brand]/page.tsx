@@ -47,7 +47,10 @@ export default async function BrandPage({
             <a href="/">{lang === "uz" ? "Bosh sahifa" : "Главная"}</a>
             {" · "}
             <a href={`/c/${category}`}>
-              {category === "smartphones" ? t(lang, "cat.smartphones") : category}
+              {(() => {
+                const v = t(lang, `cat.${category}`);
+                return v && !v.startsWith("cat.") ? v : category;
+              })()}
             </a>
           </div>
           <h1 style={{ textTransform: "capitalize" }}>{brand}</h1>
