@@ -85,6 +85,15 @@ MARKETING: frozenset[str] = frozenset({
     "smart", "смарт", "android", "андроид", "google", "assistant", "webos",
     "tizen", "yandex", "алиса", "ai", "wifi", "wi", "fi", "bluetooth",
     "inverter", "invertor", "инвертор", "инверторный", "инверторная",
+    # Inverter-type markers on air conditioners, stated by some listings of a
+    # unit and not by others: "Artel Dc Full Shahrisabz 12" and "Artel
+    # Shahrisabz 12" are one air conditioner, as are "Artel Marvarid Inv 18"
+    # and "Artel Marvarid 18". "art" is Artel's own product-line prefix
+    # ("Artel ART HDG Iceberg 12"), not a model.
+    # Series letters ("12BE", "12HE", "HS") are deliberately NOT here: those
+    # ride inside the figure token and may distinguish real units, and merging
+    # two real products is the failure this module must not have.
+    "inv", "dc", "full", "art",
     "led", "qled", "oled", "nanocell", "frameless",
     "uhd", "fhd", "hd", "ultrahd", "fullhd", "4k", "8k", "2k",
     "dyuym", "дюйм", "дюйма", "дюймов",

@@ -32,6 +32,9 @@ BRAND_ALIASES: dict[str, str] = {
     "redmi": "xiaomi",
     "poco": "xiaomi",
     "macbook": "apple",
+    # Avalon prefixes its model codes "AVL-": "AVALON AVL-RF512", and some
+    # listings drop the brand word entirely ("Стиральная машина AVL-WM 7030").
+    "avl": "avalon",
 }
 
 # Brands that appear ONLY outside smartphones: TV, appliance and laptop makers.
@@ -57,6 +60,13 @@ APPLIANCE_BRANDS: list[str] = [
     "electrolux", "ariston", "siemens", "candy", "roison", "ferre",
     "sony", "philips", "sharp", "supra", "yasin", "goldstar",
     "7tech", "arg", "lg",
+    # Second measured pass, after the category frontier tripled the non-phone
+    # catalogue (2,076 -> 6,320 offers). Same method: unrecognised head tokens
+    # counted across every non-phone title, each confirmed against three real
+    # listings as a manufacturer.
+    "hofmann", "gefest", "elite", "aux", "ideal", "loretto", "bench",
+    "kleo", "sitronic", "volna", "itech", "goodwell", "helper", "aiwa",
+    "sirius", "biryusa", "sencor", "vestel", "zanussi", "hansa",
     # laptops
     "lenovo", "acer", "msi", "dell", "bikon", "gigabyte", "razer",
     "hp",
@@ -85,6 +95,13 @@ APPLIANCE_BRAND_LABELS: dict[str, str] = {
     "arg": "ARG", "lg": "LG", "lenovo": "Lenovo", "acer": "Acer",
     "msi": "MSI", "dell": "Dell", "bikon": "BIKON", "gigabyte": "Gigabyte",
     "razer": "Razer", "hp": "HP",
+    "hofmann": "Hofmann", "gefest": "Gefest", "elite": "Elite",
+    "aux": "AUX", "ideal": "Ideal", "loretto": "Loretto", "bench": "Bench",
+    "kleo": "Kleo", "sitronic": "Sitronic", "volna": "Volna",
+    "itech": "iTech", "goodwell": "Goodwell", "helper": "Helper",
+    "aiwa": "AIWA", "sirius": "Sirius", "biryusa": "Бирюса",
+    "sencor": "Sencor", "vestel": "Vestel", "zanussi": "Zanussi",
+    "hansa": "Hansa",
 }
 
 # Brands that never print RAM in consumer product names. For these, RAM is
