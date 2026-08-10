@@ -25,8 +25,10 @@ export default async function CategoryPage({
   const rows = (await getBrandsByCategory()).filter(
     (r) => r.category === category
   );
-  const catLabel = (c: string) =>
-    c === "smartphones" ? t(lang, "cat.smartphones") : c;
+  const catLabel = (c: string) => {
+    const v = t(lang, `cat.${c}`);
+    return v && !v.startsWith("cat.") ? v : c;
+  };
   return (
     <main>
       <div className="page">

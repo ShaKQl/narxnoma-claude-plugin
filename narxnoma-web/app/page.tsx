@@ -58,21 +58,36 @@ export default async function HomePage() {
           <div className="result-head" style={{ marginTop: 40 }}>
             <h2>{t(lang, "home.brands")}</h2>
           </div>
-          <div className="brand-grid">
-            {brands.map((b) => (
-              <Link
-                key={b.brand}
-                className="brand-tile"
-                href={`/c/${b.category}/${b.brand}`}
-              >
-                <span className="b-name">{b.brand}</span>
-                <span className="b-meta">
-                  {plural(lang, b.count, "model", "модель", "модели", "моделей")}
-                  {b.min_price != null && ` · ${lang === "uz" ? "dan" : "от"} ${price(lang, b.min_price)}`}
-                </span>
-              </Link>
-            ))}
-          </div>
+          {(() => {
+            const groups = new Map<string, typeof brands>();
+            for (const b of brands) {
+              const arr = groups.get(b.category) ?? [];
+              arr.push(b);
+              groups.set(b.category, arr);
+            }
+            return [...groups.entries()].map(([cat, list]) => (
+              <div key={cat} style={{ marginTop: 8 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 600, margin: "18px 0 8px" }}>
+                  {t(lang, `cat.${cat}` as any)}
+                </h3>
+                <div className="brand-grid">
+                  {list.map((b) => (
+                    <Link
+                      key={b.brand}
+                      className="brand-tile"
+                      href={`/c/${b.category}/${b.brand}`}
+                    >
+                      <span className="b-name">{b.brand}</span>
+                      <span className="b-meta">
+                        {plural(lang, b.count, "model", "модель", "модели", "моделей")}
+                        {b.min_price != null && ` · ${lang === "uz" ? "dan" : "от"} ${price(lang, b.min_price)}`}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ));
+          })()}
         </div>
       </section>
     </main>
