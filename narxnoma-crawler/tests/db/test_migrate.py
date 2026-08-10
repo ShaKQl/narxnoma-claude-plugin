@@ -11,7 +11,7 @@ def test_migrate_creates_tables_and_seeds_stores(db_conn):
     # migration-1 seed list -- see the comments there. Listed explicitly
     # rather than derived from SOURCES: a source registered with no store row
     # is precisely the bug this catches.
-    assert slugs == ["alifshop", "asaxiy", "beemarket", "idea", "mediapark",
+    assert slugs == ["alifshop", "asaxiy", "beemarket", "glotr", "idea", "mediapark",
                      "olcha", "radius", "texnomart", "uzum"]
 
 
@@ -21,7 +21,7 @@ def test_migrate_is_idempotent(db_conn):
     migrate(db_conn)          # second run must not raise or duplicate
     with db_conn.cursor() as cur:
         cur.execute("SELECT count(*) FROM store")
-        assert cur.fetchone()[0] == 9
+        assert cur.fetchone()[0] == 10
 
 
 def test_price_check_constraint_rejects_bad_values(db_conn):

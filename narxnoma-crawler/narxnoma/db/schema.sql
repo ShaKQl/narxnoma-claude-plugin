@@ -181,3 +181,15 @@ INSERT INTO store (slug, name, website_url) VALUES
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO schema_version (version) VALUES (4) ON CONFLICT (version) DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Migration 5: glotr.uz, the tenth source. Appended for the same reason
+-- migration 3 was -- the INSERT above already ran in production and only a
+-- fresh database would see a new row under migration 1's block.
+-- ---------------------------------------------------------------------------
+
+INSERT INTO store (slug, name, website_url) VALUES
+    ('glotr', 'Glotr', 'https://glotr.uz')
+ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO schema_version (version) VALUES (5) ON CONFLICT (version) DO NOTHING;

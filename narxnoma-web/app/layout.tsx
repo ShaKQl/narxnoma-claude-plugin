@@ -19,7 +19,7 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
-const STORES = "Uzum, Alif Shop, BeeMarket, Idea, Mediapark, Olcha, Texnomart";
+const STORES = "Uzum, Alif Shop, BeeMarket, Idea, Mediapark, Olcha, Texnomart, Glotr";
 
 export const metadata: Metadata = {
   title: {
