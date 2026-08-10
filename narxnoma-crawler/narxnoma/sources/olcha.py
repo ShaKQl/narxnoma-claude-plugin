@@ -5,6 +5,7 @@ smartphone category is fewer calls and better coverage than one search per
 phone (see docs/parsers/olcha.md). `search()` therefore filters the swept
 catalogue client-side rather than hitting a different endpoint.
 """
+from dataclasses import replace
 from typing import Iterator
 
 from narxnoma.sources.base import Listing, coerce_price, paginate, try_build_listing
@@ -13,6 +14,19 @@ from narxnoma.sources.http import get_json, polite_session
 API_URL = "https://mobile.olcha.uz/api/v2/products"
 PRODUCT_URL = "https://olcha.uz/ru/product/view/{alias}"
 CATEGORY = "telefony"
+
+# Plan 5: category -> olcha category alias, verified live 2026-08-10 from
+# /api/v2/categories (leaf alias). "ovens" maps to olcha's only close
+# category, built-in-and-freestanding stoves (olcha sells no built-in ovens).
+CATEGORY_ALIASES = {
+    "smartphones": "telefony",                       # id 10
+    "televisions": "televizory",                     # id 2
+    "laptops": "noutbuki",                           # id 6
+    "acs": "konditsionery",                          # id 98
+    "fridges": "kholodilniki-i-morozilnye-kamery-1", # id 41
+    "washers": "stiralnye-mashiny",                  # id 37
+    "ovens": "plity-gazovye-i-elektricheskie",       # id 42 (stoves)
+}
 PER_PAGE = 20  # server caps per_page at 20 regardless of what is requested
 
 _HEADERS = {
@@ -77,21 +91,27 @@ class OlchaSource:
         return self._session
 
     def sweep(self, category: str = "smartphones") -> Iterator[Listing]:
-        """Every phone in olcha's telefony category, walking pagination to the end."""
+        """Every item in one olcha category, walking pagination to the end."""
+        alias = CATEGORY_ALIASES.get(category)
+        if alias is None:
+            raise ValueError(f"unknown category {category!r}")
         session = self._get_session()
 
         def fetch(page):
             return get_json(
                 session,
                 API_URL,
-                params={"page": page, "per_page": PER_PAGE, "category": CATEGORY},
+                params={"page": page, "per_page": PER_PAGE, "category": alias},
             )
 
         def following(payload, page):
             paginator = ((payload or {}).get("data") or {}).get("paginator") or {}
             return page + 1 if page < paginator.get("last_page", page) else None
 
-        yield from paginate(fetch, parse, following)
+        for listing in paginate(fetch, parse, following):
+            if listing.category != category:
+                listing = replace(listing, category=category)
+            yield listing
 
     def search(self, query: str) -> Iterator[Listing]:
         """olcha has no search endpoint; filter the already-swept catalogue by name."""
