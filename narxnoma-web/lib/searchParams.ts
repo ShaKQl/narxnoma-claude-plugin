@@ -1,9 +1,11 @@
-import { normalizeQuery } from "./queries";
+import { normalizeQuery, queryTokens } from "./queries";
 import type { SortKey } from "./queries";
 
 export interface ParsedSearch {
   rawQ: string;
   qNorm: string;
+  /** The tokens a row must all contain; see queryTokens. */
+  qTokens: string[];
   brands: string[];
   colors: string[];
   rams: number[];
@@ -37,6 +39,7 @@ export function parseSearchParams(
       .filter(Boolean);
 
   const rawQ = get("q");
+  const qTokens = queryTokens(rawQ);
   const qNorm = normalizeQuery(rawQ);
   const brands = list("brand");
   const colors = list("color");
@@ -67,6 +70,7 @@ export function parseSearchParams(
   return {
     rawQ,
     qNorm,
+    qTokens,
     brands,
     colors,
     rams,

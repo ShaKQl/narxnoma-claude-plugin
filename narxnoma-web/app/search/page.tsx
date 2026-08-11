@@ -15,6 +15,7 @@ export default async function SearchPage({
   const p = parseSearchParams(await searchParams);
   const res = await searchVariants({
     qNorm: p.qNorm,
+    qTokens: p.qTokens,
     brands: p.brands,
     colors: p.colors,
     rams: p.rams,

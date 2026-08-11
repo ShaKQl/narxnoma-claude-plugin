@@ -66,11 +66,14 @@ EXPECTED_MIN_OFFERS = {
         # copied from a bigger shop would never fire, which is the one thing a
         # floor must not do.
         "radius": 120,
-        # Measured live 2026-08-10 from glotr's category pages: each of the seven
-        # categories is ~56 products * 5 pages (~280), so a full sweep is ~1900.
-        # A floor far below that measured size only fires if the source truly
-        # breaks -- which is the only thing a floor is for.
-        "glotr": 500,
+        # Re-measured live 2026-08-11: 8,138 offers kept across the seven
+        # categories. The previous figure (~1,900) was wrong, and instructively
+        # so: it came from reading "5 pages" off the pager on page 1, which is
+        # WINDOWED and only ever shows a few links around the current page.
+        # glotr's ACs alone run to 58 pages. Set at half the measured size --
+        # this is a classifieds board, so its volume moves with how many
+        # sellers happen to be posting, and a tight floor here would cry wolf.
+        "glotr": 4000,
     }
 
 

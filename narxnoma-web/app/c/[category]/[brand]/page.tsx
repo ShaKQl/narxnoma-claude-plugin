@@ -24,7 +24,11 @@ export default async function BrandPage({
   const { category, brand } = await params;
   const lang = langFromCookie((await cookies()).get("lang")?.value);
   const res = await searchVariants({
+    // qNorm ranks; qTokens filters. The brand is already an exact filter
+    // below, so adding it as a name token would additionally require the
+    // brand to appear in the display name and quietly drop rows it does not.
     qNorm: brand,
+    qTokens: [],
     brands: [brand],
     colors: [],
     rams: [],

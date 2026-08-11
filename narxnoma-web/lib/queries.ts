@@ -91,23 +91,89 @@ const BRAND_SYNONYMS: Record<string, string> = {
   тecno: "tecno",
   асус: "asus",
   гугл: "google",
-  "смартфон": "",
-  smartfon: "",
-  телефон: "",
+  галакси: "galaxy",
+  галакcи: "galaxy",
+  // Category nouns. display_name is generated in Russian and ALWAYS opens
+  // with one ("Телевизор 7Tech 7TV4G55QLEDKS1"), so these are the most
+  // searchable words in the catalogue -- they used to be discarded as noise,
+  // which is why "смартфон" matched nothing while every phone was named one.
+  телефон: "смартфон",
+  смартфон: "смартфон",
+  smartfon: "смартфон",
+  telefon: "смартфон",
+  televizor: "телевизор",
+  noutbuk: "ноутбук",
+  laptop: "ноутбук",
+  konditsioner: "кондиционер",
+  muzlatgich: "холодильник",
+  duxovka: "духовой",
+  pechka: "духовой",
 };
 
-export function normalizeQuery(raw: string): string {
-  let q = raw.toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, " ").trim();
-  q = q.replace(/\s+/g, " ");
-  if (!q) return "";
-  // Whole-word synonym rewrite (also expands "реди" -> "redmi"); noise words
-  // map to "" and are dropped.
-  const words = q.split(" ");
-  const mapped = words
+/**
+ * The query, split into the tokens a row must ALL contain.
+ *
+ * Search used to match `display_name LIKE '%<the whole query>%'`, which made
+ * word order and adjacency mandatory: "iphone 256" found 0 of the 186 rows
+ * that hold both words, and "asus vivobook 15" found 5 of 26. Users do not
+ * type catalogue names in catalogue order.
+ */
+export function queryTokens(raw: string): string[] {
+  const q = raw
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s-]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!q) return [];
+  return q
+    .split(" ")
     .map((w) => (w in BRAND_SYNONYMS ? BRAND_SYNONYMS[w] : w))
     .filter(Boolean);
-  return mapped.join(" ");
 }
+
+export function normalizeQuery(raw: string): string {
+  return queryTokens(raw).join(" ");
+}
+
+/**
+ * Case-folded display_name, explicitly under ICU.
+ *
+ * THE DATABASE IS LC_COLLATE=C / LC_CTYPE=C, so Postgres' own `lower()` folds
+ * ASCII and leaves everything else alone: `lower('Телевизор Samsung')` is
+ * `'Телевизор samsung'`. Every one of the catalogue's display names opens
+ * with a Cyrillic capital, so before this every Cyrillic search in the site
+ * returned exactly nothing -- "телевизор", "холодильник", "ноутбук",
+ * "кондиционер", all zero, on a catalogue where those words name thousands of
+ * rows. ILIKE and citext read the same ctype and are no help; pg_trgm is not
+ * installed. ICU is compiled in (784 collations), and `lower(x COLLATE
+ * "und-x-icu")` folds Cyrillic correctly, so the fix is per-expression and
+ * needs neither an extension nor a database rebuild.
+ *
+ * Use this ANYWHERE a user's typed text is compared to catalogue text. A bare
+ * lower() will appear to work in every English test and silently fail for the
+ * language the site is actually written in.
+ */
+const FOLDED_NAME = `lower(v.display_name COLLATE "und-x-icu")`;
+const FOLDED_BRAND = `lower(v.brand COLLATE "und-x-icu")`;
+
+/**
+ * The picture for one grid card, as `v.id`'s cheapest available image.
+ *
+ * Restricted to IN_STOCK offers this returned nothing for 1,936 of 11,150
+ * listed products, because whether a picture exists and whether the cheapest
+ * seller happens to have stock are unrelated facts. The out-of-stock tier is
+ * a fallback only, so a card still shows the in-stock seller's picture
+ * whenever there is one.
+ */
+const CARD_IMAGE = `COALESCE(
+              (SELECT o.image_url FROM offer o
+                WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
+                  AND o.availability = 'IN_STOCK'
+                ORDER BY o.price LIMIT 1),
+              (SELECT o.image_url FROM offer o
+                WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
+                ORDER BY o.price LIMIT 1)
+            )`;
 
 // ---------------------------------------------------------------------------
 // Base WHERE builder shared by results + facet queries.
@@ -117,6 +183,8 @@ export function normalizeQuery(raw: string): string {
 
 interface SearchParams {
   qNorm: string;
+  /** Every token the row must contain; see queryTokens. */
+  qTokens: string[];
   brands: string[];
   colors: string[];
   rams: number[];
@@ -130,9 +198,25 @@ function baseWhere(p: SearchParams, excludeFacet?: "brands" | "colors" | "rams")
   const clauses: string[] = [];
   const params: unknown[] = [];
   let i = 1;
-  if (p.qNorm) {
-    clauses.push(`lower(v.display_name) LIKE '%' || $${i} || '%'`);
-    params.push(p.qNorm);
+  // Every token must appear, in any order, in the catalogue name OR in what
+  // some retailer calls the same product.
+  //
+  // display_name is GENERATED from the variant key, so it carries only what
+  // the matcher treats as identity -- and the matcher drops marketing words.
+  // "Galaxy" is one of them: 1,730 offers say Galaxy, 9 display names do, so
+  // "samsung galaxy a26" -- the ordinary way to name that phone -- matched
+  // nothing while the phone sat in the catalogue as "Смартфон Samsung A26
+  // 8/256 ГБ, Чёрный". Searching the offers as well costs about 100ms over
+  // 8,600 variants and needs no change to identity, which is the one thing
+  // that must not move to make a search box work.
+  for (const token of p.qTokens) {
+    clauses.push(
+      `(${FOLDED_NAME} LIKE '%' || $${i} || '%'
+        OR EXISTS (SELECT 1 FROM offer o
+                    WHERE o.variant_id = v.id
+                      AND lower(o.name_raw COLLATE "und-x-icu") LIKE '%' || $${i} || '%'))`
+    );
+    params.push(token);
     i += 1;
   }
   if (excludeFacet !== "brands" && p.brands.length) {
@@ -178,6 +262,7 @@ export async function searchVariants(
 ): Promise<SearchResult> {
   const p: SearchParams = {
     qNorm: raw.qNorm,
+    qTokens: raw.qTokens,
     brands: raw.brands,
     colors: raw.colors,
     rams: raw.rams,
@@ -187,11 +272,14 @@ export async function searchVariants(
     category: raw.category,
   };
   const { where, params } = baseWhere(p);
-  // The SELECT's brand-rank/pos expressions need the query itself as a
-  // parameter. It must go in a COPY: `params` is reused by the count and
-  // facet queries, which do not declare it.
+  // The SELECT's brand-rank/pos expressions need a query term as a parameter.
+  // It must go in a COPY: `params` is reused by the count and facet queries,
+  // which do not declare it. The FIRST token is the ranking term -- with
+  // token matching there is no single "the query" string to position, and the
+  // leading word is what a user is anchoring on ("samsung a26" -> samsung).
   const qIdx = params.length + 1;
-  const resParams = [...params, p.qNorm];
+  const rankTerm = p.qTokens[0] ?? "";
+  const resParams = [...params, rankTerm];
 
   // --- results ------------------------------------------------------------
   const orderBy = {
@@ -207,13 +295,13 @@ export async function searchVariants(
             vp.min_price, vp.median_price, vp.max_price,
             vp.offer_count, vp.in_stock_offer_count, vp.store_count, vp.computed_at,
             (SELECT max(o.last_seen) FROM offer o WHERE o.variant_id = v.id) AS latest_offer_at,
-            (SELECT o.image_url FROM offer o
-              WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
-                AND o.availability = 'IN_STOCK'
-              ORDER BY o.price LIMIT 1) AS image_url,
-            CASE WHEN lower(v.brand) = $${qIdx} THEN 0
-                 WHEN lower(v.brand) LIKE $${qIdx} || '%' THEN 1 ELSE 2 END AS brand_rank,
-            strpos(lower(v.display_name), $${qIdx}) AS pos
+            ${CARD_IMAGE} AS image_url,
+            CASE WHEN ${FOLDED_BRAND} = $${qIdx} THEN 0
+                 WHEN ${FOLDED_BRAND} LIKE $${qIdx} || '%' THEN 1 ELSE 2 END AS brand_rank,
+            -- strpos returns 0 when the term is absent, which would sort
+            -- those rows FIRST. Push them last instead.
+            CASE WHEN strpos(${FOLDED_NAME}, $${qIdx}) = 0 THEN 2147483647
+                 ELSE strpos(${FOLDED_NAME}, $${qIdx}) END AS pos
        FROM variant v
        JOIN variant_price vp ON vp.variant_id = v.id
        ${where}
@@ -424,7 +512,29 @@ export async function getVariantPage(slug: string): Promise<VariantPage> {
  (SELECT o.name_raw FROM offer o WHERE o.id = vp.min_offer_id) AS min_offer_name,
             (SELECT o.url FROM offer o WHERE o.id = vp.min_offer_id) AS min_offer_url,
             (SELECT s.name FROM store s WHERE s.id = vp.min_store_id) AS min_store_name,
-            (SELECT o.image_url FROM offer o WHERE o.id = vp.min_offer_id) AS hero_image_url
+            -- The hero picture used to be the CHEAPEST offer's picture and
+            -- nothing else, so a variant whose cheapest seller publishes no
+            -- image showed no image at all -- while the grid card for the
+            -- same product, which already picked the cheapest offer that HAS
+            -- one, showed it. Clicking a product made its picture disappear.
+            -- uzum alone accounts for 5,461 imageless offers, and 302
+            -- variants had a picture available and rendered none.
+            --
+            -- Preference order, cheapest first within each tier: the min
+            -- offer, then any in-stock offer, then any offer at all. A
+            -- picture from a second retailer of the same product is right;
+            -- an empty frame is not.
+            COALESCE(
+              (SELECT o.image_url FROM offer o
+                WHERE o.id = vp.min_offer_id AND o.image_url IS NOT NULL),
+              (SELECT o.image_url FROM offer o
+                WHERE o.variant_id = vp.variant_id AND o.image_url IS NOT NULL
+                  AND o.availability = 'IN_STOCK'
+                ORDER BY o.price LIMIT 1),
+              (SELECT o.image_url FROM offer o
+                WHERE o.variant_id = vp.variant_id AND o.image_url IS NOT NULL
+                ORDER BY o.price LIMIT 1)
+            ) AS hero_image_url
        FROM variant_price vp WHERE vp.variant_id = $1`,
     [v.id]
   );
@@ -539,10 +649,7 @@ export async function getFeatured(): Promise<VariantHit[]> {
             vp.min_price, vp.median_price, vp.max_price,
             vp.offer_count, vp.in_stock_offer_count, vp.store_count, vp.computed_at,
             (SELECT max(o.last_seen) FROM offer o WHERE o.variant_id = v.id) AS latest_offer_at,
-            (SELECT o.image_url FROM offer o
-              WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
-                AND o.availability = 'IN_STOCK'
-              ORDER BY o.price LIMIT 1) AS image_url,
+            ${CARD_IMAGE} AS image_url,
             0 AS brand_rank, 0 AS pos
        FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
       WHERE vp.store_count >= 2 AND vp.min_price IS NOT NULL
@@ -563,10 +670,7 @@ export async function getFeaturedPerCategory(
                vp.min_price, vp.median_price, vp.max_price,
                vp.offer_count, vp.in_stock_offer_count, vp.store_count, vp.computed_at,
                (SELECT max(o.last_seen) FROM offer o WHERE o.variant_id = v.id) AS latest_offer_at,
-               (SELECT o.image_url FROM offer o
-                 WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
-                   AND o.availability = 'IN_STOCK'
-                 ORDER BY o.price LIMIT 1) AS image_url,
+               ${CARD_IMAGE} AS image_url,
                -- Carried by most retailers first, then most widely stocked,
                -- and only then cheapest. Ordering by price alone fills an
                -- appliance row with the cheapest no-name units in the
@@ -613,10 +717,7 @@ export async function getCategoryProducts(
             vp.min_price, vp.median_price, vp.max_price,
             vp.offer_count, vp.in_stock_offer_count, vp.store_count, vp.computed_at,
             (SELECT max(o.last_seen) FROM offer o WHERE o.variant_id = v.id) AS latest_offer_at,
-            (SELECT o.image_url FROM offer o
-              WHERE o.variant_id = v.id AND o.image_url IS NOT NULL
-                AND o.availability = 'IN_STOCK'
-              ORDER BY o.price LIMIT 1) AS image_url,
+            ${CARD_IMAGE} AS image_url,
             0 AS brand_rank, 0 AS pos
        FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
       WHERE v.category = $1 AND vp.min_price IS NOT NULL
@@ -638,18 +739,31 @@ export async function getCategoryCount(category: string): Promise<number> {
 }
 
 export async function getSearchSuggestions(q: string) {
-  const qNorm = normalizeQuery(q);
-  if (!qNorm) return { variants: [], brands: [] };
+  // Same token rule and same ICU fold as the results page. When the two
+  // disagree the dropdown offers products the search page then cannot find,
+  // which reads as the search box being broken even when it is not.
+  const tokens = queryTokens(q);
+  if (!tokens.length) return { variants: [], brands: [] };
+  const clauses = tokens
+    .map(
+      (_, n) =>
+        `(${FOLDED_NAME} LIKE '%' || $${n + 1} || '%'
+          OR EXISTS (SELECT 1 FROM offer o
+                      WHERE o.variant_id = v.id
+                        AND lower(o.name_raw COLLATE "und-x-icu") LIKE '%' || $${n + 1} || '%'))`
+    )
+    .join(" AND ");
   const variants = await query(
     `SELECT v.slug, v.display_name, vp.min_price, vp.store_count
        FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
-      WHERE lower(v.display_name) LIKE '%' || $1 || '%'
+      WHERE ${clauses}
       ORDER BY vp.store_count DESC, vp.min_price ASC NULLS LAST LIMIT 6`,
-    [qNorm]
+    tokens
   );
   const brands = await query<{ brand: string }>(
-    `SELECT DISTINCT brand FROM variant WHERE lower(brand) LIKE $1 || '%' ORDER BY brand LIMIT 5`,
-    [qNorm]
+    `SELECT DISTINCT v.brand FROM variant v
+      WHERE ${FOLDED_BRAND} LIKE $1 || '%' ORDER BY v.brand LIMIT 5`,
+    [tokens[0]]
   );
   return { variants, brands: brands.map((b) => b.brand) };
 }

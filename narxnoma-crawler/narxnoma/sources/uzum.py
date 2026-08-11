@@ -199,6 +199,7 @@ query getMakeSearch($q: MakeSearchQueryInput!) {
         productId
         title
         category { id title }
+        photos { link(trans: PRODUCT_540) { high } }
         ... on SkuGroupCard {
           skuList {
             id
@@ -580,6 +581,42 @@ def _items(payload: dict) -> list[dict]:
     return (((payload or {}).get("data") or {}).get("makeSearch") or {}).get("items") or []
 
 
+def _card_image(card: dict) -> str | None:
+    """The card's first photo, or None.
+
+    uzum was the only source publishing no picture at all -- 5,461 offers,
+    the largest source in the catalogue, every one of them imageless, because
+    `photos` was simply never asked for. The site's placeholder-heavy look
+    traced back to this one missing field.
+
+    Two things about the field are not guessable and were read off the live
+    schema: `photos.link` REQUIRES a `trans:` argument (`Transformation!`), so
+    a bare `link { high }` is a validation error and a 400, not a null; and
+    PhotoLink's `high`/`low` are plain URL strings, not objects. PRODUCT_540
+    is a card-sized render -- ORIGINAL exists but is a full-resolution
+    original, which is the wrong thing to hotlink into a grid.
+
+    The photo belongs to the CARD, and a card is finer-grained than a
+    product: makeSearch returns ONE CARD PER COLOUR, so a single productId
+    comes back as several cards (16 of 72 items in the recorded fixture) whose
+    skuLists differ only in storage tier. The picture is therefore accurate to
+    the colour, not merely to the model -- which matters here, because colour
+    is part of a phone's identity in this catalogue and a card showing the
+    black handset under the green variant would be a substitution.
+    """
+    photos = card.get("photos")
+    if not isinstance(photos, list):
+        return None
+    for photo in photos:
+        if not isinstance(photo, dict):
+            continue
+        link = photo.get("link")
+        url = link.get("high") if isinstance(link, dict) else None
+        if isinstance(url, str) and url.startswith("http"):
+            return url
+    return None
+
+
 def _parse_sku(card: dict, sku: dict) -> Listing | None:
     if not isinstance(sku, dict):
         return None
@@ -609,6 +646,7 @@ def _parse_sku(card: dict, sku: dict) -> Listing | None:
         price=price,
         url=PRODUCT_URL.format(product_id=product_id, sku_id=sku_id),
         availability=availability,
+        image_url=_card_image(card),
         raw={
             "card_title": card.get("title"),      # untouched, for re-derivation downstream
             "category_id": (card.get("category") or {}).get("id"),

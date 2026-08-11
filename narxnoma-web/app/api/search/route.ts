@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
   try {
     const res = await searchVariants({
       qNorm: p.qNorm,
+      qTokens: p.qTokens,
       brands: p.brands,
       colors: p.colors,
       rams: p.rams,

@@ -43,7 +43,7 @@ import requests
 from narxnoma.matching import extract_features, variant_key
 from narxnoma.sources import uzum
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
-from narxnoma.sources.uzum import _build_name_raw, _char_kind, parse
+from narxnoma.sources.uzum import _build_name_raw, _card_image, _char_kind, _items, parse
 
 FIXTURE = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "sources" / "uzum.json"
 
@@ -71,6 +71,88 @@ def test_fixture_exists_and_is_not_empty():
 def test_parse_returns_listings():
     listings = parse(payload())
     assert listings, "parse() found nothing in a real recorded response"
+
+
+# ---------------------------------------------------------------------------
+# Product photos.
+#
+# uzum published none at all -- 5,461 offers, the largest source in the
+# catalogue, every one imageless -- because SEARCH_QUERY never asked for
+# `photos`. Recorded separately from uzum.json rather than by re-recording it,
+# because that file pins the SKU-memory-vs-card-title trap on specific ids and
+# re-recording would throw that evidence away to test something unrelated.
+# ---------------------------------------------------------------------------
+
+PHOTOS_FIXTURE = FIXTURE.with_name("uzum_photos.json")
+
+
+def photos_payload():
+    return json.loads(PHOTOS_FIXTURE.read_text(encoding="utf-8"))
+
+
+def test_every_uzum_listing_carries_a_photo():
+    listings = parse(photos_payload())
+    assert len(listings) > 50, "fixture too small to be evidence"
+    missing = [l.source_key for l in listings if not l.image_url]
+    assert not missing, f"{len(missing)} listings with no image_url"
+
+
+def test_photo_urls_are_uzum_cdn_renders_not_originals():
+    """PRODUCT_540 is a card-sized render; ORIGINAL would be a full-res file.
+
+    Also pins that `high` is a plain URL string. Both facts come from the live
+    schema: `photos.link` requires a `trans:` argument, so getting this wrong
+    is a 400 at query time rather than a null at read time.
+    """
+    for l in parse(photos_payload()):
+        assert l.image_url.startswith("https://images.uzum.uz/")
+        assert "t_product_540_high" in l.image_url
+
+
+def test_each_listing_takes_the_photo_of_the_card_it_came_from():
+    """Every SKU on a card shares that card's photo -- and no other card's.
+
+    Written first as "all SKUs of one productId share one photo", which
+    FAILED: makeSearch returns one card per COLOUR, so a productId arrives as
+    several cards with different pictures. That is the stronger, better
+    property (see _card_image) and this is the version that states it.
+    """
+    items = _items(photos_payload())
+    assert len(items) > 50
+    for item in items:
+        expected = _card_image(item["catalogCard"])
+        single = {"data": {"makeSearch": {"items": [item]}}}
+        built = parse(single)
+        for l in built:
+            assert l.image_url == expected, l.source_key
+
+
+def test_uzum_splits_one_product_into_a_card_per_colour():
+    """The reason a photo is colour-accurate rather than merely model-accurate.
+
+    Pinned because it is the assumption _card_image rests on: if uzum ever
+    collapses colours onto one card, the picture stops matching the variant
+    and this test is where that shows up.
+    """
+    items = _items(photos_payload())
+    by_product: dict[int, list[dict]] = {}
+    for item in items:
+        card = item["catalogCard"]
+        by_product.setdefault(card["productId"], []).append(card)
+    multi = {p: cards for p, cards in by_product.items() if len(cards) > 1}
+    assert multi, "fixture no longer has a product split across cards"
+    for cards in multi.values():
+        images = {_card_image(c) for c in cards}
+        assert len(images) == len(cards), (
+            "two cards of the same product share a photo, so the split is no "
+            "longer by colour")
+
+
+def test_a_card_without_photos_yields_no_image_rather_than_raising():
+    """The old fixture predates the field; parse must survive its absence."""
+    listings = parse(payload())
+    assert listings
+    assert all(l.image_url is None for l in listings)
 
 
 def test_every_listing_has_provenance():

@@ -38,6 +38,7 @@ for free.
 """
 import base64
 import logging
+import re
 from dataclasses import replace
 from typing import Iterator
 
@@ -177,6 +178,29 @@ def _availability(flag) -> str:
     return {True: "IN_STOCK", False: "OUT_OF_STOCK"}.get(flag, "UNKNOWN")
 
 
+# Saleor hands back a thumbnail URL for every image, but radius's thumbnailer
+# does not actually RENDER every source format: an .avif original yields a
+# /thumbnails/200/... URL that 404s. Sampling all 274 radius offers, 272
+# thumbnails load and the 2 avif ones do not -- a well-formed URL for a file
+# that was never generated, which no status check upstream can see because the
+# field is present and non-null.
+#
+# The original under /media/ does exist and returns image/avif, so that is
+# what we publish for those. Only for avif: /thumbnails/ is the right thing
+# for a grid everywhere it works, and swapping wholesale would hotlink
+# full-size originals for 272 products to fix 2.
+_UNTHUMBNAILED = (".avif",)
+
+
+def _image(thumbnail: dict | None) -> str | None:
+    url = (thumbnail or {}).get("url")
+    if not isinstance(url, str) or not url:
+        return None
+    if url.lower().endswith(_UNTHUMBNAILED) and "/thumbnails/" in url:
+        return re.sub(r"/thumbnails/\d+/", "/media/", url, count=1)
+    return url
+
+
 def _parse_node(node: dict) -> list[Listing]:
     """One Saleor Product -> one Listing per VARIANT. See _PRODUCT_FIELDS."""
     product_id = numeric_id(node.get("id"))
@@ -197,7 +221,7 @@ def _parse_node(node: dict) -> list[Listing]:
     product_price = coerce_price(
         (((node.get("pricing") or {}).get("priceRange") or {}).get("start") or {})
         .get("amount"))
-    product_image = (node.get("thumbnail") or {}).get("url")
+    product_image = _image(node.get("thumbnail"))
 
     listings = []
     for variant in variants:
@@ -223,7 +247,7 @@ def _parse_node(node: dict) -> list[Listing]:
                 variant.get("isAvailable")
                 if variant.get("isAvailable") is not None
                 else node.get("isAvailable")),
-            image_url=(variant.get("thumbnail") or {}).get("url") or product_image,
+            image_url=_image(variant.get("thumbnail")) or product_image,
             raw={"product": {k: v for k, v in node.items() if k != "variants"},
                  "variant": variant},
         )

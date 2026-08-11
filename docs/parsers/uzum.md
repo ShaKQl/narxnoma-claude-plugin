@@ -600,3 +600,41 @@ had sellers at 1.45 M and 3.0 M.
 **61/66 (92 %)** — best of all seven sources. The 5 misses were each verified as
 genuine absence: Honor 400 12/256 (uzum stocks only 8/256 and 12/512) and Vivo Y31d
 ×4 (not listed at all).
+
+---
+
+## 10. Product photos — the field nobody asked for
+
+uzum published **no image at all** for 5,461 offers — the largest source in the
+catalogue, every row imageless — for the simple reason that `SEARCH_QUERY` never
+requested `photos`. The site's placeholder-heavy look traced back to this one
+missing selection.
+
+```graphql
+catalogCard {
+  ...
+  photos { link(trans: PRODUCT_540) { high } }
+}
+```
+
+Two things about the field are not guessable and were read off the live schema:
+
+1. **`photos.link` requires a `trans:` argument** of type `Transformation!`.
+   A bare `link { high }` is a *validation error* — HTTP 400 — not a null.
+   Valid values: `ORIGINAL`, `PRODUCT_60`, `PRODUCT_80`, `PRODUCT_120`,
+   `PRODUCT_240`, `PRODUCT_24034`, `PRODUCT_480`, `PRODUCT_540`, `PRODUCT_720`,
+   `PRODUCT_800`. `PRODUCT_540` is a card-sized render; `ORIGINAL` is a
+   full-resolution original and the wrong thing to hotlink into a grid.
+2. **`PhotoLink.high` / `.low` are plain URL strings**, not objects.
+
+Yielding e.g.
+`https://images.uzum.uz/d9kvjoa1146g73i19b0g/t_product_540_high.jpg`.
+
+**makeSearch returns one card per COLOUR.** A single `productId` comes back as
+several cards (16 of 72 items in the recorded fixture) whose `skuList`s differ
+only in storage tier. So the photo is accurate to the *colour*, not merely to
+the model — which matters here, because colour is part of a phone's identity in
+this catalogue and showing the black handset under the green variant would be a
+substitution. The first test written for this asserted the opposite ("all SKUs
+of one productId share one photo") and failed, which is how the structure was
+found.

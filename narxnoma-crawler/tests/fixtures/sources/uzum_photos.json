@@ -1,0 +1,5300 @@
+{
+ "data": {
+  "makeSearch": {
+   "total": 581,
+   "items": [
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2478675,
+      "title": "Смартфон OPPO A5i (4+4)GB/64GB, Красный | Фиолетовый, 1 год гарантии + UZIMEI",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ilaajvgbktbpvmur8g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ilaajvgbktbpvmur7g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ilaai1146k64hudh3g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ilaags9rf3gtpkmrgg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ilaajvgbktbpvmur80/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ilad0s9rf3gtpkmrj0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ilaji1146k64hudhag/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8941436,
+        "sellPrice": 1490000,
+        "fullPrice": 1490000,
+        "availableAmount": 36,
+        "characteristicValues": [
+         {
+          "title": "Багровый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 3050296,
+      "title": "Смартфон Samsung Galaxy A16, 4/128 GB, 2 SIM, Super AMOLED, камера 50 Мп, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9bnh549g1ku9j5jii6g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9bm7jc9g1ku9j5jhbg0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9ae3grsv8vsdeu8t7n0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9ae3gc9g1ku9j5iv930/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11194303,
+        "sellPrice": 2070000,
+        "fullPrice": 4398000,
+        "availableAmount": 57,
+        "characteristicValues": [
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1349726,
+      "title": "Смартфон Oppo A40m 6/256GB, цвет Белый/Черный, быстрая зарядка 45Вт, 1 Год гарантии",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6imr7q1146k64hueong/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d0qn610n274j5scok970/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6imr7q1146k64hueon0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6imr7i1146k64hueomg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6imr7os9rf3gtpko3ug/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6imr7gs9rf3gtpko3u0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/ct4ktsdpq3gujfcfuda0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 4353378,
+        "sellPrice": 2290000,
+        "fullPrice": 2290000,
+        "availableAmount": 40,
+        "characteristicValues": [
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2996356,
+      "title": "Смартфон Samsung Galaxy A16, Super AMOLED, 90Hz 6.7\", 50 MP",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9379mrsv8vsdeu5np60/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9379vbsv8vsdeu5npcg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11008116,
+        "sellPrice": 2299000,
+        "fullPrice": 4200000,
+        "availableAmount": 7,
+        "characteristicValues": [
+         {
+          "title": "4ГБ | 128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2996394,
+      "title": "Смартфон Samsung Galaxy A26 5G, Super AMOLED 120Hz 6.7\", 5000 mAh, 50 МП камера",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d937d649g1ku9j5fq4j0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d937d9s9g1ku9j5fq4n0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11008200,
+        "sellPrice": 3899000,
+        "fullPrice": 7000000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "8 | 256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Розовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1953775,
+      "title": "Смартфон Samsung Galaxy A07, 6\\128ГБ 6.7\" дюймовый дисплей, 90Hz, 50Мп камера, IP54 Защита",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tmaviub35i07kprjg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tmat2llnd6jum2sr0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tmaviub35i07kprj0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tmar4eu2up0au0sj0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tmaj4eu2up0au0si0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tmaviub35i07kprig/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tmar4eu2up0au0sig/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6898289,
+        "sellPrice": 1951000,
+        "fullPrice": 3647000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "6 | 128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 6898288,
+        "sellPrice": 1821000,
+        "fullPrice": 3500000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "4 | 128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 7004282,
+        "sellPrice": 1691000,
+        "fullPrice": 3500000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "3 | 64 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1984822,
+      "title": "Смартфон Samsung Galaxy A17 4G, 5G, Super AMOLED, 50Мп, 5000 мА-ч, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55r6h3s2tab83s8415g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55phuih0asneli75ggg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55pheojsv1neacr0oq0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55phmih0asneli75gdg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ahh5q1146g78h3m9ag/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ahibtr1spqpknjiu90/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ahhgd2lln52upueie0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9743885,
+        "sellPrice": 3599000,
+        "fullPrice": 6000000,
+        "availableAmount": 95,
+        "characteristicValues": [
+         {
+          "title": "A17 5G 8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 7022287,
+        "sellPrice": 3299000,
+        "fullPrice": 4000000,
+        "availableAmount": 48,
+        "characteristicValues": [
+         {
+          "title": "8/256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 7553918,
+        "sellPrice": 2599000,
+        "fullPrice": 4000000,
+        "availableAmount": 95,
+        "characteristicValues": [
+         {
+          "title": "4/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 7022286,
+        "sellPrice": 2799000,
+        "fullPrice": 4000000,
+        "availableAmount": 50,
+        "characteristicValues": [
+         {
+          "title": "6/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2750967,
+      "title": "Смартфон Samsung Galaxy A57 5G, 50 МП, sAMOLED, 120 Гц, гарантия 1 год, адаптер в подарок",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ohi721146tv0786r0g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7qu3fc9g1ktqmljdm8g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7qu3fi1146tv06stp60/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10054231,
+        "sellPrice": 5215000,
+        "fullPrice": 9000000,
+        "availableAmount": 994,
+        "characteristicValues": [
+         {
+          "title": "8/128ГБ",
+          "characteristic": {
+           "title": "Памят:"
+          }
+         },
+         {
+          "title": "Серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10054233,
+        "sellPrice": 5899000,
+        "fullPrice": 10000000,
+        "availableAmount": 984,
+        "characteristicValues": [
+         {
+          "title": "8/256ГБ",
+          "characteristic": {
+           "title": "Памят:"
+          }
+         },
+         {
+          "title": "Серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2897488,
+      "title": "Смартфон Samsung Galaxy A07, 6.7\" дюймовый дисплей, 90Hz, 50Мп камера, IP54 Защита",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9d04ks9g1ku9j5k594g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9930849g1ku9j5icmhg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9930821146g73hrsf0g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d993083sv8vsdeu8aeo0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d993083sv8vsdeu8aeog/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9930821146g73hrsf10/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2fisb52lln03jpjeqo0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10996656,
+        "sellPrice": 1759000,
+        "fullPrice": 2499000,
+        "availableAmount": 54,
+        "characteristicValues": [
+         {
+          "title": "4ГБ / 64ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10618751,
+        "sellPrice": 1899000,
+        "fullPrice": 2699000,
+        "availableAmount": 16,
+        "characteristicValues": [
+         {
+          "title": "4ГБ / 128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1978967,
+      "title": "Смартфон Samsung Galaxy A17 4G 8/256GB, 6.7\" AMOLED 90 Гц, 50 МП, 5000 мА·ч, 25",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395ctg9oh640qb7p1tg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395ct89oh640qb7p1sg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395ctb4eu2s0bgjca00/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395cta298hfmibv7brg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8988500,
+        "sellPrice": 2499000,
+        "fullPrice": 10000000,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "4/128GB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 6998864,
+        "sellPrice": 2699000,
+        "fullPrice": 10000000,
+        "availableAmount": 16,
+        "characteristicValues": [
+         {
+          "title": "6/128GB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 6998865,
+        "sellPrice": 3099000,
+        "fullPrice": 10000000,
+        "availableAmount": 58,
+        "characteristicValues": [
+         {
+          "title": "8/256GB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1984822,
+      "title": "Смартфон Samsung Galaxy A17 4G, 5G, Super AMOLED, 50Мп, 5000 мА-ч, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d57b6h3s2tab83s8ivjg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55phsrs2tab83s831sg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55phbah0asneli75g6g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55phkjs2tab83s831og/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d57b6v3tqdhjp1vcpa6g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d57b813tqdhjp1vcpao0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 7022283,
+        "sellPrice": 3299000,
+        "fullPrice": 4000000,
+        "availableAmount": 97,
+        "characteristicValues": [
+         {
+          "title": "8/256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Синий",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 9743881,
+        "sellPrice": 3599000,
+        "fullPrice": 6000000,
+        "availableAmount": 59,
+        "characteristicValues": [
+         {
+          "title": "A17 5G 8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Синий",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 7022282,
+        "sellPrice": 2799000,
+        "fullPrice": 4000000,
+        "availableAmount": 63,
+        "characteristicValues": [
+         {
+          "title": "6/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Синий",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 7553916,
+        "sellPrice": 2599000,
+        "fullPrice": 4000000,
+        "availableAmount": 98,
+        "characteristicValues": [
+         {
+          "title": "4/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Синий",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2886009,
+      "title": "Смартфон Samsung Galaxy A17, Super AMOLED, 50Мп, 5000 мА-ч, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8v8rjc9g1ku9j5e2f3g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8v8lkbsv8vnuj112au0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8v8lt49g1ku9j5e2bn0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8v8m6a1146phmqft6sg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8hs073sv8vo2t0jvs5g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8hrvta1146tv075ihfg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8hs0krsv8vo2t0jvseg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10573499,
+        "sellPrice": 2699000,
+        "fullPrice": 5500000,
+        "availableAmount": 91,
+        "characteristicValues": [
+         {
+          "title": "6/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10573500,
+        "sellPrice": 3139000,
+        "fullPrice": 5500000,
+        "availableAmount": 97,
+        "characteristicValues": [
+         {
+          "title": "8/256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2318433,
+      "title": "Samsung Galaxy A16, 4/6/128 ГБ, 5000 мАч, 50 МП, Uzimei Pass, гарoнтия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6tel9q1146ojv97k2ag/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d609ksvqkmamvfqsaeug/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d5pks0niub393sdcngng/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d5pks2b4eu2jdglfrjf0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8308088,
+        "sellPrice": 2199000,
+        "fullPrice": 3200000,
+        "availableAmount": 93,
+        "characteristicValues": [
+         {
+          "title": "4/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1891976,
+      "title": "Смартфон Samsung Galaxy A07, 6.7\" дюймовый дисплей, 90Hz, 50Мп камера, IP54 Защита",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7b1s0k3obpufnhab9sg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2jdcdd2llnd6juiauhg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2jdccniub35suqa5i70/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2fisb52lln03jpjeqo0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2fisb7iub3brtuautu0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2fisb34eu2hrb2q5880/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2fisb7iub3brtuautug/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6649595,
+        "sellPrice": 2099000,
+        "fullPrice": 3148500,
+        "availableAmount": 20,
+        "characteristicValues": [
+         {
+          "title": "4ГБ / 128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2996394,
+      "title": "Смартфон Samsung Galaxy A26 5G, Super AMOLED 120Hz 6.7\", 5000 mAh, 50 МП камера",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d937cnbsv8vsdeu5nr30/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d937d7i1146phmqhkvu0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11008195,
+        "sellPrice": 3159000,
+        "fullPrice": 6000000,
+        "availableAmount": 19,
+        "characteristicValues": [
+         {
+          "title": "6 | 128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 11008196,
+        "sellPrice": 3899000,
+        "fullPrice": 7000000,
+        "availableAmount": 4,
+        "characteristicValues": [
+         {
+          "title": "8 | 256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2750967,
+      "title": "Смартфон Samsung Galaxy A57 5G, 50 МП, sAMOLED, 120 Гц, гарантия 1 год, адаптер в подарок",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ohi7bsv8vo2t0mka8g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7qu3cc9g1ktqmljdm6g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7qu3cq1146tv06stp2g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10054235,
+        "sellPrice": 5215000,
+        "fullPrice": 9000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "8/128ГБ",
+          "characteristic": {
+           "title": "Памят:"
+          }
+         },
+         {
+          "title": "Сиреневый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10054236,
+        "sellPrice": 5899000,
+        "fullPrice": 10000000,
+        "availableAmount": 989,
+        "characteristicValues": [
+         {
+          "title": "8/256ГБ",
+          "characteristic": {
+           "title": "Памят:"
+          }
+         },
+         {
+          "title": "Сиреневый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1951131,
+      "title": "Смартфон Samsung Galaxy A07, 2 SIM, 6.7\" 90Hz, 5000 мАч 25Вт, Helio G99, Камера 50МП",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d97noj21146phmqjj4gg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3186tt2llnd6julsqpg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3186tt2llnd6julsqog/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3186tt2llnd6julsqp0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3186k34eu2up0atqrig/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6888157,
+        "sellPrice": 1896000,
+        "fullPrice": 10000000,
+        "availableAmount": 24,
+        "characteristicValues": [
+         {
+          "title": "4/128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Зеленый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2750967,
+      "title": "Смартфон Samsung Galaxy A57 5G, 50 МП, sAMOLED, 120 Гц, гарантия 1 год, адаптер в подарок",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ohi6k9g1ktqmlunnqg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7qu3ac9g1ktqmljdm3g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7qu3bs9g1ktqmljdm5g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10054228,
+        "sellPrice": 5215000,
+        "fullPrice": 9000000,
+        "availableAmount": 999,
+        "characteristicValues": [
+         {
+          "title": "8/128ГБ",
+          "characteristic": {
+           "title": "Памят:"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10054229,
+        "sellPrice": 5899000,
+        "fullPrice": 10000000,
+        "availableAmount": 979,
+        "characteristicValues": [
+         {
+          "title": "8/256ГБ",
+          "characteristic": {
+           "title": "Памят:"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2900942,
+      "title": "Смартфон Samsung Galaxy M17e 5G 4/128GB, 1 год гарантия, IMEI зарегистрирован",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8kgsdq1146tv076i5v0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8kgsh49g1ktqmlt2jf0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8kgsl49g1ktqmlt2jgg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10630297,
+        "sellPrice": 2380000,
+        "fullPrice": 2380000,
+        "availableAmount": 10,
+        "characteristicValues": [
+         {
+          "title": "4/128",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Фиолетовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2318433,
+      "title": "Samsung Galaxy A16, 4/6/128 ГБ, 5000 мАч, 50 МП, Uzimei Pass, гарoнтия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6telcs3obpjedc2lrsg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d609b2uf4hvsl3r2fo90/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d609b2rq345o6s41br7g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d609b2mf4hvsl3r2fo80/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d609b2mf4hvsl3r2fo8g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8455482,
+        "sellPrice": 2199000,
+        "fullPrice": 3200000,
+        "availableAmount": 79,
+        "characteristicValues": [
+         {
+          "title": "4/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2608938,
+      "title": "Смартфон Samsung Galaxy A37 5G – мощная батарея и современный AMOLED дисплей",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7rj1249g1ktqmljlg00/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7rj12jsv8vo2t0biflg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7rj133sv8vo2t0bifm0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d78g8f21146ojv9brq70/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9521449,
+        "sellPrice": 5380000,
+        "fullPrice": 7300000,
+        "availableAmount": 5,
+        "characteristicValues": [
+         {
+          "title": "8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Угольный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2398774,
+      "title": "Samsung Galaxy A07, 4/64 ГБ, 4/6/128 ГБ, 50 МП, 90 Гц, 5000 мАч, UZIMEI, гарoнтия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66eg7bvv0v6ikl3n6q0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66eg9bq345uoeq1u2g0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66eg75sp2tk1m7i1sp0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66eggrq345uoeq1u2h0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66egmrvv0v6ikl3n6s0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66eggrq345uoeq1u2gg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66egglsp2tk1m7i1srg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8611423,
+        "sellPrice": 2099000,
+        "fullPrice": 3200000,
+        "availableAmount": 90,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Тёмно-зелёный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8611422,
+        "sellPrice": 1759000,
+        "fullPrice": 2819000,
+        "availableAmount": 50,
+        "characteristicValues": [
+         {
+          "title": "4/64",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Тёмно-зелёный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8741711,
+        "sellPrice": 1959000,
+        "fullPrice": 3000000,
+        "availableAmount": 50,
+        "characteristicValues": [
+         {
+          "title": "4/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Тёмно-зелёный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1953775,
+      "title": "Смартфон Samsung Galaxy A07, 6\\128ГБ 6.7\" дюймовый дисплей, 90Hz, 50Мп камера, IP54 Защита",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8pahs3sv8vnuj0uighg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tm6l2llnd6jum2skg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tm6l2llnd6jum2sj0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tm6fiub35i07kprdg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tm6l2llnd6jum2sig/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tm6l2llnd6jum2sk0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31tm6b4eu2up0au0s9g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6898290,
+        "sellPrice": 1821000,
+        "fullPrice": 3500000,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "4 | 128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Зеленый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1978967,
+      "title": "Смартфон Samsung Galaxy A17 4G 8/256GB, 6.7\" AMOLED 90 Гц, 50 МП, 5000 мА·ч, 25",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395bld2llnbilepi4b0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395c4r4eu2sajck5do0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395c4r4eu2sajck5dog/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395c4t2llnbilepi4gg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395c4viub30vbrv8jdg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6998862,
+        "sellPrice": 2699000,
+        "fullPrice": 10000000,
+        "availableAmount": 74,
+        "characteristicValues": [
+         {
+          "title": "6/128GB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Светло-синий",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2961114,
+      "title": "Смартфон Samsung Galaxy A07, 6.7\" дюймовый дисплей, 90Hz, 50Мп камера, IP54 Защита",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue5d21146phmqfgi6g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue5i3sv8vnuj10lo20/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue5i21146phmqfgibg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue5i49g1ku9j5dln5g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue5i3sv8vnuj10lo2g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10870730,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "4/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10870731,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 7,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 3098780,
+      "title": "Samsung Galaxy A17",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9h966i1146g73hvjj10/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11444594,
+        "sellPrice": 3732000,
+        "fullPrice": 3732000,
+        "availableAmount": 5,
+        "characteristicValues": [
+         {
+          "title": "6/128GB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2047524,
+      "title": "Смартфон Samsung Galaxy A07, дисплей 6,7 дюйма, 90 Гц, камера 50 Мп, 6+128 ГБ",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ro5nej76ovgfnul940/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ro5qdv2sjj05oqjrtg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ro5slv2sjj05oqjrv0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ro5ulv2sjj05oqjrvg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 7287113,
+        "sellPrice": 1899000,
+        "fullPrice": 1899000,
+        "availableAmount": 10,
+        "characteristicValues": [
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2665039,
+      "title": "Samsung Galaxy M17e 5G, 6,7-дюймовый, 120Гц, 50МП, 6000мАч, 4/6/128 ГБ, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7h7dd3sv8vghom13hs0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl5c3obpkks10hn80/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl5bsv8vghom194og/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl5c3obpkks10hn7g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl5a1146ojv9fmgu0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl4s3obpkks10hn70/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl4rsv8vghom194o0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9747417,
+        "sellPrice": 4299000,
+        "fullPrice": 4299000,
+        "availableAmount": 49,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Розовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2996394,
+      "title": "Смартфон Samsung Galaxy A26 5G, Super AMOLED 120Hz 6.7\", 5000 mAh, 50 МП камера",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d937cqq1146phmqhkvkg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d937d8jsv8vsdeu5nrbg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11008198,
+        "sellPrice": 3899000,
+        "fullPrice": 7000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "8 | 256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Белый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 3029616,
+      "title": "Смартфон Samsung Galaxy A17 6.7\" FHD+ 90Hz 50MP 5000mAh",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d97iels9g1ku9j5hkfk0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d97ieic9g1ku9j5hkfh0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d97ieps9g1ku9j5hkfkg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d97iets9g1ku9j5hkfn0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d97if0s9g1ku9j5hkfog/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11120135,
+        "sellPrice": 2652210,
+        "fullPrice": 4200000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2608938,
+      "title": "Смартфон Samsung Galaxy A37 5G – мощная батарея и современный AMOLED дисплей",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7rj17jsv8vo2t0bifp0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7rj1821146tv06t5nb0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7rj18i1146tv06t5nbg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d78g7843obpufnh9b0jg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9521452,
+        "sellPrice": 4990000,
+        "fullPrice": 7000000,
+        "availableAmount": 5,
+        "characteristicValues": [
+         {
+          "title": "8/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Лавандовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 9521453,
+        "sellPrice": 5380000,
+        "fullPrice": 7300000,
+        "availableAmount": 5,
+        "characteristicValues": [
+         {
+          "title": "8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Лавандовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2398774,
+      "title": "Samsung Galaxy A07, 4/64 ГБ, 4/6/128 ГБ, 50 МП, 90 Гц, 5000 мАч, UZIMEI, гарoнтия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66ef93vv0v6ikl3n6h0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66ef8rq345uoeq1u24g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efdbq345uoeq1u26g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efbdsp2tk1m7i1shg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efbdsp2tk1m7i1sh0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efbbq345uoeq1u260/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efjlsp2tk1m7i1sjg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8611419,
+        "sellPrice": 2099000,
+        "fullPrice": 3200000,
+        "availableAmount": 49,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8611418,
+        "sellPrice": 1759000,
+        "fullPrice": 2819000,
+        "availableAmount": 50,
+        "characteristicValues": [
+         {
+          "title": "4/64",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8741709,
+        "sellPrice": 1959000,
+        "fullPrice": 3000000,
+        "availableAmount": 88,
+        "characteristicValues": [
+         {
+          "title": "4/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2961082,
+      "title": "Смартфон Samsung Galaxy A17, 6.7\" Super AMOLED 90Гц экран, камера 50Мп, 5000 мАч",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2ps9g1ku9j5dlkm0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2sc9g1ku9j5dlkp0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2sa1146phmqfgg60/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2sa1146phmqfgg6g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2sa1146phmqfgg5g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2sa1146phmqfgg70/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2sbsv8vnuj10lli0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10870649,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 5,
+        "characteristicValues": [
+         {
+          "title": "8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Тёмно-серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10870648,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 6,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Тёмно-серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1984822,
+      "title": "Смартфон Samsung Galaxy A17 4G, 5G, Super AMOLED, 50Мп, 5000 мА-ч, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55qqhah0asneli76700/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55phtjs2tab83s831t0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55phd2h0asneli75g90/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d55phljs2tab83s831p0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ahe7dr1spqpknjirr0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ahehlr1spqpknjis1g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3ahfdl2lln52upueh5g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9743884,
+        "sellPrice": 3099000,
+        "fullPrice": 6000000,
+        "availableAmount": 98,
+        "characteristicValues": [
+         {
+          "title": "A17 5G 6/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 9743883,
+        "sellPrice": 3599000,
+        "fullPrice": 6000000,
+        "availableAmount": 59,
+        "characteristicValues": [
+         {
+          "title": "A17 5G 8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 7022284,
+        "sellPrice": 2799000,
+        "fullPrice": 4000000,
+        "availableAmount": 144,
+        "characteristicValues": [
+         {
+          "title": "6/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 7553917,
+        "sellPrice": 2599000,
+        "fullPrice": 4000000,
+        "availableAmount": 78,
+        "characteristicValues": [
+         {
+          "title": "4/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 7022285,
+        "sellPrice": 3299000,
+        "fullPrice": 4000000,
+        "availableAmount": 97,
+        "characteristicValues": [
+         {
+          "title": "8/256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1916630,
+      "title": "Смартфон Samsung Galaxy A07, 6.7\" дюймовый дисплей, 90Hz, 50Мп камера, IP54 защита",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2nedo34eu2h0tmp7u20/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d425l16j76okhkd99cn0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2mphfviub35i07huq80/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2mphfr4eu2h0tmp1m10/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2mphft2llnd6juj7uhg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2mphnt2llnd6juj7uo0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2mphfviub35i07huq7g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6745706,
+        "sellPrice": 1790000,
+        "fullPrice": 2685000,
+        "availableAmount": 11,
+        "characteristicValues": [
+         {
+          "title": "4GB 128GB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2462659,
+      "title": "Смартфон Samsung Galaxy A16 4/128ГБ,2 SIM-карт, AMOLED, камера 50 Мп, 1 год гарантия",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6rteva1146th72vqlsg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6rtf1i1146th72vqltg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6rtf2q1146th72vqlvg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8875585,
+        "sellPrice": 2089000,
+        "fullPrice": 3000000,
+        "availableAmount": 95,
+        "characteristicValues": [
+         {
+          "title": "4/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2338366,
+      "title": "Samsung Galaxy M36 5G, +адаптер в подарок, 50МП, 5000 мА/ч, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d884d9bsv8vo2t0gmkfg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d880vbq1146tv07278b0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d5t4302dk6jhqj0sqj20/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d5t430adk6jhqj0sqj2g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d5t4302eb32c430b60gg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d5t42vqdk6jhqj0sqj10/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8383983,
+        "sellPrice": 3099000,
+        "fullPrice": 4320000,
+        "availableAmount": 493,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2460965,
+      "title": "Смартфон Samsung Galaxy A26 5G, 8+256GB, 6.7\" SAMOLED 120Hz, 50 МП",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6fv1o8s9rfd9u9435o0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6fv6r21146jevjr0q20/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6fv70i1146jevjr0q50/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6fv7321146jevjr0q7g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6fv75a1146jevjr0q8g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8868250,
+        "sellPrice": 3893000,
+        "fullPrice": 4543000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8868247,
+        "sellPrice": 3430000,
+        "fullPrice": 4080000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 3082605,
+      "title": "Смартфон Samsung Galaxy A57 5G, экран Super AMOLED, 2 SIM-карты, eSim, 50Мп, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9j18m49g1ku9j5msjb0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9j121bsv8vsdeucpslg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9j12n3sv8vsdeucptc0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11429690,
+        "sellPrice": 5450000,
+        "fullPrice": 10900000,
+        "availableAmount": 6,
+        "characteristicValues": [
+         {
+          "title": "8/256гб",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Тёмно-серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1968200,
+      "title": "Samsung Galaxy A17 4G, камера 50 Мп, до 8/256Gb, 6.7\" AMOLED 90Hz, 5000 mAh 25w, IP54",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d36g2lniub30vbruj9qg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d36g3k52llnbileosqm0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d35uianiub30vbruf580/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d35uicd2lln9aeon1ck0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d35uibl2lln9aeon1cjg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d35uicr4eu2s0bgiinmg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6954873,
+        "sellPrice": 3199000,
+        "fullPrice": 3199000,
+        "availableAmount": 10,
+        "characteristicValues": [
+         {
+          "title": "8/256Gb",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 6954871,
+        "sellPrice": 2739000,
+        "fullPrice": 2739000,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "6/128Gb",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1965705,
+      "title": "Смартфон Samsung Galaxy A17, 6.7\" 90Гц экран, камера 50Мп, батарея 5000 мА/ч",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d45k3vuj76ohd6dvvpvg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d44vcstv2sjo4rvgekig/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d36jcuj4eu2s0bgiogq0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d36jctfiub30vbruksfg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d36jcud2llnbileouee0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d36jctl2llnbileouedg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d36jcub4eu2s0bgiogp0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6945005,
+        "sellPrice": 2899000,
+        "fullPrice": 3883500,
+        "availableAmount": 111,
+        "characteristicValues": [
+         {
+          "title": "6ГБ 128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 6945006,
+        "sellPrice": 3199000,
+        "fullPrice": 4633500,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "8ГБ 256ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 3120810,
+      "title": "Смартфон Samsung Galaxy A17, 6.7\" 90Гц экран, камера 50Мп, батарея 5000 мА/ч",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9kpm5bsv8vsdeudi480/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9kpm83sv8vsdeudi4cg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9kpmac9g1ku9j5nkfr0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11472052,
+        "sellPrice": 3000000,
+        "fullPrice": 6400000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "8/256гб",
+          "characteristic": {
+           "title": "память "
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 11472054,
+        "sellPrice": 2406000,
+        "fullPrice": 4812000,
+        "availableAmount": 27,
+        "characteristicValues": [
+         {
+          "title": "4/128гб",
+          "characteristic": {
+           "title": "память "
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 3120810,
+      "title": "Смартфон Samsung Galaxy A17, 6.7\" 90Гц экран, камера 50Мп, батарея 5000 мА/ч",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9kpm3a1146g73i13jpg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9kpm7c9g1ku9j5nkfm0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9kpm9bsv8vsdeudi4fg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11472055,
+        "sellPrice": 2406000,
+        "fullPrice": 4812000,
+        "availableAmount": 70,
+        "characteristicValues": [
+         {
+          "title": "4/128гб",
+          "characteristic": {
+           "title": "память "
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2535375,
+      "title": "Смартфон Samsung Galaxy A57 5G,экран Super AMOLED,2 SIM-карты,eSim,50Мп,гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d85vfcc9g1ktqmlnrse0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d74gfsbsv8vlb6mk2ov0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d74gg6a1146ojv9a3uog/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d74ggfc3obpjedc5621g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d74g08c3obpjedc55pc0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d74g2dc3obpjedc55qag/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11307922,
+        "sellPrice": 5799000,
+        "fullPrice": 9000000,
+        "availableAmount": 95,
+        "characteristicValues": [
+         {
+          "title": "8/256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Ледяной",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 11307920,
+        "sellPrice": 4899000,
+        "fullPrice": 9000000,
+        "availableAmount": 94,
+        "characteristicValues": [
+         {
+          "title": "8/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Ледяной",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2535375,
+      "title": "Смартфон Samsung Galaxy A57 5G,экран Super AMOLED,2 SIM-карты,eSim,50Мп,гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d85vg121146tv071c1r0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d74gg8k3obpjedc561s0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d74ggik3obpjedc56240/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6rmk8a1146th72vndgg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6rmjbq1146th72vndcg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9171548,
+        "sellPrice": 4899000,
+        "fullPrice": 9000000,
+        "availableAmount": 95,
+        "characteristicValues": [
+         {
+          "title": "8/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Тёмно-серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 9171549,
+        "sellPrice": 5799000,
+        "fullPrice": 9000000,
+        "availableAmount": 89,
+        "characteristicValues": [
+         {
+          "title": "8/256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Тёмно-серый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2996356,
+      "title": "Смартфон Samsung Galaxy A16, Super AMOLED, 90Hz 6.7\", 50 MP",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9b25s49g1ku9j5j8a0g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9b25s49g1ku9j5j8a10/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11209158,
+        "sellPrice": 2299000,
+        "fullPrice": 4200000,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "4ГБ | 128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2398774,
+      "title": "Samsung Galaxy A07, 4/64 ГБ, 4/6/128 ГБ, 50 МП, 90 Гц, 5000 мАч, UZIMEI, гарoнтия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efplsp2tk1m7i1sl0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efqrvv0v6ikl3n6lg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66eforq345uoeq1u2ag/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efujq345uoeq1u2cg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efudsp2tk1m7i1slg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efujq345uoeq1u2bg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d66efulsp2tk1m7i1smg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8611421,
+        "sellPrice": 2099000,
+        "fullPrice": 3200000,
+        "availableAmount": 46,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Фиолетовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2658835,
+      "title": "Samsung Galaxy A37 5G, Super AMOLED, 120 Гц, HD 4K, камера 50 Мп, 5000 мАч",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d99okj3sv8vsdeu8iv10/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d99okkbsv8vsdeu8iv1g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7ge5f21146ojv9f4qjg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7ge5fbsv8vghom0nns0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7ge5f21146ojv9f4qj0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7ge5fa1146ojv9f4qkg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7ge5fc3obpkks1004ng/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9724675,
+        "sellPrice": 6000000,
+        "fullPrice": 6000000,
+        "availableAmount": 100,
+        "characteristicValues": [
+         {
+          "title": "8/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Фиолетовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 9724676,
+        "sellPrice": 6499000,
+        "fullPrice": 6499000,
+        "availableAmount": 99,
+        "characteristicValues": [
+         {
+          "title": "8/256",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Фиолетовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2481094,
+      "title": "Samsung Galaxy S26 Ultra IMEI Пройден Официально 1 Год Гарантии",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9mgm149g1ku9j5oimh0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0cvtsp2tohdbbpmg0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0cvtsp2tohdbbpmfg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0cvq1146th72s5fs0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0cvtsp2tohdbbpmf0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0cvq1146th72s5fsg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0cvos9rf3ubqur1t0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8949782,
+        "sellPrice": 13837000,
+        "fullPrice": 19000000,
+        "availableAmount": 18,
+        "characteristicValues": [
+         {
+          "title": "12/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8949783,
+        "sellPrice": 16809010,
+        "fullPrice": 21000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "12/512",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8949784,
+        "sellPrice": 24750000,
+        "fullPrice": 25000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "16/1TB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1891964,
+      "title": "Смартфон Samsung Galaxy A07, 6.7\" дюймовый дисплей, 90Hz, 50Мп камера, IP54 Защита",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d40vchdsp2tj49o7g200/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2jdbkviub35suqa5hrg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2jdbkt2llnd6juiau40/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2fisb52lln03jpjeqo0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2fisb7iub3brtuautu0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2fisb34eu2hrb2q5880/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d2fisb7iub3brtuautug/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6649580,
+        "sellPrice": 1899000,
+        "fullPrice": 2848500,
+        "availableAmount": 13,
+        "characteristicValues": [
+         {
+          "title": "4ГБ / 128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 6649581,
+        "sellPrice": 2099000,
+        "fullPrice": 3148500,
+        "availableAmount": 21,
+        "characteristicValues": [
+         {
+          "title": "6ГБ / 128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1978967,
+      "title": "Смартфон Samsung Galaxy A17 4G 8/256GB, 6.7\" AMOLED 90 Гц, 50 МП, 5000 мА·ч, 25",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395c9o9oh640qb7p1n0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395d7a298hfmibv7bsg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395d7d2llnbilepi4u0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d395d752llnbilepi4tg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6998860,
+        "sellPrice": 2699000,
+        "fullPrice": 10000000,
+        "availableAmount": 182,
+        "characteristicValues": [
+         {
+          "title": "6/128GB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 6998861,
+        "sellPrice": 3099000,
+        "fullPrice": 10000000,
+        "availableAmount": 30,
+        "characteristicValues": [
+         {
+          "title": "8/256GB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2961082,
+      "title": "Смартфон Samsung Galaxy A17, 6.7\" Super AMOLED 90Гц экран, камера 50Мп, 5000 мАч",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2p21146phmqfgg20/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2u21146phmqfgga0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2u49g1ku9j5dlkq0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2u3sv8vnuj10llk0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2u21146phmqfgg9g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10870645,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10870646,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2040795,
+      "title": "Смартфон Samsung Galaxy M36 5G, 6/128 ГБ, super AMOLED, 50 Мп, 120Гц, 5000 мА/ч",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3pnoqbq345pkir6lnh0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3pnoq3s2ta8m27e9d1g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3pnoq3q345pkir6lnfg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3pnoqb4eu2ogp30tv70/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3pnoqbs2ta8m27e9d20/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3pnoqbq345pkir6lng0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3pnoqbq345pkir6lngg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 7256897,
+        "sellPrice": 3382000,
+        "fullPrice": 15000000,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2974154,
+      "title": "Samsung Galaxy A27 5G, Uzimei зарегистрированы, 1 год гарантии, 50МП, 5000 мА/ч, 120Гц",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d90gjpbsv8vnuj11hf20/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d90gjp3sv8vnuj11hf1g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d90gjorsv8vnuj11hf10/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d90gjp49g1ku9j5ehg4g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10932217,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Конфетный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10932218,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Конфетный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2535375,
+      "title": "Смартфон Samsung Galaxy A57 5G,экран Super AMOLED,2 SIM-карты,eSim,50Мп,гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d85vforsv8vo2t0fp2hg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d74gg53sv8vlb6mk2p6g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d74ggebsv8vlb6mk2phg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6rmii5sp2tohdbfcgj0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6rmhklsp2tohdbfcgd0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9171543,
+        "sellPrice": 5799000,
+        "fullPrice": 9000000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "8/256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 9171542,
+        "sellPrice": 4899000,
+        "fullPrice": 9000000,
+        "availableAmount": 4,
+        "characteristicValues": [
+         {
+          "title": "8/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 3078714,
+      "title": "Samsung Galaxy A37 5G 6,7-дюймовый Super AMOLED FHD+ 120 Гц",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9gggq21146g73hv863g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9ef96jsv8vsdeuao5dg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9ef96i1146g73hua0gg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9ef96i1146g73hua0hg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11310526,
+        "sellPrice": 5247000,
+        "fullPrice": 7500000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "8\\256",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Лавандовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 11310528,
+        "sellPrice": 4919000,
+        "fullPrice": 7500000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "8\\128",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Лавандовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2942521,
+      "title": "Samsung A17 6\\128 Черный",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8r75qc9g1ku9j5cbu90/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8r75sq1146phmqe6t30/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8r75srsv8vnuj0vbu0g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8r75sq1146phmqe6t2g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8r75si1146phmqe6t20/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10797285,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 2,
+        "characteristicValues": []
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2535852,
+      "title": "Смартфон Samsung Galaxy A37 5G, экран Super AMOLED, 120Гц, камера UHD 4K 50Мп, 2 SIM-карты, NFC",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d70fj9q1146ojv98f5qg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6rqd90s9rf3ubr2i45g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6rqdkq1146th72vol3g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9174149,
+        "sellPrice": 4879000,
+        "fullPrice": 8500000,
+        "availableAmount": 86,
+        "characteristicValues": [
+         {
+          "title": "8/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Угольный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 9174150,
+        "sellPrice": 5399000,
+        "fullPrice": 8500000,
+        "availableAmount": 59,
+        "characteristicValues": [
+         {
+          "title": "8/256 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Угольный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 3078714,
+      "title": "Samsung Galaxy A37 5G 6,7-дюймовый Super AMOLED FHD+ 120 Гц",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9gggljsv8vsdeubmh7g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9ef98i1146g73hua0j0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9ef98jsv8vsdeuao5f0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d9ef98jsv8vsdeuao5fg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11310527,
+        "sellPrice": 5247000,
+        "fullPrice": 7500000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "8\\256",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Тёмно-зелёный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 11310529,
+        "sellPrice": 4919000,
+        "fullPrice": 7500000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "8\\128",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Тёмно-зелёный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 3036861,
+      "title": "Смартфон Samsung Galaxy A17, экран 6.7\" 90 Гц, камера 50 Мп, батарея 5000 мА·ч",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d994n5i1146g73hrtiig/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d994n6q1146g73hrtijg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d994n821146g73hrtil0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 11148015,
+        "sellPrice": 2409820,
+        "fullPrice": 2659000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "4GB+128GB",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 11148014,
+        "sellPrice": 2743020,
+        "fullPrice": 2999000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "6GB+128GB",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 11148013,
+        "sellPrice": 3233020,
+        "fullPrice": 3499000,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "8GB+256GB",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2452408,
+      "title": "Смартфон Samsung Galaxy A17 5G, 6/128, 8/256, sAMOLED 90 Hz, 50 Mp, 5000 mA/h, 25 Вт",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ep1r8s9rfd9u93hjcg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ep1uos9rfd9u93hjeg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ep1vq1146jevjqfrug/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ep210s9rfd9u93hjf0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ep22q1146jevjqfrv0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6ep24gs9rfd9u93hjfg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8836579,
+        "sellPrice": 2729000,
+        "fullPrice": 3229000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Ледяной",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8836580,
+        "sellPrice": 3458000,
+        "fullPrice": 3958000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Ледяной",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2961082,
+      "title": "Смартфон Samsung Galaxy A17, 6.7\" Super AMOLED 90Гц экран, камера 50Мп, 5000 мАч",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2oc9g1ku9j5dlkkg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2vc9g1ku9j5dlkrg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2vc9g1ku9j5dlks0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2vbsv8vnuj10llmg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8ue2vc9g1ku9j5dlkr0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10870643,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "8/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Голубой",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 10870642,
+        "sellPrice": 13000000,
+        "fullPrice": 13000000,
+        "availableAmount": 7,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Голубой",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1951131,
+      "title": "Смартфон Samsung Galaxy A07, 2 SIM, 6.7\" 90Hz, 5000 мАч 25Вт, Helio G99, Камера 50МП",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d97nohq1146phmqjj4fg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31872j4eu2up0atqrp0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31872niub35i07kjoh0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d31872j4eu2up0atqrog/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3186p52llnd6julsqmg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 6888154,
+        "sellPrice": 2135760,
+        "fullPrice": 10000000,
+        "availableAmount": 111,
+        "characteristicValues": [
+         {
+          "title": "6/128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 6888153,
+        "sellPrice": 1896000,
+        "fullPrice": 10000000,
+        "availableAmount": 14,
+        "characteristicValues": [
+         {
+          "title": "4/128ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2778917,
+      "title": "Смартфон Samsung Galaxy A17, 4G, 6.7\", sAMOLED 90 Гц, камера 50 МП",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7uago49g1ktqmlkrt90/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 10145153,
+        "sellPrice": 2290000,
+        "fullPrice": 7000000,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "4/128",
+          "characteristic": {
+           "title": "память"
+          }
+         },
+         {
+          "title": "Индиго",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2481094,
+      "title": "Samsung Galaxy S26 Ultra IMEI Пройден Официально 1 Год Гарантии",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0sba1146th72s5hag/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0scq1146th72s5hbg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0sctsp2tohdbbpnm0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0scos9rf3ubqur3o0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0scq1146th72s5hc0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0scos9rf3ubqur3og/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d6j0sd5sp2tohdbbpnmg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 8949785,
+        "sellPrice": 14837000,
+        "fullPrice": 19000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "12/256",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Фиолетовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8949786,
+        "sellPrice": 17790000,
+        "fullPrice": 21000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "12/512",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Фиолетовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 8949787,
+        "sellPrice": 24750000,
+        "fullPrice": 25000000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "16/1TB",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Фиолетовый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2665867,
+      "title": "Смартфон Samsung Galaxy M17e 5G, мощный аккумулятор 6000мАч, камера 50Мп, 120Гц, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7k6j543obpkks11igsg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hhi9bsv8vghom156o0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hhj4a1146ojv9fifs0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hhjck3obpkks10dpr0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9751122,
+        "sellPrice": 2699000,
+        "fullPrice": 4500000,
+        "availableAmount": 59,
+        "characteristicValues": [
+         {
+          "title": "6/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Сиреневый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1349810,
+      "title": "Смартфон Samsung Galaxy A16,2 SIM-карт, Super AMOLED,камера 50 Мп, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d3u66j5v2sjj05or9kk0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/ct4vkttpb7f3jk81g9kg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/ct4vup45j42b32f4ceu0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/ct4vvadpb7f3jk81geg0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/cstdvfrvgbkpg1nmsnv0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/cste3k34nkdilc6bafj0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 5557421,
+        "sellPrice": 2099000,
+        "fullPrice": 6200000,
+        "availableAmount": 3,
+        "characteristicValues": [
+         {
+          "title": "4/128 ГБ",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Темно-синий",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1508302,
+      "title": "Смартфон Samsung Galaxy S25 ultra, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/cumru4s5j42bjc4e2ta0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/cugl07ei4n324lr82hkg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/cugl07c5j42bjc4c6sig/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/cugl07dht56sc95cni20/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/cugl07ei4n324lr82hk0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/cugl07dht56sc95cni2g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/cugl07ei4n324lr82hl0/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 4945596,
+        "sellPrice": 12129000,
+        "fullPrice": 24867000,
+        "availableAmount": 12,
+        "characteristicValues": [
+         {
+          "title": "12/256",
+          "characteristic": {
+           "title": "Память :"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 4945597,
+        "sellPrice": 15824160,
+        "fullPrice": 28453000,
+        "availableAmount": 2,
+        "characteristicValues": [
+         {
+          "title": "12/512",
+          "characteristic": {
+           "title": "Память :"
+          }
+         },
+         {
+          "title": "Черный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2665039,
+      "title": "Samsung Galaxy M17e 5G, 6,7-дюймовый, 120Гц, 50МП, 6000мАч, 4/6/128 ГБ, гарантия 1 год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7h7ddrsv8vghom13hu0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl23sv8vghom194n0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl1q1146ojv9fmgr0/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl1s3obpkks10hn40/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnl1s3obpkks10hn4g/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnkt43obpkks10hn10/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7hnku43obpkks10hn1g/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9747415,
+        "sellPrice": 4299000,
+        "fullPrice": 4299000,
+        "availableAmount": 50,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Светло-синий",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2608938,
+      "title": "Смартфон Samsung Galaxy A37 5G – мощная батарея и современный AMOLED дисплей",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7rj14c9g1ktqmljlg40/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7rj15bsv8vo2t0bifng/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7rj15q1146tv06t5n90/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d78g5qi1146ojv9brnpg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9521450,
+        "sellPrice": 4990000,
+        "fullPrice": 7000000,
+        "availableAmount": 5,
+        "characteristicValues": [
+         {
+          "title": "8/128",
+          "characteristic": {
+           "title": "Память"
+          }
+         },
+         {
+          "title": "Тёмно-зелёный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 2674459,
+      "title": "Samsung Galaxy M17 5G, адаптер в подарок, Super AMOLED, 50МП, 5000мАч, UZIMEI, гарантия 1год",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d8nfh1i1146tv077pr30/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7itirjsv8vghom1mrdg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7itira1146ojv9g49bg/t_product_540_high.jpg"
+        }
+       },
+       {
+        "link": {
+         "high": "https://images.uzum.uz/d7itirc3obpkks10vhjg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 9788313,
+        "sellPrice": 3599000,
+        "fullPrice": 3599000,
+        "availableAmount": 50,
+        "characteristicValues": [
+         {
+          "title": "4/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       },
+       {
+        "id": 9790176,
+        "sellPrice": 3799000,
+        "fullPrice": 3799000,
+        "availableAmount": 50,
+        "characteristicValues": [
+         {
+          "title": "6/128",
+          "characteristic": {
+           "title": "ПАМЯТЬ"
+          }
+         },
+         {
+          "title": "Серебряный",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    },
+    {
+     "catalogCard": {
+      "__typename": "SkuGroupCard",
+      "productId": 1446366,
+      "title": "Смартфон Samsung Galaxy A35",
+      "category": {
+       "id": 15271,
+       "title": "Смартфоны Android"
+      },
+      "photos": [
+       {
+        "link": {
+         "high": "https://images.uzum.uz/ctsq8bc5j42bjc46h5cg/t_product_540_high.jpg"
+        }
+       }
+      ],
+      "skuList": [
+       {
+        "id": 4705010,
+        "sellPrice": 6900000,
+        "fullPrice": 6900000,
+        "availableAmount": 1,
+        "characteristicValues": [
+         {
+          "title": "Сиреневый",
+          "characteristic": {
+           "title": "Цвет"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ]
+  }
+ }
+}

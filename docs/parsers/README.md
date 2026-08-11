@@ -52,6 +52,7 @@ verified by running the parser end to end and opening the resulting links.
 | [mediapark.md](mediapark.md) | mediapark.uz | REST GET, autocomplete | none | 46/66 |
 | [asaxiy.md](asaxiy.md) | asaxiy.uz | **server-rendered HTML** | none | — † |
 | [radius.md](radius.md) | radius.uz | Saleor GraphQL, single card | none | — † |
+| [glotr.md](glotr.md) | glotr.uz | **server-rendered HTML**, classifieds board | none (by grant — see the file) | — † |
 | [_matching-engine.md](_matching-engine.md) | — | shared name→product matcher | — | — |
 
 > **Narxnoma is an aggregator.** The two internal systems documented in the original
@@ -61,9 +62,33 @@ verified by running the parser end to end and opening the resulting links.
 
 \* phones matched out of 66 active smartphones, as of 2026-07-24.
 
-† asaxiy (2026-08-10) and radius (2026-08-11) were added after that survey, so
-they have no 66-phone score. Measured on their own terms: asaxiy 693 offers at
-96.8% attached; radius 274 offers at 98.9%.
+† asaxiy (2026-08-10), radius and glotr (2026-08-11) were added after that
+survey, so they have no 66-phone score. Measured on their own terms: asaxiy 693
+offers at 96.8% attached; radius 274 offers at 98.9%; glotr 8,138 offers.
+
+> **Third pass, 2026-08-11 — what is on the row, not how many rows.** The first
+> pass verified transport and the second verified matching. Neither could see a
+> field that is *populated, well-formed, and wrong*, because every count stays
+> identical. Three defects of exactly that shape, all now fixed:
+>
+> 1. **[glotr.md §3](glotr.md#3-trap--the-photos-come-before-the-name)** — the
+>    photos sit *before* the name inside a card, so cutting cards at the name
+>    anchor gave every listing its neighbour's picture. **55 of 55 wrong** on
+>    the page it was measured on; row counts, attachment and the coverage
+>    report were all unchanged by it.
+> 2. **[glotr.md §4](glotr.md#4-trap--past-its-last-page-glotr-serves-other-peoples-goods)** —
+>    past its last page glotr serves 21 *unrelated* products per page,
+>    endlessly and never repeating, so the no-new-ids stop never fired. A
+>    category holding 240 ovens ingested 2,739.
+> 3. **[uzum.md](uzum.md)** — `photos` was never requested, so the largest
+>    source in the catalogue published **5,461 offers with no picture at all**.
+>
+> Lesson worth generalising, alongside the second pass's: **aggregate metrics
+> cannot see a substitution.** Count, freshness and attachment answer "is there
+> a value here?", never "is it this product's value?". Checking that needs a
+> second, independently-rendered copy of the same fact — the `-p-<id>` in the
+> photo anchor, the `alt` text, the site's own pager — and a rule that drops
+> the row when the two disagree.
 
 > **A small source is not a weak source.** radius contributes 2.2% of the
 > catalogue's offers and 4.8% of its *comparisons* — 212 of its products are

@@ -203,3 +203,31 @@ terms), which is itself useful — a comparison needs both ends.
 
 All 212 multi-store variants were read offer by offer. Every merge is correct,
 matched on catalogue codes: `ARTSIQ3BW12BE`, `ARTSID3AW12BE`, `AVLSIQ1AW12BE`.
+
+---
+
+## 9. TRAP — a thumbnail URL for a thumbnail that was never rendered
+
+Saleor returns a `thumbnail(size: N) { url }` for every image, and the field is
+non-null and well-formed regardless of whether the file exists. radius's
+thumbnailer does not render `.avif` sources: the URL 404s with
+`application/xml`.
+
+Sampled across all 274 live radius offers:
+
+| extension | count | thumbnail status |
+|---|---|---|
+| `.webp` | 218 | 200 |
+| `.jpg` | 31 | 200 |
+| `.png` | 23 | 200 |
+| `.avif` | 2 | **404** |
+
+The original **does** exist — the same path with `/thumbnails/<N>/` replaced by
+`/media/` returns `200 image/avif` — so that is what we publish for those two.
+Only for avif: `/thumbnails/` is the right thing to hotlink into a grid
+everywhere it works, and swapping wholesale would serve full-size originals for
+272 products to fix 2.
+
+Worth stating plainly because no upstream check can catch it: "the field is
+present" and "the file exists" are different questions, and only the second one
+matters to a page that renders the URL.

@@ -13,8 +13,10 @@ Fixture recorded live on 2026-08-11 with:
 import json
 import pathlib
 
+import pytest
+
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN
-from narxnoma.sources.radius import next_cursor, numeric_id, parse
+from narxnoma.sources.radius import _image, next_cursor, numeric_id, parse
 
 FIXTURES = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "sources"
 FIXTURE = FIXTURES / "radius.json"
@@ -250,3 +252,48 @@ def test_parse_survives_an_empty_or_missing_payload():
     assert parse({"data": {"category": None}}) == []
     assert parse({}) == []
     assert parse(None) == []
+
+
+# ---------------------------------------------------------------------------
+# Thumbnails radius never rendered.
+#
+# Saleor returns a thumbnail URL for every image, but radius's thumbnailer
+# does not render .avif sources: the URL is well-formed, non-null, and 404s.
+# Measured over all 274 live radius offers -- 272 thumbnails load, the 2 avif
+# ones do not. Nothing upstream can catch this, because "field present" and
+# "file exists" are different questions.
+# ---------------------------------------------------------------------------
+
+def test_avif_thumbnails_are_replaced_by_the_original_that_exists():
+    avif = ("https://new.api.radius.uz/thumbnails/200/images/product/"
+            "31101cec018f49b29871c665b6aa7fde.avif")
+    assert _image({"url": avif}) == (
+        "https://new.api.radius.uz/media/images/product/"
+        "31101cec018f49b29871c665b6aa7fde.avif")
+
+
+@pytest.mark.parametrize("url", [
+    "https://new.api.radius.uz/thumbnails/200/images/product/abc.webp",
+    "https://new.api.radius.uz/thumbnails/512/images/product/abc.jpg",
+    "https://new.api.radius.uz/thumbnails/200/images/product/abc.png",
+])
+def test_every_other_format_keeps_its_thumbnail(url):
+    """272 of 274 work; only avif is swapped, so a grid keeps loading renders."""
+    assert _image({"url": url}) == url
+
+
+def test_a_missing_thumbnail_is_none_not_a_crash():
+    assert _image(None) is None
+    assert _image({}) is None
+    assert _image({"url": ""}) is None
+
+
+def test_the_fixtures_still_parse_to_reachable_looking_images():
+    for path in (FIXTURE, PHONES):
+        listings = parse(json.loads(path.read_text(encoding="utf-8")))
+        assert listings
+        for l in listings:
+            if l.image_url:
+                assert l.image_url.startswith("https://new.api.radius.uz/")
+                assert not (l.image_url.endswith(".avif")
+                            and "/thumbnails/" in l.image_url)
