@@ -12,7 +12,7 @@ from narxnoma.matching.keys import CATEGORIES
 from narxnoma.pipeline.report import EXPECTED_MIN_OFFERS
 from narxnoma.sources import SOURCES
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN, Source, Listing
-from narxnoma.sources.glotr import CATEGORY_PATHS, parse
+from narxnoma.sources.glotr import CATEGORY_PATHS, _DROP_RE, _KEEP_RE, parse
 
 FIXTURES = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "sources"
 FIXTURE = FIXTURES / "glotr.html"
@@ -82,6 +82,54 @@ def test_category_paths_cover_every_supported_category():
         "ovens": "duxovie-shkafi",
     }
     assert set(CATEGORY_PATHS) == set(CATEGORIES)
+
+
+def test_laptop_keep_is_startswith_based():
+    # Real glotr laptops start with a designator word; an accessory never does.
+    # (A contains-check would wrongly keep "Клавиатура для ноутбука" and, via
+    # an SSD/батарея drop, wrongly drop a real laptop that lists its specs.)
+    starts = ("ноутбук", "нетбук", "ультрабук", "макбук", "лэптоп", "игровой ноутбук")
+    def keep(n):
+        return n.casefold().startswith(starts)
+    assert keep("Ноутбук Acer Aspire Lite 15.6 FHD IPS SlimBezel, 8GB DDR5, 512GB SSD")
+    assert keep("Ультрабук HP EliteBook Ultra G1i 14")
+    # the two exact cases the user reported as parsed-into-laptops:
+    assert not keep("Беспроводная мышь \"Lenovo\" 400, L300")
+    assert not keep("Клавиатура для ноутбука Toshiba Satellite C650")
+
+
+def test_positive_filter_keeps_real_items_and_drops_accessories():
+    tv, tvdrop = _KEEP_RE["televisions"], _DROP_RE["televisions"]
+    assert tv.search("Телевизор Samsung UE55 UHD".casefold())
+    assert tv.search("75\" Телевизор Hisense".casefold())
+    assert not tvdrop.search("Телевизор Samsung UE55 UHD".casefold())
+    assert not tv.search("Радиотелефон Panasonic KX-TG1612".casefold())
+    assert not tv.search("Микроскоп Бинокулярный OPTIKA".casefold())
+    assert tvdrop.search("Антенна для телевизора DigiColor".casefold())
+    # every supported category has keep + drop rules (smartphones is_phone_listing,
+    # laptops is startswith-based so it has no regex here)
+    assert set(_KEEP_RE) == set(CATEGORIES) - {"smartphones", "laptops"}
+    assert set(_DROP_RE) == set(CATEGORIES) - {"smartphones", "laptops"}
+
+
+def test_sweep_applies_the_positive_filter(monkeypatch):
+    import narxnoma.sources.glotr as mod
+    from narxnoma.sources.glotr import GlotrSource
+
+    def fake_paginate(fetch, parse_page, following):
+        yield Listing(store_slug="glotr", source_key="1",
+                      name_raw="Ноутбук Acer Aspire Lite 15.6",
+                      price=4_000_000, url="https://glotr.uz/1", category="smartphones")
+        yield Listing(store_slug="glotr", source_key="2",
+                      name_raw="Беспроводная мышь Lenovo 400, L300",
+                      price=120_000, url="https://glotr.uz/2", category="smartphones")
+
+    monkeypatch.setattr(mod, "paginate", fake_paginate)
+    src = GlotrSource()
+    src._get_session = lambda: None
+    out = list(src.sweep(category="laptops"))
+    assert [l.source_key for l in out] == ["1"]
+    assert out[0].category == "laptops"
 
 
 def test_glotr_is_registered_and_satisfies_the_source_protocol():

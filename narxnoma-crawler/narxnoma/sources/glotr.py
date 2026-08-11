@@ -75,6 +75,41 @@ _RE_AVAIL_BLOCK = re.compile(r"<span\s+class='text-stock\s+([^']+)'>")
 _RE_PRICE = re.compile(r'class="price-retail[^"]*">\s*([\d\s]+)\s*<span>сум</span>')
 _RE_IMG = re.compile(r"<img class='lazyload-img'[^>]*data-src='([^']+)'")
 
+# glotr's category pages are NOISY: alongside the category's own products they
+# mix in unrelated listings (a парфюм/стол/микроскоп on the laptop page, a
+# радиотелефон on the TV page) and accessories (a "Беспроводная мышь Lenovo"
+# on the laptop page). A denylist can never catch every intruder, so this is a
+# POSITIVE filter: a listing is kept only if its name carries the category's
+# product-type word. Verified live 2026-08-10 against the laptop and TV pages
+# (43/50 laptop names start "Ноутбук ", real TVs all carry "Телевизор"/"ТВ").
+# The smartphones sweep uses is_phone_listing instead (its category mixes
+# tablets, and the phone detector already drops them).
+_KEEP_RE = {
+    "televisions": re.compile(r"телевизор|smart\s*tv|led\s*tv|\bтв\b|\btv\b"),
+    "acs":         re.compile(r"кондиционер|сплит[- ]систем"),
+    "fridges":     re.compile(r"холодильник|морозильн|винный шкаф"),
+    "washers":     re.compile(r"стиральн"),
+    "ovens":       re.compile(r"духов|газовая плита|электроплита|вытяжк|варочн"),
+}
+
+# A positive keep isn't enough: an accessory is often named "<thing> для
+# ноутбука" and so carries the product-type word. This is the OTHER half --
+# reject names that are accessories/spares/consumables for the category's
+# device. Combined test: keep iff _KEEP_RE matches AND _DROP_RE does not.
+# (laptops is startswith-based in sweep(), so it has no regex here.)
+_DROP_RE = {
+    "televisions": re.compile(
+        r"антенн|кронштейн|пульт|подставк|кабель|тюнер|ресивер|креплени|держател|стенд|шкив|крючок|запчаст|ремонт"),
+    "acs": re.compile(
+        r"кронштейн|монтаж|установ|заправ|фреон|чистк|обслужив|пульт|дренаж|провод|запчаст|ремонт"),
+    "fridges": re.compile(
+        r"термометр|уплотнитель|полк|набор|органайзер|контейнер|кулер для воды|чистк|средство|запчаст|ремонт"),
+    "washers": re.compile(
+        r"порошок|средство|капсул|гель для|сетк|мешок|кондиционер для белья|смягчитель|чистк|запчаст|ремонт"),
+    "ovens": re.compile(
+        r"противень|форма|перчатк|рукавиц|щетк|средство|решетк|сковород|чистк|набор|запчаст|ремонт"),
+}
+
 
 def parse(page_html: str) -> list[Listing]:
     """Turn one category page into Listings. Pure function, no I/O.
@@ -185,8 +220,27 @@ class GlotrSource:
             seen.add(listing.source_key)
             state["new"] += 1
             # The phone category is /telefoni-i-plansheti/ (phones+tablets);
-            # keep only genuine phones there. Other categories are already clean.
-            if category == "smartphones" and not is_phone_listing(listing):
+            # keep only genuine phones there. Other categories are noisy too
+            # (accessories + unrelated goods), so keep only names that carry
+            # the category's product-type word.
+            if category == "smartphones":
+                keep = is_phone_listing(listing)
+            elif category == "laptops":
+                # Every real glotr laptop starts with a designator word
+                # ("Ноутбук Acer…", "Ультрабук HP…"); accessories ("Беспроводная
+                # мышь Lenovo", "Клавиатура для ноутбука…") never do. A
+                # startswith check is unambiguous where a contains-check is not
+                # (a laptop's own spec mentions "SSD"/"батарея").
+                name_l = listing.name_raw.casefold()
+                keep = name_l.startswith(("ноутбук", "нетбук", "ультрабук",
+                                          "макбук", "лэптоп", "игровой ноутбук"))
+            else:
+                name = listing.name_raw.casefold()
+                keep_re = _KEEP_RE.get(category)
+                drop_re = _DROP_RE.get(category)
+                keep = (keep_re is not None and bool(keep_re.search(name))
+                        and not (drop_re is not None and drop_re.search(name)))
+            if not keep:
                 refused += 1
                 continue
             if listing.category != category:
