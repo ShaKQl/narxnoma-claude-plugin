@@ -71,7 +71,7 @@ export default async function CategoryPage({
                 <h2 style={{ fontSize: 17, fontWeight: 700 }}>
                   {plural(lang, total, "mahsulot", "товар", "товара", "товаров")}
                 </h2>
-                <Link href={`/search?category=${category}`} className="more-link">
+                <Link href={`/catalog?category=${category}`} className="more-link">
                   {lang === "uz" ? "Barchasini ko'rish →" : "Смотреть все →"}
                 </Link>
               </div>

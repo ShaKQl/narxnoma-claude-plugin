@@ -941,6 +941,111 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Horizontal scroll of product cards (home "popular per category"). */
+.hscroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+}
+
+.hscroll > .card {
+  flex: 0 0 auto;
+  width: 200px;
+  scroll-snap-align: start;
+}
+
+.hscroll-more {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.btn {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--card);
+  padding: 10px 18px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid var(--ink);
+  transition: opacity 0.15s ease;
+}
+
+.btn:hover {
+  opacity: 0.88;
+}
+
+/* Catalog category filter bar. */
+.cat-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 4px;
+}
+
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.cat-chip:hover {
+  border-color: var(--terracotta);
+}
+
+.cat-chip.active {
+  background: var(--ink);
+  color: var(--card);
+  border-color: var(--ink);
+}
+
+.chip-n {
+  font-size: 12px;
+  font-family: var(--font-num);
+  opacity: 0.7;
+}
+
+/* Catalog pagination. */
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.pagination a,
+.pagination .pg-ellipsis {
+  min-width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-family: var(--font-num);
+  font-size: 14px;
+}
+
+.pagination a.cur {
+  background: var(--ink);
+  color: var(--card);
+  border-color: var(--ink);
+}
+
+.pg-ellipsis {
+  border: none !important;
+  background: none !important;
+}
+
 .prose {
   background: var(--card);
   border: 1px solid var(--border);

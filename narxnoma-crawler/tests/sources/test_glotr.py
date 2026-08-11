@@ -12,7 +12,7 @@ from narxnoma.matching.keys import CATEGORIES
 from narxnoma.pipeline.report import EXPECTED_MIN_OFFERS
 from narxnoma.sources import SOURCES
 from narxnoma.sources.base import PRICE_MAX, PRICE_MIN, Source, Listing
-from narxnoma.sources.glotr import CATEGORY_PATHS, _DROP_RE, _KEEP_RE, parse
+from narxnoma.sources.glotr import CATEGORY_PATHS, _DROP_RE, _KEEP_RE, _is_laptop, parse
 
 FIXTURES = pathlib.Path(__file__).resolve().parents[1] / "fixtures" / "sources"
 FIXTURE = FIXTURES / "glotr.html"
@@ -84,18 +84,22 @@ def test_category_paths_cover_every_supported_category():
     assert set(CATEGORY_PATHS) == set(CATEGORIES)
 
 
-def test_laptop_keep_is_startswith_based():
-    # Real glotr laptops start with a designator word; an accessory never does.
-    # (A contains-check would wrongly keep "Клавиатура для ноутбука" and, via
-    # an SSD/батарея drop, wrongly drop a real laptop that lists its specs.)
-    starts = ("ноутбук", "нетбук", "ультрабук", "макбук", "лэптоп", "игровой ноутбук")
-    def keep(n):
-        return n.casefold().startswith(starts)
-    assert keep("Ноутбук Acer Aspire Lite 15.6 FHD IPS SlimBezel, 8GB DDR5, 512GB SSD")
-    assert keep("Ультрабук HP EliteBook Ultra G1i 14")
+def test_laptop_keep_is_robust():
+    # real laptops (both "Ноутбук X" and brand-first names):
+    assert _is_laptop("Ноутбук Acer Aspire Lite 15.6 FHD IPS, 8GB DDR5, 512GB SSD")
+    assert _is_laptop("Ультрабук HP EliteBook Ultra G1i 14")
+    assert _is_laptop("ASUS ROG Strix G16")
+    assert _is_laptop("HP EliteBook X Flip — 2-в-1 бизнес-ноутбук")
     # the two exact cases the user reported as parsed-into-laptops:
-    assert not keep("Беспроводная мышь \"Lenovo\" 400, L300")
-    assert not keep("Клавиатура для ноутбука Toshiba Satellite C650")
+    assert not _is_laptop("Беспроводная мышь \"Lenovo\" 400, L300")
+    assert not _is_laptop("Клавиатура для ноутбука Toshiba Satellite C650")
+    # other non-laptops that leak into the page:
+    assert not _is_laptop("Монитор HP Series 5 23.8 inch")
+    assert not _is_laptop("Моноблок Lenovo IdeaCentre AIO 24IRH9")
+    assert not _is_laptop("Наушники Asus TUF GAMING H7")
+    assert not _is_laptop("МФУ Canon imageRUNNER C3326i")
+    assert not _is_laptop("D-Link DGS-1005A")
+    assert not _is_laptop("Наросан Черника сироп с железом")
 
 
 def test_positive_filter_keeps_real_items_and_drops_accessories():

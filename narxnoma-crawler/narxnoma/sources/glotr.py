@@ -92,6 +92,33 @@ _KEEP_RE = {
     "ovens":       re.compile(r"духов|газовая плита|электроплита|вытяжк|варочн"),
 }
 
+# Laptops are the messiest glotr category: names are inconsistent ("Ноутбук
+# Acer…" vs bare "ASUS ROG Strix G16" vs "HP EliteBook — бизнес-ноутбук"),
+# and non-laptops leak in (monitors, headphones, AIOs, printers, network
+# gear, mice, keyboards). A startswith check is too strict (drops real
+# brand-first laptops); a bare contains-check keeps "Клавиатура для ноутбука".
+# So: keep a laptop iff (it carries the word "ноутбук" OR starts with a known
+# laptop brand) AND its name does not signal a NON-laptop product/accessory.
+_LAPTOP_BRAND_PREFIXES = (
+    "asus", "lenovo", "hp ", "acer", "dell", "msi", "apple", "samsung",
+    "huawei", "xiaomi", "toshiba", "gigabyte", "razer", "honor", "vivo ",
+    "realme", "infinity", "irbis", "depo", "prestigio", "thunderobot",
+)
+_LAPTOP_DROP = re.compile(
+    r"монитор|моноблок|наушник|гарнитур|принтер|сканер|мфу|свитч|коммутатор|роутер|маршрутизатор|"
+    r"планшет|приставк|консоль|проектор|мыш|клавиатур|сумк|чехол|подставк|аккумулятор|блок питания|"
+    r"зарядн|зарядк|кабель|адаптер|переходник|охлажд|коврик|флеш|док-станц|док станц|веб-камер|колонк|"
+    r"микрофон|динамик|аккустик|павербанк|повербанк|разветвит|хаб|держател|экран для|запчаст|ремонт|"
+    r"обслуживан|корпус|термопаст|вентилятор|кулер для|наручные|ссд|backpack|рюкзак|ink[- ]tank|printer"
+)
+
+
+def _is_laptop(name: str) -> bool:
+    low = name.casefold().strip()
+    has_laptop_word = "ноутбук" in low or "нетбук" in low or "ультрабук" in low or "макбук" in low
+    brand_prefix = low.startswith(_LAPTOP_BRAND_PREFIXES)
+    return (has_laptop_word or brand_prefix) and not _LAPTOP_DROP.search(low)
+
 # A positive keep isn't enough: an accessory is often named "<thing> для
 # ноутбука" and so carries the product-type word. This is the OTHER half --
 # reject names that are accessories/spares/consumables for the category's
@@ -226,14 +253,10 @@ class GlotrSource:
             if category == "smartphones":
                 keep = is_phone_listing(listing)
             elif category == "laptops":
-                # Every real glotr laptop starts with a designator word
-                # ("Ноутбук Acer…", "Ультрабук HP…"); accessories ("Беспроводная
-                # мышь Lenovo", "Клавиатура для ноутбука…") never do. A
-                # startswith check is unambiguous where a contains-check is not
-                # (a laptop's own spec mentions "SSD"/"батарея").
-                name_l = listing.name_raw.casefold()
-                keep = name_l.startswith(("ноутбук", "нетбук", "ультрабук",
-                                          "макбук", "лэптоп", "игровой ноутбук"))
+                # glotr names laptops inconsistently ("Ноутбук Acer…" vs bare
+                # "ASUS ROG Strix G16"); _is_laptop keeps real laptops and
+                # drops the mice/keyboards/monitors that leak into the page.
+                keep = _is_laptop(listing.name_raw)
             else:
                 name = listing.name_raw.casefold()
                 keep_re = _KEEP_RE.get(category)
