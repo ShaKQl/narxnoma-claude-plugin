@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
       priceHi: p.priceHi,
       multiStore: p.multiStore,
       category: p.category,
+      priced: p.priced,
       sort: p.sort,
       page: p.page,
     });

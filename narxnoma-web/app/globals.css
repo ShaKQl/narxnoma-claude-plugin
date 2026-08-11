@@ -1,5 +1,5 @@
 /* ============================================================
-   Нархнома — design tokens (Narxnoma Mobile.dc.html, spec §7)
+   narxnoma — design tokens (Narxnoma Mobile.dc.html, spec §7)
    Flat, radius 0, 44px touch targets, 390×844 baseline.
    ============================================================ */
 
@@ -1404,4 +1404,44 @@ a:hover {
   .topnav-links a:nth-child(4) {
     display: none; /* О проекте drops on the narrowest screens */
   }
+}
+/* ---------- infinite grid: the "show more" row ----------
+   The button is not decoration. Scroll-appended results have one failure
+   that matters -- when the fetch breaks the list just stops, and a page that
+   has stopped looks exactly like a page that has ended. This row is always
+   present while pages remain, so there is a visible control and a visible
+   "N / total" whether or not the observer ever fires. */
+
+.more-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.more-btn {
+  padding: 11px 22px;
+  border: 1px solid var(--ink);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.more-btn:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--card);
+}
+
+.more-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.more-row .count {
+  font-family: var(--font-num);
+  font-size: 13px;
+  color: var(--muted);
 }

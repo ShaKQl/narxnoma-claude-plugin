@@ -1,13 +1,12 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import VariantCard from "@/components/VariantCard";
+import InfiniteGrid from "@/components/InfiniteGrid";
+import Pager from "@/components/Pager";
 import { langFromCookie, plural, t } from "@/lib/i18n";
 import { getBrandsByCategory, searchVariants } from "@/lib/queries";
 import { parseSearchParams } from "@/lib/searchParams";
 
 export const dynamic = "force-dynamic";
-
-const PAGE_SIZE = 24;
 
 export default async function CatalogPage({
   searchParams,
@@ -23,6 +22,13 @@ export default async function CatalogPage({
     getBrandsByCategory(),
     searchVariants({ ...p, sort: "price_asc", page: Math.max(1, p.page) }),
   ]);
+
+  // What InfiniteGrid appends must be the SAME query the server just ran, so
+  // the filters and the sort are carried and `page` is left for the grid.
+  const grid = new URLSearchParams();
+  if (category) grid.set("category", category);
+  grid.set("sort", "price_asc");
+  const gridQs = grid.toString();
 
   // Category counts for the filter bar.
   const catCount = new Map<string, number>();
@@ -66,40 +72,24 @@ export default async function CatalogPage({
               : lang === "uz" ? "Hozircha bo'sh." : "Пока пусто."}
           </p>
 
-          <div className="grid">
-            {res.hits.map((v) => (
-              <VariantCard key={v.id} v={v} />
-            ))}
-          </div>
-
-          {res.pages > 1 && (
-            <nav className="pagination" aria-label="pagination">
-              {p.page > 1 && (
-                <Link href={`/catalog?category=${category ?? ""}&page=${p.page - 1}`} rel="prev">
-                  ←
-                </Link>
-              )}
-              {Array.from({ length: res.pages }, (_, i) => i + 1)
-                .filter((n) => n === 1 || n === res.pages || Math.abs(n - p.page) <= 2)
-                .map((n, idx, arr) => (
-                  <span key={n} style={{ display: "inline-flex", gap: 4 }}>
-                    {idx > 0 && arr[idx - 1] !== n - 1 ? <span className="pg-ellipsis">…</span> : null}
-                    <Link
-                      href={`/catalog?category=${category ?? ""}&page=${n}`}
-                      className={n === p.page ? "cur" : ""}
-                      aria-current={n === p.page ? "page" : undefined}
-                    >
-                      {n}
-                    </Link>
-                  </span>
-                ))}
-              {p.page < res.pages && (
-                <Link href={`/catalog?category=${category ?? ""}&page=${p.page + 1}`} rel="next">
-                  →
-                </Link>
-              )}
-            </nav>
-          )}
+          {/* Scrolling appends the next page; the numbered links below stay
+              as the manual route, and are what a crawler (and a browser with
+              a broken fetch) follows. */}
+          <InfiniteGrid
+            initialHits={res.hits}
+            initialPage={res.page}
+            pages={res.pages}
+            total={res.total}
+            qs={gridQs}
+            pagerFallback={
+              <Pager
+                page={res.page}
+                pages={res.pages}
+                basePath="/catalog"
+                query={{ category: category ?? undefined }}
+              />
+            }
+          />
         </section>
       </div>
     </main>

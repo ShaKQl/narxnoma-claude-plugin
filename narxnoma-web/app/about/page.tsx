@@ -9,7 +9,7 @@ export default function AboutPage() {
         <section className="sec">
           <h1>О проекте</h1>
           <p className="sub">
-            Нархнома — агрегатор цен на электронику в Узбекистане. Мы ничего не
+            narxnoma — агрегатор цен на электронику в Узбекистане. Мы ничего не
             продаём и никому не отдаём предпочтение.
           </p>
           <div className="prose">

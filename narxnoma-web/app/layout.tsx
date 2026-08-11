@@ -23,8 +23,8 @@ const STORES = "Uzum, Alif Shop, BeeMarket, Idea, Mediapark, Olcha, Texnomart, G
 
 export const metadata: Metadata = {
   title: {
-    default: "Нархнома — сравнение цен на технику в Узбекистане",
-    template: "%s · Нархнома",
+    default: "narxnoma — сравнение цен на технику в Узбекистане",
+    template: "%s · narxnoma",
   },
   description:
     "Введите название техники — смартфона, телевизора, ноутбука — и сравните цены Uzum, Alif Shop, BeeMarket, Idea, Mediapark, Olcha и Texnomart. Рядом с каждой ценой — точная формулировка магазина, чтобы вы сами могли проверить совпадение.",
@@ -43,9 +43,9 @@ export default async function RootLayout({
           <header className="topnav">
             <div className="topnav-inner">
               <a className="brand" href="/">
-                <span className="brand-mark">Н</span>
+                <span className="brand-mark">n</span>
                 <span className="brand-name">
-                  Нархнома<span className="brand-dot">.</span>
+                  narxnoma<span className="brand-dot">.</span>
                 </span>
               </a>
               <nav className="topnav-links">

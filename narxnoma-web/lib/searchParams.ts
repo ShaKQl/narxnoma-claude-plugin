@@ -13,6 +13,9 @@ export interface ParsedSearch {
   priceHi: number | null;
   multiStore: boolean;
   category: string | null;
+  /** `priced=1` — only variants with a buyable price. Used by the category
+   *  page, whose grid has always excluded them. */
+  priced: boolean;
   sort: SortKey;
   page: number;
   /** URLSearchParams string carrying every applied filter (for /api/search). */
@@ -52,6 +55,7 @@ export function parseSearchParams(
     priceLo != null && !Number.isNaN(priceLo) ? priceLo + 2_499_999 : null;
   const multiStore = get("multi") === "1";
   const category = get("category") || null;
+  const priced = get("priced") === "1";
   const sortRaw = get("sort") as SortKey;
   const sort: SortKey = SORTS.includes(sortRaw) ? sortRaw : "relevance";
   const page = Math.max(1, Number(get("page")) || 1);
@@ -64,6 +68,7 @@ export function parseSearchParams(
   if (priceLo != null) qs.set("price", String(priceLo));
   if (multiStore) qs.set("multi", "1");
   if (category) qs.set("category", category);
+  if (priced) qs.set("priced", "1");
   qs.set("sort", sort);
   if (page > 1) qs.set("page", String(page));
 
@@ -78,6 +83,7 @@ export function parseSearchParams(
     priceHi,
     multiStore,
     category,
+    priced,
     sort,
     page,
     qs: qs.toString(),

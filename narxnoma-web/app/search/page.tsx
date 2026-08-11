@@ -12,7 +12,10 @@ export default async function SearchPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const p = parseSearchParams(await searchParams);
+  const sp = await searchParams;
+  const p = parseSearchParams(sp);
+  // Set by the home page when it hands over mid-word; see SearchBox.
+  const resumeTyping = sp.typing === "1";
   const res = await searchVariants({
     qNorm: p.qNorm,
     qTokens: p.qTokens,
@@ -23,6 +26,7 @@ export default async function SearchPage({
     priceHi: p.priceHi,
     multiStore: p.multiStore,
     category: p.category,
+    priced: p.priced,
     sort: p.sort,
     page: p.page,
   });
@@ -34,6 +38,7 @@ export default async function SearchPage({
           initialResult={res}
           initialQs={p.qs}
           initialRawQ={p.rawQ}
+          resumeTyping={resumeTyping}
         />
       </div>
     </main>

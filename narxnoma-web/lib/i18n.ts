@@ -76,7 +76,7 @@ const DICT: Record<string, { ru: string; uz: string }> = {
     uz: "Narxlar {t} tekshirilgan — do'konlar ularni o'zgartirgan bo'lishi mumkin. Biz faqat o'zimiz ko'rgan narsani ko'rsatamiz.",
   },
   "footer.line": {
-    ru: "Нархнома — агрегатор цен. Мы ничего не продаём: цена каждого предложения ведёт на страницу магазина, где вы можете проверить её сами.",
+    ru: "narxnoma — агрегатор цен. Мы ничего не продаём: цена каждого предложения ведёт на страницу магазина, где вы можете проверить её сами.",
     uz: "Narxnoma — narxlar agregatori. Biz hech narsa sotmaymiz: har bir taklif narxi do'kon sahifasiga olib boradi, u yerda o'zingiz tekshirishingiz mumkin.",
   },
   "footer.sources": {

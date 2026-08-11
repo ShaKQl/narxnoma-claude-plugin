@@ -192,6 +192,11 @@ interface SearchParams {
   priceHi: number | null;
   multiStore: boolean;
   category: string | null;
+  /** Drop variants with no buyable price. The category page has always done
+   *  this (getCategoryProducts required min_price NOT NULL); search and the
+   *  catalogue never have, and this keeps that difference explicit rather
+   *  than letting one page quietly change behaviour when it switched query. */
+  priced?: boolean;
 }
 
 function baseWhere(p: SearchParams, excludeFacet?: "brands" | "colors" | "rams") {
@@ -252,6 +257,9 @@ function baseWhere(p: SearchParams, excludeFacet?: "brands" | "colors" | "rams")
     params.push(p.category);
     i += 1;
   }
+  if (p.priced) {
+    clauses.push("vp.min_price IS NOT NULL");
+  }
   return { where: clauses.length ? `WHERE ${clauses.join(" AND ")}` : "", params };
 }
 
@@ -270,6 +278,7 @@ export async function searchVariants(
     priceHi: raw.priceHi,
     multiStore: raw.multiStore,
     category: raw.category,
+    priced: raw.priced,
   };
   const { where, params } = baseWhere(p);
   // The SELECT's brand-rank/pos expressions need a query term as a parameter.
@@ -376,7 +385,18 @@ export async function searchVariants(
       const bLo = lo + (Number(r.bucket) - 1) * STEP;
       bands.push({ lo: bLo, hi: bLo + STEP - 1, count: Number(r.n) });
     }
-    if (bands.length > 8) bands.splice(0, bands.length - 8);
+    // Keep the eight bands that hold the most products, then restore price
+    // order. This used to be `splice(0, bands.length - 8)`, which drops from
+    // the FRONT and so kept the eight most EXPENSIVE bands: searching
+    // "samsung" offered 35M–47.5M with 2, 2, 1 and 1 products in them, while
+    // the several hundred phones between 1M and 10M had no band at all. A
+    // price filter whose every option matches almost nothing is worse than no
+    // price filter.
+    if (bands.length > 8) {
+      const keep = [...bands].sort((a, b) => b.count - a.count).slice(0, 8);
+      const kept = new Set(keep.map((b) => b.lo));
+      bands.splice(0, bands.length, ...bands.filter((b) => kept.has(b.lo)));
+    }
   }
 
   return {
@@ -698,44 +718,6 @@ export async function getFeaturedPerCategory(
     groups.set(r.category, arr);
   }
   return [...groups.entries()].map(([category, hits]) => ({ category, hits }));
-}
-
-/** A category's products, most widely carried first.
- *
- *  The category page used to borrow getFeaturedPerCategory, which ranks every
- *  category at once and then throws away all but one — so a category holding
- *  492 televisions showed eight of them and a list of brand tiles. This asks
- *  for one category directly and asks for enough of it to look like a shop.
- */
-export async function getCategoryProducts(
-  category: string,
-  limit: number = 24
-): Promise<VariantHit[]> {
-  return query<VariantHit>(
-    `SELECT v.id, v.slug, v.brand, v.display_name, v.ram_gb, v.storage_gb,
-            v.color, v.sim_kind, v.category,
-            vp.min_price, vp.median_price, vp.max_price,
-            vp.offer_count, vp.in_stock_offer_count, vp.store_count, vp.computed_at,
-            (SELECT max(o.last_seen) FROM offer o WHERE o.variant_id = v.id) AS latest_offer_at,
-            ${CARD_IMAGE} AS image_url,
-            0 AS brand_rank, 0 AS pos
-       FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
-      WHERE v.category = $1 AND vp.min_price IS NOT NULL
-      ORDER BY vp.store_count DESC, vp.in_stock_offer_count DESC, vp.min_price ASC
-      LIMIT $2`,
-    [category, limit]
-  );
-}
-
-/** How many priced products a category holds, for the page heading. */
-export async function getCategoryCount(category: string): Promise<number> {
-  const rows = await query<{ n: string }>(
-    `SELECT count(*) AS n
-       FROM variant v JOIN variant_price vp ON vp.variant_id = v.id
-      WHERE v.category = $1 AND vp.min_price IS NOT NULL`,
-    [category]
-  );
-  return Number(rows[0]?.n ?? 0);
 }
 
 export async function getSearchSuggestions(q: string) {

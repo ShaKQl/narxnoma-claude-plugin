@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import VariantCard from "@/components/VariantCard";
+import InfiniteGrid from "@/components/InfiniteGrid";
+import Pager from "@/components/Pager";
 import { langFromCookie, plural, t } from "@/lib/i18n";
-import {
-  getBrandsByCategory,
-  getCategoryCount,
-  getCategoryProducts,
-} from "@/lib/queries";
+import { getBrandsByCategory, searchVariants } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -33,17 +30,43 @@ export async function generateMetadata({
 
 export default async function CategoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ category: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { category } = await params;
+  const page = Math.max(1, Number((await searchParams).page) || 1);
   const lang = langFromCookie((await cookies()).get("lang")?.value);
-  const [featured, total, brandRows] = await Promise.all([
-    getCategoryProducts(category, 24),
-    getCategoryCount(category),
+
+  // Was getCategoryProducts(category, 24) with no paging at all -- the page
+  // showed the first 24 and offered nothing but a link out to /catalog.
+  // searchVariants is what /api/search runs, so scrolling continues the very
+  // list the server rendered rather than a subtly different one, and
+  // `priced: true` keeps the min_price filter the old query had. Its ordering
+  // is the same store_count-first ranking; the only difference is that it no
+  // longer breaks ties on in_stock_offer_count before price. That function is
+  // now gone rather than left beside this one to drift.
+  const [res, brandRows] = await Promise.all([
+    searchVariants({
+      qNorm: "",
+      qTokens: [],
+      brands: [],
+      colors: [],
+      rams: [],
+      priceLo: null,
+      priceHi: null,
+      multiStore: false,
+      category,
+      priced: true,
+      sort: "stores",
+      page,
+    }),
     getBrandsByCategory(),
   ]);
+  const total = res.total;
   const rows = brandRows.filter((r) => r.category === category);
+  const gridQs = `category=${encodeURIComponent(category)}&sort=stores&priced=1`;
   const catLabel = (c: string) => {
     const v = t(lang, `cat.${c}`);
     return v && !v.startsWith("cat.") ? v : c;
@@ -65,7 +88,7 @@ export default async function CategoryPage({
               : "цены из 7 магазинов Узбекистана, каждая проверяется автоматически."}
           </p>
 
-          {featured.length > 0 && (
+          {res.hits.length > 0 && (
             <>
               <div className="row-head" style={{ marginTop: 12 }}>
                 <h2 style={{ fontSize: 17, fontWeight: 700 }}>
@@ -75,11 +98,16 @@ export default async function CategoryPage({
                   {lang === "uz" ? "Barchasini ko'rish →" : "Смотреть все →"}
                 </Link>
               </div>
-              <div className="grid">
-                {featured.map((v) => (
-                  <VariantCard key={v.id} v={v} />
-                ))}
-              </div>
+              <InfiniteGrid
+                initialHits={res.hits}
+                initialPage={res.page}
+                pages={res.pages}
+                total={total}
+                qs={gridQs}
+                pagerFallback={
+                  <Pager page={res.page} pages={res.pages} basePath={`/c/${category}`} />
+                }
+              />
             </>
           )}
 
