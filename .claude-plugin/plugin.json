@@ -1,0 +1,24 @@
+{
+  "name": "narxnoma",
+  "description": "Price-fetch engine for Uzbekistan's electronics retailers: verified clients, API notes and traps for uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius and glotr, plus the name-to-product matcher.",
+  "version": "1.0.0",
+  "author": {
+    "name": "ShaKQl",
+    "url": "https://github.com/ShaKQl"
+  },
+  "homepage": "https://github.com/ShaKQl/narxnoma-claude-plugin",
+  "repository": "https://github.com/ShaKQl/narxnoma-claude-plugin",
+  "license": "MIT",
+  "keywords": [
+    "scraping",
+    "price-comparison",
+    "uzbekistan",
+    "uzum",
+    "alifshop",
+    "olcha",
+    "texnomart",
+    "asaxiy",
+    "retail-api",
+    "crawler"
+  ]
+}

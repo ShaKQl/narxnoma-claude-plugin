@@ -161,3 +161,90 @@ def test_cycle_refuses_to_run_twice_at_once(db_conn, dsn, monkeypatch):
         assert main(["cycle"]) == 1
     finally:
         holder.close()
+
+
+# --- fetch: the database-free path ------------------------------------------
+
+class _FakeSource:
+    slug = "fake"
+    can_sweep = True
+
+    def __init__(self):
+        self.calls = []
+
+    def sweep(self, category="smartphones"):
+        from narxnoma.sources.base import Listing
+        self.calls.append(("sweep", category))
+        for i in range(3):
+            yield Listing(store_slug="fake", source_key=f"k{i}", name_raw=f"Phone {i}",
+                          price=1_000_000 + i, url=f"https://fake/{i}", category=category)
+
+    def search(self, query):
+        from narxnoma.sources.base import Listing
+        self.calls.append(("search", query))
+        yield Listing(store_slug="fake", source_key="q", name_raw=query,
+                      price=2_000_000, url="https://fake/q")
+
+
+def test_fetch_sweeps_without_a_database(monkeypatch, capsys):
+    """`fetch` must never touch connect(): it is the path someone without
+    Postgres uses to get prices out of a source in one command."""
+    import json
+    from narxnoma import cli
+
+    fake = _FakeSource()
+    monkeypatch.setattr(cli, "SOURCES", {"fake": fake})
+    monkeypatch.setattr(cli, "connect", lambda: (_ for _ in ()).throw(AssertionError("db touched")))
+
+    code = cli.main(["fetch", "--source", "fake", "--category", "laptops"])
+
+    assert code == 0
+    assert fake.calls == [("sweep", "laptops")]
+    rows = [json.loads(line) for line in capsys.readouterr().out.splitlines()]
+    assert [r["source_key"] for r in rows] == ["k0", "k1", "k2"]
+    assert rows[0]["price"] == 1_000_000 and rows[0]["category"] == "laptops"
+    assert "raw" not in rows[0], "raw payload stays out unless --raw is asked for"
+
+
+def test_fetch_query_uses_search_and_limit_stops_early(monkeypatch, capsys):
+    import json
+    from narxnoma import cli
+
+    fake = _FakeSource()
+    monkeypatch.setattr(cli, "SOURCES", {"fake": fake})
+
+    code = cli.main(["fetch", "--source", "fake", "--query", "iphone 16", "--limit", "1"])
+
+    assert code == 0
+    assert fake.calls == [("search", "iphone 16")]
+    rows = [json.loads(line) for line in capsys.readouterr().out.splitlines()]
+    assert len(rows) == 1 and rows[0]["name_raw"] == "iphone 16"
+
+
+def test_fetch_refuses_to_sweep_a_search_only_source(monkeypatch, capsys):
+    """mediapark has no catalogue browse; asking to sweep it must fail loudly
+    rather than print nothing and exit 0."""
+    from narxnoma import cli
+
+    fake = _FakeSource()
+    fake.can_sweep = False
+    monkeypatch.setattr(cli, "SOURCES", {"fake": fake})
+
+    code = cli.main(["fetch", "--source", "fake"])
+
+    assert code == 1
+    assert fake.calls == []
+    assert capsys.readouterr().out == ""
+
+
+def test_fetch_raw_includes_the_retailer_payload(monkeypatch, capsys):
+    import json
+    from narxnoma import cli
+
+    fake = _FakeSource()
+    monkeypatch.setattr(cli, "SOURCES", {"fake": fake})
+
+    cli.main(["fetch", "--source", "fake", "--raw", "--limit", "1"])
+
+    row = json.loads(capsys.readouterr().out.splitlines()[0])
+    assert "raw" in row

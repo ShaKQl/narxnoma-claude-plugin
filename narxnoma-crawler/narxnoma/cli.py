@@ -1,8 +1,11 @@
 """Command line entry point:
+    python -m narxnoma.cli fetch --source SLUG [--category C | --query Q]
     python -m narxnoma.cli harvest [--source SLUG]
     python -m narxnoma.cli report
 """
 import argparse
+import dataclasses
+import json
 import logging
 import sys
 
@@ -148,9 +151,47 @@ def _stage(name: str, fn, outcomes: dict) -> None:
         logging.error("%-10s FAILED: %s", name, exc)
 
 
+def run_fetch(source, category: str, query: str | None, limit: int | None,
+              raw: bool, out) -> int:
+    """Stream one source's listings as JSON lines, one Listing per line.
+
+    This is the whole engine with the database removed: no Postgres, no
+    matcher, no clustering -- exactly what the retailer said, in the shape
+    `Listing` guarantees. A search-only source asked to sweep is refused
+    here, before any request is made, for the same reason `Source.sweep`
+    raises: an empty stream that exits 0 is indistinguishable from an
+    empty shop.
+    """
+    if query is None and not source.can_sweep:
+        logging.error("%s cannot be swept (search-only); pass --query", source.slug)
+        return 1
+    listings = source.search(query) if query is not None else source.sweep(category)
+    written = 0
+    for listing in listings:
+        row = dataclasses.asdict(listing)
+        if not raw:
+            row.pop("raw")
+        out.write(json.dumps(row, ensure_ascii=False) + "\n")
+        written += 1
+        if limit is not None and written >= limit:
+            break
+    logging.info("%-10s wrote %d listings", source.slug, written)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="narxnoma")
     sub = parser.add_subparsers(dest="command", required=True)
+    fetch = sub.add_parser("fetch", help="print one source's listings as JSON lines; "
+                                        "needs no database")
+    fetch.add_argument("--source", required=True, choices=sorted(SOURCES))
+    fetch.add_argument("--category", default="smartphones", choices=sorted(CATEGORIES),
+                       help="catalogue sweep to run (default: smartphones)")
+    fetch.add_argument("--query", help="search instead of sweeping; the only way "
+                                       "into a search-only source such as mediapark")
+    fetch.add_argument("--limit", type=int, help="stop after this many listings")
+    fetch.add_argument("--raw", action="store_true",
+                       help="include the retailer's untouched payload per row")
     harvest = sub.add_parser("harvest", help="sweep retailers into the database")
     harvest.add_argument("--source", action="append", choices=sorted(SOURCES),
                          help="limit to these sources (repeatable)")
@@ -173,6 +214,14 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+    if args.command == "fetch":
+        # JSON lines are meant to be piped into a file; a Windows console
+        # defaulting to cp1251 would otherwise raise on the first Uzbek name.
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8")
+        return run_fetch(SOURCES[args.source], args.category, args.query,
+                         args.limit, args.raw, sys.stdout)
 
     if args.command == "report":
         with connect() as conn:

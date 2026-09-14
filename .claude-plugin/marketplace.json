@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "narxnoma",
+  "description": "Price-fetch engine and per-retailer scraping notes for Uzbekistan's electronics market.",
+  "owner": {
+    "name": "ShaKQl",
+    "url": "https://github.com/ShaKQl"
+  },
+  "plugins": [
+    {
+      "name": "narxnoma",
+      "description": "Fetch prices from ten Uzbek electronics retailers; one skill per store documents its exact endpoint, price unit, URL rule and traps.",
+      "source": "./",
+      "category": "data"
+    }
+  ]
+}
