@@ -1,0 +1,11 @@
+# Keep the digest to what an LLM needs to understand and rebuild the engine.
+# Recorded retailer responses and the golden corpus are data, not design.
+narxnoma-crawler/tests/fixtures/
+narxnoma-seed/golden/
+narxnoma-web/package-lock.json
+narxnoma-web/tsconfig.tsbuildinfo
+docs/superpowers/plans/
+.superpowers/
+.local/
+llms-full.txt
+llms-engine.txt

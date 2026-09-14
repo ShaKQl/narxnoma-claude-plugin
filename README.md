@@ -119,6 +119,13 @@ python -m pytest -q -m live tests/sources/test_contract_live.py   # hits the ret
    `User-Agent`, the `Origin`/`Referer` the site's own app sends. Respect
    `robots.txt`; where it forbids crawling, get permission or stop.
 
+## For AI agents and LLM tools
+
+- `llms.txt` — index of what to read first, per the llmstxt convention.
+- `llms-engine.txt` — gitingest digest of docs/parsers, skills and the engine source (~140k tokens).
+- `llms-full.txt` — gitingest digest of the whole repo minus recorded fixtures and the golden corpus (~300k tokens).
+- Regenerate after changes: `pip install gitingest && python -m gitingest . -o llms-full.txt` (`.gitingestignore` is honoured), or paste the repo URL into https://gitingest.com.
+
 ## License
 
 MIT — see `LICENSE`.

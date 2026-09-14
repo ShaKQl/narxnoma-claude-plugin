@@ -1,0 +1,48 @@
+# narxnoma
+
+> Price-fetch engine for Uzbekistan's electronics retailers (uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, glotr), packaged as a Claude Code plugin. Every client was rebuilt from the notes in docs/parsers/ and asserted live; those notes are canonical.
+
+Start with the README, then the umbrella skill, then the per-store note for the retailer in question. `python -m narxnoma.cli fetch --source SLUG` prints one source's listings as JSON lines with no database.
+
+## Read first
+
+- [README](README.md): quick start, source table, plugin install, layout
+- [narxnoma-fetch skill](skills/narxnoma-fetch/SKILL.md): engine layout, Listing contract, rules every source obeys
+- [Parser notes index](docs/parsers/README.md): the one thing to understand first, the two shapes of retailer, rules for every source
+- [Matching engine](docs/parsers/_matching-engine.md): name to (brand, model, memory, colour) identity and scoring
+
+## Per-store notes (canonical)
+
+- [uzum](docs/parsers/uzum.md): GraphQL, anonymous self-minted token, SKU price not card price
+- [alifshop](docs/parsers/alifshop.md): REST POST, price in tiyin, /moderated-offer/ URL
+- [beemarket](docs/parsers/beemarket.md): REST GET, category endpoint for sweeps
+- [idea](docs/parsers/idea.md): REST GET, brand queries, 404 on empty search
+- [mediapark](docs/parsers/mediapark.md): autocomplete only, slug lies
+- [olcha](docs/parsers/olcha.md): full-catalogue pull, per_page capped at 20
+- [texnomart](docs/parsers/texnomart.md): broad query sweep, not-a-phone denylist
+- [asaxiy](docs/parsers/asaxiy.md): server-rendered HTML, /ru/ path, page-1 redirect trap
+- [radius](docs/parsers/radius.md): Saleor GraphQL, variant is the offer, default-variant URL
+- [glotr](docs/parsers/glotr.md): server-rendered classifieds; robots.txt forbids, permission required
+
+## Per-store skills (operational cards)
+
+- [skills/](skills/): fetch-<slug>/SKILL.md for each store, plus adding-a-narxnoma-source
+
+## Code
+
+- [sources/](narxnoma-crawler/narxnoma/sources/): one client per store; base.py holds Listing, coerce_price, paginate
+- [matching/](narxnoma-crawler/narxnoma/matching/): normalisation, features, brands, colours, scoring
+- [pipeline/](narxnoma-crawler/narxnoma/pipeline/): harvest, cluster, aggregate, quality, report
+- [cli.py](narxnoma-crawler/narxnoma/cli.py): fetch | harvest | cluster | aggregate | quality | report | cycle
+- [Design spec](docs/superpowers/specs/2026-07-27-narxnoma-design.md)
+
+## Whole-repo digests (gitingest)
+
+- [llms-engine.txt](llms-engine.txt): docs/parsers + skills + engine source, no tests or web (~140k tokens)
+- [llms-full.txt](llms-full.txt): everything except recorded fixtures and the golden corpus (~300k tokens)
+- Regenerate: `pip install gitingest && python -m gitingest . -o llms-full.txt` (respects .gitingestignore); or open https://gitingest.com/ShaKQl/narxnoma-claude-plugin
+
+## Optional
+
+- [narxnoma-web/](narxnoma-web/): Next.js frontend over the Postgres catalogue
+- [narxnoma-seed/](narxnoma-seed/): pre-production matcher and golden corpus
