@@ -1,6 +1,6 @@
 # narxnoma
 
-> Price-fetch engine for Uzbekistan's electronics retailers (uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, glotr), packaged as a Claude Code plugin. Every client was rebuilt from the notes in docs/parsers/ and asserted live; those notes are canonical.
+> Price-fetch engine for Uzbekistan's electronics retailers (uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, glotr, openshop), packaged as a Claude Code plugin. Every client was rebuilt from the notes in docs/parsers/ and asserted live; those notes are canonical.
 
 Start with the README, then the umbrella skill, then the per-store note for the retailer in question. `python -m narxnoma.cli fetch --source SLUG` prints one source's listings as JSON lines with no database.
 
@@ -10,6 +10,7 @@ Start with the README, then the umbrella skill, then the per-store note for the 
 - [narxnoma-fetch skill](skills/narxnoma-fetch/SKILL.md): engine layout, Listing contract, rules every source obeys
 - [Parser notes index](docs/parsers/README.md): the one thing to understand first, the two shapes of retailer, rules for every source
 - [Matching engine](docs/parsers/_matching-engine.md): name to (brand, model, memory, colour) identity and scoring
+- [Changelog](docs/CHANGELOG.md): latest state, open items, history by era
 
 ## Per-store notes (canonical)
 
@@ -23,6 +24,7 @@ Start with the README, then the umbrella skill, then the per-store note for the 
 - [asaxiy](docs/parsers/asaxiy.md): server-rendered HTML, /ru/ path, page-1 redirect trap
 - [radius](docs/parsers/radius.md): Saleor GraphQL, variant is the offer, default-variant URL
 - [glotr](docs/parsers/glotr.md): server-rendered classifieds; robots.txt forbids, permission required
+- [openshop](docs/parsers/openshop.md): REST POST full-catalogue sweep, 48/page and ~2,400 deep-paging caps, ?lang=ru URLs
 
 ## Per-store skills (operational cards)
 
@@ -40,7 +42,7 @@ Start with the README, then the umbrella skill, then the per-store note for the 
 
 - [llms-engine.txt](llms-engine.txt): docs/parsers + skills + engine source, no tests or web (~140k tokens)
 - [llms-full.txt](llms-full.txt): everything except recorded fixtures and the golden corpus (~300k tokens)
-- Regenerate: `pip install gitingest && python -m gitingest . -o llms-full.txt` (respects .gitingestignore); or open https://gitingest.com/ShaKQl/narxnoma-claude-plugin
+- Regenerate both: `pip install gitingest && python tools/regen_digests.py` (respects .gitingestignore); or open https://gitingest.com/ShaKQl/narxnoma-claude-plugin
 
 ## Optional
 

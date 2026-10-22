@@ -1,6 +1,6 @@
 # narxnoma — price-fetch engine for Uzbekistan's electronics retailers
 
-Ten verified retailer clients, one `Listing` contract, and a Claude Code
+Eleven verified retailer clients, one `Listing` contract, and a Claude Code
 plugin whose skills tell an agent exactly how each store is fetched: the
 endpoint, the auth, which field is the price and in what unit, how to build a
 URL that opens, and the traps that silently produce wrong numbers.
@@ -24,6 +24,7 @@ Aggregator only — it reads public catalogues; it never sells.
 | asaxiy | asaxiy.uz | server-rendered HTML | none | yes | no |
 | radius | radius.uz | Saleor GraphQL, one row per variant | none | yes | yes |
 | glotr | glotr.uz | server-rendered HTML classifieds | none — **robots.txt disallows; permission required** | yes | no |
+| openshop | openshop.uz | REST POST, full catalogue in ~120 requests | none | yes | yes (fuzzy) |
 
 Categories: smartphones, televisions, laptops, acs, fridges, washers, ovens.
 
@@ -64,7 +65,7 @@ Then ask Claude for prices from any of the stores, or to add a new one. Skills:
 | skill | when it loads |
 |---|---|
 | `narxnoma-fetch` | any request for Uzbek retailer prices; running or debugging the engine |
-| `fetch-uzum` … `fetch-glotr` | one per store: endpoint, headers, price field and unit, URL rule, traps, fixture and tests |
+| `fetch-uzum` … `fetch-openshop` | one per store: endpoint, headers, price field and unit, URL rule, traps, fixture and tests |
 | `adding-a-narxnoma-source` | adding a retailer; a site that looks unscrapable |
 
 The skills are operational cards. `docs/parsers/` is the rebuild-grade source
@@ -96,6 +97,10 @@ Local Postgres setup: `docs/deployment/local-postgres.md`.
 | `narxnoma-seed/` | pre-production matcher + 14,860-row golden corpus (reference data) |
 | `narxnoma-web/` | optional Next.js frontend over the Postgres catalogue |
 | `docs/superpowers/` | design specs and implementation plans |
+| `docs/CHANGELOG.md` | what changed, newest first, with the current state and open items |
+| `docs/folder-map.md` | where everything lives and the naming conventions |
+| `tools/` | maintenance scripts (digest regeneration) |
+| `CLAUDE.md`, `.claude/skills/narxnoma-maintain/` | start here when *working on* the repo with an agent |
 
 ## Tests
 

@@ -20,6 +20,7 @@ node_modules/
 
 # Crawler working data (regenerable — never commit a catalogue dump)
 narxnoma-crawler/database/cache/
+*.jsonl
 *.sqlite
 *.db
 
