@@ -28,6 +28,7 @@ Directory structure:
     │       ├── __init__.py
     │       ├── cli.py
     │       ├── config.py
+    │       ├── daily.py
     │       ├── db/
     │       │   ├── __init__.py
     │       │   ├── connection.py
@@ -4353,6 +4354,473 @@ def load_settings() -> Settings:
 
 
 ================================================
+FILE: narxnoma-crawler/narxnoma/daily.py
+================================================
+"""Unattended daily jobs: nightly price refresh, morning market report to Telegram.
+
+Runs on the owner's own machine from the OS scheduler, with no Claude session involved.
+
+    python -m narxnoma.daily refresh            03:00  re-sweep every store into the cache
+    python -m narxnoma.daily report             09:00  catalogue -> research workbook -> Telegram
+    python -m narxnoma.daily probe              show the shape of the catalogue response (no values)
+    python -m narxnoma.daily report --no-send   build the file, do not send
+
+Everything private lives in an env file OUTSIDE the repo (default `~/.narxnoma-daily.env`,
+override with `--env-file` or `NARXNOMA_DAILY_ENV`); see docs/daily-report.md. Nothing about
+the catalogue API (URL, token, field names) is hard-coded here.
+"""
+
+import argparse
+import csv
+import json
+import logging
+import os
+import shutil
+import sys
+import tempfile
+import time
+from datetime import date
+from pathlib import Path
+
+import requests
+
+logger = logging.getLogger("narxnoma.daily")
+
+DEFAULT_ENV = Path.home() / ".narxnoma-daily.env"
+LIST_KEYS = ("items", "results", "data", "products", "rows")
+NAME_FIELDS = ("name", "title", "product_name")
+PRICE_FIELDS = ("price", "sale_price", "retail_price", "current_price")
+CATEGORY_FIELDS = ("category", "category_name", "category.name", "category_title")
+ACTIVE_FIELDS = ("is_active", "active", "published", "is_published")
+MAX_PAGES = 500
+
+
+# --------------------------------------------------------------------------- config
+
+
+def load_env(path: str | Path | None) -> dict:
+    """KEY=VALUE lines (quotes and `#` comments allowed) layered under the process env."""
+    cfg: dict = {}
+    p = Path(path) if path else DEFAULT_ENV
+    if p.exists():
+        for line in p.read_text(encoding="utf-8-sig").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            cfg[k.strip()] = v.strip().strip("'\"")
+    for k, v in os.environ.items():
+        if k.startswith(("ECOM_", "TG_", "NARXNOMA_")):
+            cfg[k] = v
+    return cfg
+
+
+def read_token(cfg: dict) -> str:
+    """The bearer token is rotated by another job, so it is read fresh at every run.
+    `ECOM_TOKEN_FILE` may be plain text, a JSON object, or a KEY=VALUE env file."""
+    if cfg.get("ECOM_TOKEN_FILE"):
+        raw = Path(cfg["ECOM_TOKEN_FILE"]).read_text(encoding="utf-8-sig").strip()
+        if raw.startswith("{"):
+            obj = json.loads(raw)
+            for k in ("access_token", "token", "bearer", "ECOM_TOKEN"):
+                if obj.get(k):
+                    return str(obj[k]).strip()
+            raise ValueError("token file is JSON but has no access_token/token key")
+        if "=" in raw.splitlines()[0]:
+            for line in raw.splitlines():
+                k, _, v = line.partition("=")
+                if k.strip() in ("ECOM_TOKEN", "TOKEN", "ACCESS_TOKEN"):
+                    return v.strip().strip("'\"")
+            raise ValueError("token file has no ECOM_TOKEN= line")
+        return raw.removeprefix("Bearer ").strip()
+    if cfg.get("ECOM_TOKEN"):
+        return cfg["ECOM_TOKEN"].removeprefix("Bearer ").strip()
+    raise ValueError("set ECOM_TOKEN_FILE (preferred) or ECOM_TOKEN")
+
+
+# --------------------------------------------------------------------------- catalogue
+
+
+def dig(obj, path: str):
+    """`a.b.c` lookup through dicts; None when any step is missing."""
+    for part in path.split("."):
+        if not isinstance(obj, dict) or part not in obj:
+            return None
+        obj = obj[part]
+    return obj
+
+
+def first_field(obj: dict, candidates) -> object:
+    for c in candidates:
+        v = dig(obj, c)
+        if v not in (None, ""):
+            return v
+    return None
+
+
+def extract_items(payload) -> list:
+    """The product list inside one page, whatever envelope it comes in."""
+    if isinstance(payload, list):
+        return payload
+    if isinstance(payload, dict):
+        for k in LIST_KEYS:
+            if isinstance(payload.get(k), list):
+                return payload[k]
+        for v in payload.values():  # {"data": {"items": [...]}}
+            if isinstance(v, dict):
+                got = extract_items(v)
+                if got:
+                    return got
+    return []
+
+
+def fetch_catalogue(cfg: dict, session: requests.Session | None = None) -> list[dict]:
+    """Walk the paginated admin endpoint and return every raw product dict."""
+    url = cfg.get("ECOM_PRODUCTS_URL")
+    if not url:
+        raise ValueError("set ECOM_PRODUCTS_URL")
+    size = int(cfg.get("ECOM_PAGE_SIZE", 100))
+    params = dict(p.split("=", 1) for p in cfg.get("ECOM_EXTRA_PARAMS", "").split("&") if "=" in p)
+    sess = session or requests.Session()
+    headers = {"Authorization": f"Bearer {read_token(cfg)}", "Accept": "application/json"}
+    pause = float(cfg.get("ECOM_PAUSE_S", 0.3))
+    out: list[dict] = []
+    seen_first = None
+    for page in range(1, MAX_PAGES + 1):
+        r = sess.get(
+            url, params={**params, "page": page, "page_size": size}, headers=headers, timeout=60
+        )
+        if r.status_code in (401, 403):
+            raise PermissionError(
+                f"catalogue API said {r.status_code}: the bearer token is expired or wrong"
+            )
+        r.raise_for_status()
+        items = extract_items(r.json())
+        if not items:
+            break
+        marker = json.dumps(items[0], sort_keys=True, default=str)
+        if marker == seen_first:  # a server that ignores `page` would loop forever
+            break
+        seen_first = seen_first or marker
+        out.extend(items)
+        if len(items) < size:
+            break
+        time.sleep(pause)
+    else:
+        raise RuntimeError(f"more than {MAX_PAGES} pages; refusing to continue")
+    return out
+
+
+def to_targets(items: list[dict], cfg: dict) -> tuple[list[dict], dict]:
+    """-> (rows for the research input file, stats). Rows without a name or a price are dropped
+    and counted; inactive ones too when ECOM_ONLY_ACTIVE (default on)."""
+    f_name = [cfg["ECOM_FIELD_NAME"]] if cfg.get("ECOM_FIELD_NAME") else NAME_FIELDS
+    f_price = [cfg["ECOM_FIELD_PRICE"]] if cfg.get("ECOM_FIELD_PRICE") else PRICE_FIELDS
+    f_cat = [cfg["ECOM_FIELD_CATEGORY"]] if cfg.get("ECOM_FIELD_CATEGORY") else CATEGORY_FIELDS
+    f_act = [cfg["ECOM_FIELD_ACTIVE"]] if cfg.get("ECOM_FIELD_ACTIVE") else ACTIVE_FIELDS
+    only_active = cfg.get("ECOM_ONLY_ACTIVE", "1") not in ("0", "false", "no")
+    stats = {"seen": len(items), "inactive": 0, "no_name": 0, "no_price": 0, "no_category": 0}
+    rows = []
+    for it in items:
+        if only_active:
+            flag = first_field(it, f_act)
+            if flag is not None and not _truthy(flag):
+                stats["inactive"] += 1
+                continue
+        name = first_field(it, f_name)
+        if not name:
+            stats["no_name"] += 1
+            continue
+        price = _num(first_field(it, f_price))
+        if not price:
+            stats["no_price"] += 1
+            continue
+        cat = first_field(it, f_cat)
+        cat = cat.get("name") if isinstance(cat, dict) else cat
+        if not cat:
+            stats["no_category"] += 1
+        rows.append({"name": str(name).strip(), "our price": price, "category": cat or ""})
+    stats["kept"] = len(rows)
+    return rows, stats
+
+
+def _truthy(v) -> bool:
+    if isinstance(v, str):
+        return v.strip().lower() not in ("0", "false", "no", "inactive", "")
+    return bool(v)
+
+
+def _num(v) -> float | None:
+    if v is None or isinstance(v, bool):
+        return None
+    try:
+        return float(str(v).replace(" ", "").replace(",", "."))
+    except ValueError:
+        return None
+
+
+def write_targets(rows: list[dict], path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8-sig") as fh:
+        w = csv.DictWriter(fh, fieldnames=["name", "our price", "category"])
+        w.writeheader()
+        w.writerows(rows)
+
+
+def shape(items: list[dict]) -> dict:
+    """Field names and value types of the first product, never the values (safe to paste)."""
+    if not items:
+        return {}
+
+    def walk(o, prefix=""):
+        out = {}
+        for k, v in o.items():
+            if isinstance(v, dict):
+                out.update(walk(v, f"{prefix}{k}."))
+            else:
+                out[f"{prefix}{k}"] = type(v).__name__
+        return out
+
+    return walk(items[0])
+
+
+# --------------------------------------------------------------------------- locking
+
+
+class Lock:
+    """One job at a time: `refresh` (03:00) and `report` (09:00) never run on the same cache
+    together. A lock older than `stale_h` is taken over (a crashed run must not block forever)."""
+
+    def __init__(self, path: Path, stale_h: float = 6):
+        self.path, self.stale_h = path, stale_h
+
+    def acquire(self, wait_s: float = 0) -> bool:
+        deadline = time.time() + wait_s
+        while True:
+            try:
+                self.path.parent.mkdir(parents=True, exist_ok=True)
+                fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                os.write(fd, str(os.getpid()).encode())
+                os.close(fd)
+                return True
+            except FileExistsError:
+                if time.time() - self.path.stat().st_mtime > self.stale_h * 3600:
+                    logger.warning("taking over a stale lock %s", self.path)
+                    self.path.unlink(missing_ok=True)
+                    continue
+                if time.time() >= deadline:
+                    return False
+                time.sleep(15)
+
+    def release(self) -> None:
+        self.path.unlink(missing_ok=True)
+
+
+# --------------------------------------------------------------------------- telegram
+
+
+def send_telegram(cfg: dict, path: Path, caption: str) -> None:
+    """Send a file to Saved Messages through the owner's existing Telegram user session.
+
+    The listener that owns the session keeps it open, so the send works on a temporary COPY of
+    the session file, deletes it afterwards, and never logs in (a login would invalidate the
+    listener's authorization). API id/hash come from the env file only at send time."""
+    try:
+        from telethon.sync import TelegramClient
+    except ImportError as exc:  # pragma: no cover - environment dependent
+        raise RuntimeError("pip install telethon to send to Telegram") from exc
+    session = Path(cfg["TG_SESSION"])  # path as Telethon takes it, without ".session"
+    src = session.with_suffix(".session") if session.suffix != ".session" else session
+    if not src.exists():
+        raise FileNotFoundError(f"Telegram session file not found: {src}")
+    tmpdir = Path(tempfile.mkdtemp(prefix="narxnoma_tg_"))
+    try:
+        copy = tmpdir / "send.session"
+        shutil.copyfile(src, copy)
+        client = TelegramClient(
+            str(copy.with_suffix("")), int(cfg["TG_API_ID"]), cfg["TG_API_HASH"]
+        )
+        client.connect()
+        try:
+            if not client.is_user_authorized():
+                raise RuntimeError("Telegram session is not authorised; log it in once by hand")
+            client.send_file("me", str(path), caption=caption)
+        finally:
+            client.disconnect()
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def send_text(cfg: dict, text: str) -> None:
+    """Failure notices go to the same place; a silent failure is worse than a noisy one."""
+    try:
+        from telethon.sync import TelegramClient
+    except ImportError:  # pragma: no cover
+        return
+    tmpdir = Path(tempfile.mkdtemp(prefix="narxnoma_tg_"))
+    try:
+        src = Path(cfg["TG_SESSION"])
+        src = src.with_suffix(".session") if src.suffix != ".session" else src
+        shutil.copyfile(src, tmpdir / "send.session")
+        client = TelegramClient(str(tmpdir / "send"), int(cfg["TG_API_ID"]), cfg["TG_API_HASH"])
+        client.connect()
+        try:
+            if client.is_user_authorized():
+                client.send_message("me", text)
+        finally:
+            client.disconnect()
+    except Exception:  # noqa: BLE001 -- a failed notice must not mask the original error
+        logger.exception("could not send the failure notice")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+# --------------------------------------------------------------------------- jobs
+
+
+def work_dir(cfg: dict) -> Path:
+    return Path(cfg.get("NARXNOMA_DAILY_DIR", Path.home() / "narxnoma-daily"))
+
+
+def cache_dir(cfg: dict) -> Path:
+    return work_dir(cfg) / "research_cache"
+
+
+def job_refresh(cfg: dict) -> int:
+    from narxnoma.matching.keys import CATEGORIES
+    from narxnoma.research.collect import default_markets, refresh_cache
+
+    lock = Lock(work_dir(cfg) / "daily.lock")
+    if not lock.acquire(wait_s=0):
+        logger.error("another daily job holds the lock; refresh skipped")
+        return 2
+    try:
+        res = refresh_cache(default_markets(), sorted(CATEGORIES), cache_dir(cfg))
+    finally:
+        lock.release()
+    logger.info("refresh: %d sweeps ok, %d failed", len(res["ok"]), len(res["failed"]))
+    if res["failed"] and cfg.get("TG_SESSION"):
+        lines = [f"{s}/{c}: {why[:80]}" for s, c, why in res["failed"][:12]]
+        send_text(cfg, "narxnoma 03:00 refresh: failures\n" + "\n".join(lines))
+    return 1 if res["failed"] and not res["ok"] else 0
+
+
+def job_report(cfg: dict, send: bool = True, wait_lock_min: float = 90) -> int:
+    from narxnoma.research.build import make_workbook
+    from narxnoma.research.run import run_research
+    from narxnoma.research.targets import load_targets
+
+    out_dir = work_dir(cfg) / "reports"
+    stamp = date.today().isoformat()
+    lock = Lock(work_dir(cfg) / "daily.lock")
+    # the nightly refresh may still be running on a slow night: wait for it, do not race it
+    if not lock.acquire(wait_s=wait_lock_min * 60):
+        logger.error("the refresh is still running after %s min; report skipped", wait_lock_min)
+        if send and cfg.get("TG_SESSION"):
+            send_text(
+                cfg, f"narxnoma {stamp}: the 03:00 refresh was still running, no report today"
+            )
+        return 2
+    try:
+        items = fetch_catalogue(cfg)
+        rows, stats = to_targets(items, cfg)
+        logger.info("catalogue: %s", stats)
+        if not rows:
+            raise RuntimeError(f"no usable products in the catalogue response ({stats})")
+        targets_path = out_dir / f"products_{stamp}.csv"
+        write_targets(rows, targets_path)
+        targets = load_targets(targets_path)
+        research = run_research(
+            targets,
+            None,
+            cache_dir=cache_dir(cfg),
+            max_age_h=float(cfg.get("NARXNOMA_MAX_AGE_H", 30)),
+            force=False,
+            title=f"Market analysis {stamp}",
+        )
+        xlsx = out_dir / f"market_analysis_{stamp}.xlsx"
+        research.to_json(xlsx.with_suffix(".json"))
+        info = make_workbook(research, xlsx, pivots="auto", model="auto", verify=False)
+    except Exception as exc:  # noqa: BLE001 -- always tell the owner, then fail loudly
+        logger.exception("report failed")
+        if send and cfg.get("TG_SESSION"):
+            send_text(
+                cfg, f"narxnoma {stamp}: report FAILED - {type(exc).__name__}: {str(exc)[:300]}"
+            )
+        return 1
+    finally:
+        lock.release()
+
+    caption = (
+        f"Market analysis {stamp}: {stats['kept']} products, "
+        f"{info['layout']['n_offers']} offers"
+        + (
+            f"; {stats['no_category']} without a category were not matched"
+            if stats["no_category"]
+            else ""
+        )
+    )
+    logger.info("wrote %s", xlsx)
+    if send:
+        # the cube-status job also sends around 09:00 from a copy of the same session; if the
+        # two collide Telegram may refuse one of them, so wait and try again instead of failing
+        for attempt in range(1, 5):
+            try:
+                send_telegram(cfg, xlsx, caption)
+                break
+            except Exception:  # noqa: BLE001
+                logger.exception("Telegram send failed (attempt %d/4)", attempt)
+                if attempt == 4:
+                    return 1
+                time.sleep(90)
+        logger.info("sent to Telegram Saved Messages")
+    return 0
+
+
+def job_probe(cfg: dict) -> int:
+    items = fetch_catalogue({**cfg, "ECOM_PAGE_SIZE": "5"})
+    print(json.dumps(shape(items), indent=2, ensure_ascii=False))
+    rows, stats = to_targets(items[:5], cfg)
+    print("with the current field mapping:", stats)
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    p = argparse.ArgumentParser(
+        prog="narxnoma.daily",
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    p.add_argument("job", choices=["refresh", "report", "probe"])
+    p.add_argument("--env-file", default=os.environ.get("NARXNOMA_DAILY_ENV"))
+    p.add_argument("--no-send", action="store_true", help="report: build the file, skip Telegram")
+    args = p.parse_args(argv)
+    cfg = load_env(args.env_file)
+    wd = work_dir(cfg)
+    wd.mkdir(parents=True, exist_ok=True)
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+        handlers=[
+            logging.StreamHandler(),
+            logging.FileHandler(wd / f"{args.job}.log", encoding="utf-8"),
+        ],
+    )
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    if args.job == "refresh":
+        return job_refresh(cfg)
+    if args.job == "probe":
+        return job_probe(cfg)
+    return job_report(cfg, send=not args.no_send)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+
+
+================================================
 FILE: narxnoma-crawler/narxnoma/db/__init__.py
 ================================================
 """PostgreSQL access. The only module that knows SQL."""
@@ -6287,7 +6755,146 @@ def slug(key: VariantKey) -> str:
 ================================================
 FILE: narxnoma-crawler/narxnoma/matching/memory.py
 ================================================
-[Binary file]
+"""RAM and storage extraction.
+
+The lookbehind (?<![a-zа-я\\d]) before each figure is what stops a model
+code being read as memory. See docs/parsers/_matching-engine.md.
+"""
+import re
+
+from narxnoma.matching.brands import BRANDS_WITHOUT_PUBLISHED_RAM
+
+_UNIT = re.compile(r"(?<![a-zа-я\d])(\d{1,4})\s*(gb|гб|tb|тб)\b")
+
+# Zero-width: the two figures are captured inside a lookahead instead of
+# being consumed, so re.finditer's matches can overlap. A plain consuming
+# regex can only offer non-overlapping candidates, and a model number
+# directly adjacent to RAM ("Redmi Note 15 12/256" normalises to
+# "redmi note 15 12 256") makes the model+RAM pair ("15", "12") match
+# first, consuming "12" and hiding the real memory pair ("12", "256") from
+# ever being scanned. Matching zero-width lets the scan advance one
+# character at a time and consider "12 256" too, so the plausibility check
+# below can reject "15 12" and still go on to find the real pair.
+_STORAGE_PAIR = re.compile(r"(?<![a-zа-я\d])(?=(\d{1,3})\s+(\d{2,4})(?!\d))")
+_RAM_PAIR = re.compile(r"(?<![a-zа-я\d])(?=(\d{1,2})\s+(\d{2,4})(?!\d))")
+_PAIR_SEPARATOR = re.compile(r"\d\s*[/\\+|]\s*\d")
+
+_MAX_PLAUSIBLE_RAM = 24
+
+# Plausible RAM/storage sizes for the bare-pair fallbacks ("12 256" with no
+# unit and no separator). A model number like the "7" in "Galaxy Z Fold 7
+# 512 ГБ" or the "5" in "Galaxy Watch 5 44mm" has the same shape as a real
+# memory pair; restricting candidates to values retailers actually sell
+# stops the model number from being absorbed as RAM or storage.
+_PLAUSIBLE_RAM_GB = frozenset({1, 2, 3, 4, 6, 8, 10, 12, 16, 18, 24})
+_PLAUSIBLE_STORAGE_GB = frozenset({32, 64, 128, 256, 512, 1024, 2048})
+
+# Last-resort: a storage figure standing entirely alone, with neither a unit
+# nor a second adjacent figure. Every rule above needs one or the other, so
+# "Apple iPhone 12 pro 128 Синий" read as no memory at all and the listing
+# became unkeyable -- while "Apple iPhone 12 128 Алый" read 128 correctly,
+# purely because the model number happened to sit next to the capacity.
+#
+# The shape is common rather than exotic: uzum states memory in a per-SKU
+# characteristic whose value is often the bare figure (Память: "128"), and
+# that value reaches the name with nothing beside it.
+_LONE_FIGURE = re.compile(r"(?<![a-zа-я\d])(\d{2,4})(?!\d)")
+
+# A lone figure is much weaker evidence than a pair, so it needs screening a
+# pair does not: these units mark a figure as something else entirely, and
+# 64 (МП), 128 (mp) and 512 are all plausible capacities sitting in blurbs.
+_OTHER_UNIT = re.compile(
+    r"^\s*(mp|мп|mah|мач|hz|гц|mm|мм|w|вт|nm|нм|dpi|ppi|fps|core|ядер)\b"
+)
+
+
+def scan_memory(
+    raw: str | None, normalized: str, brand: str | None
+) -> tuple[int | None, int | None, int | None]:
+    """Return (ram_gb, storage_gb, stated_ram_gb).
+
+    ``stated_ram_gb`` is the RAM figure a retailer actually wrote, BEFORE the
+    Apple suppression below removes it from identity. Callers that build model
+    tokens need it: a suppressed figure is still a memory figure, and must not
+    be allowed to fall through and become a model token instead.
+    """
+    ram: int | None = None
+    storage: int | None = None
+
+    # Collect ALL unit-bearing figures. Sellers write "8ГБ/256ГБ", where a
+    # single-match regex reads the RAM as the storage.
+    units: list[int] = []
+    for m in _UNIT.finditer(normalized):
+        val = int(m.group(1))
+        if m.group(2) in ("tb", "тб"):
+            val *= 1024
+        units.append(val)
+
+    if len(units) >= 2:
+        storage = max(units)
+        if min(units) <= _MAX_PLAUSIBLE_RAM:
+            ram = min(units)
+    elif len(units) == 1:
+        if units[0] >= 32:
+            storage = units[0]
+        else:
+            ram = units[0]
+
+    if storage is None:                      # bare "6 128" form
+        for m in _STORAGE_PAIR.finditer(normalized):
+            a, b = int(m.group(1)), int(m.group(2))
+            if max(a, b) not in _PLAUSIBLE_STORAGE_GB:
+                continue
+            storage = max(a, b)
+            break
+
+    if storage is None:                      # lone "128" form -- see _LONE_FIGURE
+        for m in _LONE_FIGURE.finditer(normalized):
+            val = int(m.group(1))
+            if val not in _PLAUSIBLE_STORAGE_GB:
+                continue
+            if _OTHER_UNIT.match(normalized[m.end():]):
+                continue
+            storage = val
+            break
+
+    # A bare "12 256" pair normally means RAM/storage -- but "iPhone 16 256 GB"
+    # has the identical shape, and reading 16 as RAM deletes the model number
+    # from model_tokens, making iPhone 16 / 17 / Air interchangeable.
+    # normalize() has already erased the "/" that tells them apart, so test the
+    # RAW string, and never infer RAM for Apple (which does not publish it).
+    has_separator = bool(_PAIR_SEPARATOR.search(str(raw or "")))
+    if ram is None and (has_separator or brand not in BRANDS_WITHOUT_PUBLISHED_RAM):
+        for m in _RAM_PAIR.finditer(normalized):
+            a, b = int(m.group(1)), int(m.group(2))
+            if min(a, b) not in _PLAUSIBLE_RAM_GB or max(a, b) not in _PLAUSIBLE_STORAGE_GB:
+                continue
+            ram = min(a, b)
+            break
+
+    # Global Apple-RAM suppression, applied to EVERY path (unit-bearing,
+    # bare-pair and separator alike) rather than only to the bare-pair
+    # fallback. Apple does not publish RAM, so any RAM figure appearing in an
+    # Apple listing came from a reseller's own wording and must never become
+    # identity. Guarding only the bare-pair path let "iPhone 17 Pro 12/256GB"
+    # yield ram=12 through the unit-bearing pass while "iPhone 17 Pro 256 ГБ"
+    # yielded None, splitting one phone into two canonical products
+    # (apple-17-pro-12-256-silver and apple-17-pro-256-silver) -- a split
+    # offer pool and two different displayed prices.
+    stated_ram = ram
+    if brand in BRANDS_WITHOUT_PUBLISHED_RAM:
+        ram = None
+
+    return ram, storage, stated_ram
+
+
+def extract_memory(
+    raw: str | None, normalized: str, brand: str | None
+) -> tuple[int | None, int | None]:
+    """Return (ram_gb, storage_gb). Either may be None."""
+    ram, storage, _ = scan_memory(raw, normalized, brand)
+    return ram, storage
+
 
 
 ================================================
@@ -7032,112 +7639,7 @@ def cluster_offers(conn, identities, repo=default_repo) -> ClusterResult:
 ================================================
 FILE: narxnoma-crawler/narxnoma/pipeline/extract.py
 ================================================
-"""Stage 2: an offer row -> the identity Plan 1's matcher can reason about.
-
-This stage is deliberately **thin and pure**. A row goes in, a structure comes
-out; there is no I/O and no judgement here. Every decision about what makes two
-listings the same product lives in `narxnoma.matching`, and keeping that true is
-what lets Task 4's clustering be tested without a database.
-"""
-from dataclasses import dataclass
-from typing import Any, Mapping
-
-from narxnoma.matching import (
-    Features,
-    PartialKey,
-    VariantKey,
-    extract_features,
-    partial_key,
-    sim_kind,
-    variant_key,
-)
-
-# Characteristic keys, across retailers and their typos, that carry SIM
-# configuration. uzum states this in structured data that never reaches the
-# product name, so a name-only reading would classify a dual-SIM phone as
-# "unknown" and let it cluster with the eSIM-only variant -- a different
-# product at a materially different price. See docs/parsers/uzum.md section 6.
-_SIM_CHARACTERISTIC_PREFIXES = ("sim", "сим", "сим-карта")
-
-
-@dataclass(frozen=True)
-class OfferIdentity:
-    """What one offer claims to be.
-
-    `key` is set only when every identity field is known. When it is None,
-    `partial` carries whatever *was* known, so clustering can try to resolve it
-    against existing variants -- and refuse when more than one fits.
-    """
-
-    offer_id: Any
-    features: Features
-    sim_kind: str
-    key: VariantKey | None
-    partial: PartialKey
-
-
-def _sim_text_from_raw(raw: Mapping[str, Any] | None) -> str | None:
-    """Pull an explicit SIM statement out of source-specific payload.
-
-    Returns None when the payload says nothing about SIM, so the caller falls
-    back to the product name rather than treating silence as a signal.
-    """
-    if not raw:
-        return None
-
-    values = raw.get("characteristic_values")
-    if isinstance(values, list):
-        for entry in values:
-            if not isinstance(entry, Mapping):
-                continue
-            characteristic = entry.get("characteristic")
-            title = ""
-            if isinstance(characteristic, Mapping):
-                title = str(characteristic.get("title") or "")
-            key = title.strip().casefold()
-            if key.startswith(_SIM_CHARACTERISTIC_PREFIXES):
-                value = str(entry.get("title") or "").strip()
-                if value:
-                    return value
-
-    # A source may also state it flatly.
-    for field in ("sim", "sim_type", "sim_kind"):
-        value = raw.get(field)
-        if value:
-            return str(value)
-    return None
-
-
-def identify(offer_row: Mapping[str, Any]) -> OfferIdentity:
-    """Turn one offer row into its canonical identity, or as much as is known.
-
-    `offer_row` needs `id` and `name_raw`; `raw` is optional source-specific
-    payload, used only for a SIM signal the name cannot carry.
-    """
-    name_raw = offer_row.get("name_raw") or ""
-
-    # The category the offer was harvested under (Plan 5). Defaults to
-    # smartphones for offers written before the column existed.
-    category = offer_row.get("category") or "smartphones"
-
-    # Category selects the identity model, so it must be known BEFORE features
-    # are read: a television's catalogue code is its identity, and the phone
-    # reading discards exactly that token.
-    features = extract_features(name_raw, category)
-
-    # An explicit statement beats an inference. A name that merely omits "eSIM"
-    # is silent, not evidence of a dual-SIM device.
-    sim_text = _sim_text_from_raw(offer_row.get("raw"))
-    kind = sim_kind(sim_text) if sim_text else sim_kind(name_raw)
-
-    return OfferIdentity(
-        offer_id=offer_row.get("id"),
-        features=features,
-        sim_kind=kind,
-        key=variant_key(features, kind, category),
-        partial=partial_key(features, kind, category),
-    )
-
+[Binary file]
 
 
 ================================================
@@ -7950,6 +8452,28 @@ def _sweep_cached(slug: str, category: str, cache_dir: Path, max_age_h: float, f
     os.replace(tmp, path)  # never leave a truncated cache behind
     logger.info("%-10s %-12s %d listings", slug, category, len(listings))
     return listings, path.stat().st_mtime
+
+
+def refresh_cache(markets: list[str], categories: list[str], cache_dir: str | Path) -> dict:
+    """Re-sweep every (market, category) and overwrite its cache, ignoring age.
+
+    -> {"ok": [(slug, cat, n)], "failed": [(slug, cat, why)]}. One failed sweep never stops
+    the others, and a failed sweep leaves the previous cache file untouched (writes are atomic).
+    Search-only markets have nothing to sweep and are skipped."""
+    out: dict = {"ok": [], "failed": []}
+    cache = Path(cache_dir)
+    for slug in markets:
+        if not SOURCES[slug].can_sweep:
+            continue
+        for cat in categories:
+            try:
+                listings, _ = _sweep_cached(slug, cat, cache, 0, True)
+            except Exception as exc:  # noqa: BLE001 -- one source must not end the refresh
+                logger.error("%s/%s failed: %s", slug, cat, exc)
+                out["failed"].append((slug, cat, str(exc)))
+                continue
+            out["ok"].append((slug, cat, len(listings)))
+    return out
 
 
 def search_query(target: Target) -> str:

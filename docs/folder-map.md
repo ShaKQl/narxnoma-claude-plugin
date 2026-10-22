@@ -13,6 +13,7 @@ Read this when you need to know where something lives or what a file group is fo
 | `.claude-plugin/` | `plugin.json` (name, version, keywords) and `marketplace.json` | bump `version` when skills or sources change |
 | `docs/parsers/` | canonical per-store notes + `_matching-engine.md` + `README.md` (index, verification passes) | rebuild-grade: a client must be rebuildable from its note alone |
 | `docs/market-research.md` | canonical note for `narxnoma/research/`: pipeline, workbook anatomy, pivot tiers, verification | rebuild-grade; update with the code |
+| `docs/daily-report.md` | canonical note for `narxnoma/daily.py`: 03:00 refresh + 09:00 report to Telegram, set-up, locking | rebuild-grade |
 | `docs/excel-workbooks.md` | Excel engineering behind the workbook: Tables, formulas, conditional formatting, COM pivots, raw OOXML, verification, traps | |
 | `docs/CHANGELOG.md` | what changed, newest first, plus "latest state" | update at the end of every session that changes the repo |
 | `docs/deployment/` | local portable PostgreSQL; owner/server handover checklist | |
@@ -20,7 +21,7 @@ Read this when you need to know where something lives or what a file group is fo
 | `narxnoma-crawler/` | the engine (Python ≥ 3.11) | see below |
 | `narxnoma-seed/` | pre-production matcher and the 14,860-row golden corpus | reference data; never edit `golden/` by hand |
 | `narxnoma-web/` | optional Next.js frontend over the Postgres catalogue | |
-| `tools/` | maintenance scripts (see `tools/README.md`) | |
+| `tools/` | maintenance scripts (see `tools/README.md`); `tools/daily/` = env template + Windows task installer for the daily jobs | |
 | `llms.txt` | LLM-oriented index of what to read first | hand-written |
 | `llms-full.txt`, `llms-engine.txt` | gitingest digests | **generated** — `python tools/regen_digests.py` |
 | `.gitingestignore` | what the full digest leaves out (fixtures, golden corpus, plans) | |

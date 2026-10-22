@@ -89,6 +89,28 @@ def _sweep_cached(slug: str, category: str, cache_dir: Path, max_age_h: float, f
     return listings, path.stat().st_mtime
 
 
+def refresh_cache(markets: list[str], categories: list[str], cache_dir: str | Path) -> dict:
+    """Re-sweep every (market, category) and overwrite its cache, ignoring age.
+
+    -> {"ok": [(slug, cat, n)], "failed": [(slug, cat, why)]}. One failed sweep never stops
+    the others, and a failed sweep leaves the previous cache file untouched (writes are atomic).
+    Search-only markets have nothing to sweep and are skipped."""
+    out: dict = {"ok": [], "failed": []}
+    cache = Path(cache_dir)
+    for slug in markets:
+        if not SOURCES[slug].can_sweep:
+            continue
+        for cat in categories:
+            try:
+                listings, _ = _sweep_cached(slug, cat, cache, 0, True)
+            except Exception as exc:  # noqa: BLE001 -- one source must not end the refresh
+                logger.error("%s/%s failed: %s", slug, cat, exc)
+                out["failed"].append((slug, cat, str(exc)))
+                continue
+            out["ok"].append((slug, cat, len(listings)))
+    return out
+
+
 def search_query(target: Target) -> str:
     """Keep the query close to verbatim: a ranking autocomplete (mediapark) needs the RAM/storage
     and colour words to rank the exact variant into its short list. Only the leading category

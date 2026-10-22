@@ -60,6 +60,8 @@ Release: bump `.claude-plugin/plugin.json` `version`, add a CHANGELOG entry, com
   `docs/market-research.md` and `docs/excel-workbooks.md`; run `pytest -m excel tests/research`
   on a machine with desktop Excel after touching `workbook.py` or `excel/`. Never re-save a
   finished workbook through openpyxl (drops slicers / Data Model).
+- `narxnoma/daily.py` (note `docs/daily-report.md`): owner-run 03:00 refresh + 09:00 report to
+  Telegram; 18 offline tests; live API shape and Telegram send unverified (owner's PC only).
 - Open: eight matcher gaps from openshop names (`docs/parsers/openshop.md` §8), not yet
   fixed in `matching/`; one pre-existing over-long line in `test_contract_live.py`.
 - Downstream user: the Extractractor project (Ishonch pricing, private) vendors

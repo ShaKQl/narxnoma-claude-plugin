@@ -12,6 +12,8 @@ repo is in. Newest first. Older history is summarised per era from `git log`.
   contract test passes.
 - **Market research** (`narxnoma/research/`): a product list in, an analysable Excel
   workbook out — see `docs/market-research.md`.
+- **Daily jobs** (`narxnoma/daily.py`, `docs/daily-report.md`): 03:00 price refresh and 09:00
+  catalogue → research workbook → Telegram, run by the owner's OS scheduler.
 - Plugin manifest version **1.2.0**.
 - Open items:
   - `research`: the matcher gaps below limit recall on openshop names (iPhone `SIM + eSIM`,
@@ -24,6 +26,24 @@ repo is in. Newest first. Older history is summarised per era from `git log`.
     `tests/sources/test_contract_live.py` (uzum case).
   - `docs/superpowers/NEXT-SESSION-PROMPT.md` is a handoff from the July build on
     another machine (`D:\ASUS\Desktop\narxnoma`); historical, not current.
+
+## 2026-10-22 — unattended daily refresh and morning report
+
+- **New `narxnoma/daily.py`** (`python -m narxnoma.daily refresh|report|probe`): runs on the
+  owner's PC from Task Scheduler, independent of any Claude session. `refresh` (03:00
+  Tashkent) re-sweeps all stores into the research cache; `report` (09:00) pulls the store's
+  admin catalogue (paged, bearer token re-read from a file each run), writes a dated
+  `products_<date>.csv`, runs the research pipeline on the fresh cache, and sends
+  `market_analysis_<date>.xlsx` to Telegram Saved Messages from a temporary copy of an existing
+  user session. Failure notices go to the same place.
+- `research/collect.py`: public `refresh_cache()` (forced, atomic, per-sweep failures).
+- Nothing store-specific or secret is in the repo: URL, token file, field names, Telegram
+  credentials live in an env file outside it (`tools/daily/daily.env.example`);
+  `tools/daily/install-windows-tasks.ps1` registers the two tasks.
+- One lock file keeps the jobs from overlapping; the report waits up to 90 min for a slow
+  refresh. Tests: `tests/test_daily.py` (18, offline). **Not verified live**: the real catalogue
+  response shape (use `probe`) and the Telegram send — both need the owner's machine; the
+  build container's egress policy blocks the store and Telegram hosts.
 
 ## 2026-10-22 — market research: product list in, analysable workbook out
 
