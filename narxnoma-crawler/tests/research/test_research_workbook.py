@@ -183,3 +183,15 @@ def test_ooxml_refuses_a_workbook_without_placeholders(research, tmp_path):
     layout = build_workbook(research, str(src))
     with pytest.raises(ValueError, match="placeholder"):
         inject_pivots(str(src), str(tmp_path / "b.xlsx"), layout["offers_cols"])
+
+
+def test_powershell_scripts_are_ascii_only():
+    """Windows PowerShell 5.1 reads a BOM-less script in the system code page: a stray em dash
+    or Cyrillic letter becomes a smart quote or garbage. Keep the scripts pure ASCII."""
+    import pathlib
+
+    import narxnoma.research.excel as pkg
+
+    for script in pathlib.Path(pkg.__file__).parent.glob("*.ps1"):
+        data = script.read_bytes()
+        assert all(b < 128 for b in data), script.name

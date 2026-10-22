@@ -61,8 +61,8 @@ try {
     return $s
   }
   function Finish-Pivot($pt, [string]$rowLabel = "", [string]$colLabel = "") {
-    # Header and grand-total captions otherwise follow the Excel UI language ("Row Labels", "Grand Total",
-    # "Названия строк"...): the same workbook would read differently on every machine.
+    # Header and grand-total captions otherwise follow the Excel UI language ("Row Labels", "Grand
+    # Total", or their translations): the same workbook would read differently on every machine.
     if ($rowLabel) { Try-Step "row header caption" { $pt.CompactLayoutRowHeader = $rowLabel } }
     if ($colLabel) { Try-Step "column header caption" { $pt.CompactLayoutColumnHeader = $colLabel } }
     Try-Step "grand total caption" { $pt.GrandTotalName = "Total" }

@@ -7,7 +7,7 @@ repo is in. Newest first. Older history is summarised per era from `git log`.
 
 - **Eleven sources**: uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart,
   asaxiy, radius, glotr, openshop. All sweepable except mediapark (search-only).
-- Offline suite: **627 passed**, 72 skipped (need `NARXNOMA_TEST_DSN`), 12 deselected
+- Offline suite: **628 passed**, 72 skipped (need `NARXNOMA_TEST_DSN`), 12 deselected
   (9 live, 3 `excel` — need desktop Excel; they pass on the dev machine). openshop's live
   contract test passes.
 - **Market research** (`narxnoma/research/`): a product list in, an analysable Excel
