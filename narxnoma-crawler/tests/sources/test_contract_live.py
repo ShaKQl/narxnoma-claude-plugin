@@ -36,6 +36,11 @@ from narxnoma.sources.mediapark import (
     parse as mediapark_parse,
 )
 from narxnoma.sources.olcha import API_URL, CATEGORY, OlchaSource, PER_PAGE, parse
+from narxnoma.sources.openshop import (
+    PER_PAGE as OPENSHOP_PER_PAGE,
+    OpenshopSource,
+    parse as openshop_parse,
+)
 from narxnoma.sources.texnomart import (
     API_URL as TEXNOMART_API_URL,
     LIMIT as TEXNOMART_LIMIT,
@@ -314,3 +319,39 @@ def test_uzum_makesearch_still_matches_documented_shape():
         assert PRICE_MIN <= lst.price <= PRICE_MAX
         assert lst.url.startswith("https://uzum.uz/ru/product/")
         assert lst.raw["category_id"] in UZUM_PHONE_CATEGORY_IDS
+
+
+@pytest.mark.live
+def test_openshop_get_products_still_matches_documented_shape():
+    """Checks the catalogue browse openshop's own category pages call: POST
+    with filters in the QUERY STRING, `data` + Laravel `meta` pager, the
+    48-per-page clamp, `price.total` as an integer, and that the page built
+    from `slug` is the server-rendered shop page whose <title> states the
+    same price. Every trap in docs/parsers/openshop.md returns HTTP 200, so
+    only the shape can catch a change.
+    """
+    source = OpenshopSource()
+    payload = source._page(1, subcategory_id=4, per_page=100)
+
+    meta = payload.get("meta")
+    assert meta is not None, "Laravel 'meta' pager is gone"
+    for field in ("current_page", "last_page", "per_page", "total"):
+        assert field in meta, f"documented field meta.{field!r} is gone"
+    assert meta["per_page"] == OPENSHOP_PER_PAGE, "per_page clamp moved; re-measure the sweep"
+
+    items = payload.get("data")
+    assert items, "live get_products returned no items"
+    first = items[0]
+    for field in ("id", "name", "slug", "price", "is_stock", "subsubcategory_id", "brand_name"):
+        assert field in first, f"documented field {field!r} is missing from a live item"
+    assert isinstance(first["price"]["total"], int)
+
+    listings = openshop_parse(payload)
+    assert listings, "parse() found nothing in a live response"
+    for lst in listings:
+        assert lst.store_slug == "openshop"
+        assert PRICE_MIN <= lst.price <= PRICE_MAX
+        assert lst.url.startswith("https://openshop.uz/shop/product/")
+
+    title, price = source.page_title(first["slug"])
+    assert price == first["price"]["total"], f"page title disagrees with the API: {title!r}"

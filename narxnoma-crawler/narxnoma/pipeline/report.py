@@ -74,6 +74,11 @@ EXPECTED_MIN_OFFERS = {
         # this is a classifieds board, so its volume moves with how many
         # sellers happen to be posting, and a tight floor here would cry wolf.
         "glotr": 4000,
+        # Measured live 2026-10-22 through `cli fetch`, all seven categories:
+        # 432 phones + 113 laptops + 59 ovens + 50 fridges + 45 TVs + 39
+        # washers + 31 ACs = 769. Single-seller shop listing only in-stock
+        # goods, so its size moves with stock; floor at half.
+        "openshop": 380,
     }
 
 

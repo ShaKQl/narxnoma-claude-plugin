@@ -53,6 +53,7 @@ verified by running the parser end to end and opening the resulting links.
 | [asaxiy.md](asaxiy.md) | asaxiy.uz | **server-rendered HTML** | none | — † |
 | [radius.md](radius.md) | radius.uz | Saleor GraphQL, single card | none | — † |
 | [glotr.md](glotr.md) | glotr.uz | **server-rendered HTML**, classifieds board | none (by grant — see the file) | — † |
+| [openshop.md](openshop.md) | openshop.uz | REST POST, full catalogue (~120 requests) | none | — ‡ |
 | [_matching-engine.md](_matching-engine.md) | — | shared name→product matcher | — | — |
 
 > **Narxnoma is an aggregator.** The two internal systems documented in the original
@@ -65,6 +66,30 @@ verified by running the parser end to end and opening the resulting links.
 † asaxiy (2026-08-10), radius and glotr (2026-08-11) were added after that
 survey, so they have no 66-phone score. Measured on their own terms: asaxiy 693
 offers at 96.8% attached; radius 274 offers at 98.9%; glotr 8,138 offers.
+
+‡ openshop (2026-10-14) came after all three. Measured on its own terms on
+2026-10-22: 769 offers across the seven categories, 5,723 products in the whole
+catalogue, every one in stock.
+
+> **Fourth pass, 2026-10-14 — a whole assortment against one new store.**
+> openshop was first used to price a retailer's *entire* warehouse list (2,619
+> names across 118 product types, most of them not phones) against one catalogue,
+> and every matched name was then read by hand. Every automated check passed while
+> the names were wrong, and every defect was in the **caller's** use of the matcher
+> on names it had never been measured on. None is fixed in `matching/` yet — its
+> golden corpus pins the phone behaviour — so callers outside phones must handle
+> them; the repros are in [openshop.md §8](openshop.md#8-matcher-gaps-its-names-exposed):
+>
+> 1. `"(SIM + eSIM)"` written **with spaces** became a phantom `plus` model token,
+>    so **every iPhone** was rejected (0 matched; 16 once worked around).
+> 2. The non-phone path drops one-character tokens, model digits included:
+>    **Galaxy Watch 4 matched Watch 8, Buds 2 Pro matched Buds 4 Pro.**
+> 3. `head_for_model` cuts an appliance name at `/`, so **PRM-20MW/LA1, /LA3 and
+>    /LA4 all matched /LA2** at one price.
+>
+> Lesson, alongside the earlier passes': **the matcher is only as tested as the
+> names it has seen.** A new store's naming style is a new test corpus; read the
+> pairs before trusting the counts.
 
 > **Third pass, 2026-08-11 — what is on the row, not how many rows.** The first
 > pass verified transport and the second verified matching. Neither could see a
@@ -118,7 +143,7 @@ why the lighter XHR fragment is the wrong thing to fetch.
 
 This distinction decides how you turn results into one number:
 
-- **Single-card** (beemarket, texnomart, idea, mediapark, olcha) — the retailer is
+- **Single-card** (beemarket, texnomart, idea, mediapark, olcha, openshop) — the retailer is
   the only seller, so one variant appears once. Take the best exact match's price.
 - **Multi-seller** (uzum, alifshop) — many partners list the same variant at
   different prices. Collect all matches, strip outliers with IQR fences, take the

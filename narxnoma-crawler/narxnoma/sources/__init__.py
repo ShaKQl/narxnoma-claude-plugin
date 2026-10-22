@@ -6,6 +6,7 @@ from narxnoma.sources.glotr import GlotrSource
 from narxnoma.sources.idea import IdeaSource
 from narxnoma.sources.mediapark import MediaparkSource
 from narxnoma.sources.olcha import OlchaSource
+from narxnoma.sources.openshop import OpenshopSource
 from narxnoma.sources.radius import RadiusSource
 from narxnoma.sources.texnomart import TexnomartSource
 from narxnoma.sources.uzum import UzumSource
@@ -13,5 +14,5 @@ from narxnoma.sources.uzum import UzumSource
 SOURCES = {s.slug: s for s in (
     OlchaSource(), TexnomartSource(), IdeaSource(), BeemarketSource(),
     AlifshopSource(), MediaparkSource(), UzumSource(), AsaxiySource(),
-    RadiusSource(), GlotrSource(),
+    RadiusSource(), GlotrSource(), OpenshopSource(),
 )}

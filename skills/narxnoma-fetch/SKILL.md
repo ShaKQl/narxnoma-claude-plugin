@@ -1,13 +1,13 @@
 ---
 name: narxnoma-fetch
-description: Use when asked for electronics prices, listings or product data from Uzbek online retailers (uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, glotr), or when running, extending or debugging the narxnoma crawler engine.
+description: Use when asked for electronics prices, listings or product data from Uzbek online retailers (uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, glotr, openshop), or when running, extending or debugging the narxnoma crawler engine.
 ---
 
 # narxnoma fetch engine
 
 ## Overview
 
-Ten verified retailer clients behind one `Source` protocol, one `Listing`
+Eleven verified retailer clients behind one `Source` protocol, one `Listing`
 contract, and a CLI that needs no database. Every client was rebuilt from the
 notes in `docs/parsers/` and asserted live; the notes are canonical. When code
 and doc disagree, verify live and fix both in one commit.
@@ -46,6 +46,7 @@ Categories: `smartphones televisions laptops acs fridges washers ovens`.
 | asaxiy | server-rendered HTML, `/ru/` path | yes | no | fetch-asaxiy |
 | radius | Saleor GraphQL, one row per variant | yes | yes | fetch-radius |
 | glotr | server-rendered HTML classifieds, **robots.txt disallows** | by grant only | no | fetch-glotr |
+| openshop | REST POST, full catalogue ~120 requests, filters in query string | yes | fuzzy | fetch-openshop |
 
 Each source skill states the exact endpoint, headers, price field and unit,
 URL rule, and the traps that silently produce wrong numbers.
@@ -62,7 +63,11 @@ URL rule, and the traps that silently produce wrong numbers.
 5. **Price fences**: `100_000 <= price <= 100_000_000` UZS, else it is a unit
    bug (`narxnoma/sources/base.py`). Run every raw price through `coerce_price`.
 6. **Be polite**: sequential requests, 0.3–0.6 s pause (`NARXNOMA_MIN_DELAY`/`MAX_DELAY`),
-   real `User-Agent`, the `Origin`/`Referer` the site's own SPA sends.
+   real `User-Agent`, the `Origin`/`Referer` the site's own SPA sends. A site that
+   publishes a rate limit gets its own floor in the client (openshop: 120/min → 0.55 s).
+7. **Read the matched names, not the counts.** A new store's naming style is a new
+   test corpus for the matcher; see `docs/parsers/openshop.md` §8 for eight gaps
+   that passed every automated check.
 
 ## Engine layout
 
@@ -92,7 +97,7 @@ python -m pytest -q -m live tests/sources/test_contract_live.py   # hits retaile
 
 | Mistake | Reality |
 |---|---|
-| Scrape the HTML | Nine of ten sites are SPAs with an empty shell; call the JSON API the SPA calls. asaxiy and glotr are the exceptions. |
+| Scrape the HTML | Nine of eleven sites are SPAs with an empty shell; call the JSON API the SPA calls. asaxiy and glotr are the exceptions. |
 | Check HTTP status only | uzum and radius report GraphQL failure with **HTTP 200** and an `errors` key. |
 | Use `minSellPrice` / `old_price` / `price` | Card, struck-through and list prices are not the offer price. Each skill names the one field. |
 | Stop paging on an empty page | asaxiy redirects out-of-range pages to page 1; glotr serves unrelated filler forever. Stop on the site's own pager. |

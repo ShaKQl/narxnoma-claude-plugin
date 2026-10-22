@@ -193,3 +193,15 @@ INSERT INTO store (slug, name, website_url) VALUES
 ON CONFLICT (slug) DO NOTHING;
 
 INSERT INTO schema_version (version) VALUES (5) ON CONFLICT (version) DO NOTHING;
+
+-- ---------------------------------------------------------------------------
+-- Migration 6: openshop.uz, the eleventh source. Appended for the same reason
+-- migration 3 was -- the INSERT above already ran in production and only a
+-- fresh database would see a new row under migration 1's block.
+-- ---------------------------------------------------------------------------
+
+INSERT INTO store (slug, name, website_url) VALUES
+    ('openshop', 'OpenShop', 'https://openshop.uz')
+ON CONFLICT (slug) DO NOTHING;
+
+INSERT INTO schema_version (version) VALUES (6) ON CONFLICT (version) DO NOTHING;

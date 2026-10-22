@@ -12,7 +12,7 @@ def test_migrate_creates_tables_and_seeds_stores(db_conn):
     # rather than derived from SOURCES: a source registered with no store row
     # is precisely the bug this catches.
     assert slugs == ["alifshop", "asaxiy", "beemarket", "glotr", "idea", "mediapark",
-                     "olcha", "radius", "texnomart", "uzum"]
+                     "olcha", "openshop", "radius", "texnomart", "uzum"]
 
 
 def test_migrate_is_idempotent(db_conn):
