@@ -10,6 +10,8 @@ Start with the README, then the umbrella skill, then the per-store note for the 
 - [narxnoma-fetch skill](skills/narxnoma-fetch/SKILL.md): engine layout, Listing contract, rules every source obeys
 - [Parser notes index](docs/parsers/README.md): the one thing to understand first, the two shapes of retailer, rules for every source
 - [Matching engine](docs/parsers/_matching-engine.md): name to (brand, model, memory, colour) identity and scoring
+- [Market research](docs/market-research.md): a product list in, an analysable workbook out (Tables, formulas, heat map, PivotTables)
+- [Excel workbooks](docs/excel-workbooks.md): building analysable .xlsx from Python; COM pivots, raw-OOXML pivots, conditional formatting, verifying in Excel
 - [Changelog](docs/CHANGELOG.md): latest state, open items, history by era
 
 ## Per-store notes (canonical)
@@ -28,14 +30,15 @@ Start with the README, then the umbrella skill, then the per-store note for the 
 
 ## Per-store skills (operational cards)
 
-- [skills/](skills/): fetch-<slug>/SKILL.md for each store, plus adding-a-narxnoma-source
+- [skills/](skills/): fetch-<slug>/SKILL.md for each store, plus adding-a-narxnoma-source, narxnoma-market-research, narxnoma-excel-workbooks
 
 ## Code
 
 - [sources/](narxnoma-crawler/narxnoma/sources/): one client per store; base.py holds Listing, coerce_price, paginate
 - [matching/](narxnoma-crawler/narxnoma/matching/): normalisation, features, brands, colours, scoring
 - [pipeline/](narxnoma-crawler/narxnoma/pipeline/): harvest, cluster, aggregate, quality, report
-- [cli.py](narxnoma-crawler/narxnoma/cli.py): fetch | harvest | cluster | aggregate | quality | report | cycle
+- [research/](narxnoma-crawler/narxnoma/research/): targets, collect, match, workbook, excel pivots (`python -m narxnoma.research`)
+- [cli.py](narxnoma-crawler/narxnoma/cli.py): fetch | harvest | cluster | aggregate | quality | report | cycle | research
 - [Design spec](docs/superpowers/specs/2026-07-27-narxnoma-design.md)
 
 ## Whole-repo digests (gitingest)

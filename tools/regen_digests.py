@@ -28,6 +28,8 @@ ENGINE_PATTERNS = [
     "README.md", "LICENSE", "llms.txt", ".gitingestignore",
     ".claude-plugin/*",
     "docs/parsers/*",
+    "docs/market-research.md",
+    "docs/excel-workbooks.md",
     "skills/*",
     "narxnoma-crawler/pyproject.toml",
     "narxnoma-crawler/docker-compose.yml",

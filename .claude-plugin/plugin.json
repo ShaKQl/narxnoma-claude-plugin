@@ -1,7 +1,7 @@
 {
   "name": "narxnoma",
-  "description": "Price-fetch engine for Uzbekistan's electronics retailers: verified clients, API notes and traps for uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, glotr and openshop, plus the name-to-product matcher.",
-  "version": "1.1.0",
+  "description": "Price-fetch engine for Uzbekistan's electronics retailers: verified clients, API notes and traps for uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, glotr and openshop, plus the name-to-product matcher and a market-research tool that turns a product list into an analysable Excel workbook (tables, formulas, heat map, PivotTables).",
+  "version": "1.2.0",
   "author": {
     "name": "ShaKQl",
     "url": "https://github.com/ShaKQl"
@@ -20,6 +20,9 @@
     "asaxiy",
     "retail-api",
     "crawler",
-    "openshop"
+    "openshop",
+    "market-research",
+    "excel",
+    "pivot-table"
   ]
 }

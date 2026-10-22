@@ -67,10 +67,36 @@ Then ask Claude for prices from any of the stores, or to add a new one. Skills:
 | `narxnoma-fetch` | any request for Uzbek retailer prices; running or debugging the engine |
 | `fetch-uzum` … `fetch-openshop` | one per store: endpoint, headers, price field and unit, URL rule, traps, fixture and tests |
 | `adding-a-narxnoma-source` | adding a retailer; a site that looks unscrapable |
+| `narxnoma-market-research` | researching a product list against the markets; delivering an analysable Excel file |
+| `narxnoma-excel-workbooks` | generating Excel with PivotTables, slicers, formulas, conditional formatting; verifying it in Excel |
 
 The skills are operational cards. `docs/parsers/` is the rebuild-grade source
 of truth they point to; every client here was re-implemented from those notes
 alone and asserted live.
+
+## Market research — a product list in, an analysable workbook out
+
+Give it a list of products (`.xlsx` / `.csv` / `.txt`); it sweeps the markets, matches every
+product with the shared identity matcher, keeps **every** accepted offer, and writes a workbook
+you can work in rather than a static table:
+
+```bash
+pip install -e "narxnoma-crawler[excel]"      # adds openpyxl
+cd narxnoma-crawler
+python -m narxnoma.research run --targets products.xlsx --out research.xlsx
+python -m narxnoma.research check research.xlsx      # real Excel recalculates it, reports errors
+```
+
+- **A database**: Excel Tables `tblOffers` / `tblProducts` / `tblMarkets`; your own columns
+  become pivot dimensions.
+- **Formulas that follow edits**: change *Our price*, a threshold or the baseline, or add an
+  offer row, and the grid, deltas, bands and colours all update.
+- **A heat map that is conditional formatting**, per-row baseline, thresholds on a Settings sheet.
+- **Real PivotTables**: Excel COM adds three pivots, slicers, a pivot chart and (if Power Pivot
+  exists) a Data Model with DAX; with no Excel the pivots are written straight into the package
+  and build when the file opens.
+
+Details: `docs/market-research.md`; the Excel engineering: `docs/excel-workbooks.md`.
 
 ## Full pipeline (with PostgreSQL)
 
@@ -93,7 +119,7 @@ Local Postgres setup: `docs/deployment/local-postgres.md`.
 | `skills/` | Claude Code skills — one per store, one umbrella, one for adding a store |
 | `.claude-plugin/` | plugin and marketplace manifests |
 | `docs/parsers/` | canonical notes per retailer + the shared matching engine |
-| `narxnoma-crawler/` | the engine: `sources/`, `matching/`, `pipeline/`, `cli.py`, fixture-backed tests |
+| `narxnoma-crawler/` | the engine: `sources/`, `matching/`, `research/`, `pipeline/`, `cli.py`, fixture-backed tests |
 | `narxnoma-seed/` | pre-production matcher + 14,860-row golden corpus (reference data) |
 | `narxnoma-web/` | optional Next.js frontend over the Postgres catalogue |
 | `docs/superpowers/` | design specs and implementation plans |
@@ -108,6 +134,7 @@ Local Postgres setup: `docs/deployment/local-postgres.md`.
 cd narxnoma-crawler
 python -m pytest -q                                     # offline, fixture-backed
 python -m pytest -q -m live tests/sources/test_contract_live.py   # hits the retailers
+python -m pytest -q -m excel tests/research                       # needs desktop Excel (Windows)
 ```
 
 ## Working rules

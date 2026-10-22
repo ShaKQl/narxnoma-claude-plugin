@@ -32,6 +32,9 @@ source is asked to sweep; never an empty stream that exits 0.
 
 Categories: `smartphones televisions laptops acs fridges washers ovens`.
 
+For a **list of products compared across the markets** (and an Excel file to analyse), do not
+loop `fetch` yourself: use `python -m narxnoma.research run` (skill `narxnoma-market-research`).
+
 ## Pick the source skill
 
 | slug | kind | sweep | search | skill |

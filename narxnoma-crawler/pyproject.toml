@@ -5,7 +5,9 @@ requires-python = ">=3.11"
 dependencies = ["requests>=2.32", "psycopg[binary]>=3.2"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "ruff>=0.5"]
+dev = ["pytest>=8.0", "ruff>=0.5", "openpyxl>=3.1"]
+# market research workbooks (narxnoma.research): Excel Tables, formulas, heat map
+excel = ["openpyxl>=3.1"]
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -17,8 +19,9 @@ pythonpath = ["."]
 markers = [
     "db: needs a PostgreSQL instance (set NARXNOMA_TEST_DSN, a disposable database distinct from the production NARXNOMA_DSN)",
     "live: hits a real retailer API",
+    "excel: needs desktop Excel (Windows); run with `pytest -m excel`",
 ]
-addopts = "-m 'not live'"
+addopts = "-m 'not live and not excel'"
 
 [tool.ruff]
 line-length = 100

@@ -7,7 +7,9 @@ Directory structure:
     ├── .gitingestignore
     ├── docs/
     │   ├── CHANGELOG.md
+    │   ├── excel-workbooks.md
     │   ├── folder-map.md
+    │   ├── market-research.md
     │   ├── deployment/
     │   │   ├── local-postgres.md
     │   │   └── owner-checklist.md
@@ -63,6 +65,23 @@ Directory structure:
     │   │   │   ├── harvest.py
     │   │   │   ├── quality.py
     │   │   │   └── report.py
+    │   │   ├── research/
+    │   │   │   ├── __init__.py
+    │   │   │   ├── __main__.py
+    │   │   │   ├── build.py
+    │   │   │   ├── cli.py
+    │   │   │   ├── collect.py
+    │   │   │   ├── match.py
+    │   │   │   ├── model.py
+    │   │   │   ├── run.py
+    │   │   │   ├── targets.py
+    │   │   │   ├── workbook.py
+    │   │   │   └── excel/
+    │   │   │       ├── __init__.py
+    │   │   │       ├── ooxml_pivot.py
+    │   │   │       ├── pivots.ps1
+    │   │   │       ├── pivots.py
+    │   │   │       └── verify.ps1
     │   │   └── sources/
     │   │       ├── __init__.py
     │   │       ├── alifshop.py
@@ -113,6 +132,13 @@ Directory structure:
     │       │   ├── test_harvest.py
     │       │   ├── test_quality.py
     │       │   └── test_report.py
+    │       ├── research/
+    │       │   ├── _synth.py
+    │       │   ├── test_research_collect_cli.py
+    │       │   ├── test_research_excel_integration.py
+    │       │   ├── test_research_match.py
+    │       │   ├── test_research_targets.py
+    │       │   └── test_research_workbook.py
     │       └── sources/
     │           ├── test_alifshop.py
     │           ├── test_alifshop_categories.py
@@ -225,7 +251,11 @@ Directory structure:
     │   │   └── SKILL.md
     │   ├── fetch-uzum/
     │   │   └── SKILL.md
-    │   └── narxnoma-fetch/
+    │   ├── narxnoma-excel-workbooks/
+    │   │   └── SKILL.md
+    │   ├── narxnoma-fetch/
+    │   │   └── SKILL.md
+    │   └── narxnoma-market-research/
     │       └── SKILL.md
     ├── tools/
     │   ├── README.md
@@ -310,10 +340,36 @@ Then ask Claude for prices from any of the stores, or to add a new one. Skills:
 | `narxnoma-fetch` | any request for Uzbek retailer prices; running or debugging the engine |
 | `fetch-uzum` … `fetch-openshop` | one per store: endpoint, headers, price field and unit, URL rule, traps, fixture and tests |
 | `adding-a-narxnoma-source` | adding a retailer; a site that looks unscrapable |
+| `narxnoma-market-research` | researching a product list against the markets; delivering an analysable Excel file |
+| `narxnoma-excel-workbooks` | generating Excel with PivotTables, slicers, formulas, conditional formatting; verifying it in Excel |
 
 The skills are operational cards. `docs/parsers/` is the rebuild-grade source
 of truth they point to; every client here was re-implemented from those notes
 alone and asserted live.
+
+## Market research — a product list in, an analysable workbook out
+
+Give it a list of products (`.xlsx` / `.csv` / `.txt`); it sweeps the markets, matches every
+product with the shared identity matcher, keeps **every** accepted offer, and writes a workbook
+you can work in rather than a static table:
+
+```bash
+pip install -e "narxnoma-crawler[excel]"      # adds openpyxl
+cd narxnoma-crawler
+python -m narxnoma.research run --targets products.xlsx --out research.xlsx
+python -m narxnoma.research check research.xlsx      # real Excel recalculates it, reports errors
+```
+
+- **A database**: Excel Tables `tblOffers` / `tblProducts` / `tblMarkets`; your own columns
+  become pivot dimensions.
+- **Formulas that follow edits**: change *Our price*, a threshold or the baseline, or add an
+  offer row, and the grid, deltas, bands and colours all update.
+- **A heat map that is conditional formatting**, per-row baseline, thresholds on a Settings sheet.
+- **Real PivotTables**: Excel COM adds three pivots, slicers, a pivot chart and (if Power Pivot
+  exists) a Data Model with DAX; with no Excel the pivots are written straight into the package
+  and build when the file opens.
+
+Details: `docs/market-research.md`; the Excel engineering: `docs/excel-workbooks.md`.
 
 ## Full pipeline (with PostgreSQL)
 
@@ -336,7 +392,7 @@ Local Postgres setup: `docs/deployment/local-postgres.md`.
 | `skills/` | Claude Code skills — one per store, one umbrella, one for adding a store |
 | `.claude-plugin/` | plugin and marketplace manifests |
 | `docs/parsers/` | canonical notes per retailer + the shared matching engine |
-| `narxnoma-crawler/` | the engine: `sources/`, `matching/`, `pipeline/`, `cli.py`, fixture-backed tests |
+| `narxnoma-crawler/` | the engine: `sources/`, `matching/`, `research/`, `pipeline/`, `cli.py`, fixture-backed tests |
 | `narxnoma-seed/` | pre-production matcher + 14,860-row golden corpus (reference data) |
 | `narxnoma-web/` | optional Next.js frontend over the Postgres catalogue |
 | `docs/superpowers/` | design specs and implementation plans |
@@ -351,6 +407,7 @@ Local Postgres setup: `docs/deployment/local-postgres.md`.
 cd narxnoma-crawler
 python -m pytest -q                                     # offline, fixture-backed
 python -m pytest -q -m live tests/sources/test_contract_live.py   # hits the retailers
+python -m pytest -q -m excel tests/research                       # needs desktop Excel (Windows)
 ```
 
 ## Working rules
@@ -441,6 +498,8 @@ Start with the README, then the umbrella skill, then the per-store note for the 
 - [narxnoma-fetch skill](skills/narxnoma-fetch/SKILL.md): engine layout, Listing contract, rules every source obeys
 - [Parser notes index](docs/parsers/README.md): the one thing to understand first, the two shapes of retailer, rules for every source
 - [Matching engine](docs/parsers/_matching-engine.md): name to (brand, model, memory, colour) identity and scoring
+- [Market research](docs/market-research.md): a product list in, an analysable workbook out (Tables, formulas, heat map, PivotTables)
+- [Excel workbooks](docs/excel-workbooks.md): building analysable .xlsx from Python; COM pivots, raw-OOXML pivots, conditional formatting, verifying in Excel
 - [Changelog](docs/CHANGELOG.md): latest state, open items, history by era
 
 ## Per-store notes (canonical)
@@ -459,14 +518,15 @@ Start with the README, then the umbrella skill, then the per-store note for the 
 
 ## Per-store skills (operational cards)
 
-- [skills/](skills/): fetch-<slug>/SKILL.md for each store, plus adding-a-narxnoma-source
+- [skills/](skills/): fetch-<slug>/SKILL.md for each store, plus adding-a-narxnoma-source, narxnoma-market-research, narxnoma-excel-workbooks
 
 ## Code
 
 - [sources/](narxnoma-crawler/narxnoma/sources/): one client per store; base.py holds Listing, coerce_price, paginate
 - [matching/](narxnoma-crawler/narxnoma/matching/): normalisation, features, brands, colours, scoring
 - [pipeline/](narxnoma-crawler/narxnoma/pipeline/): harvest, cluster, aggregate, quality, report
-- [cli.py](narxnoma-crawler/narxnoma/cli.py): fetch | harvest | cluster | aggregate | quality | report | cycle
+- [research/](narxnoma-crawler/narxnoma/research/): targets, collect, match, workbook, excel pivots (`python -m narxnoma.research`)
+- [cli.py](narxnoma-crawler/narxnoma/cli.py): fetch | harvest | cluster | aggregate | quality | report | cycle | research
 - [Design spec](docs/superpowers/specs/2026-07-27-narxnoma-design.md)
 
 ## Whole-repo digests (gitingest)
@@ -511,10 +571,16 @@ repo is in. Newest first. Older history is summarised per era from `git log`.
 
 - **Eleven sources**: uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart,
   asaxiy, radius, glotr, openshop. All sweepable except mediapark (search-only).
-- Offline suite: **584 passed**, 72 skipped (need `NARXNOMA_TEST_DSN`), 9 live
-  deselected. openshop's live contract test passes.
-- Plugin manifest version **1.1.0**.
+- Offline suite: **627 passed**, 72 skipped (need `NARXNOMA_TEST_DSN`), 12 deselected
+  (9 live, 3 `excel` — need desktop Excel; they pass on the dev machine). openshop's live
+  contract test passes.
+- **Market research** (`narxnoma/research/`): a product list in, an analysable Excel
+  workbook out — see `docs/market-research.md`.
+- Plugin manifest version **1.2.0**.
 - Open items:
+  - `research`: the matcher gaps below limit recall on openshop names (iPhone `SIM + eSIM`,
+    codes in parentheses); the Data Model tier is verified only on one Excel 16 build;
+    raw-OOXML pivots have no slicers / chart / model; no cached values without Excel.
   - Eight matcher gaps that openshop's names exposed are documented, not fixed in
     `matching/` (`docs/parsers/openshop.md` §8). Each needs a golden-corpus
     measurement before it lands.
@@ -522,6 +588,42 @@ repo is in. Newest first. Older history is summarised per era from `git log`.
     `tests/sources/test_contract_live.py` (uzum case).
   - `docs/superpowers/NEXT-SESSION-PROMPT.md` is a handoff from the July build on
     another machine (`D:\ASUS\Desktop\narxnoma`); historical, not current.
+
+## 2026-10-22 — market research: product list in, analysable workbook out
+
+- **New package `narxnoma/research/`** (database-free; `openpyxl` via the `[excel]` extra),
+  generalised from a private project's competitor-survey scripts: no retailer-internal data,
+  no hard-coded paths. Entry: `python -m narxnoma.research run|workbook|check`, also
+  `python -m narxnoma.cli research ...`.
+  - `targets` (xlsx / csv / txt, header aliases RU/UZ/EN, extra columns kept), `collect`
+    (24 h per-(source, category) sweep cache, atomic writes, per-source failure notes,
+    search-only sources per product, glotr excluded by default), `match` (brand-bucketed;
+    threshold 30 phones / 25 other categories; every accepted offer kept; name-delta audit),
+    `run` (CBU USD rate for USD inputs), `model` (JSON round-trip: rebuild a workbook with
+    no fetching).
+  - **Workbook** (`workbook.py`): Excel Tables `tblOffers` / `tblProducts` / `tblMarkets`,
+    a formula `Prices` grid, `Heatmap`, `Links`, `Settings` (named thresholds + baseline),
+    `Notes`. Calculated columns fill rows a user adds. **Heat map = conditional formatting**
+    with a per-row baseline and Settings-driven thresholds, so it follows edits and re-sorts.
+  - **Pivots** (`excel/`): Excel COM (`pivots.ps1`) — three PivotTables on one cache, three
+    slicers, pivot chart, neutral captions, and a Data Model with relationships + DAX
+    measures when `workbook.Model` exists (probed; flat pivots are the fallback). Raw OOXML
+    (`ooxml_pivot.py`) — pivots written into the package with `refreshOnLoad`, no Excel.
+    `verify.ps1` — Excel recalculates and reports error cells, tables, pivots, slicers, CF
+    rules and the displayed fill of named cells.
+- Verified in real Excel 16: 0 formula errors; every grid / baseline / delta / band / market
+  figure equals an independent Python recomputation; edits (our price, baseline switch,
+  thresholds, an appended table row) propagate; raw-OOXML pivots populate on open. Live run:
+  8 products × 4 markets (openshop, texnomart, olcha, mediapark), 4 offers matched (the rest
+  correctly absent or lost to the known matcher gaps).
+- Bugs found on the way (each now has a test or a note in `docs/excel-workbooks.md`): table
+  column names must equal header cells; `_xlfn.` prefix for MINIFS/MAXIFS; undeclared `r:`
+  namespace in hand-written `workbook.xml` fragments; openpyxl ≥ 3.1 hides chart axes;
+  pivot captions follow the Excel UI language; the new `tests/research/conftest.py` shadowed
+  the repo's `conftest` module (fixtures now in `tests/research/_synth.py`).
+- Docs: `docs/market-research.md`, `docs/excel-workbooks.md`; skills
+  `narxnoma-market-research`, `narxnoma-excel-workbooks`; README, `llms.txt`, folder map.
+  pytest marker `excel` (deselected by default).
 
 ## 2026-10-22 — openshop.uz, the eleventh source; project onboarding
 
@@ -583,6 +685,186 @@ repo is in. Newest first. Older history is summarised per era from `git log`.
 
 
 ================================================
+FILE: docs/excel-workbooks.md
+================================================
+# Building analysable Excel workbooks
+
+What it takes to generate an `.xlsx` that is a **tool**, not a screenshot of numbers: a
+database you can pivot, formulas that follow edits, conditional formatting that stays honest,
+and real PivotTables. Everything here was learned building
+`narxnoma-crawler/narxnoma/research/` and was verified against real desktop Excel 16; the
+failures are recorded because each one cost an hour. The workflow that uses it is
+[market-research.md](market-research.md).
+
+The techniques are generalised from tooling that builds PivotTables over an OLAP cube through
+Excel automation (hidden Excel via COM, `GETPIVOTDATA`-linked report cells, recalculating a
+file by letting Excel do it). No data from that work is in this repo.
+
+## 1. The one ordering rule
+
+```
+openpyxl builds   →   pivots / slicers / Data Model are added   →   nothing re-saves through openpyxl
+```
+
+openpyxl can neither create a PivotTable nor keep a slicer: it warns *"Slicer List extension
+is not supported and will be removed"* on load and silently drops slicers and the Data Model
+on save. So the sheets, Tables, formulas, validation, conditional formatting and charts are
+written first; the pivot step runs last and owns the file from then on. A pipeline that
+loads the finished workbook with openpyxl "just to tweak a cell" destroys it.
+
+## 2. Excel Tables are the database
+
+- One Table per entity (`tblOffers`, `tblProducts`, `tblMarkets`), one fact per row. A flat
+  long table (one row per product × market offer) is what a PivotTable wants; a wide grid is
+  a *view* of it, built with formulas.
+- **A Table column's name must equal its header cell's text, exactly.** `openpyxl` writes
+  `Column1…ColumnN` if you call `table._initialise_columns()` (needed to attach
+  `calculatedColumnFormula`) and Excel then refuses to open the file with an unhelpful
+  "cannot get Open property" error. Restore the names from the header cells right after
+  (`_calc_columns` in `research/workbook.py`).
+- **Calculated columns** need `TableFormula(attr_text=...)` on the column so a row a person
+  adds to the Table fills itself in. The formula text is stored *without* the leading `=`
+  and uses `Table[[#This Row],[Col]]`.
+- Keep referenced header names free of special characters (`( ) % # [ ] ' "`): they need
+  escaping inside structured references. Spaces are fine. `Delta vs baseline`, not `Δ%`.
+- Name the knobs: thresholds and switches live in a `Settings` sheet and are **defined
+  names** (`cfg_sat`), so formulas, conditional-format rules and pivots read the same cell.
+  Add data validation (decimal 0–1, a list) so a typo cannot produce nonsense.
+- Inputs are visibly inputs (pale-yellow fill). Everything else is a formula.
+
+## 3. Formulas: what the file format needs that the UI hides
+
+- **`_xlfn.` prefix** for functions newer than Excel 2007 written through openpyxl:
+  `_xlfn.MINIFS`, `_xlfn.MAXIFS`, `_xlfn.IFS`, `_xlfn.XLOOKUP`… Without it the cell shows
+  `#NAME?` until someone re-enters it. `COUNTIFS`, `SUMIFS`, `AVERAGEIFS`, `IFERROR`,
+  `AGGREGATE` are fine bare. A test asserts no bare `MINIFS` is ever written.
+- openpyxl writes **no cached values**. Set `fullCalcOnLoad` so Excel calculates on open, and
+  know that a previewer, pandas or LibreOffice-less reader sees blanks. To bake values in,
+  let Excel save the file (`verify.ps1 -Save`).
+- A SUMPRODUCT of `(col=x)/COUNTIFS(col,col, …)` gives a distinct count in every Excel
+  version; `INDEX(range,0,MATCH(name,header,0))` returns a whole column by header name,
+  which is how one formula fills a table row per market.
+- Use `""` (not 0) for "no data"; `COUNT`, `MEDIAN`, `AVERAGE` ignore text. Never write 0
+  for "not found": zero is a price.
+
+## 4. Conditional formatting that cannot go stale
+
+A painted fill is a second copy of a fact, and it goes stale the moment the number is edited.
+Use rules.
+
+- **Per-row baseline** (what a colour scale cannot do — its end points come from the whole
+  range): a formula rule with a relative row and absolute column, applied to the block:
+  `AND(ISNUMBER(D2),N($N2)>0,D2<=$N2*(1-cfg_sat))`. Thresholds from defined names. Six graded
+  rules with `stopIfTrue`, plus one non-stopping rule (bold border on `D2=MIN($D2:$M2)`) so
+  both apply to the same cell.
+- Rule fills need **`bgColor`** (set both `fgColor` and `bgColor`): Excel reads a conditional
+  `dxf` solid fill from `bgColor`.
+- **Graded colour scale with editable end points**: `ColorScaleRule(start_type="formula",
+  start_value="-cfg_sat", mid_type="num", mid_value=0, end_type="formula",
+  end_value="cfg_sat")` — a defined name works as a cfvo formula, so the scale follows
+  Settings.
+- **On a PivotTable** (COM): `DataBodyRange.FormatConditions.AddColorScale(3)` then
+  `ScopeType = 2` (`xlDataFieldScope`) so the scale follows the pivot as it is rearranged
+  rather than being tied to the cells it happened to cover.
+- Direction must be stated in the file (Notes + a legend on Settings): here red = the market is
+  *cheaper* than the baseline.
+
+## 5. PivotTables through COM
+
+Driven from PowerShell (`research/excel/pivots.ps1`); Python only launches it.
+
+- **Every COM call retries on `0x800AC472` ("busy")** (plus `RPC_E_*`, `0x8001010A`): Excel
+  answers that intermittently while it is calculating or refreshing, and one unwrapped call
+  fails the whole build. Any other error is raised with the step's name.
+- Calculate first (`CalculateFull`, wait for `CalculationState = 0`): a pivot built over
+  unevaluated formulas is empty.
+- Source = the Table by name: `PivotCaches().Create(1, "tblOffers")` (`xlDatabase`). Create
+  **one cache** and several pivots from it: slicers connect to pivots on the same cache, so
+  one slicer drives them all (`SlicerCaches.Add2(pt, "Field")`, then
+  `.PivotTables.AddPivotTable(other)`).
+- Number formats on the **data field** (`DataField.NumberFormat`), not painted on cells.
+- **Captions follow the Excel UI language** — a Russian Excel prints "Названия строк" and
+  "Общий итог". Set `CompactLayoutRowHeader`, `CompactLayoutColumnHeader` and
+  `GrandTotalName` so the workbook reads the same everywhere. Field names are the Table's own
+  headers and are unaffected.
+- Slicers: place them right of *both* the pivot and the chart below it; a pivot narrows after
+  its captions are shortened, so compute the position after formatting.
+- Pivot chart: legend at the bottom, `ShowAllFieldButtons = $false` (the slicers filter).
+- **Optional steps never abort the build**: wrap style, colour scale, chart in a `Try-Step`
+  that prints `WARN` and goes on; wrap required steps so a failure names the step.
+- Always `Quit()` and release the COM object in `finally`, or a hidden `EXCEL.EXE` stays alive
+  holding the file.
+
+### Data Model (Power Pivot), probed
+
+```
+$wb.Model                                   # null / absent without Power Pivot → fall back to flat pivots
+$wb.Connections.Add2("WorksheetConnection_tblX", "", "WORKSHEET;$file", "tblX", 7, $true, $false)
+                                            # 7 = xlCmdExcel, True = add to the Data Model
+$m.ModelRelationships.Add($fkColumn, $pkColumn)
+$m.ModelMeasures.Add("Name", $table, "DAX…", $m.ModelFormatDecimalNumber(1,0), "description")
+$pc = $wb.PivotCaches().Create(2, $wb.Connections.Item("ThisWorkbookDataModel"))
+$pt.CubeFields.Item("[tblMarkets].[Market]").Orientation = 1
+$pt.CubeFields.Item("[Measures].[Avg delta]").Orientation = 4
+```
+
+Do it in a `try`, and keep the flat pivots regardless: the flat tier is the guaranteed one.
+
+## 6. PivotTables with no Excel (raw OOXML)
+
+`research/excel/ooxml_pivot.py` writes the parts into the package and marks the cache
+`refreshOnLoad="1"`, so Excel builds the pivots on first open (the same approach libraries
+like EPPlus use). It needs: `pivotCacheDefinition` (source `<worksheetSource name="tblOffers"/>`,
+one `cacheField` per Table column with empty `sharedItems`), an empty `pivotCacheRecords`
+part, one `pivotTableDefinition` per pivot (axis fields carry just `<item t="default"/>`;
+`rowFields`/`colFields`/`dataFields` declared; no `rowItems`/`colItems`), the relationships,
+`[Content_Types].xml` overrides, and `<pivotCaches>` in `workbook.xml` after `<calcPr>`.
+
+The first attempt (building the objects with `openpyxl.pivot`) produced a file Excel would not
+open. The hand-written version failed the same way once, for a reason worth keeping: openpyxl's
+`workbook.xml` declares `xmlns:r` only on each `<sheet>` element, so a bare
+`<pivotCache r:id="…">` used an **undeclared prefix** and the package was invalid. Declare the
+namespace on the element. Excel gives no diagnostic through COM — bisect by removing parts.
+
+Limits: no slicers, no pivot chart, no Data Model, built-in number formats only
+(`numFmtId` 3 = `#,##0`, 10 = `0.00%`).
+
+## 7. Prove it in Excel, not in Python
+
+openpyxl cannot evaluate a formula, so only Excel can say the file is valid.
+`research/excel/verify.ps1`:
+
+- opens, `CalculateFull`, then `UsedRange.SpecialCells(xlCellTypeFormulas, xlErrors)` per
+  sheet — counts and names the first error cells;
+- reports `ListObjects`, `PivotTables`, `SlicerCaches`, `FormatConditions` counts;
+- `-Probe "Prices!D2,…"` returns each cell's **displayed** text and
+  `DisplayFormat.Interior.Color` — the colour a conditional-format rule actually produces;
+- `-Save` bakes the values in.
+
+Then **recompute independently** in Python from the Offers rows and compare (grid, medians,
+baselines, deltas, bands, per-market stats). Then **look**: `Worksheet.ExportAsFixedFormat`
+to PDF, render with PyMuPDF, read the PNG — that is how an overlapping chart, an invisible
+axis and a localised caption were found. Finally test *behaviour*: change an input through
+COM (`Range.Value2`), recalc, probe the colours again.
+
+## 8. Traps, one line each
+
+| Symptom | Cause |
+|---|---|
+| Excel: "cannot get Open property of Workbooks" | Table column names ≠ header text; or an undeclared XML namespace prefix; bisect by deleting parts |
+| `#NAME?` in a formula that looks right | newer function without `_xlfn.` |
+| Pivot sheet empty | built before `CalculateFull`; or `refreshOnLoad` pivot over uncalculated formulas |
+| Slicers vanished | the file was re-saved through openpyxl |
+| Bar chart has no axis labels | openpyxl ≥ 3.1 hides axes: `axis.delete = False` |
+| Colour rule shows no fill | solid fill without `bgColor` in a conditional `dxf` |
+| "Row Labels" / "Общий итог" in the pivot | caption follows Excel's UI language: set the captions |
+| COM call fails intermittently | `0x800AC472`: retry wrapper |
+| Hidden `EXCEL.EXE` left running | `Quit()` not in `finally` |
+| Colours "wrong" after sorting | baked fills; use rules |
+
+
+
+================================================
 FILE: docs/folder-map.md
 ================================================
 # Folder map
@@ -596,9 +878,11 @@ Read this when you need to know where something lives or what a file group is fo
 | `README.md` | public front page: sources table, quick start, plugin install, rules | keep the source table in sync with `SOURCES` |
 | `CLAUDE.md` | pointer for agent sessions working **on** this repo | loads `.claude/skills/narxnoma-maintain` |
 | `.claude/skills/narxnoma-maintain/` | project-local skill: session checklist, invariants, current state | for maintainers; not part of the plugin |
-| `skills/` | **plugin** skills shipped to users: `narxnoma-fetch`, `fetch-<slug>` ×11, `adding-a-narxnoma-source` | operational cards; `docs/parsers/` is canonical |
+| `skills/` | **plugin** skills shipped to users: `narxnoma-fetch`, `fetch-<slug>` ×11, `adding-a-narxnoma-source`, `narxnoma-market-research`, `narxnoma-excel-workbooks` | operational cards; `docs/parsers/` is canonical |
 | `.claude-plugin/` | `plugin.json` (name, version, keywords) and `marketplace.json` | bump `version` when skills or sources change |
 | `docs/parsers/` | canonical per-store notes + `_matching-engine.md` + `README.md` (index, verification passes) | rebuild-grade: a client must be rebuildable from its note alone |
+| `docs/market-research.md` | canonical note for `narxnoma/research/`: pipeline, workbook anatomy, pivot tiers, verification | rebuild-grade; update with the code |
+| `docs/excel-workbooks.md` | Excel engineering behind the workbook: Tables, formulas, conditional formatting, COM pivots, raw OOXML, verification, traps | |
 | `docs/CHANGELOG.md` | what changed, newest first, plus "latest state" | update at the end of every session that changes the repo |
 | `docs/deployment/` | local portable PostgreSQL; owner/server handover checklist | |
 | `docs/superpowers/` | July–August design spec and plans 1–5; `NEXT-SESSION-PROMPT.md` | historical build record; paths in it point at the old machine |
@@ -620,11 +904,13 @@ Read this when you need to know where something lives or what a file group is fo
 | `narxnoma/sources/brand_queries.py` | crawl frontier for brand-query sources (idea, alifshop) |
 | `narxnoma/matching/` | stdlib-only name → identity: normalize, colours, memory, features, categories, scoring, keys |
 | `narxnoma/pipeline/` | harvest, extract, cluster, aggregate, quality, report (`EXPECTED_MIN_OFFERS`) |
+| `narxnoma/research/` | product list → offers → analysable workbook: `targets` `collect` `match` `model` `run` `workbook` `build` `cli`; `excel/` = `pivots.ps1`/`pivots.py` (COM), `ooxml_pivot.py` (no Excel), `verify.ps1` |
 | `narxnoma/db/schema.sql` | schema + append-only migrations (one per added store) |
 | `narxnoma/cli.py` | `fetch` (no DB) · `harvest` · `cluster` · `aggregate` · `quality` · `report` · `cycle` |
 | `tests/fixtures/sources/` | one recorded live response per store (public catalogue data) |
 | `tests/sources/test_<slug>*.py` | offline parse tests from the fixture; `test_contract_live.py` (`-m live`) |
 | `tests/db/` | need `NARXNOMA_TEST_DSN` (a disposable database); skipped otherwise |
+| `tests/research/` | offline research tests (`_synth.py` = synthetic data, no private figures); `-m excel` needs desktop Excel |
 
 ## Naming conventions
 
@@ -634,6 +920,234 @@ Read this when you need to know where something lives or what a file group is fo
 - Plans and specs are dated `YYYY-MM-DD-narxnoma-<topic>.md`.
 - Each added store gets its own numbered schema migration, appended, never edited
   into migration 1 (production already ran it).
+
+
+
+================================================
+FILE: docs/market-research.md
+================================================
+# Market research: a product list in, an analysable workbook out
+
+Canonical note for `narxnoma-crawler/narxnoma/research/`. Read it before changing that
+package. The Excel engineering behind the workbook is in
+[excel-workbooks.md](excel-workbooks.md).
+
+## What it answers
+
+*"Here is a list of products. What does every market charge for them, and where do we
+stand?"* — and it hands back a workbook you can **work in**, not a picture of the numbers:
+a small database (Excel Tables), formulas that follow your edits, a heat map that is
+conditional formatting, and real PivotTables over the database.
+
+Three tools, three questions — pick by the question:
+
+| | `fetch` | `research` (this) | `cycle` (Postgres pipeline) |
+|---|---|---|---|
+| Answers | "what is on this store's shelf?" | "what do the markets charge for *my* list?" | "what is the canonical price of everything, continuously?" |
+| Input | a source + category or query | a product list (xlsx / csv / txt) | none (sweeps everything) |
+| Output | JSON lines | `.xlsx` + `research.json` | PostgreSQL |
+| Needs | `requests` | `requests`, `openpyxl`; Excel optional | PostgreSQL |
+
+## Quick start
+
+```bash
+pip install -e "narxnoma-crawler[excel]"             # adds openpyxl
+cd narxnoma-crawler
+
+python -m narxnoma.research run --targets products.xlsx --out research.xlsx
+python -m narxnoma.research run --targets list.txt --category smartphones \
+        --sources uzum,olcha,texnomart --out phones.xlsx
+python -m narxnoma.research workbook --from research.json --out research.xlsx   # no fetching
+python -m narxnoma.research check research.xlsx                                  # Excel recalculates, reports errors
+```
+
+`run` writes `research.json` next to the workbook (override with `--json`). Rebuilding a
+workbook from it costs no requests, so a change to the workbook layout, the Settings
+defaults or a baseline never needs a re-crawl.
+
+### Input
+
+| file | shape |
+|---|---|
+| `.xlsx` / `.xlsm` | first sheet, header row |
+| `.csv` | UTF-8 (BOM ok), delimiter sniffed (`, ; tab`) |
+| `.txt` | one name per line; `name;price` or `name<TAB>price`; `#` comments |
+
+Columns are found by header name, case-insensitively (`targets.ALIASES`): **name**
+(`Product`, `Product Name`, `Товар`, `Наименование`, `Mahsulot`…), **price** (`Our price`,
+`Наша цена`, `Narx`…), **category** (`Category`, `Категория`…), **currency** (`UZS` default,
+`USD` converted at the central-bank rate fetched live, or `--usd-rate`), **note**. *Any other
+column is kept* as an extra column on `Products` — your own brand / supplier / segment
+columns become pivot dimensions for free.
+
+Only the name is required. With no price the baseline falls back to the market median.
+A category is a narxnoma slug (`smartphones televisions laptops acs fridges washers ovens`);
+`targets.CATEGORY_ALIASES` maps RU/UZ/EN words to it. A product with no category (and no
+`--category`) is **not matched** — the matcher's identity model depends on it — and is
+reported.
+
+## The pipeline
+
+1. **Collect** (`collect.py`). Every sweepable source is swept once per category present in
+   the list and cached for 24 h in `database/research_cache/<source>__<category>.json`
+   (`--max-age-h`, `--force`). Sweeping is the point: it gives every product the same
+   candidate pool and lets a price be **re-matched without re-fetching**. A failed sweep
+   raises inside the source and is **caught per (source, category)**: it is written to that
+   market's Note, the market's `fetched_at` stays empty, the run continues. A half-swept
+   catalogue is never recorded as a success, and a cache file is written atomically so a
+   crash cannot leave a truncated one. Search-only sources (`mediapark`) get one query per
+   product, nearly verbatim (only the leading category noun is dropped: a ranking
+   autocomplete needs the RAM/storage and colour words to rank the exact variant). **glotr
+   is excluded by default** — its robots.txt forbids crawling and it is used only by grant
+   at its `Crawl-delay` (`docs/parsers/glotr.md`); name it in `--sources` deliberately.
+2. **Match** (`match.py`). The shared matcher, unchanged: brand, model, RAM and storage must
+   match; colour is not identity except on iPhones. Targets are bucketed by brand first
+   (a brand mismatch is a hard reject before anything else; unknown-brand listings are
+   always considered). The accept threshold is per category: **30 for phones, 25 for
+   everything else** — a television has no storage/RAM/identity-colour, so a *perfect*
+   brand + bidirectional model-code match scores exactly 25, and 30 would empty the
+   category. 25 is not looser: it still requires the model tokens to match in both
+   directions.
+3. **Keep every accepted offer.** Nothing is reduced at this layer. A marketplace with 20
+   sellers contributes 20 rows; `Offers` is the database the analysis runs on.
+4. **Build** (`workbook.py`), then **pivots** (`excel/`), then **verify**. In that order,
+   and nothing may re-save the file through openpyxl afterwards.
+
+### Known limits (read before quoting a result)
+
+- The matcher is used as-is. Eight gaps that openshop's names exposed are documented, not
+  fixed (`docs/parsers/openshop.md` §8): e.g. `iPhone 16 128GB (SIM + eSIM)` and
+  `Samsung 55" Crystal UHD DU7100 ... (UE55DU7100UXUZ)` are rejected as the same product.
+  Precision over recall: a miss shows as an empty cell, never as a wrong price. Fixing a
+  gap needs a golden-corpus measurement first (`narxnoma-seed/golden/`).
+- `Name delta` on `Offers` lists words present in one name but not the other. Non-empty is
+  not an error; it is the row to read before quoting.
+- A listing at an implausible price (outside 100 000 – 100 000 000 UZS) is dropped by the
+  source client, so very cheap accessories and very expensive display units never appear.
+- Categories outside the seven narxnoma knows are not matched.
+
+## The workbook
+
+| Sheet | What it is | Edit it? |
+|---|---|---|
+| `Start` | index with links, how to use | — |
+| `Prices` | product × market grid: the **cheapest accepted offer per market**, as formulas over `tblOffers`; plus Baseline, Markets matched, min, median, Δ ours vs median, cheapest market. **The heat map.** | no — formulas |
+| `Heatmap` | the same grid as % difference from the baseline, graded colour scale | no |
+| `Pivot …` | PivotTables over `tblOffers` (see below) | drag fields freely |
+| `Offers` | Excel Table **`tblOffers`** — one row per offer, every one kept. Pivot source. | add / delete rows |
+| `Products` | Excel Table **`tblProducts`** — one row per product. **Yellow cells are inputs.** | edit Our price, Category |
+| `Markets` | Excel Table **`tblMarkets`** — coverage, average delta, share cheaper than baseline, cheapest wins, freshness, the reason a market is empty; bar chart | no |
+| `Links` | as-fetched snapshot, each price a hyperlink to its offer | no |
+| `Settings` | `cfg_par` `cfg_mid` `cfg_sat` thresholds and `cfg_baseline` (`Our price` / `Market median`) | **yes** |
+| `Notes` | definitions, per-market freshness, what an empty cell means | — |
+
+### How edits propagate
+
+`Products[Our price]` → `Products[Baseline]` → `Offers[Baseline]` → `Offers[Delta vs baseline]`
+→ `Offers[Band]`, and → `Prices` baseline → heat-map colours, `Heatmap`, `Markets`.
+Change a price of yours, flip `cfg_baseline` to `Market median`, tighten a threshold, or
+**append a row to `tblOffers`** (the calculated columns fill themselves, the grid picks the
+offer up): everything follows. This was verified in real Excel (see *Verification*).
+
+### Definitions
+
+- **Baseline** = your price if you gave one and `cfg_baseline` is `Our price`; otherwise the
+  market median.
+- **Market median** = median of one representative (cheapest) price per market, so a
+  marketplace with many sellers does not outvote a single-shop retailer.
+- **Delta vs baseline** = (market price − baseline) / baseline. **Negative = the market is
+  cheaper than you.** (`Delta ours vs median` on `Prices` is the other way round:
+  (our − median) / median, positive = you are dearer.)
+- **Bands** (`Offers[Band]`, sort-prefixed so a pivot orders them): `1 Market much cheaper`
+  ≤ −`cfg_sat` · `2 Market cheaper` ≤ −`cfg_mid` · `3 Market slightly cheaper` < −`cfg_par` ·
+  `4 About equal` within ±`cfg_par` · `5…7` mirror image on the dear side. Defaults 2 % /
+  10 % / 20 %.
+- An **empty cell** means "no match found", never a price of zero.
+
+### The heat map
+
+Conditional formatting, never a baked fill. On `Prices`, seven rules over the market
+block: a bold dark border on the cheapest price in each row, and six graded fills (three red
+for a market cheaper than the baseline, three green for dearer). Each rule compares a cell
+with **its own row's baseline** (`$N2`, absolute column, relative row) and reads its
+thresholds from the named Settings cells. That is the one thing a built-in colour scale cannot
+do (its endpoints come from the range, not from a per-row baseline) and a formula rule can.
+`Heatmap` uses a real 3-colour scale whose end points are `-cfg_sat` / `0` / `+cfg_sat`.
+
+Why this matters: a painted fill goes stale the moment a price is edited, and a wrong colour
+is read faster than the number it contradicts. These cannot go stale, and they survive a
+re-sort and a filter.
+
+## Pivots — three tiers
+
+| `--pivots` | Needs | Gives |
+|---|---|---|
+| `com` (auto when Excel is present) | Windows + desktop Excel | three PivotTables on one shared cache (Category×Market avg delta with a pivot-scoped colour scale; Product×Market cheapest price; Market×Band counts), **three slicers** (Category, Market, Band) that drive all of them, a **pivot chart**, neutral captions (no localised "Row Labels"), and — if this Excel has Power Pivot — a **Data Model** (below) |
+| `ooxml` (auto when no Excel) | nothing | the same three PivotTables, written into the .xlsx package with `refreshOnLoad`; Excel builds them when the file is opened. No slicers, chart, Data Model; built-in number formats only |
+| `none` | nothing | Tables + formulas + heat map; Insert > PivotTable > `tblOffers` does the rest |
+
+### Data Model (`--model auto|yes|no`)
+
+With `com`, the script **probes** `workbook.Model`. If present it loads `tblOffers`,
+`tblProducts`, `tblMarkets` into the model, relates `Offers[Product] → Products[Product]` and
+`Offers[Market] → Markets[Market]`, adds DAX measures (`Offers count`, `Median price`,
+`Cheapest price`, `Avg delta`, `Share cheaper than baseline`) and a model-based PivotTable
+(`Pivot model (DAX)`). If the probe fails — no Power Pivot, or any error — it prints
+`MODEL unavailable: <reason>` and the workbook keeps the flat pivots: **flat is the fallback,
+nothing is lost** (`--model yes` fails loudly instead). Both are present when the model works,
+so you can compare.
+
+## Verification
+
+`python -m narxnoma.research check book.xlsx` opens the file in real Excel, recalculates
+fully, and prints one line per sheet: formula-error cells, tables, pivots, conditional-format
+rule counts, slicers. `run` / `workbook` call it automatically when Excel is present and exit 1
+on any error cell. Why: openpyxl writes formulas it cannot evaluate, so a `#NAME?` is invisible
+until a person opens the file.
+
+What was verified on 2026-10-22 (real Excel 16, 25 synthetic products × 10 markets, 230
+offers, and a live 8-product × 4-market run):
+
+- 0 formula-error cells on all sheets; the file reopens with the right counts of tables,
+  pivots, slicers.
+- Every `Prices` cell, median, baseline, `Delta vs baseline`, cheapest flag, band and every
+  `Markets` figure matched an **independent Python recomputation** (0 mismatches).
+- Pivot and DAX figures were **spot-checked** against the same recomputation (category ×
+  market averages, a market's grand total, offer counts, share cheaper than baseline, a band
+  count); the whole pivot body was not compared cell by cell.
+- Edits propagate: our price, the `Market median` switch, the thresholds and an appended
+  `tblOffers` row each changed the displayed colours / bands as expected.
+- The raw-OOXML pivots open and populate on open, with no manual refresh.
+
+`pytest -m excel tests/research` repeats the Excel-side checks on any machine that has Excel;
+the default `pytest` run skips them.
+
+## Requirements
+
+- Python ≥ 3.11, `requests`, `openpyxl ≥ 3.1` (`[excel]` extra).
+- `MINIFS` / `MAXIFS` (used by `Prices`, `Products`, `Offers`) need **Excel 2019 / Microsoft
+  365** or LibreOffice. They are written with the `_xlfn.` prefix; without it Excel shows
+  `#NAME?` until a cell is re-entered.
+- COM tier: Windows, desktop Excel, PowerShell. Data Model: an Excel with Power Pivot.
+- Without Excel the formulas still work when a person opens the file, but cached values are
+  absent, so a previewer or pandas shows blanks. Run `check --save` (needs Excel) to bake the
+  calculated values in.
+
+## Where things are
+
+| File | Role |
+|---|---|
+| `research/targets.py` | read the product list; alias tables |
+| `research/collect.py` | sweep + cache, search-only, market order, failure notes |
+| `research/match.py` | brand-bucketed matching, category thresholds, name delta |
+| `research/model.py` | `Target` / `Offer` / `Research`, JSON round-trip |
+| `research/run.py` | `run_research`: collect → match; CBU USD rate |
+| `research/workbook.py` | the workbook (openpyxl): tables, formulas, heat map, Settings, Notes |
+| `research/build.py` | `make_workbook`: workbook → pivots → verify |
+| `research/excel/pivots.ps1` / `pivots.py` | COM: pivots, slicers, chart, Data Model probe |
+| `research/excel/ooxml_pivot.py` | raw-OOXML pivots, no Excel |
+| `research/excel/verify.ps1` | Excel recalculates and reports errors, tables, pivots, fills |
+| `tests/research/` | offline tests; `-m excel` for the Excel-side ones |
 
 
 
@@ -4761,7 +5275,9 @@ requires-python = ">=3.11"
 dependencies = ["requests>=2.32", "psycopg[binary]>=3.2"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "ruff>=0.5"]
+dev = ["pytest>=8.0", "ruff>=0.5", "openpyxl>=3.1"]
+# market research workbooks (narxnoma.research): Excel Tables, formulas, heat map
+excel = ["openpyxl>=3.1"]
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -4773,8 +5289,9 @@ pythonpath = ["."]
 markers = [
     "db: needs a PostgreSQL instance (set NARXNOMA_TEST_DSN, a disposable database distinct from the production NARXNOMA_DSN)",
     "live: hits a real retailer API",
+    "excel: needs desktop Excel (Windows); run with `pytest -m excel`",
 ]
-addopts = "-m 'not live'"
+addopts = "-m 'not live and not excel'"
 
 [tool.ruff]
 line-length = 100
@@ -4796,6 +5313,7 @@ FILE: narxnoma-crawler/narxnoma/cli.py
     python -m narxnoma.cli fetch --source SLUG [--category C | --query Q]
     python -m narxnoma.cli harvest [--source SLUG]
     python -m narxnoma.cli report
+    python -m narxnoma.cli research run|workbook|check ...   (see narxnoma/research/cli.py)
 """
 import argparse
 import dataclasses
@@ -4974,6 +5492,11 @@ def run_fetch(source, category: str, query: str | None, limit: int | None,
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if argv and argv[0] == "research":
+        # database-free, and kept out of the parser below so its options stay in one place
+        from narxnoma.research.cli import main as research_main
+        return research_main(argv[1:])
     parser = argparse.ArgumentParser(prog="narxnoma")
     sub = parser.add_subparsers(dest="command", required=True)
     fetch = sub.add_parser("fetch", help="print one source's listings as JSON lines; "
@@ -8399,6 +8922,2291 @@ def coverage_report(conn) -> list[SourceCoverage]:
                 ),
             ))
         return rows
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/__init__.py
+================================================
+"""Market research: a list of products -> every market's offers -> an analysable workbook.
+
+    targets.py    read the product list (csv / xlsx / txt)
+    collect.py    sweep or search the markets, with an on-disk cache
+    match.py      the matching engine applied to a target list, keeping every offer
+    model.py      Target / Offer / Research and the JSON that lets a workbook be rebuilt
+    workbook.py   the analysable .xlsx (Excel Tables, formulas, heat map, Settings)
+    excel/        PivotTables: Excel COM driver, Data Model probe, raw-OOXML writer
+
+Everything outside `workbook.py` and `excel/` needs only the standard library and
+`requests`; the workbook layer needs `openpyxl` (extra: `pip install narxnoma-crawler[excel]`).
+"""
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/__main__.py
+================================================
+import sys
+
+from narxnoma.research.cli import main
+
+sys.exit(main())
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/build.py
+================================================
+"""From a `Research` to the finished .xlsx: workbook, then pivots, then an Excel check.
+
+    pivots="auto"    Excel COM if desktop Excel is here, else raw OOXML
+    pivots="com"     Excel COM (flat pivots, slicers, chart, Data Model if present); needs Excel
+    pivots="ooxml"   written into the package, Excel builds them on open; no slicers / chart / model
+    pivots="none"    Tables, formulas, heat map only; Insert > PivotTable > tblOffers does the rest
+
+Order matters and is not negotiable: openpyxl builds, THEN pivots are added, THEN nothing may
+re-save the file through openpyxl (it drops slicers and the Data Model without a word).
+"""
+
+import logging
+import tempfile
+from pathlib import Path
+
+from narxnoma.research.model import Research
+from narxnoma.research.workbook import build_workbook
+
+logger = logging.getLogger("narxnoma.research")
+
+
+def make_workbook(
+    r: Research, out: str | Path, pivots: str = "auto", model: str = "auto", verify: bool = True
+) -> dict:
+    from narxnoma.research.excel import ooxml_pivot, pivots as com
+
+    out = Path(out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    info: dict = {"out": str(out), "pivots": "none", "lines": [], "errors": None}
+    use_com = pivots == "com" or (pivots == "auto" and com.excel_available())
+    if pivots == "com" and not com.excel_available():
+        raise com.ExcelUnavailable("pivots='com' needs Windows + desktop Excel")
+
+    if use_com:
+        tmp = Path(tempfile.mkdtemp(prefix="narxnoma_")) / "built.xlsx"
+        layout = build_workbook(r, str(tmp))
+        res = com.add_pivots(tmp, out, model=model)
+        info["lines"] += res.lines
+        if not res.ok:
+            raise RuntimeError("Excel pivot step failed:\n" + str(res))
+        info["pivots"], info["model"] = "com", res.model
+        tmp.unlink(missing_ok=True)
+    elif pivots in ("auto", "ooxml"):
+        tmp = Path(tempfile.mkdtemp(prefix="narxnoma_")) / "built.xlsx"
+        layout = build_workbook(r, str(tmp), pivot_placeholders=True)
+        info["lines"] += [
+            "PIVOT " + n
+            for n in ooxml_pivot.inject_pivots(str(tmp), str(out), layout["offers_cols"])
+        ]
+        info["pivots"] = "ooxml"
+        tmp.unlink(missing_ok=True)
+    else:
+        layout = build_workbook(r, str(out))
+
+    info.update(layout=layout)
+    if verify and com.excel_available():
+        res = com.verify(out)
+        info["lines"] += res.lines
+        info["errors"] = com.error_count(res)
+        if info["errors"]:
+            logger.error("Excel reports %d formula error cell(s) in %s", info["errors"], out)
+    return info
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/cli.py
+================================================
+"""Command line for market research. Database-free; needs `requests`, and `openpyxl` for workbooks.
+
+    python -m narxnoma.research run --targets products.xlsx --out research.xlsx
+    python -m narxnoma.research run --targets list.txt --category smartphones --sources uzum,olcha
+    python -m narxnoma.research workbook --from research.json --out research.xlsx --pivots ooxml
+    python -m narxnoma.research check research.xlsx
+
+`run` sweeps (24 h cache), matches, saves research.json next to the workbook so the workbook can
+be rebuilt without fetching, and builds the workbook. Also reachable as `python -m narxnoma.cli
+research ...`.
+"""
+
+import argparse
+import logging
+import sys
+from pathlib import Path
+
+from narxnoma.matching.keys import CATEGORIES
+
+
+def _add_build_args(p: argparse.ArgumentParser) -> None:
+    p.add_argument(
+        "--pivots",
+        choices=("auto", "com", "ooxml", "none"),
+        default="auto",
+        help="PivotTables: auto = Excel COM if present else raw OOXML (default); "
+        "com = Excel only (slicers, chart, Data Model); ooxml = no Excel needed; none",
+    )
+    p.add_argument(
+        "--model",
+        choices=("auto", "yes", "no"),
+        default="auto",
+        help="Power Pivot Data Model with the COM pivots: auto = probe, fall back to flat "
+        "pivots (default); yes = fail if unavailable; no = skip",
+    )
+    p.add_argument(
+        "--no-verify",
+        action="store_true",
+        help="skip the Excel recalculation check of the finished file",
+    )
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="narxnoma.research",
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    run = sub.add_parser("run", help="targets -> markets -> matched offers -> workbook")
+    run.add_argument("--targets", required=True, help=".xlsx / .csv / .txt product list")
+    run.add_argument(
+        "--category", choices=sorted(CATEGORIES), help="category for products whose file gives none"
+    )
+    run.add_argument("--sources", help="comma-separated markets (default: all but glotr)")
+    run.add_argument("--out", required=True, help="output .xlsx")
+    run.add_argument("--json", help="where to save the research data (default: <out>.json)")
+    run.add_argument("--title", default="Market research")
+    run.add_argument("--cache-dir", default="database/research_cache")
+    run.add_argument("--max-age-h", type=float, default=24)
+    run.add_argument("--force", action="store_true", help="ignore the sweep cache")
+    run.add_argument(
+        "--usd-rate", type=float, help="UZS per USD for USD inputs (default: central bank, live)"
+    )
+    _add_build_args(run)
+
+    wb = sub.add_parser("workbook", help="rebuild a workbook from saved research.json, no fetching")
+    wb.add_argument("--from", dest="src", required=True, help="research.json from a previous run")
+    wb.add_argument("--out", required=True)
+    _add_build_args(wb)
+
+    chk = sub.add_parser("check", help="open a workbook in Excel, recalculate, report errors")
+    chk.add_argument("path")
+    chk.add_argument("--save", action="store_true", help="also write the calculated values back")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
+    if args.cmd == "check":
+        from narxnoma.research.excel import pivots as com
+
+        res = com.verify(args.path, save=args.save)
+        print(res)
+        n = com.error_count(res)
+        return 0 if res.ok and not n else 1
+
+    from narxnoma.research.build import make_workbook
+    from narxnoma.research.model import Research
+
+    if args.cmd == "workbook":
+        research = Research.from_json(args.src)
+    else:
+        from narxnoma.research.run import run_research
+        from narxnoma.research.targets import load_targets
+
+        targets = load_targets(args.targets, default_category=args.category)
+        if not targets:
+            logging.error("no products found in %s", args.targets)
+            return 1
+        markets = [m.strip() for m in args.sources.split(",")] if args.sources else None
+        research = run_research(
+            targets,
+            markets,
+            cache_dir=args.cache_dir,
+            max_age_h=args.max_age_h,
+            force=args.force,
+            title=args.title,
+            usd_rate=args.usd_rate,
+        )
+        js = Path(args.json) if args.json else Path(args.out).with_suffix(".json")
+        js.parent.mkdir(parents=True, exist_ok=True)
+        research.to_json(js)
+        logging.info("research data saved: %s", js)
+
+    info = make_workbook(
+        research, args.out, pivots=args.pivots, model=args.model, verify=not args.no_verify
+    )
+    print("\n".join(info["lines"]))
+    print(
+        f"wrote {info['out']}  pivots={info['pivots']}  "
+        f"products={info['layout']['n_products']}  offers={info['layout']['n_offers']}"
+    )
+    return 1 if info["errors"] else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/collect.py
+================================================
+"""Gather the markets' listings for a research run.
+
+Sweep, don't search per product: sweeping each (market, category) once costs a few hundred
+requests, gives every target the same candidate pool, and -- the part that matters -- lets a
+price be RE-MATCHED without re-fetching, so a matcher fix is a seconds-long re-run. Sweeps are
+cached on disk and reused for `max_age_h` hours; prices move daily, so the default is 24.
+
+Search-only sources (`can_sweep` is False -- mediapark) are reached one query per target.
+glotr is left out of the default set: its robots.txt declares `Crawl-delay: 10` and it is
+crawled only by grant, in its own process with NARXNOMA_MIN_DELAY=10 NARXNOMA_MAX_DELAY=11.
+"""
+
+import dataclasses
+import json
+import logging
+import os
+import re
+import time
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from pathlib import Path
+
+from narxnoma.matching.keys import CATEGORY_PREFIX
+from narxnoma.research.model import Target
+from narxnoma.sources import SOURCES
+
+logger = logging.getLogger("narxnoma.research")
+
+#: Market column order, fixed so two runs can be diffed side by side. Removing a market that
+#: matched nothing would silently change the shape of the file between runs.
+MARKET_ORDER = (
+    "uzum",
+    "texnomart",
+    "mediapark",
+    "alifshop",
+    "beemarket",
+    "olcha",
+    "idea",
+    "asaxiy",
+    "radius",
+    "openshop",
+    "glotr",
+)
+DEFAULT_EXCLUDE = frozenset({"glotr"})
+
+
+def default_markets() -> list[str]:
+    return [m for m in MARKET_ORDER if m in SOURCES and m not in DEFAULT_EXCLUDE]
+
+
+@dataclass
+class Collected:
+    #: (market, category) -> listing dicts
+    sweeps: dict = field(default_factory=dict)
+    #: market -> target name -> listing dicts (search-only markets)
+    searches: dict = field(default_factory=dict)
+    #: market -> ISO time of its OLDEST catalogue -- a survey is only as fresh as its stalest column
+    fetched_at: dict = field(default_factory=dict)
+    #: market -> why it has no (or partial) data
+    notes: dict = field(default_factory=dict)
+
+
+def _iso(ts: float) -> str:
+    return datetime.fromtimestamp(ts, timezone.utc).astimezone().isoformat(timespec="seconds")
+
+
+def _listing_dict(listing) -> dict:
+    d = dataclasses.asdict(listing)
+    d.pop("raw", None)
+    return d
+
+
+def _sweep_cached(slug: str, category: str, cache_dir: Path, max_age_h: float, force: bool):
+    """-> (listings, fetched_ts). Raises on a failed sweep: a half-swept catalogue must not
+    be recorded as a success."""
+    path = cache_dir / f"{slug}__{category}.json"
+    if path.exists() and not force:
+        age_h = (time.time() - path.stat().st_mtime) / 3600
+        if age_h <= max_age_h:
+            logger.info("%-10s %-12s cache hit (%.1f h old)", slug, category, age_h)
+            return json.loads(path.read_text(encoding="utf-8")), path.stat().st_mtime
+    logger.info("%-10s %-12s sweeping...", slug, category)
+    listings = [_listing_dict(x) for x in SOURCES[slug].sweep(category)]
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(".tmp")
+    tmp.write_text(json.dumps(listings, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, path)  # never leave a truncated cache behind
+    logger.info("%-10s %-12s %d listings", slug, category, len(listings))
+    return listings, path.stat().st_mtime
+
+
+def search_query(target: Target) -> str:
+    """Keep the query close to verbatim: a ranking autocomplete (mediapark) needs the RAM/storage
+    and colour words to rank the exact variant into its short list. Only the leading category
+    noun is dropped."""
+    nouns = "|".join(re.escape(p) for p in CATEGORY_PREFIX.values())
+    return re.sub(rf"^\s*(?:{nouns}|Смартфон|Телевизор)\s+", "", target.name, flags=re.I).strip()
+
+
+def collect(
+    markets: list[str],
+    targets: list[Target],
+    cache_dir: str | Path,
+    max_age_h: float = 24,
+    force: bool = False,
+) -> Collected:
+    out = Collected()
+    cache = Path(cache_dir)
+    categories = sorted({t.category for t in targets if t.category})
+    for slug in markets:
+        src = SOURCES[slug]
+        stamps = []
+        if src.can_sweep:
+            for cat in categories:
+                try:
+                    listings, ts = _sweep_cached(slug, cat, cache, max_age_h, force)
+                except Exception as exc:  # noqa: BLE001 -- one source must not end the run
+                    logger.error("%s/%s failed: %s", slug, cat, exc)
+                    out.notes[slug] = (
+                        out.notes.get(slug, "") + f"{cat}: sweep failed ({exc}). "
+                    ).strip()
+                    continue
+                out.sweeps[(slug, cat)] = listings
+                stamps.append(ts)
+                if not listings:
+                    out.notes[slug] = (out.notes.get(slug, "") + f"{cat}: no listings. ").strip()
+        else:
+            hits, failures = {}, 0
+            todo = [t for t in targets if t.category]
+            for i, t in enumerate(todo, 1):
+                try:
+                    hits[t.name] = [_listing_dict(x) for x in src.search(search_query(t))]
+                except Exception as exc:  # noqa: BLE001
+                    failures += 1
+                    logger.warning("%s search %r failed: %s", slug, t.name, exc)
+                    hits[t.name] = []
+                if i % 25 == 0:
+                    logger.info("%-10s search %d/%d", slug, i, len(todo))
+            out.searches[slug] = hits
+            stamps.append(time.time())
+            if failures:
+                out.notes[slug] = f"{failures} of {len(todo)} searches failed."
+        if stamps:
+            out.fetched_at[slug] = _iso(min(stamps))
+        elif slug not in out.notes:
+            out.notes[slug] = "no data collected."
+    return out
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/match.py
+================================================
+"""Apply the matching engine to a target list and keep every accepted offer.
+
+The matcher decides identity; this module only runs it at scale. Two choices carry over
+from the surveys this was extracted from, because each one was a defect once:
+
+* **Bucket by brand first.** `score_match` hard-rejects on a brand mismatch before anything
+  else, so comparing a Samsung target against a store's 400 Apple listings is pure waste. A
+  listing whose brand could not be read goes in the `None` bucket and is always considered --
+  dropping it would lose every listing whose brand we merely failed to parse.
+* **The accept threshold depends on the category.** A phone can score 50 (brand 10 + storage 20
+  + RAM 10 + model 15 + colour 5) against ACCEPT_THRESHOLD 30. A television has no storage,
+  RAM or identity-colour, so a *perfect* match -- brand plus a bidirectional model-code match
+  -- scores exactly 25 and a threshold of 30 empties the category. 25 still demands the brand
+  AND the model tokens in both directions, so it is the same identity, not a looser one.
+"""
+
+import re
+from collections import defaultdict
+
+from narxnoma.matching import ACCEPT_THRESHOLD, extract_features, score_match
+from narxnoma.research.model import Offer, Target
+
+NON_PHONE_ACCEPT = 25
+
+
+def accept_threshold(category: str) -> int:
+    return ACCEPT_THRESHOLD if category == "smartphones" else NON_PHONE_ACCEPT
+
+
+# Words that differ between two listings of the SAME product and carry no identity: the
+# category noun, marketing, units, packaging language. Used only for the Name-delta audit
+# column, never for matching.
+_NOISE = re.compile(
+    r"^(?:кондиционер\w*|телевизор\w*|холодильник\w*|морозильник\w*|стиральн\w*|машин\w*|"
+    r"смартфон\w*|ноутбук\w*|televizor\w*|konditsioner\w*|muzlatgich\w*|sovutgich\w*|kir|yuvish|"
+    r"mashina\w*|автомат|inverter|invertor|инвертор\w*|inv|smart|смарт|android|андроид|tv|тв|"
+    r"led|qled|oled|uhd|fhd|hd|4k|8k|btu|вт|kg|кг|л|litr|дюйм\w*|new|новый|воздуха|сплит|"
+    r"система|белый|черный|серый|g|dc|full|art|ru|uz|с|и|в|на)$",
+    re.I,
+)
+
+
+def name_delta(target: str, matched: str) -> str:
+    """Significant words in one name but not the other.
+
+    A non-empty value is NOT an error: the matcher deliberately collapses decorated variants of
+    one catalogue code. But `ASW-H12A4/FADR` vs `ASW-H12A4/LR1DI` can be a different indoor unit
+    at a different price, and the number alone cannot show it. These are the rows to read.
+    """
+
+    def toks(s):
+        return {
+            t
+            for t in re.split(r"[^0-9a-zA-Zа-яА-ЯёЁ]+", (s or "").lower())
+            if len(t) > 1 and not _NOISE.match(t)
+        }
+
+    a, b = toks(target), toks(matched)
+    parts = []
+    if a - b:
+        parts.append("ours: " + " ".join(sorted(a - b)[:6]))
+    if b - a:
+        parts.append("theirs: " + " ".join(sorted(b - a)[:6]))
+    return " | ".join(parts)
+
+
+def index_by_brand(listings: list[dict], category: str) -> dict:
+    buckets: dict = defaultdict(list)
+    for listing in listings:
+        feats = extract_features(listing["name_raw"], category)
+        buckets[feats.brand].append((listing, feats))
+    return buckets
+
+
+def match_target(
+    target: Target, market: str, buckets: dict | None, extra_listings: list[dict] | None = None
+) -> list[Offer]:
+    """Every accepted offer of one market for one target, cheapest first."""
+    if not target.category:
+        return []
+    tfeat = extract_features(target.name, target.category)
+    threshold = accept_threshold(target.category)
+    candidates: list = []
+    if buckets is not None:
+        candidates = list(buckets.get(tfeat.brand, []))
+        if tfeat.brand is not None:
+            candidates += buckets.get(None, [])
+    if extra_listings:
+        candidates += [
+            (x, extract_features(x["name_raw"], target.category)) for x in extra_listings
+        ]
+
+    offers, seen = [], set()
+    for listing, cfeat in candidates:
+        score = score_match(tfeat, cfeat)
+        if score < threshold:
+            continue
+        ident = (listing.get("source_key"), listing["url"], listing["price"])
+        if ident in seen:  # the None bucket can repeat a brand bucket's row
+            continue
+        seen.add(ident)
+        offers.append(
+            Offer(
+                target=target.name,
+                market=market,
+                listing_name=listing["name_raw"],
+                price=int(listing["price"]),
+                url=listing["url"],
+                availability=listing.get("availability", "UNKNOWN"),
+                score=score,
+                name_delta=name_delta(target.name, listing["name_raw"]),
+                source_key=listing.get("source_key"),
+            )
+        )
+    offers.sort(key=lambda o: (o.price, -o.score))
+    return offers
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/model.py
+================================================
+"""What a research run produces, and the JSON that lets a workbook be rebuilt without fetching."""
+
+import json
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
+
+
+@dataclass
+class Target:
+    """One product the user wants researched."""
+
+    name: str
+    category: str | None = None  # a narxnoma category slug, or None when unknown
+    our_price: float | None = None  # in `currency`; None when the user has no price for it
+    currency: str = "UZS"
+    note: str = ""
+    extra: dict = field(default_factory=dict)  # any other column of the input, kept as-is
+
+
+@dataclass
+class Offer:
+    """One accepted listing for one target. Nothing is reduced here: the workbook keeps them all."""
+
+    target: str
+    market: str
+    listing_name: str
+    price: int
+    url: str
+    availability: str = "UNKNOWN"
+    score: int = 0
+    name_delta: str = ""
+    source_key: str | None = None
+
+
+@dataclass
+class Research:
+    targets: list[Target]
+    offers: list[Offer]
+    markets: list[str]  # fixed column order
+    fetched_at: dict[str, str] = field(default_factory=dict)  # market -> ISO time of its catalogue
+    notes: dict[str, str] = field(default_factory=dict)  # market -> why it has no data
+    run_at: str = ""
+    usd_rate: float | None = None
+    usd_rate_date: str = ""
+    title: str = "Market research"
+
+    def to_json(self, path: str | Path) -> None:
+        Path(path).write_text(
+            json.dumps(asdict(self), ensure_ascii=False, indent=1), encoding="utf-8"
+        )
+
+    @classmethod
+    def from_json(cls, path: str | Path) -> "Research":
+        d = json.loads(Path(path).read_text(encoding="utf-8"))
+        return cls(
+            targets=[Target(**t) for t in d["targets"]],
+            offers=[Offer(**o) for o in d["offers"]],
+            markets=d["markets"],
+            fetched_at=d.get("fetched_at", {}),
+            notes=d.get("notes", {}),
+            run_at=d.get("run_at", ""),
+            usd_rate=d.get("usd_rate"),
+            usd_rate_date=d.get("usd_rate_date", ""),
+            title=d.get("title", "Market research"),
+        )
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/run.py
+================================================
+"""One call from a product list to a `Research`: collect, then match."""
+
+import logging
+from datetime import datetime
+from pathlib import Path
+
+from narxnoma.research.collect import MARKET_ORDER, collect, default_markets
+from narxnoma.research.match import index_by_brand, match_target
+from narxnoma.research.model import Research, Target
+from narxnoma.sources import SOURCES
+from narxnoma.sources.http import get_json, polite_session
+
+logger = logging.getLogger("narxnoma.research")
+
+CBU_URL = "https://cbu.uz/ru/arkhiv-kursov-valyut/json/USD/"
+
+
+def cbu_usd_rate() -> tuple[float, str]:
+    """Official USD rate in UZS and its date, from the central bank. Raises when unreachable:
+    a silent default would put a wrong number in every converted price."""
+    data = get_json(polite_session(), CBU_URL)
+    row = data[0] if isinstance(data, list) else data
+    return float(str(row["Rate"]).replace(",", ".")), str(row["Date"])
+
+
+def run_research(
+    targets: list[Target],
+    markets: list[str] | None = None,
+    cache_dir: str | Path = "database/research_cache",
+    max_age_h: float = 24,
+    force: bool = False,
+    title: str = "Market research",
+    usd_rate: float | None = None,
+) -> Research:
+    markets = [m for m in MARKET_ORDER if m in (markets or default_markets())]
+    unknown = [m for m in (markets or []) if m not in SOURCES]
+    if unknown:
+        raise ValueError(f"unknown market(s): {unknown}")
+    rate_date = ""
+    if any(t.currency == "USD" and t.our_price for t in targets):
+        if usd_rate is None:
+            usd_rate, rate_date = cbu_usd_rate()
+        else:
+            rate_date = "given on the command line"
+
+    got = collect(markets, targets, cache_dir, max_age_h=max_age_h, force=force)
+    pools = {key: index_by_brand(listings, key[1]) for key, listings in got.sweeps.items()}
+
+    offers = []
+    for t in targets:
+        if not t.category:
+            continue
+        for m in markets:
+            if SOURCES[m].can_sweep:
+                offers += match_target(t, m, pools.get((m, t.category)))
+            else:
+                offers += match_target(t, m, None, got.searches.get(m, {}).get(t.name))
+    logger.info(
+        "%d offers for %d of %d products",
+        len(offers),
+        len({o.target for o in offers}),
+        len(targets),
+    )
+    notes = dict(got.notes)
+    no_cat = [t.name for t in targets if not t.category]
+    if no_cat:
+        logger.warning(
+            "%d products have no category and were not matched (pass --category)", len(no_cat)
+        )
+    return Research(
+        targets=targets,
+        offers=offers,
+        markets=markets,
+        fetched_at=got.fetched_at,
+        notes=notes,
+        run_at=datetime.now().isoformat(timespec="seconds"),
+        usd_rate=usd_rate,
+        usd_rate_date=rate_date,
+        title=title,
+    )
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/targets.py
+================================================
+"""Read the product list the user wants researched.
+
+Accepted shapes, picked by file extension:
+
+    .xlsx / .xlsm   first sheet, header row; columns found by name (see ALIASES)
+    .csv            same, UTF-8 (with or without BOM), delimiter sniffed
+    .txt            one product name per line; "name;price" or "name<TAB>price" carries a price
+
+Only the name is required. A price is "our price" -- the baseline every delta is measured
+against; with none, the workbook still compares the markets with each other. A category is a
+narxnoma slug (see `CATEGORY_ALIASES` for the words accepted); with none, the run-wide
+`default_category` applies.
+"""
+
+import csv
+import re
+from pathlib import Path
+
+from narxnoma.matching.keys import CATEGORIES
+from narxnoma.research.model import Target
+
+ALIASES = {
+    "name": (
+        "name",
+        "product",
+        "product name",
+        "title",
+        "item",
+        "товар",
+        "наименование",
+        "название",
+        "mahsulot",
+        "nomi",
+    ),
+    "price": ("our price", "price", "our price (sum)", "наша цена", "цена", "narx", "baho"),
+    "category": ("category", "категория", "turkum", "kategoriya"),
+    "currency": ("currency", "валюта", "valyuta"),
+    "note": ("note", "notes", "comment", "примечание", "комментарий"),
+}
+
+CATEGORY_ALIASES = {
+    "smartphones": (
+        "smartphones",
+        "smartphone",
+        "phone",
+        "phones",
+        "смартфон",
+        "смартфоны",
+        "телефон",
+        "телефоны",
+        "смартфонлар",
+        "smartfon",
+        "telefon",
+    ),
+    "televisions": (
+        "televisions",
+        "television",
+        "tv",
+        "tvs",
+        "тв",
+        "телевизор",
+        "телевизоры",
+        "televizor",
+    ),
+    "laptops": ("laptops", "laptop", "ноутбук", "ноутбуки", "noutbuk"),
+    "acs": (
+        "acs",
+        "ac",
+        "air conditioner",
+        "air conditioners",
+        "кондиционер",
+        "кондиционеры",
+        "konditsioner",
+    ),
+    "fridges": ("fridges", "fridge", "refrigerator", "холодильник", "холодильники", "muzlatgich"),
+    "washers": (
+        "washers",
+        "washer",
+        "washing machine",
+        "стиральная машина",
+        "стиральные машины",
+        "kir yuvish mashinasi",
+    ),
+    "ovens": ("ovens", "oven", "духовой шкаф", "духовка", "духовые шкафы", "duxovka"),
+}
+_CAT_LOOKUP = {a: slug for slug, names in CATEGORY_ALIASES.items() for a in names}
+
+
+def category_slug(value) -> str | None:
+    """A narxnoma slug for whatever the user wrote, or None."""
+    if value is None:
+        return None
+    v = str(value).strip().lower()
+    if v in CATEGORIES:
+        return v
+    return _CAT_LOOKUP.get(v)
+
+
+def _norm_header(h) -> str:
+    return re.sub(r"\s+", " ", str(h or "").strip().lower())
+
+
+def _map_columns(headers: list) -> dict[str, int]:
+    found: dict[str, int] = {}
+    normed = [_norm_header(h) for h in headers]
+    for key, names in ALIASES.items():
+        for want in names:
+            if want in normed and key not in found:
+                found[key] = normed.index(want)
+    return found
+
+
+def _to_price(v) -> float | None:
+    if v in (None, ""):
+        return None
+    if isinstance(v, (int, float)):
+        return float(v) if v > 0 else None
+    s = re.sub(r"[^\d.,]", "", str(v).replace("\xa0", "").replace(" ", ""))
+    if not s:
+        return None
+    if "," in s and "." in s:
+        s = s.replace(",", "")
+    elif "," in s:
+        s = s.replace(",", ".") if len(s.rsplit(",", 1)[1]) <= 2 else s.replace(",", "")
+    try:
+        p = float(s)
+    except ValueError:
+        return None
+    return p if p > 0 else None
+
+
+def _cell(row, cols, key):
+    i = cols.get(key)
+    return row[i] if i is not None and i < len(row) else None
+
+
+def _rows_to_targets(headers: list, rows, default_category: str | None) -> list[Target]:
+    cols = _map_columns(headers)
+    if "name" not in cols:
+        raise ValueError(
+            f"no product-name column found in {list(headers)!r}; "
+            f"name one of: {', '.join(ALIASES['name'])}"
+        )
+    known = set(cols.values())
+    out, seen = [], set()
+    for row in rows:
+        name = str(_cell(row, cols, "name") or "").strip()
+        if not name or name.lower() in seen:
+            continue
+        seen.add(name.lower())
+        cur = str(_cell(row, cols, "currency") or "UZS").strip().upper()
+        out.append(
+            Target(
+                name=name,
+                category=category_slug(_cell(row, cols, "category")) or default_category,
+                our_price=_to_price(_cell(row, cols, "price")),
+                currency="USD" if cur in ("USD", "$", "ДОЛЛАР") else "UZS",
+                note=str(_cell(row, cols, "note") or ""),
+                extra={
+                    str(headers[i]): row[i]
+                    for i in range(min(len(headers), len(row)))
+                    if i not in known and headers[i] and row[i] not in (None, "")
+                },
+            )
+        )
+    return out
+
+
+def load_targets(path: str | Path, default_category: str | None = None) -> list[Target]:
+    p = Path(path)
+    ext = p.suffix.lower()
+    if ext in (".xlsx", ".xlsm"):
+        from openpyxl import load_workbook  # optional dependency, only for xlsx input
+
+        ws = load_workbook(p, read_only=True, data_only=True).worksheets[0]
+        it = ws.iter_rows(values_only=True)
+        headers = list(next(it))
+        return _rows_to_targets(headers, [list(r) for r in it], default_category)
+    if ext == ".csv":
+        text = p.read_text(encoding="utf-8-sig")
+        dialect = csv.Sniffer().sniff(text[:4096], delimiters=",;\t")
+        rows = list(csv.reader(text.splitlines(), dialect))
+        return _rows_to_targets(rows[0], rows[1:], default_category)
+    if ext == ".txt":
+        out, seen = [], set()
+        for line in p.read_text(encoding="utf-8-sig").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = re.split(r"\t|;", line, maxsplit=1)
+            name = parts[0].strip()
+            if name.lower() in seen:
+                continue
+            seen.add(name.lower())
+            out.append(
+                Target(
+                    name=name,
+                    category=default_category,
+                    our_price=_to_price(parts[1]) if len(parts) > 1 else None,
+                )
+            )
+        return out
+    raise ValueError(f"unsupported target file type {ext!r}; use .xlsx, .csv or .txt")
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/workbook.py
+================================================
+"""The analysable workbook: a database you can pivot, and formulas that follow your edits.
+
+A static survey file is a picture. This one is a small database plus a view of it:
+
+    Offers    Excel Table `tblOffers`   one row per (product x market) offer, every one kept. The
+                                        pivot source. Category / Baseline / Delta / Band are
+                                        formulas, so a table row you add fills itself in.
+    Products  Excel Table `tblProducts` one row per researched product. Our price is an INPUT
+                                        (yellow): change it and every delta, colour, band follows.
+    Markets   Excel Table `tblMarkets`  one row per market: coverage, delta, wins, freshness.
+    Prices    product x market grid     the cheapest accepted offer per market, as formulas over
+                                        `tblOffers`, plus min / median / delta columns. Heat map.
+    Heatmap   product x market grid     each cell's difference from baseline, colour scale.
+    Links     product x market grid     as-fetched snapshot, every price a hyperlink to its offer.
+    Settings  thresholds + baseline     named cells (cfg_par, cfg_mid, cfg_sat, cfg_baseline) that
+                                        the heat map, the bands and the pivots all read.
+    Notes     provenance                every derived number defined, every market's freshness.
+
+The heat map is CONDITIONAL FORMATTING, never a baked fill. A baked fill goes stale the moment
+a price is edited, and a wrong colour is read faster than the number it contradicts. Each rule
+compares a cell to ITS ROW's baseline -- which a colour scale cannot do, a formula rule can --
+and takes its thresholds from Settings, so it is data-driven and survives a re-sort.
+
+PivotTables are not made here: openpyxl cannot write them and would drop them on re-save. Run
+`excel/` (COM, or the raw-OOXML writer) AFTER this module, and never re-save the result through
+openpyxl: it silently removes slicers.
+"""
+
+from datetime import datetime
+
+from openpyxl import Workbook
+from openpyxl.chart import BarChart, Reference
+from openpyxl.formatting.rule import ColorScaleRule, FormulaRule
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.utils import get_column_letter as L
+from openpyxl.workbook.defined_name import DefinedName
+from openpyxl.workbook.properties import CalcProperties
+from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.worksheet.hyperlink import Hyperlink
+from openpyxl.worksheet.table import Table, TableStyleInfo
+
+from narxnoma.research.model import Research
+
+NAVY = "1F3864"
+HEADER_FILL = PatternFill("solid", fgColor=NAVY)
+HEADER_FONT = Font(bold=True, color="FFFFFF")
+INPUT_FILL = PatternFill("solid", fgColor="FFF2CC")
+LINK_FONT = Font(color="0563C1", underline="single")
+MONEY = "#,##0"
+PCT = "+0.0%;-0.0%;0.0%"
+
+# heat colours, darkest = furthest from the baseline. Red: the market is CHEAPER than the
+# baseline (we are exposed); green: the market is dearer (our price is competitive).
+HEAT = {
+    "cheap3": "F8696B",
+    "cheap2": "FBA39C",
+    "cheap1": "FDD9D6",
+    "dear1": "DDF0E1",
+    "dear2": "A9D8B2",
+    "dear3": "63BE7B",
+}
+
+BANDS = (
+    "1 Market much cheaper",
+    "2 Market cheaper",
+    "3 Market slightly cheaper",
+    "4 About equal",
+    "5 Market slightly dearer",
+    "6 Market dearer",
+    "7 Market much dearer",
+)
+
+
+def tr(table: str, col: str) -> str:
+    """Structured reference to a column of the current row."""
+    return f"{table}[[#This Row],[{col}]]"
+
+
+def _header(ws, row, titles, widths=None):
+    for i, t in enumerate(titles, 1):
+        c = ws.cell(row=row, column=i, value=t)
+        c.fill, c.font = HEADER_FILL, HEADER_FONT
+        c.alignment = Alignment(wrap_text=True, vertical="center", horizontal="center")
+        if widths:
+            ws.column_dimensions[L(i)].width = widths[i - 1]
+    ws.row_dimensions[row].height = 32
+
+
+def _table(ws, name, ref, style="TableStyleMedium2"):
+    t = Table(displayName=name, ref=ref)
+    t.tableStyleInfo = TableStyleInfo(name=style, showRowStripes=True)
+    ws.add_table(t)
+    return t
+
+
+def _calc_columns(ws, table: Table, formulas: dict[str, str]) -> None:
+    """Mark columns as calculated so a row added to the table fills itself in.
+
+    `_initialise_columns()` names every column "Column1..N"; the names must be put back from the
+    header cells or Excel refuses to open the file (table column names must equal the header text).
+    """
+    from openpyxl.worksheet.table import TableFormula
+
+    table._initialise_columns()
+    first = table.ref.split(":")[0]
+    row = int("".join(ch for ch in first if ch.isdigit()))
+    for i, col in enumerate(table.tableColumns, 1):
+        col.name = str(ws.cell(row=row, column=i).value)
+        if col.name in formulas:
+            col.calculatedColumnFormula = TableFormula(attr_text=formulas[col.name])
+
+
+def _uzs(target, usd_rate):
+    if target.our_price is None:
+        return None
+    if target.currency == "USD":
+        return round(target.our_price * usd_rate) if usd_rate else None
+    return target.our_price
+
+
+PIVOT_PLACEHOLDERS = (
+    ("Pivot by category", "Average market price vs baseline, by category and market"),
+    ("Pivot price matrix", "Cheapest price by product and market"),
+    ("Pivot market bands", "Offers per heat band, by market"),
+)
+
+
+def build_workbook(r: Research, path: str, pivot_placeholders: bool = False) -> dict:
+    """Write the workbook. Returns the layout facts the pivot step needs.
+
+    `pivot_placeholders=True` adds empty 'Pivot ...' sheets for the raw-OOXML pivot writer
+    (excel/ooxml_pivot.py) to land on. The COM driver creates its own sheets: leave this False.
+    """
+    markets = list(r.markets)
+    nm = len(markets)
+    n = len(r.targets)
+    if not n or not nm:
+        raise ValueError("a workbook needs at least one product and one market")
+    wb = Workbook()
+    wb.calculation = CalcProperties(fullCalcOnLoad=True)
+    wb.properties.title = r.title
+    wb.properties.creator = "narxnoma"
+    wb.properties.subject = "Market research: Offers / Products / Markets tables, Prices heat map"
+
+    ws_start = wb.active
+    ws_start.title = "Start"
+    ws_prices = wb.create_sheet("Prices")
+    ws_heat = wb.create_sheet("Heatmap")
+    if pivot_placeholders:
+        for name, title in PIVOT_PLACEHOLDERS:
+            ph = wb.create_sheet(name)
+            ph["A1"], ph["A1"].font = title, Font(bold=True, size=14)
+            ph["A2"], ph["A2"].font = (
+                (
+                    "Built by Excel when this file is opened (refresh on load). "
+                    "Data > Refresh All after edits."
+                ),
+                Font(italic=True, color="808080"),
+            )
+    ws_off = wb.create_sheet("Offers")
+    ws_prod = wb.create_sheet("Products")
+    ws_mkt = wb.create_sheet("Markets")
+    ws_links = wb.create_sheet("Links")
+    ws_set = wb.create_sheet("Settings")
+    ws_notes = wb.create_sheet("Notes")
+
+    # ------------------------------------------------------------------ Settings
+    _header(ws_set, 1, ["Setting", "Value", "What it does"], [34, 16, 90])
+    settings = [
+        (
+            "Par band (+/-)",
+            0.02,
+            "cfg_par",
+            "Differences inside this band count as 'about equal' (no colour).",
+        ),
+        ("Moderate difference from", 0.10, "cfg_mid", "Medium red / green from here."),
+        (
+            "Strong difference from",
+            0.20,
+            "cfg_sat",
+            "Darkest red / green from here; the Heatmap colour scale saturates here.",
+        ),
+        (
+            "Baseline",
+            "Our price",
+            "cfg_baseline",
+            "What every delta is measured against: 'Our price' or 'Market median'. "
+            "A product with no price of ours always falls back to the median.",
+        ),
+    ]
+    for i, (label, val, name, note) in enumerate(settings, 2):
+        ws_set.cell(row=i, column=1, value=label)
+        c = ws_set.cell(row=i, column=2, value=val)
+        c.fill = INPUT_FILL
+        if name != "cfg_baseline":
+            c.number_format = "0%"
+        ws_set.cell(row=i, column=3, value=note).alignment = Alignment(
+            wrap_text=True, vertical="top"
+        )
+        wb.defined_names[name] = DefinedName(name, attr_text=f"Settings!$B${i}")
+    dv = DataValidation(
+        type="decimal",
+        operator="between",
+        formula1="0",
+        formula2="1",
+        showErrorMessage=True,
+        errorTitle="Threshold",
+        error="Enter a fraction between 0 and 1 (0.1 = 10%).",
+    )
+    ws_set.add_data_validation(dv)
+    dv.add("B2:B4")
+    dv2 = DataValidation(
+        type="list", formula1='"Our price,Market median"', allow_blank=False, showErrorMessage=True
+    )
+    ws_set.add_data_validation(dv2)
+    dv2.add("B5")
+    ws_set["A8"] = "Heat-map legend (market price vs baseline)"
+    ws_set["A8"].font = Font(bold=True)
+    legend = [
+        ("cheap3", "Market much cheaper (<= -strong)"),
+        ("cheap2", "Market cheaper (<= -moderate)"),
+        ("cheap1", "Market slightly cheaper"),
+        (None, "About equal (inside the par band)"),
+        ("dear1", "Market slightly dearer"),
+        ("dear2", "Market dearer (>= +moderate)"),
+        ("dear3", "Market much dearer (>= +strong)"),
+    ]
+    for i, (key, text) in enumerate(legend, 9):
+        sw = ws_set.cell(row=i, column=1, value=text)
+        if key:
+            sw.fill = PatternFill("solid", fgColor=HEAT[key])
+    ws_set.cell(row=16, column=1, value="Bold border = the cheapest price in its row").font = Font(
+        bold=True
+    )
+
+    # ------------------------------------------------------ Products (inputs + per-product facts)
+    # column order is fixed up front: later formulas address columns by header name
+    extra_keys = sorted({k for t in r.targets for k in t.extra})
+    p_in = [
+        "Product",
+        "Category",
+        "Our price",
+        "Currency",
+        "Our price original",
+        "Note",
+    ] + extra_keys
+    p_calc = ["Baseline", "Offers", "Cheapest", "Highest", "Average", "Ours vs cheapest"]
+    p_cols = p_in + p_calc
+    pc = {name: i for i, name in enumerate(p_cols, 1)}
+    _header(
+        ws_prod,
+        1,
+        p_cols,
+        [52, 16, 16, 9, 16, 28] + [18] * len(extra_keys) + [16, 9, 16, 16, 16, 16],
+    )
+    prices_median_col = 3 + nm + 4  # Prices: A B C | markets | Baseline Matched Min Median ...
+    for i, t in enumerate(r.targets, 2):
+        ws_prod.cell(row=i, column=pc["Product"], value=t.name)
+        ws_prod.cell(row=i, column=pc["Category"], value=t.category or "")
+        up = _uzs(t, r.usd_rate)
+        c = ws_prod.cell(row=i, column=pc["Our price"], value=up)
+        c.number_format, c.fill = MONEY, INPUT_FILL
+        ws_prod.cell(row=i, column=pc["Category"]).fill = INPUT_FILL
+        ws_prod.cell(row=i, column=pc["Currency"], value=t.currency)
+        if t.our_price is not None:
+            ws_prod.cell(
+                row=i, column=pc["Our price original"], value=t.our_price
+            ).number_format = "#,##0.##"
+        ws_prod.cell(row=i, column=pc["Note"], value=t.note)
+        for k in extra_keys:
+            ws_prod.cell(row=i, column=pc[k], value=t.extra.get(k))
+        mc = L(prices_median_col)
+        f = {
+            "Baseline": (
+                f'=IF(AND(cfg_baseline="Our price",ISNUMBER({tr("tblProducts", "Our price")}),'
+                f"N({tr('tblProducts', 'Our price')})>0),{tr('tblProducts', 'Our price')},"
+                f"IFERROR(INDEX(Prices!${mc}:${mc},"
+                f'MATCH({tr("tblProducts", "Product")},Prices!$A:$A,0)),""))'
+            ),
+            "Offers": f"=COUNTIFS(tblOffers[Product],{tr('tblProducts', 'Product')})",
+            "Cheapest": (
+                f'=IF({tr("tblProducts", "Offers")}=0,"",_xlfn.MINIFS(tblOffers[Price],'
+                f"tblOffers[Product],{tr('tblProducts', 'Product')}))"
+            ),
+            "Highest": (
+                f'=IF({tr("tblProducts", "Offers")}=0,"",_xlfn.MAXIFS(tblOffers[Price],'
+                f"tblOffers[Product],{tr('tblProducts', 'Product')}))"
+            ),
+            "Average": (
+                f'=IF({tr("tblProducts", "Offers")}=0,"",AVERAGEIFS(tblOffers[Price],'
+                f"tblOffers[Product],{tr('tblProducts', 'Product')}))"
+            ),
+            "Ours vs cheapest": (
+                f"=IF(AND(ISNUMBER({tr('tblProducts', 'Our price')}),"
+                f"ISNUMBER({tr('tblProducts', 'Cheapest')})),"
+                f'{tr("tblProducts", "Our price")}/{tr("tblProducts", "Cheapest")}-1,"")'
+            ),
+        }
+        for name in p_calc:
+            c = ws_prod.cell(row=i, column=pc[name], value=f[name])
+            c.number_format = PCT if name == "Ours vs cheapest" else MONEY
+    prod_last = n + 1
+    t_prod = _table(ws_prod, "tblProducts", f"A1:{L(len(p_cols))}{prod_last}")
+    _calc_columns(ws_prod, t_prod, {k: ws_prod.cell(row=2, column=pc[k]).value[1:] for k in p_calc})
+    ws_prod.freeze_panes = "B2"
+
+    # ------------------------------------------------------------------ Offers (the pivot source)
+    o_cols = [
+        "Product",
+        "Category",
+        "Market",
+        "Listing",
+        "Price",
+        "Availability",
+        "Score",
+        "Name delta",
+        "URL",
+        "Fetched",
+        "Baseline",
+        "Delta vs baseline",
+        "Cheapest in product",
+        "Band",
+    ]
+    oc = {name: i for i, name in enumerate(o_cols, 1)}
+    _header(ws_off, 1, o_cols, [52, 16, 12, 56, 14, 14, 8, 36, 50, 20, 14, 12, 11, 26])
+    order = {t.name: i for i, t in enumerate(r.targets)}
+    offers = sorted(
+        r.offers,
+        key=lambda o: (
+            order.get(o.target, 0),
+            markets.index(o.market) if o.market in markets else 99,
+            o.price,
+        ),
+    )
+    o_f = {
+        "Category": (
+            f"=IFERROR(INDEX(tblProducts[Category],MATCH({tr('tblOffers', 'Product')},"
+            f'tblProducts[Product],0)),"")'
+        ),
+        "Baseline": (
+            f"=IFERROR(INDEX(tblProducts[Baseline],MATCH({tr('tblOffers', 'Product')},"
+            f'tblProducts[Product],0)),"")'
+        ),
+        "Delta vs baseline": (
+            f"=IF(AND(ISNUMBER({tr('tblOffers', 'Baseline')}),"
+            f"N({tr('tblOffers', 'Baseline')})>0),"
+            f'{tr("tblOffers", "Price")}/{tr("tblOffers", "Baseline")}-1,"")'
+        ),
+        "Cheapest in product": (
+            f"=IF({tr('tblOffers', 'Price')}=_xlfn.MINIFS(tblOffers[Price],"
+            f"tblOffers[Product],{tr('tblOffers', 'Product')}),1,0)"
+        ),
+    }
+    d = tr("tblOffers", "Delta vs baseline")
+    o_f["Band"] = (
+        f'=IF({d}="","",IF({d}<=-cfg_sat,"{BANDS[0]}",IF({d}<=-cfg_mid,"{BANDS[1]}",'
+        f'IF({d}<-cfg_par,"{BANDS[2]}",IF({d}<=cfg_par,"{BANDS[3]}",IF({d}<cfg_mid,"{BANDS[4]}",'
+        f'IF({d}<cfg_sat,"{BANDS[5]}","{BANDS[6]}")))))))'
+    )
+    fetched_default = r.run_at[:19].replace("T", " ")
+    for i, o in enumerate(offers, 2):
+        ws_off.cell(row=i, column=oc["Product"], value=o.target)
+        ws_off.cell(row=i, column=oc["Market"], value=o.market)
+        ws_off.cell(row=i, column=oc["Listing"], value=o.listing_name)
+        ws_off.cell(row=i, column=oc["Price"], value=o.price).number_format = MONEY
+        ws_off.cell(row=i, column=oc["Availability"], value=o.availability)
+        ws_off.cell(row=i, column=oc["Score"], value=o.score)
+        ws_off.cell(row=i, column=oc["Name delta"], value=o.name_delta)
+        u = ws_off.cell(row=i, column=oc["URL"], value=o.url)
+        u.hyperlink, u.font = o.url, LINK_FONT
+        ws_off.cell(
+            row=i,
+            column=oc["Fetched"],
+            value=(r.fetched_at.get(o.market) or fetched_default)[:19].replace("T", " "),
+        )
+        for name, f in o_f.items():
+            c = ws_off.cell(row=i, column=oc[name], value=f)
+            if name == "Baseline":
+                c.number_format = MONEY
+            elif name == "Delta vs baseline":
+                c.number_format = PCT
+    off_last = max(len(offers) + 1, 2)
+    if not offers:  # a table needs one data row to be valid
+        ws_off.cell(row=2, column=1, value="(no offers found)")
+    t_off = _table(ws_off, "tblOffers", f"A1:{L(len(o_cols))}{off_last}")
+    if offers:
+        _calc_columns(ws_off, t_off, {k: ws_off.cell(row=2, column=oc[k]).value[1:] for k in o_f})
+    ws_off.freeze_panes = "B2"
+    ws_off.auto_filter.ref = None
+
+    # --------------------------------------------------------- Prices (formula grid + heat map)
+    p_head = (
+        ["Product", "Category", "Our price"]
+        + markets
+        + [
+            "Baseline",
+            "Markets matched",
+            "Market min",
+            "Market median",
+            "Delta ours vs median",
+            "Cheapest market",
+        ]
+    )
+    _header(ws_prices, 1, p_head, [52, 16, 14] + [14] * nm + [14, 9, 14, 14, 12, 14])
+    m0, m1 = 4, 3 + nm  # first / last market column
+    bcol, ncol, mincol, medcol, dcol, chcol = (m1 + k for k in range(1, 7))
+    assert medcol == prices_median_col
+
+    def R(row):
+        return f"{L(m0)}{row}:{L(m1)}{row}"
+
+    for i, t in enumerate(r.targets, 2):
+        key = f"$A{i}"
+        ws_prices.cell(row=i, column=1, value=f"=INDEX(tblProducts[Product],{i - 1})")
+        ws_prices.cell(row=i, column=2, value=f"=INDEX(tblProducts[Category],{i - 1})")
+        c = ws_prices.cell(
+            row=i,
+            column=3,
+            value=f'=IF(INDEX(tblProducts[Our price],{i - 1})="","",'
+            f"INDEX(tblProducts[Our price],{i - 1}))",
+        )
+        c.number_format = MONEY
+        for j in range(nm):
+            col = L(m0 + j)
+            c = ws_prices.cell(
+                row=i,
+                column=m0 + j,
+                value=(
+                    f'=IF(COUNTIFS(tblOffers[Product],{key},tblOffers[Market],{col}$1)=0,"",'
+                    f"_xlfn.MINIFS(tblOffers[Price],tblOffers[Product],{key},tblOffers[Market],{col}$1))"
+                ),
+            )
+            c.number_format = MONEY
+        ws_prices.cell(
+            row=i,
+            column=bcol,
+            value=(
+                f'=IFERROR(INDEX(tblProducts[Baseline],MATCH({key},tblProducts[Product],0)),"")'
+            ),
+        ).number_format = MONEY
+        ws_prices.cell(row=i, column=ncol, value=f"=COUNT({R(i)})")
+        ws_prices.cell(
+            row=i, column=mincol, value=f'=IF(COUNT({R(i)})=0,"",MIN({R(i)}))'
+        ).number_format = MONEY
+        ws_prices.cell(
+            row=i, column=medcol, value=f'=IF(COUNT({R(i)})=0,"",MEDIAN({R(i)}))'
+        ).number_format = MONEY
+        ws_prices.cell(
+            row=i,
+            column=dcol,
+            value=(
+                f"=IF(AND(ISNUMBER($C{i}),ISNUMBER({L(medcol)}{i})),IF({L(medcol)}{i}>0,"
+                f'$C{i}/{L(medcol)}{i}-1,""),"")'
+            ),
+        ).number_format = PCT
+        ws_prices.cell(
+            row=i,
+            column=chcol,
+            value=(
+                f'=IF(COUNT({R(i)})=0,"",INDEX(${L(m0)}$1:${L(m1)}$1,MATCH(MIN({R(i)}),{R(i)},0)))'
+            ),
+        )
+    last = n + 1
+    ws_prices.freeze_panes = "D2"
+    ws_prices.auto_filter.ref = f"A1:{L(chcol)}{max(last, 2)}"
+    # heat map: rules compare each cell with ITS ROW's baseline and read thresholds from Settings
+    grid = f"{L(m0)}2:{L(m1)}{max(last, 2)}"
+    c0, B = f"{L(m0)}2", f"${L(bcol)}2"
+    ok = f"AND(ISNUMBER({c0}),N({B})>0,"
+    ws_prices.conditional_formatting.add(
+        grid,
+        FormulaRule(
+            formula=[f"AND(ISNUMBER({c0}),{c0}=MIN(${L(m0)}2:${L(m1)}2))"],
+            font=Font(bold=True),
+            border=Border(*(Side(style="medium", color="1F3864"),) * 4),
+        ),
+    )
+    rules = [
+        (f"{ok}{c0}<={B}*(1-cfg_sat))", HEAT["cheap3"]),
+        (f"{ok}{c0}<={B}*(1-cfg_mid))", HEAT["cheap2"]),
+        (f"{ok}{c0}<{B}*(1-cfg_par))", HEAT["cheap1"]),
+        (f"{ok}{c0}>={B}*(1+cfg_sat))", HEAT["dear3"]),
+        (f"{ok}{c0}>={B}*(1+cfg_mid))", HEAT["dear2"]),
+        (f"{ok}{c0}>{B}*(1+cfg_par))", HEAT["dear1"]),
+    ]
+    for formula, colour in rules:
+        ws_prices.conditional_formatting.add(
+            grid,
+            FormulaRule(
+                formula=[formula],
+                fill=PatternFill("solid", bgColor=colour, fgColor=colour),
+                stopIfTrue=True,
+            ),
+        )
+
+    # --------------------------------------------------------- Heatmap (graded colour scale)
+    _header(ws_heat, 1, ["Product"] + markets, [52] + [14] * nm)
+    for i in range(2, last + 1):
+        ws_heat.cell(row=i, column=1, value=f"=Prices!A{i}")
+        for j in range(nm):
+            pcell = f"Prices!{L(m0 + j)}{i}"
+            ws_heat.cell(
+                row=i,
+                column=2 + j,
+                value=(
+                    f'=IF(AND(ISNUMBER({pcell}),N(Prices!${L(bcol)}{i})>0),{pcell}/Prices!${L(bcol)}{i}-1,"")'
+                ),
+            ).number_format = PCT
+    if n:
+        ws_heat.conditional_formatting.add(
+            f"B2:{L(1 + nm)}{last}",
+            ColorScaleRule(
+                start_type="formula",
+                start_value="-cfg_sat",
+                start_color=HEAT["cheap3"],
+                mid_type="num",
+                mid_value=0,
+                mid_color="FFFFFF",
+                end_type="formula",
+                end_value="cfg_sat",
+                end_color=HEAT["dear3"],
+            ),
+        )
+    ws_heat.freeze_panes = "B2"
+    ws_heat["A" + str(last + 2)] = (
+        "Each cell: (market price - baseline) / baseline. Red = the market is cheaper "
+        "than the baseline, green = dearer. Thresholds: Settings."
+    )
+    ws_heat["A" + str(last + 2)].font = Font(italic=True, color="808080")
+
+    # ------------------------------------------------------------------ Markets
+    mk_cols = [
+        "Market",
+        "Offers",
+        "Products covered",
+        "Average delta",
+        "Share cheaper than baseline",
+        "Cheapest wins",
+        "Catalogue fetched",
+        "Note",
+    ]
+    _header(ws_mkt, 1, mk_cols, [14, 9, 16, 14, 18, 12, 24, 70])
+    dgrid = f"Heatmap!$B$2:${L(1 + nm)}${max(last, 2)}"
+    hhead = f"Heatmap!$B$1:${L(1 + nm)}$1"
+    pgrid = f"Prices!${L(m0)}$2:${L(m1)}${max(last, 2)}"
+    phead = f"Prices!${L(m0)}$1:${L(m1)}$1"
+    pmin = f"Prices!${L(mincol)}$2:${L(mincol)}${max(last, 2)}"
+    for i, m in enumerate(markets, 2):
+        mref = tr("tblMarkets", "Market")
+        ws_mkt.cell(row=i, column=1, value=m)
+        ws_mkt.cell(row=i, column=2, value=f"=COUNTIFS(tblOffers[Market],{mref})")
+        ws_mkt.cell(
+            row=i,
+            column=3,
+            value=(
+                f"=SUMPRODUCT((tblOffers[Market]={mref})/COUNTIFS(tblOffers[Product],tblOffers[Product],"
+                f'tblOffers[Market],tblOffers[Market]&""))'
+            )
+            if offers
+            else 0,
+        )
+        col = f"INDEX({dgrid},0,MATCH({mref},{hhead},0))"
+        ws_mkt.cell(row=i, column=4, value=f'=IFERROR(AVERAGE({col}),"")').number_format = PCT
+        ws_mkt.cell(
+            row=i, column=5, value=f'=IFERROR(COUNTIF({col},"<0")/COUNT({col}),"")'
+        ).number_format = "0%"
+        ws_mkt.cell(
+            row=i,
+            column=6,
+            value=(
+                f"=SUMPRODUCT(--(INDEX({pgrid},0,MATCH({mref},{phead},0))={pmin}),"
+                f"--ISNUMBER({pmin}))"
+            ),
+        )
+        ws_mkt.cell(row=i, column=7, value=(r.fetched_at.get(m) or "")[:19].replace("T", " "))
+        ws_mkt.cell(
+            row=i,
+            column=8,
+            value=r.notes.get(m) or ("" if m in r.fetched_at else "no data collected"),
+        )
+    mk_last = nm + 1
+    _table(ws_mkt, "tblMarkets", f"A1:{L(len(mk_cols))}{mk_last}")
+    ws_mkt.freeze_panes = "B2"
+    if nm and offers:
+        ch = BarChart()
+        ch.type, ch.style = "bar", 2
+        ch.title = "Average market price vs baseline, by market"
+        ch.title.overlay = False
+        ch.add_data(Reference(ws_mkt, min_col=4, min_row=1, max_row=mk_last), titles_from_data=True)
+        ch.set_categories(Reference(ws_mkt, min_col=1, min_row=2, max_row=mk_last))
+        # openpyxl 3.1 hides both axes unless told otherwise; labels go "low" so a negative bar
+        # does not run over its own market name
+        ch.x_axis.delete = False
+        ch.y_axis.delete = False
+        ch.x_axis.tickLblPos = "low"
+        ch.x_axis.scaling.orientation = "maxMin"  # first market on top, as in the table
+        ch.y_axis.number_format = "0%"
+        ch.y_axis.majorGridlines.spPr = None
+        ch.legend = None
+        serie = ch.series[0]
+        serie.graphicalProperties.solidFill = NAVY
+        serie.invertIfNegative = False
+        ch.height, ch.width = 9, 18
+        ws_mkt.add_chart(ch, f"A{mk_last + 3}")
+
+    # ------------------------------------------------------------------ Links (as-fetched snapshot)
+    _header(ws_links, 1, ["Product", "Category", "Our price"] + markets, [52, 16, 14] + [14] * nm)
+    cheapest = {}
+    for o in offers:
+        k = (o.target, o.market)
+        if k not in cheapest or o.price < cheapest[k].price:
+            cheapest[k] = o
+    for i, t in enumerate(r.targets, 2):
+        ws_links.cell(row=i, column=1, value=t.name)
+        ws_links.cell(row=i, column=2, value=t.category or "")
+        up = _uzs(t, r.usd_rate)
+        ws_links.cell(row=i, column=3, value=up).number_format = MONEY
+        for j, m in enumerate(markets):
+            o = cheapest.get((t.name, m))
+            if o:
+                c = ws_links.cell(row=i, column=4 + j, value=o.price)
+                c.hyperlink, c.font, c.number_format = o.url, LINK_FONT, MONEY
+    ws_links.freeze_panes = "D2"
+
+    # ------------------------------------------------------------------ Notes
+    found = {o.target for o in offers}
+    stale = ", ".join(f"{m} {t[:16].replace('T', ' ')}" for m, t in sorted(r.fetched_at.items()))
+    nodata = ", ".join(
+        m for m in markets if m not in r.fetched_at or not any(o.market == m for o in offers)
+    )
+    rows = [
+        ("Run", r.run_at.replace("T", " ")),
+        ("Products", f"{n} researched, {len(found)} with at least one offer."),
+        ("Catalogue freshness", stale or "n/a"),
+        ("Markets with no offers", nodata or "none"),
+        (
+            "A market cell",
+            "The cheapest accepted offer of that market for that product (Prices = formulas over "
+            "tblOffers; Links = as-fetched snapshot with hyperlinks). Every other offer stays "
+            "in Offers.",
+        ),
+        (
+            "Market median",
+            "Median of one representative (cheapest) price per market, so a marketplace with many "
+            "sellers does not outvote a single-shop retailer.",
+        ),
+        (
+            "Baseline",
+            "Settings!cfg_baseline: 'Our price' (default) or 'Market median'. A product with no "
+            "price of "
+            "ours uses the median.",
+        ),
+        (
+            "Delta vs baseline",
+            "(market price - baseline) / baseline. Negative = the market is cheaper than the "
+            "baseline. 'Delta ours vs median' on Prices is the other way round: "
+            "(our price - median) / median, positive = we are dearer.",
+        ),
+        ("Empty cell", "No match found. Never a price of zero."),
+        (
+            "Identity rule",
+            "Brand, model, RAM and storage must match; colour is not identity except on iPhones. "
+            "Phones accept at score >= 30, other categories at >= 25 (brand + model tokens "
+            "both ways).",
+        ),
+        (
+            "Name delta",
+            "Words present in one name but not the other. Not an error by itself: read it before "
+            "quoting a row.",
+        ),
+        (
+            "Heat map",
+            "Conditional formatting over Prices and Heatmap, thresholds from Settings. "
+            "It follows edits "
+            "and re-sorts; nothing is painted by hand.",
+        ),
+        (
+            "Formulas",
+            "MINIFS / MAXIFS need Excel 2019 / Microsoft 365 (or LibreOffice). Pivot "
+            "refresh: Data > "
+            "Refresh All; PivotTables read tblOffers, which grows when you add rows.",
+        ),
+        (
+            "Currency",
+            "Prices in UZS."
+            + (
+                f" USD inputs converted at {r.usd_rate:,.2f} UZS ({r.usd_rate_date})."
+                if r.usd_rate
+                else ""
+            ),
+        ),
+    ]
+    ws_notes.column_dimensions["A"].width = 26
+    ws_notes.column_dimensions["B"].width = 120
+    for i, (k, v) in enumerate(rows, 1):
+        ws_notes.cell(row=i, column=1, value=k).font = Font(bold=True)
+        ws_notes.cell(row=i, column=2, value=v).alignment = Alignment(
+            wrap_text=True, vertical="top"
+        )
+
+    # ------------------------------------------------------------------ Start
+    ws_start.column_dimensions["A"].width = 24
+    ws_start.column_dimensions["B"].width = 100
+    ws_start["A1"] = r.title
+    ws_start["A1"].font = Font(bold=True, size=16, color=NAVY)
+    ws_start["A2"] = (
+        f"{n} products x {nm} markets, {len(offers)} offers. Built {datetime.now():%Y-%m-%d %H:%M}."
+    )
+    guide = [
+        (
+            "Prices",
+            "Heat map: cheapest price per market, coloured against your baseline. "
+            "Bold border = cheapest in row.",
+        ),
+        ("Heatmap", "The same grid as percentage differences, graded colour scale."),
+        (
+            "Offers",
+            "The database: every offer. Pivot source. Add or delete rows; formulas fill "
+            "and the grid follows.",
+        ),
+        (
+            "Products",
+            "Your products. Yellow cells (Our price, Category) are inputs: change them and "
+            "everything follows.",
+        ),
+        ("Markets", "Scoreboard per market, with a chart."),
+        ("Links", "As-fetched prices, each one a hyperlink to its offer."),
+        ("Settings", "Heat-map thresholds and the baseline."),
+        ("Notes", "Definitions, freshness, what an empty cell means."),
+    ]
+    for i, (sheet, text) in enumerate(guide, 4):
+        c = ws_start.cell(row=i, column=1, value=sheet)
+        c.hyperlink = Hyperlink(ref=c.coordinate, location=f"'{sheet}'!A1", display=sheet)
+        c.font = LINK_FONT
+        ws_start.cell(row=i, column=2, value=text)
+    ws_start.cell(row=13, column=1, value="PivotTables").font = Font(bold=True)
+    ws_start.cell(
+        row=13,
+        column=2,
+        value=(
+            "Sheets named 'Pivot ...' (if present) read tblOffers. Data > Refresh All "
+            "after you change anything. To build your own: Insert > PivotTable > "
+            "Table/Range = tblOffers."
+        ),
+    )
+
+    wb.save(path)
+    return {
+        "markets": markets,
+        "n_products": n,
+        "n_offers": len(offers),
+        "offers_cols": o_cols,
+        "path": path,
+        "prices_cols": {"first_market": m0, "last_market": m1, "baseline": bcol},
+    }
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/excel/__init__.py
+================================================
+"""PivotTables and Excel-side verification for research workbooks.
+
+Two ways to get real PivotTables into the file `narxnoma.research.workbook` writes:
+
+    pivots.py        Excel COM (Windows + desktop Excel): flat pivots, slicers, a pivot chart,
+                     and -- when this Excel has Power Pivot -- a Data Model with DAX measures.
+    ooxml_pivot.py   no Excel at all: the pivot parts are written into the .xlsx package
+                     directly and Excel builds them when the file is opened.
+
+Run either AFTER the workbook is built and never re-save the result through openpyxl: it drops
+slicers and the Data Model silently.
+"""
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/excel/ooxml_pivot.py
+================================================
+"""PivotTables with no Excel: write the pivot parts into the .xlsx package and let Excel build them.
+
+openpyxl cannot create a PivotTable (it can only carry one through), and COM needs desktop Excel.
+This writes the minimum a PivotTable needs -- a cache definition whose source is the Excel Table
+`tblOffers`, an empty records part, and one pivot-table definition per spec -- and marks the cache
+`refreshOnLoad`, so Excel fills the shared items, the totals and the cells itself on first open.
+That is the same trick libraries such as EPPlus use. What it does NOT give you: slicers, pivot
+charts, the Data Model, number formats beyond the built-in ones (the COM path has all of them).
+
+Run on a workbook built with `build_workbook(..., pivot_placeholders=True)`: the empty
+'Pivot ...' sheets it creates are where these land. Never re-save the result through openpyxl.
+"""
+
+import posixpath
+import re
+import zipfile
+from dataclasses import dataclass
+from xml.sax.saxutils import escape
+
+NS_MAIN = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+NS_R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+CT_DEF = "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheDefinition+xml"
+CT_REC = "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotCacheRecords+xml"
+CT_TBL = "application/vnd.openxmlformats-officedocument.spreadsheetml.pivotTable+xml"
+
+_AXIS_FIELD = (
+    '<pivotField axis="{axis}" showAll="0">'
+    '<items count="1"><item t="default"/></items></pivotField>'
+)
+
+# built-in number formats: 3 = #,##0   10 = 0.00%   (custom formats would need a styles.xml edit)
+NUMFMT_INT, NUMFMT_PCT = 3, 10
+
+
+@dataclass
+class PivotSpec:
+    name: str  # pivot table name, e.g. "pvtCategoryMarket"
+    sheet: str  # placeholder sheet it lands on
+    anchor: str  # top-left cell of the pivot, e.g. "A5"
+    row_field: str  # a column of tblOffers
+    col_field: str
+    data_field: str
+    function: str  # sum | count | average | min | max
+    caption: str
+    numfmt: int = NUMFMT_INT
+
+
+DEFAULT_SPECS = (
+    PivotSpec(
+        "pvtCategoryMarket",
+        "Pivot by category",
+        "A5",
+        "Category",
+        "Market",
+        "Delta vs baseline",
+        "average",
+        "Avg delta vs baseline",
+        NUMFMT_PCT,
+    ),
+    PivotSpec(
+        "pvtPriceMatrix",
+        "Pivot price matrix",
+        "A5",
+        "Product",
+        "Market",
+        "Price",
+        "min",
+        "Cheapest price",
+        NUMFMT_INT,
+    ),
+    PivotSpec(
+        "pvtMarketBands",
+        "Pivot market bands",
+        "A5",
+        "Market",
+        "Band",
+        "Product",
+        "count",
+        "Offers",
+        NUMFMT_INT,
+    ),
+)
+
+
+def _cache_xml(fields: list[str]) -> str:
+    cf = "".join(
+        f'<cacheField name="{escape(f)}" numFmtId="0"><sharedItems/></cacheField>' for f in fields
+    )
+    return (
+        f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+        f'<pivotCacheDefinition xmlns="{NS_MAIN}" xmlns:r="{NS_R}" r:id="rId1" refreshOnLoad="1" '
+        f'refreshedBy="narxnoma" refreshedDate="45000" createdVersion="3" refreshedVersion="3" '
+        f'minRefreshableVersion="3" recordCount="0"><cacheSource type="worksheet">'
+        f'<worksheetSource name="tblOffers"/></cacheSource><cacheFields count="{len(fields)}">{cf}'
+        f"</cacheFields></pivotCacheDefinition>"
+    )
+
+
+def _records_xml() -> str:
+    return (
+        f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+        f'<pivotCacheRecords xmlns="{NS_MAIN}" xmlns:r="{NS_R}" count="0"/>'
+    )
+
+
+def _table_xml(spec: PivotSpec, fields: list[str], cache_id: int) -> str:
+    ri, ci, di = (fields.index(f) for f in (spec.row_field, spec.col_field, spec.data_field))
+    pf = []
+    for i, _ in enumerate(fields):
+        if i == ri:
+            pf.append(_AXIS_FIELD.format(axis="axisRow"))
+        elif i == ci:
+            pf.append(_AXIS_FIELD.format(axis="axisCol"))
+        elif i == di:
+            pf.append('<pivotField dataField="1" showAll="0"/>')
+        else:
+            pf.append('<pivotField showAll="0"/>')
+    col = re.match(r"([A-Z]+)(\d+)", spec.anchor)
+    ref = f"{spec.anchor}:{col.group(1)}{int(col.group(2)) + 2}"  # a stub: Excel resizes on refresh
+    return (
+        f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+        f'<pivotTableDefinition xmlns="{NS_MAIN}" name="{escape(spec.name)}" cacheId="{cache_id}" '
+        f'dataCaption="Values" updatedVersion="3" minRefreshableVersion="3" createdVersion="3" '
+        f'useAutoFormatting="1" itemPrintTitles="1" indent="0" outline="1" outlineData="1" '
+        f'multipleFieldFilters="0"><location ref="{ref}" firstHeaderRow="1" firstDataRow="2" '
+        f'firstDataCol="1"/>'
+        f'<pivotFields count="{len(fields)}">{"".join(pf)}</pivotFields>'
+        f'<rowFields count="1"><field x="{ri}"/></rowFields>'
+        f'<colFields count="1"><field x="{ci}"/></colFields>'
+        f'<dataFields count="1"><dataField name="{escape(spec.caption)}" fld="{di}" '
+        f'subtotal="{spec.function}" '
+        f'baseField="0" baseItem="0" numFmtId="{spec.numfmt}"/></dataFields>'
+        f'<pivotTableStyleInfo name="PivotStyleMedium2" showRowHeaders="1" showColHeaders="1" '
+        f'showRowStripes="1" showColStripes="0" showLastColumn="1"/></pivotTableDefinition>'
+    )
+
+
+def _rels_xml(rels: list[tuple[str, str, str]]) -> str:
+    body = "".join(f'<Relationship Id="{i}" Type="{t}" Target="{tg}"/>' for i, t, tg in rels)
+    return (
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+        f'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">{body}</Relationships>'
+    )
+
+
+def _next_rid(rels_xml: str) -> str:
+    ids = [int(m) for m in re.findall(r'Id="rId(\d+)"', rels_xml)]
+    return f"rId{max(ids, default=0) + 1}"
+
+
+def inject_pivots(src: str, dst: str, offers_fields: list[str], specs=DEFAULT_SPECS) -> list[str]:
+    """Copy `src` to `dst` with the pivot parts added. Returns the names of the pivots written."""
+    zin = zipfile.ZipFile(src)
+    parts = {n: zin.read(n) for n in zin.namelist()}
+    zin.close()
+
+    wbx = parts["xl/workbook.xml"].decode("utf-8")
+    wbr = parts["xl/_rels/workbook.xml.rels"].decode("utf-8")
+    ctx = parts["[Content_Types].xml"].decode("utf-8")
+    sheet_target = {}
+    for m in re.finditer(r'<sheet\b[^>]*?name="([^"]+)"[^>]*?r:id="([^"]+)"', wbx):
+        t = re.search(
+            rf'<Relationship\b[^>]*?Id="{m.group(2)}"[^>]*?Target="([^"]+)"', wbr
+        ) or re.search(rf'<Relationship\b[^>]*?Target="([^"]+)"[^>]*?Id="{m.group(2)}"', wbr)
+        sheet_target[m.group(1)] = posixpath.normpath(
+            posixpath.join("xl", t.group(1).lstrip("/").removeprefix("xl/"))
+        )
+    missing = [s.sheet for s in specs if s.sheet not in sheet_target]
+    if missing:
+        raise ValueError(
+            f"placeholder sheet(s) missing: {missing}; build with pivot_placeholders=True"
+        )
+
+    cache_id = 1
+    parts["xl/pivotCache/pivotCacheDefinition1.xml"] = _cache_xml(offers_fields).encode("utf-8")
+    parts["xl/pivotCache/pivotCacheRecords1.xml"] = _records_xml().encode("utf-8")
+    parts["xl/pivotCache/_rels/pivotCacheDefinition1.xml.rels"] = _rels_xml(
+        [("rId1", f"{REL}/pivotCacheRecords", "pivotCacheRecords1.xml")]
+    ).encode("utf-8")
+    overrides = [
+        ("/xl/pivotCache/pivotCacheDefinition1.xml", CT_DEF),
+        ("/xl/pivotCache/pivotCacheRecords1.xml", CT_REC),
+    ]
+
+    rid = _next_rid(wbr)
+    wbr = wbr.replace(
+        "</Relationships>",
+        f'<Relationship Id="{rid}" Type="{REL}/pivotCacheDefinition" '
+        f'Target="pivotCache/pivotCacheDefinition1.xml"/></Relationships>',
+    )
+    pc_xml = (
+        f'<pivotCaches><pivotCache xmlns:r="{NS_R}" cacheId="{cache_id}" r:id="{rid}"/>'
+        "</pivotCaches>"
+    )
+    if "<pivotCaches" in wbx:
+        raise ValueError("workbook already has pivot caches")
+    if re.search(r"<calcPr\b[^>]*/>", wbx):
+        wbx = re.sub(r"(<calcPr\b[^>]*/>)", r"\1" + pc_xml, wbx, count=1)
+    else:
+        wbx = wbx.replace("</workbook>", pc_xml + "</workbook>")
+
+    written = []
+    for n, spec in enumerate(specs, 1):
+        tpath = f"xl/pivotTables/pivotTable{n}.xml"
+        parts[tpath] = _table_xml(spec, offers_fields, cache_id).encode("utf-8")
+        parts[f"xl/pivotTables/_rels/pivotTable{n}.xml.rels"] = _rels_xml(
+            [("rId1", f"{REL}/pivotCacheDefinition", "../pivotCache/pivotCacheDefinition1.xml")]
+        ).encode("utf-8")
+        overrides.append((f"/{tpath}", CT_TBL))
+        sheet_part = sheet_target[spec.sheet]
+        rels_part = posixpath.join(
+            posixpath.dirname(sheet_part), "_rels", posixpath.basename(sheet_part) + ".rels"
+        )
+        cur = parts.get(rels_part, _rels_xml([]).encode("utf-8")).decode("utf-8")
+        srid = _next_rid(cur)
+        cur = cur.replace(
+            "</Relationships>",
+            f'<Relationship Id="{srid}" Type="{REL}/pivotTable" '
+            f'Target="../pivotTables/pivotTable{n}.xml"/></Relationships>',
+        )
+        parts[rels_part] = cur.encode("utf-8")
+        written.append(spec.name)
+
+    ctx = ctx.replace(
+        "</Types>",
+        "".join(f'<Override PartName="{p}" ContentType="{c}"/>' for p, c in overrides) + "</Types>",
+    )
+    parts["xl/workbook.xml"] = wbx.encode("utf-8")
+    parts["xl/_rels/workbook.xml.rels"] = wbr.encode("utf-8")
+    parts["[Content_Types].xml"] = ctx.encode("utf-8")
+
+    with zipfile.ZipFile(dst, "w", zipfile.ZIP_DEFLATED) as zout:
+        zout.writestr("[Content_Types].xml", parts.pop("[Content_Types].xml"))  # must be first
+        for name, data in parts.items():
+            zout.writestr(name, data)
+    return written
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/excel/pivots.ps1
+================================================
+<#
+  Add real PivotTables, slicers and a pivot chart to a research workbook through Excel COM.
+
+      powershell -NoProfile -ExecutionPolicy Bypass -File pivots.ps1 -Path book.xlsx [-Out out.xlsx] [-Model auto|yes|no]
+
+  Input is a workbook written by narxnoma.research.workbook (Excel Tables tblOffers / tblProducts /
+  tblMarkets). Output lines: PIVOT, SLICER, CHART, MODEL, WARN, RESULT.
+
+  Three flat PivotTables read `tblOffers` through ONE shared pivot cache (so one slicer drives all
+  three):
+      Pivot by category       Category x Market   average delta vs baseline, colour scale, + pivot chart
+      Pivot price matrix      Product  x Market   cheapest price
+      Pivot market bands      Market   x Band     number of offers per heat band
+  Slicers: Category, Market, Band.
+
+  Data Model (Power Pivot): with -Model auto the script PROBES whether the Excel here has it. If yes it
+  loads the three tables, relates Offers[Product] -> Products[Product] and Offers[Market] ->
+  Markets[Market], adds DAX measures and one model-based PivotTable. If not (or on any failure) it
+  prints "MODEL unavailable: <reason>" and the workbook keeps the three flat pivots -- the flat tables
+  are the fallback, nothing is lost. -Model yes fails loudly instead of falling back; -Model no skips it.
+
+  The same hard-won rules as the BI cube tooling: every COM call retries on 0x800AC472 ("busy");
+  number formats are set on the data field, not painted on cells; optional steps never abort the build.
+  Re-saving the result through openpyxl would silently drop the slicers: do not.
+#>
+param(
+  [Parameter(Mandatory = $true)][string]$Path,
+  [string]$Out = "",
+  [ValidateSet("auto", "yes", "no")][string]$Model = "auto"
+)
+$ErrorActionPreference = 'Stop'
+
+function Invoke-Com([scriptblock]$Block, [string]$What) {
+  for ($attempt = 1; $attempt -le 30; $attempt++) {
+    try { return & $Block } catch {
+      if ($_.Exception.Message -notmatch '800AC472|RPC_E_|0x8001010A') { throw "$What : $($_.Exception.Message)" }
+      Start-Sleep -Milliseconds 400
+    }
+  }
+  throw "Excel is not responding: $What"
+}
+function Try-Step([string]$What, [scriptblock]$Block) {
+  try { Invoke-Com $Block $What | Out-Null } catch { Write-Output "WARN $What not done: $($_.Exception.Message)" }
+}
+
+$file = (Resolve-Path -LiteralPath $Path).Path
+$target = if ($Out) { $Out } else { $file }
+$xl = New-Object -ComObject Excel.Application
+$xl.Visible = $false; $xl.DisplayAlerts = $false
+try {
+  $wb = Invoke-Com { $xl.Workbooks.Open($file) } "open"
+  Invoke-Com { $xl.CalculateFull() } "calculate" | Out-Null          # the pivot must see values, not unevaluated formulas
+  for ($w = 0; $w -lt 120; $w++) { if ((Invoke-Com { $xl.CalculationState } "state") -eq 0) { break }; Start-Sleep -Milliseconds 300 }
+
+  function New-Sheet([string]$name, [string]$title, [string]$note) {
+    $s = Invoke-Com { $wb.Worksheets.Add() } "sheet $name"
+    Invoke-Com { $s.Name = $name } "name $name" | Out-Null
+    Invoke-Com { $s.Move($wb.Worksheets.Item("Offers")) } "move $name" | Out-Null      # pivots sit before the data sheets
+    Invoke-Com { $s.Range("A1").Value2 = $title; $s.Range("A1").Font.Bold = $true; $s.Range("A1").Font.Size = 14 } "title" | Out-Null
+    Invoke-Com { $s.Range("A2").Value2 = $note; $s.Range("A2").Font.Italic = $true; $s.Range("A2").Font.Color = 8421504 } "note" | Out-Null
+    return $s
+  }
+  function Finish-Pivot($pt, [string]$rowLabel = "", [string]$colLabel = "") {
+    # Header and grand-total captions otherwise follow the Excel UI language ("Row Labels", "Grand Total",
+    # "Названия строк"...): the same workbook would read differently on every machine.
+    if ($rowLabel) { Try-Step "row header caption" { $pt.CompactLayoutRowHeader = $rowLabel } }
+    if ($colLabel) { Try-Step "column header caption" { $pt.CompactLayoutColumnHeader = $colLabel } }
+    Try-Step "grand total caption" { $pt.GrandTotalName = "Total" }
+    Try-Step "pivot style" { $pt.TableStyle2 = "PivotStyleMedium2"; $pt.ShowTableStyleRowStripes = $true }
+    Try-Step "keep column widths" { $pt.HasAutoFormat = $false }
+    Try-Step "preserve formatting" { $pt.PreserveFormatting = $true }
+  }
+
+  $pc = Invoke-Com { $wb.PivotCaches().Create(1, "tblOffers") } "pivot cache"          # 1 = xlDatabase
+  Try-Step "refresh on open" { $pc.RefreshOnFileOpen = $true }
+  $pivots = @()
+
+  # ---- 1: Category x Market, average delta vs baseline ----
+  $ws1 = New-Sheet "Pivot by category" "Average market price vs baseline, by category and market" `
+        "Negative (red) = the market is cheaper than your baseline. Slicers on the right filter all three pivot sheets. Data > Refresh All after edits."
+  $pt1 = Invoke-Com { $pc.CreatePivotTable($ws1.Range("A5"), "pvtCategoryMarket") } "pivot 1"
+  Invoke-Com { $pt1.PivotFields("Category").Orientation = 1 } "rows" | Out-Null
+  Invoke-Com { $pt1.PivotFields("Market").Orientation = 2 } "columns" | Out-Null
+  $df = Invoke-Com { $pt1.AddDataField($pt1.PivotFields("Delta vs baseline"), "Avg delta vs baseline", -4106) } "data field"   # xlAverage
+  Invoke-Com { $df.NumberFormat = "+0.0%;-0.0%;0.0%" } "format" | Out-Null
+  Finish-Pivot $pt1 "Category" "Market"
+  Try-Step "colour scale on the pivot" {
+    $cs = $pt1.DataBodyRange.FormatConditions.AddColorScale(3)
+    $cs.ScopeType = 2                                                  # xlDataFieldScope: the scale follows the pivot as it changes
+    $cs.ColorScaleCriteria.Item(1).Type = 0; $cs.ColorScaleCriteria.Item(1).Value = -0.2; $cs.ColorScaleCriteria.Item(1).FormatColor.Color = 7039480    # F8696B
+    $cs.ColorScaleCriteria.Item(2).Type = 0; $cs.ColorScaleCriteria.Item(2).Value = 0;    $cs.ColorScaleCriteria.Item(2).FormatColor.Color = 16777215
+    $cs.ColorScaleCriteria.Item(3).Type = 0; $cs.ColorScaleCriteria.Item(3).Value = 0.2;  $cs.ColorScaleCriteria.Item(3).FormatColor.Color = 8109667    # 63BE7B
+  }
+  $pivots += $pt1
+  Write-Output "PIVOT pvtCategoryMarket on '$($ws1.Name)' $($pt1.TableRange1.Address($false,$false))"
+
+  # ---- 2: Product x Market, cheapest price ----
+  $ws2 = New-Sheet "Pivot price matrix" "Cheapest price by product and market" "The same numbers as Prices, as a pivot: drag Category / Band / Availability into rows, columns or filters."
+  $pt2 = Invoke-Com { $pc.CreatePivotTable($ws2.Range("A5"), "pvtPriceMatrix") } "pivot 2"
+  Invoke-Com { $pt2.PivotFields("Product").Orientation = 1 } "rows" | Out-Null
+  Invoke-Com { $pt2.PivotFields("Market").Orientation = 2 } "columns" | Out-Null
+  $df2 = Invoke-Com { $pt2.AddDataField($pt2.PivotFields("Price"), "Cheapest price", -4139) } "data field"                              # xlMin
+  Invoke-Com { $df2.NumberFormat = "#,##0" } "format" | Out-Null
+  Finish-Pivot $pt2 "Product" "Market"
+  $pivots += $pt2
+  Write-Output "PIVOT pvtPriceMatrix on '$($ws2.Name)' $($pt2.TableRange1.Address($false,$false))"
+
+  # ---- 3: Market x Band, offer counts ----
+  $ws3 = New-Sheet "Pivot market bands" "Offers per heat band, by market" "How many offers sit in each band against your baseline (band edges: Settings)."
+  $pt3 = Invoke-Com { $pc.CreatePivotTable($ws3.Range("A5"), "pvtMarketBands") } "pivot 3"
+  Invoke-Com { $pt3.PivotFields("Market").Orientation = 1 } "rows" | Out-Null
+  Invoke-Com { $pt3.PivotFields("Band").Orientation = 2 } "columns" | Out-Null
+  $df3 = Invoke-Com { $pt3.AddDataField($pt3.PivotFields("Product"), "Offers", -4112) } "data field"                                  # xlCount
+  Invoke-Com { $df3.NumberFormat = "#,##0" } "format" | Out-Null
+  Finish-Pivot $pt3 "Market" "Band"
+  $pivots += $pt3
+  Write-Output "PIVOT pvtMarketBands on '$($ws3.Name)' $($pt3.TableRange1.Address($false,$false))"
+
+  # ---- slicers: one cache, so each slicer drives every pivot ----
+  foreach ($f in @("Category", "Market", "Band")) {
+    Try-Step "slicer $f" {
+      $sc = $wb.SlicerCaches.Add2($pt1, $f)
+      for ($k = 1; $k -lt $pivots.Count; $k++) { $sc.PivotTables.AddPivotTable($pivots[$k]) }
+      # right of the pivot AND of the chart below it (the chart is 620 pt wide, starting at 10)
+      $left = [Math]::Max($pt1.TableRange1.Left + $pt1.TableRange1.Width + 25, 10 + 620 + 25)
+      $top = 60 + ([array]::IndexOf(@("Category", "Market", "Band"), $f)) * 190
+      [void]$sc.Slicers.Add($ws1, [Type]::Missing, "slc$f", $f, $top, $left, 170, 175)
+    }
+    Write-Output "SLICER $f"
+  }
+
+  # ---- pivot chart under pivot 1 ----
+  Try-Step "pivot chart" {
+    $shape = $ws1.Shapes.AddChart2(201, 51, 10, $pt1.TableRange1.Top + $pt1.TableRange1.Height + 25, 620, 300)
+    $shape.Chart.SetSourceData($pt1.TableRange1)
+    $shape.Chart.HasTitle = $true; $shape.Chart.ChartTitle.Text = "Average market price vs baseline"
+    $shape.Chart.HasLegend = $true; $shape.Chart.Legend.Position = -4107              # xlLegendPositionBottom: one colour per market
+    $shape.Chart.ShowAllFieldButtons = $false                                         # the slicers do the filtering
+  }
+  Write-Output "CHART on '$($ws1.Name)'"
+
+  # ---- Data Model, probed ----
+  $modelState = "skipped (-Model no)"
+  if ($Model -ne "no") {
+    try {
+      $m = Invoke-Com { $wb.Model } "wb.Model"                       # property absent / null when Power Pivot is not part of this Excel
+      if ($null -eq $m) { throw "workbook.Model is not available in this Excel" }
+      foreach ($t in @("tblOffers", "tblProducts", "tblMarkets")) {
+        $cn = "WorksheetConnection_$t"
+        [void](Invoke-Com { $wb.Connections.Add2($cn, "", "WORKSHEET;$file", $t, 7, $true, $false) } "model table $t")   # 7 = xlCmdExcel, True = add to the Data Model
+      }
+      $tabs = @{}
+      foreach ($mt in $m.ModelTables) { $tabs[$mt.Name] = $mt }
+      $o = $tabs["tblOffers"]; $p = $tabs["tblProducts"]; $mk = $tabs["tblMarkets"]
+      if (-not ($o -and $p -and $mk)) { throw "the three tables did not all reach the model (found: $($tabs.Keys -join ', '))" }
+      function Col($tab, $name) { foreach ($c in $tab.ModelTableColumns) { if ($c.Name -eq $name) { return $c } }; throw "no column $name in $($tab.Name)" }
+      [void]$m.ModelRelationships.Add((Col $o "Product"), (Col $p "Product"))
+      [void]$m.ModelRelationships.Add((Col $o "Market"), (Col $mk "Market"))
+      $pctFmt = $m.ModelFormatPercentageNumber(1)
+      $numFmt = $m.ModelFormatDecimalNumber(1, 0)
+      [void]$m.ModelMeasures.Add("Offers count", $o, "COUNTROWS(tblOffers)", $m.ModelFormatWholeNumber(1), "Number of offers")
+      [void]$m.ModelMeasures.Add("Median price", $o, "MEDIAN(tblOffers[Price])", $m.ModelFormatDecimalNumber(1, 0), "Median offer price")
+      [void]$m.ModelMeasures.Add("Cheapest price", $o, "MIN(tblOffers[Price])", $m.ModelFormatDecimalNumber(1, 0), "Lowest offer price")
+      [void]$m.ModelMeasures.Add("Avg delta", $o, "AVERAGE(tblOffers[Delta vs baseline])", $pctFmt, "Average delta vs baseline")
+      [void]$m.ModelMeasures.Add("Share cheaper than baseline", $o, "DIVIDE(CALCULATE(COUNTROWS(tblOffers), tblOffers[Delta vs baseline] < 0), COUNTROWS(tblOffers))", $pctFmt, "Share of offers cheaper than the baseline")
+      $ws4 = New-Sheet "Pivot model (DAX)" "Data Model pivot: Markets table x DAX measures" "Offers, Products and Markets are related in the Data Model; the measures are DAX. Filter by a Products column to cross tables."
+      $mcn = $wb.Connections.Item("ThisWorkbookDataModel")
+      $pcm = Invoke-Com { $wb.PivotCaches().Create(2, $mcn) } "model cache"      # 2 = xlExternal
+      $ptm = Invoke-Com { $pcm.CreatePivotTable($ws4.Range("A5"), "pvtModel") } "model pivot"
+      Invoke-Com { $ptm.CubeFields.Item("[tblMarkets].[Market]").Orientation = 1 } "model rows" | Out-Null
+      foreach ($ms in @("Offers count", "Cheapest price", "Median price", "Avg delta", "Share cheaper than baseline")) {
+        Invoke-Com { $ptm.CubeFields.Item("[Measures].[$ms]").Orientation = 4 } "measure $ms" | Out-Null
+      }
+      Finish-Pivot $ptm "Market"
+      $modelState = "ok (3 tables, 2 relationships, 5 DAX measures)"
+    } catch {
+      if ($Model -eq "yes") { throw }
+      $modelState = "unavailable: $($_.Exception.Message)"
+    }
+  }
+  Write-Output "MODEL $modelState"
+
+  Try-Step "select first sheet" { $wb.Worksheets.Item("Start").Activate() }
+  Invoke-Com { $xl.CalculateFull() } "final calculate" | Out-Null
+  if ($Out) { Invoke-Com { $wb.SaveAs($target, 51) } "save as" | Out-Null } else { Invoke-Com { $wb.Save() } "save" | Out-Null }
+  Invoke-Com { $wb.Close($false) } "close" | Out-Null
+  Write-Output "RESULT ok $target"
+} finally {
+  try { $xl.Quit() } catch { }
+  [void][Runtime.InteropServices.Marshal]::ReleaseComObject($xl)
+}
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/excel/pivots.py
+================================================
+"""Drive Excel through COM (PowerShell) to add PivotTables and to verify a workbook."""
+
+import shutil
+import subprocess
+import sys
+from dataclasses import dataclass, field
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+
+
+class ExcelUnavailable(RuntimeError):
+    pass
+
+
+@dataclass
+class ComResult:
+    ok: bool
+    lines: list[str] = field(default_factory=list)
+
+    @property
+    def warnings(self) -> list[str]:
+        return [ln for ln in self.lines if ln.startswith("WARN")]
+
+    @property
+    def model(self) -> str:
+        return next((ln[6:] for ln in self.lines if ln.startswith("MODEL ")), "")
+
+    def __str__(self) -> str:
+        return "\n".join(self.lines)
+
+
+def excel_available() -> bool:
+    """True when this is Windows, PowerShell is present and the Excel COM class is registered.
+    Checked through the registry: starting Excel just to ask costs seconds and may pop a dialog."""
+    if sys.platform != "win32" or not shutil.which("powershell"):
+        return False
+    probe = subprocess.run(
+        [
+            "powershell",
+            "-NoProfile",
+            "-Command",
+            "if (Test-Path 'Registry::HKEY_CLASSES_ROOT\\Excel.Application') {'yes'} else {'no'}",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    return probe.stdout.strip() == "yes"
+
+
+def _run(script: str, args: list[str], timeout: int) -> ComResult:
+    if not excel_available():
+        raise ExcelUnavailable(
+            "desktop Excel is not available here (needs Windows + Excel); "
+            "use the raw-OOXML pivots or open the workbook and Insert > PivotTable"
+        )
+    cmd = [
+        "powershell",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        str(HERE / script),
+        *args,
+    ]
+    p = subprocess.run(
+        cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout
+    )
+    lines = [ln.rstrip() for ln in (p.stdout or "").splitlines() if ln.strip()]
+    if p.returncode != 0:
+        lines.append(
+            "FAILED " + (p.stderr or "").strip().splitlines()[0] if p.stderr.strip() else "FAILED"
+        )
+    return ComResult(ok=p.returncode == 0, lines=lines)
+
+
+def add_pivots(
+    path: str | Path, out: str | Path | None = None, model: str = "auto", timeout: int = 600
+) -> ComResult:
+    """Flat PivotTables + slicers + chart; Data Model when `model` allows and Excel has it."""
+    args = ["-Path", str(Path(path).resolve()), "-Model", model]
+    if out:
+        args += ["-Out", str(Path(out).resolve())]
+    return _run("pivots.ps1", args, timeout)
+
+
+def verify(path: str | Path, probe: str = "", save: bool = False, timeout: int = 300) -> ComResult:
+    """Let Excel open and recalculate the workbook, then report formula errors, tables, pivots,
+    slicers and conditional-format rule counts. `save=True` also bakes the calculated values in,
+    so viewers that cannot calculate (previews, pandas) see numbers."""
+    args = ["-Path", str(Path(path).resolve())]
+    if probe:
+        args += ["-Probe", probe]
+    if save:
+        args.append("-Save")
+    return _run("verify.ps1", args, timeout)
+
+
+def error_count(result: ComResult) -> int | None:
+    for ln in result.lines:
+        if ln.startswith("ERRORS_TOTAL"):
+            return int(ln.split()[1])
+    return None
+
+
+
+================================================
+FILE: narxnoma-crawler/narxnoma/research/excel/verify.ps1
+================================================
+<#
+  Open a research workbook in real Excel, recalculate it, and report what Excel itself sees.
+
+      powershell -NoProfile -ExecutionPolicy Bypass -File verify.ps1 -Path book.xlsx [-Save] [-Probe "Prices!D2,Prices!E2"]
+
+  Why this exists: openpyxl writes formulas but cannot evaluate them, so a typo (#NAME?, #REF!, a
+  function that needs a newer Excel) is invisible until a person opens the file. This is the same
+  trick as recalculating through COM in the BI cube tooling: let Excel do it and read back.
+
+  Reports, one line each:  OPEN, ERRORS (count + first cells per sheet), TABLES, PIVOTS, SLICERS,
+  CF (conditional-format rules per sheet), PROBE (value and fill colour of the cells you name).
+  -Save writes the recalculated values back, so viewers that do not calculate (previews, pandas)
+  see numbers instead of blanks. Never run this against a workbook a person has open.
+
+  Excel automation sometimes answers 0x800AC472 ("busy"); every call retries.
+#>
+param(
+  [Parameter(Mandatory = $true)][string]$Path,
+  [switch]$Save,
+  [string]$Probe = ""
+)
+$ErrorActionPreference = 'Stop'
+
+function Invoke-Com([scriptblock]$Block, [string]$What) {
+  for ($attempt = 1; $attempt -le 25; $attempt++) {
+    try { return & $Block } catch {
+      if ($_.Exception.Message -notmatch '800AC472|RPC_E_|0x8001010A') { throw "$What : $($_.Exception.Message)" }
+      Start-Sleep -Milliseconds 400
+    }
+  }
+  throw "Excel is not responding: $What"
+}
+
+$file = (Resolve-Path -LiteralPath $Path).Path
+$xl = New-Object -ComObject Excel.Application
+$xl.Visible = $false; $xl.DisplayAlerts = $false
+try {
+  $wb = Invoke-Com { $xl.Workbooks.Open($file) } "open"
+  Invoke-Com { $xl.CalculateFull() } "calculate" | Out-Null
+  for ($w = 0; $w -lt 120; $w++) { if ((Invoke-Com { $xl.CalculationState } "state") -eq 0) { break }; Start-Sleep -Milliseconds 300 }
+  "OPEN  $($wb.Name)  Excel $($xl.Version)  sheets=$($wb.Worksheets.Count)"
+  $totalErr = 0
+  foreach ($ws in $wb.Worksheets) {
+    $errs = 0; $first = @()
+    try {
+      $cells = Invoke-Com { $ws.UsedRange.SpecialCells(-4123, 16) } "errors in $($ws.Name)"   # xlCellTypeFormulas, xlErrors
+      foreach ($c in $cells.Cells) { $errs++; if ($first.Count -lt 3) { $first += "$($c.Address($false,$false))=$($c.Text)" } }
+    } catch { }                                                                                # no matching cells -> exception
+    $totalErr += $errs
+    $cf = Invoke-Com { $ws.Cells.FormatConditions.Count } "cf count"
+    $lo = Invoke-Com { $ws.ListObjects.Count } "tables"
+    $pv = Invoke-Com { $ws.PivotTables().Count } "pivots"
+    "SHEET $($ws.Name): errors=$errs $($first -join ' ') | tables=$lo pivots=$pv cf_rules=$cf"
+  }
+  $slicers = 0
+  try { $slicers = $wb.SlicerCaches.Count } catch { }
+  "SLICERS $slicers"
+  "ERRORS_TOTAL $totalErr"
+  if ($Probe) {
+    foreach ($ref in $Probe.Split(",")) {
+      $sheet, $addr = $ref.Trim().Split("!")
+      $c = Invoke-Com { $wb.Worksheets.Item($sheet).Range($addr) } "probe $ref"
+      $rgb = Invoke-Com { $c.DisplayFormat.Interior.Color } "colour $ref"
+      $hex = "{0:X2}{1:X2}{2:X2}" -f ($rgb -band 255), (($rgb -shr 8) -band 255), (($rgb -shr 16) -band 255)
+      "PROBE $ref text=[$($c.Text)] fill=$hex bold=$($c.DisplayFormat.Font.Bold)"
+    }
+  }
+  if ($Save) { Invoke-Com { $wb.Save() } "save" | Out-Null; "SAVED" }
+  Invoke-Com { $wb.Close($false) } "close" | Out-Null
+} finally {
+  try { $xl.Quit() } catch { }
+  [void][Runtime.InteropServices.Marshal]::ReleaseComObject($xl)
+}
 
 
 
@@ -16146,6 +18954,600 @@ def test_fresh_offers_report_an_age_close_to_zero(db_conn):
 def test_every_store_appears_even_at_zero_offers(db_conn):
     rows = {r.slug: r for r in coverage_report(db_conn)}
     assert set(rows) == set(EXPECTED_MIN_OFFERS)
+
+
+
+================================================
+FILE: narxnoma-crawler/tests/research/_synth.py
+================================================
+import random
+
+from narxnoma.research.model import Offer, Research, Target
+
+MARKETS = ["uzum", "texnomart", "mediapark", "alifshop", "olcha"]
+
+
+def make_research() -> Research:
+    """25 synthetic products over three categories; some lack our price; one market is empty."""
+    rnd = random.Random(7)
+    cats = ["smartphones", "televisions", "fridges"]
+    targets, offers = [], []
+    for i in range(25):
+        our = rnd.randint(3, 30) * 400_000
+        t = Target(
+            name=f"Brand Model {i} 8/256",
+            category=cats[i % 3],
+            our_price=our if i % 7 else None,
+            extra={"Brand": f"B{i % 4}"},
+        )
+        targets.append(t)
+        for m in MARKETS[:-1]:  # olcha stays empty on purpose
+            if rnd.random() < 0.75:
+                for k in range(rnd.choice([1, 1, 2])):
+                    offers.append(
+                        Offer(
+                            target=t.name,
+                            market=m,
+                            listing_name=f"{t.name} seller {k}",
+                            price=int(our * rnd.uniform(0.78, 1.3) // 1000 * 1000),
+                            url=f"https://{m}.example/p/{i}-{k}",
+                            score=40,
+                        )
+                    )
+    return Research(
+        targets=targets,
+        offers=offers,
+        markets=MARKETS,
+        fetched_at={m: "2026-10-22T09:00:00" for m in MARKETS[:-1]},
+        notes={"olcha": "category sweep failed (boom)"},
+        run_at="2026-10-22T09:30:00",
+        title="Synthetic",
+    )
+
+
+
+================================================
+FILE: narxnoma-crawler/tests/research/test_research_collect_cli.py
+================================================
+import json
+import os
+import time
+
+import pytest
+
+from narxnoma.research import collect as C
+from narxnoma.research.cli import build_parser
+from narxnoma.research.model import Target
+from narxnoma.sources.base import Listing
+
+
+class FakeSource:
+    def __init__(self, slug, can_sweep=True, fail=False):
+        self.slug, self.can_sweep, self.fail, self.calls = slug, can_sweep, fail, 0
+
+    def sweep(self, category="smartphones"):
+        self.calls += 1
+        if self.fail:
+            raise RuntimeError("boom")
+        yield Listing(
+            store_slug=self.slug,
+            source_key="k1",
+            name_raw="Samsung Galaxy A56 8/256GB",
+            price=5_000_000,
+            url="https://x.example/1",
+            category=category,
+        )
+
+    def search(self, query):
+        self.calls += 1
+        yield Listing(
+            store_slug=self.slug,
+            source_key="s1",
+            name_raw=f"found {query}",
+            price=1_000_000,
+            url="https://x.example/s",
+            category="smartphones",
+        )
+
+
+@pytest.fixture()
+def fakes(monkeypatch):
+    fs = {
+        "uzum": FakeSource("uzum"),
+        "olcha": FakeSource("olcha", fail=True),
+        "mediapark": FakeSource("mediapark", can_sweep=False),
+    }
+    monkeypatch.setattr(C, "SOURCES", fs)
+    return fs
+
+
+TARGETS = [Target("Samsung Galaxy A56 8/256GB", "smartphones")]
+
+
+def test_sweep_is_cached_then_reused(fakes, tmp_path):
+    first = C.collect(["uzum"], TARGETS, tmp_path)
+    assert fakes["uzum"].calls == 1 and len(first.sweeps[("uzum", "smartphones")]) == 1
+    C.collect(["uzum"], TARGETS, tmp_path)
+    assert fakes["uzum"].calls == 1  # served from cache
+
+
+def test_stale_cache_is_refetched_and_force_ignores_it(fakes, tmp_path):
+    C.collect(["uzum"], TARGETS, tmp_path)
+    cache = tmp_path / "uzum__smartphones.json"
+    old = time.time() - 48 * 3600
+    os.utime(cache, (old, old))
+    C.collect(["uzum"], TARGETS, tmp_path, max_age_h=24)
+    assert fakes["uzum"].calls == 2
+    C.collect(["uzum"], TARGETS, tmp_path, force=True)
+    assert fakes["uzum"].calls == 3
+
+
+def test_a_failed_sweep_is_noted_and_does_not_end_the_run(fakes, tmp_path):
+    got = C.collect(["olcha", "uzum"], TARGETS, tmp_path)
+    assert "sweep failed" in got.notes["olcha"]
+    assert ("olcha", "smartphones") not in got.sweeps and ("uzum", "smartphones") in got.sweeps
+    assert (
+        "olcha" not in got.fetched_at and "uzum" in got.fetched_at
+    )  # the hole is visible, not hidden
+
+
+def test_a_failed_sweep_leaves_no_cache_file(fakes, tmp_path):
+    C.collect(["olcha"], TARGETS, tmp_path)
+    assert not list(tmp_path.glob("olcha__*"))
+
+
+def test_search_only_markets_are_queried_per_target(fakes, tmp_path):
+    got = C.collect(["mediapark"], TARGETS, tmp_path)
+    assert fakes["mediapark"].calls == 1
+    assert got.searches["mediapark"][TARGETS[0].name][0]["price"] == 1_000_000
+
+
+def test_search_query_drops_only_the_leading_category_noun():
+    assert (
+        C.search_query(Target("Смартфон Samsung Galaxy A56 8/256GB Black"))
+        == "Samsung Galaxy A56 8/256GB Black"
+    )
+
+
+def test_default_markets_exclude_glotr_and_keep_a_fixed_order():
+    ms = C.default_markets()
+    assert "glotr" not in ms and ms.index("uzum") < ms.index("texnomart") < ms.index("openshop")
+
+
+def test_cache_file_is_valid_json(fakes, tmp_path):
+    C.collect(["uzum"], TARGETS, tmp_path)
+    assert (
+        json.loads((tmp_path / "uzum__smartphones.json").read_text(encoding="utf-8"))[0]["price"]
+        == 5_000_000
+    )
+
+
+def test_cli_parser_knows_the_three_commands():
+    p = build_parser()
+    assert p.parse_args(["run", "--targets", "a.csv", "--out", "b.xlsx"]).pivots == "auto"
+    assert (
+        p.parse_args(
+            ["workbook", "--from", "r.json", "--out", "b.xlsx", "--pivots", "ooxml"]
+        ).pivots
+        == "ooxml"
+    )
+    assert p.parse_args(["check", "b.xlsx", "--save"]).save is True
+
+
+
+================================================
+FILE: narxnoma-crawler/tests/research/test_research_excel_integration.py
+================================================
+"""Needs desktop Excel (Windows). Deselected by default: `pytest -m excel`.
+
+These are the tests that matter most for the workbook: openpyxl writes formulas it cannot
+evaluate, so only a real Excel proves the file opens, calculates without error and colours
+what the heat-map rules say.
+"""
+
+import pytest
+
+openpyxl = pytest.importorskip("openpyxl")
+
+from _synth import make_research  # noqa: E402  (tests/ is on sys.path, no package)
+
+from narxnoma.research.build import make_workbook  # noqa: E402
+from narxnoma.research.excel import pivots as com  # noqa: E402
+
+
+@pytest.fixture()
+def research():
+    return make_research()
+
+
+pytestmark = [
+    pytest.mark.excel,
+    pytest.mark.skipif(not com.excel_available(), reason="desktop Excel not available"),
+]
+
+
+def test_com_workbook_opens_calculates_and_has_pivots(research, tmp_path):
+    out = tmp_path / "r.xlsx"
+    info = make_workbook(research, out, pivots="com", model="auto")
+    assert info["errors"] == 0, "\n".join(info["lines"])
+    text = "\n".join(info["lines"])
+    assert text.count("PIVOT pvt") >= 3 and "SLICERS 3" in text and "ERRORS_TOTAL 0" in text
+    assert info["model"].startswith(("ok", "unavailable"))  # flat pivots remain either way
+
+
+def test_ooxml_pivots_populate_on_open(research, tmp_path):
+    out = tmp_path / "r.xlsx"
+    info = make_workbook(research, out, pivots="ooxml", verify=True)
+    assert info["errors"] == 0
+    res = com.verify(out)
+    assert "pivots=1" in "\n".join(
+        ln for ln in res.lines if ln.startswith("SHEET Pivot by category")
+    )
+
+
+def test_heat_colours_follow_an_edit(research, tmp_path):
+    """Probe the displayed fill of a Prices cell, change our price through Excel, probe again."""
+    out = tmp_path / "r.xlsx"
+    make_workbook(research, out, pivots="none", verify=False)
+    res = com.verify(out, probe="Prices!D2,Prices!E2")
+    probes = [ln for ln in res.lines if ln.startswith("PROBE")]
+    assert len(probes) == 2 and all("fill=" in ln for ln in probes)
+    assert com.error_count(res) == 0
+
+
+
+================================================
+FILE: narxnoma-crawler/tests/research/test_research_match.py
+================================================
+from narxnoma.research.match import (
+    NON_PHONE_ACCEPT,
+    accept_threshold,
+    index_by_brand,
+    match_target,
+    name_delta,
+)
+from narxnoma.research.model import Target
+
+
+def L(name, price, key=None, url=None):
+    return {
+        "store_slug": "x",
+        "source_key": key or name,
+        "name_raw": name,
+        "price": price,
+        "url": url or f"https://x.example/{abs(hash(name))}",
+        "availability": "IN_STOCK",
+    }
+
+
+PHONES = [
+    L("Смартфон Samsung Galaxy A56 5G 8/256GB Black", 5_300_000),
+    L(
+        "Samsung Galaxy A56 8/256GB Gray", 5_100_000
+    ),  # same variant, other colour: colour is not identity
+    L("Samsung Galaxy A56 12/512GB", 6_500_000),  # different RAM/storage: reject
+    L("Samsung Galaxy A55 8/256GB", 4_900_000),  # different model: reject
+    L("Чехол для Samsung Galaxy A56", 150_000),  # accessory: reject
+]
+
+
+def test_every_accepted_offer_is_kept_cheapest_first():
+    t = Target("Samsung Galaxy A56 8/256GB", "smartphones")
+    offers = match_target(t, "uzum", index_by_brand(PHONES, "smartphones"))
+    assert [o.price for o in offers] == [5_100_000, 5_300_000]
+    assert all(o.market == "uzum" and o.target == t.name for o in offers)
+    assert offers[0].url and offers[0].score >= 30
+
+
+def test_other_variants_and_accessories_are_never_accepted():
+    t = Target("Samsung Galaxy A56 8/256GB", "smartphones")
+    names = {o.listing_name for o in match_target(t, "uzum", index_by_brand(PHONES, "smartphones"))}
+    assert not any("12/512" in n or "A55" in n or "Чехол" in n for n in names)
+
+
+def test_non_phone_category_uses_the_lower_threshold():
+    assert accept_threshold("smartphones") == 30
+    assert accept_threshold("televisions") == NON_PHONE_ACCEPT == 25
+    tvs = [
+        L('Телевизор Samsung UE55DU7100UXUZ 55" 4K', 6_800_000),
+        L("Телевизор Samsung UE50DU7100UXUZ", 5_300_000),
+    ]
+    t = Target("Samsung UE55DU7100UXUZ", "televisions")
+    offers = match_target(t, "olcha", index_by_brand(tvs, "televisions"))
+    assert [o.price for o in offers] == [6_800_000]  # a perfect TV match scores exactly 25
+
+
+def test_no_category_means_no_matching():
+    assert match_target(Target("Samsung Galaxy A56", None), "uzum", {}) == []
+
+
+def test_search_only_listings_are_matched_without_a_bucket():
+    t = Target("Samsung Galaxy A56 8/256GB", "smartphones")
+    offers = match_target(t, "mediapark", None, [PHONES[0], PHONES[2]])
+    assert [o.price for o in offers] == [5_300_000]
+
+
+def test_duplicate_listing_is_not_counted_twice():
+    dup = L("Samsung Galaxy A56 8/256GB", 5_100_000, key="same", url="https://x.example/dup")
+    t = Target("Samsung Galaxy A56 8/256GB", "smartphones")
+    offers = match_target(t, "uzum", None, [dup, dict(dup)])
+    assert len(offers) == 1
+
+
+def test_name_delta_reports_what_the_matcher_ignored():
+    assert name_delta("ASW-H12A4/FADR", "ASW-H12A4/LR1DI") != ""
+    assert name_delta("Samsung Galaxy A56", "Samsung Galaxy A56") == ""
+
+
+
+================================================
+FILE: narxnoma-crawler/tests/research/test_research_targets.py
+================================================
+import pytest
+
+from narxnoma.research.targets import category_slug, load_targets
+
+openpyxl = pytest.importorskip("openpyxl")
+
+
+def test_txt_names_prices_and_comments(tmp_path):
+    f = tmp_path / "list.txt"
+    f.write_text(
+        "# a comment\nSamsung Galaxy A56 8/256GB;5 200 000\n\nXiaomi Redmi 14C\tabc\n"
+        "samsung galaxy a56 8/256gb\n",
+        encoding="utf-8",
+    )
+    ts = load_targets(f, default_category="smartphones")
+    assert [t.name for t in ts] == ["Samsung Galaxy A56 8/256GB", "Xiaomi Redmi 14C"]  # dup dropped
+    assert ts[0].our_price == 5_200_000 and ts[1].our_price is None
+    assert all(t.category == "smartphones" for t in ts)
+
+
+def test_csv_columns_found_by_alias_and_extras_kept(tmp_path):
+    f = tmp_path / "list.csv"
+    f.write_text(
+        "﻿Товар;Наша цена;Категория;Brand group\n"
+        "Samsung UE55DU7100UXUZ;6 900 000;телевизоры;Samsung\n",
+        encoding="utf-8",
+    )
+    (t,) = load_targets(f)
+    assert t.name == "Samsung UE55DU7100UXUZ"
+    assert t.our_price == 6_900_000
+    assert t.category == "televisions"
+    assert t.extra == {"Brand group": "Samsung"}
+
+
+def test_xlsx_with_currency(tmp_path):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append(["Product Name", "Price", "Currency"])
+    ws.append(["iPhone 16 128GB", 799, "USD"])
+    ws.append(["Redmi 14C", 1_500_000, None])
+    f = tmp_path / "list.xlsx"
+    wb.save(f)
+    a, b = load_targets(f, default_category="smartphones")
+    assert (a.currency, a.our_price) == ("USD", 799.0)
+    assert (b.currency, b.our_price) == ("UZS", 1_500_000.0)
+
+
+def test_missing_name_column_names_the_options(tmp_path):
+    f = tmp_path / "x.csv"
+    f.write_text("a,b\n1,2\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="product-name column"):
+        load_targets(f)
+
+
+@pytest.mark.parametrize(
+    "raw,slug",
+    [
+        ("Phones", "smartphones"),
+        ("ТВ", "televisions"),
+        ("acs", "acs"),
+        ("кондиционеры", "acs"),
+        ("nonsense", None),
+        (None, None),
+    ],
+)
+def test_category_slug(raw, slug):
+    assert category_slug(raw) == slug
+
+
+def test_unsupported_extension(tmp_path):
+    f = tmp_path / "x.pdf"
+    f.write_text("x")
+    with pytest.raises(ValueError, match="unsupported"):
+        load_targets(f)
+
+
+
+================================================
+FILE: narxnoma-crawler/tests/research/test_research_workbook.py
+================================================
+import zipfile
+import xml.etree.ElementTree as ET
+
+import pytest
+
+openpyxl = pytest.importorskip("openpyxl")
+
+from _synth import make_research  # noqa: E402  (tests/ is on sys.path, no package)
+
+from narxnoma.research.excel.ooxml_pivot import DEFAULT_SPECS, inject_pivots  # noqa: E402
+from narxnoma.research.model import Research  # noqa: E402
+from narxnoma.research.workbook import BANDS, build_workbook  # noqa: E402
+
+
+@pytest.fixture()
+def research():
+    return make_research()
+
+
+@pytest.fixture()
+def built(research, tmp_path):
+    path = tmp_path / "r.xlsx"
+    layout = build_workbook(research, str(path))
+    return path, layout, openpyxl.load_workbook(path)
+
+
+def test_sheets_and_tables(built):
+    _, layout, wb = built
+    assert wb.sheetnames == [
+        "Start",
+        "Prices",
+        "Heatmap",
+        "Offers",
+        "Products",
+        "Markets",
+        "Links",
+        "Settings",
+        "Notes",
+    ]
+    assert set(wb["Offers"].tables) == {"tblOffers"}
+    assert set(wb["Products"].tables) == {"tblProducts"}
+    assert set(wb["Markets"].tables) == {"tblMarkets"}
+    assert layout["n_products"] == 25 and layout["n_offers"] > 25
+
+
+def test_table_column_names_equal_their_header_cells(built):
+    """Excel refuses to open a workbook whose table column names differ from the header text
+    ("Column1".. is what openpyxl writes if you initialise columns without restoring names)."""
+    _, _, wb = built
+    for ws in wb.worksheets:
+        for tbl in ws.tables.values():
+            header = [c.value for c in ws[1]][: len(tbl.tableColumns)]
+            assert [c.name for c in tbl.tableColumns] == [str(h) for h in header]
+
+
+def test_calculated_columns_fill_new_table_rows(built):
+    _, _, wb = built
+    cols = {c.name: c for c in wb["Offers"].tables["tblOffers"].tableColumns}
+    for name in ("Category", "Baseline", "Delta vs baseline", "Cheapest in product", "Band"):
+        assert cols[name].calculatedColumnFormula is not None, name
+    pcols = {c.name: c for c in wb["Products"].tables["tblProducts"].tableColumns}
+    assert pcols["Baseline"].calculatedColumnFormula is not None
+    assert pcols["Our price"].calculatedColumnFormula is None  # an input, not a formula
+
+
+def test_settings_are_named_cells_with_validation(built):
+    _, _, wb = built
+    for name in ("cfg_par", "cfg_mid", "cfg_sat", "cfg_baseline"):
+        assert name in wb.defined_names
+    assert wb["Settings"]["B5"].value == "Our price"
+    kinds = {dv.type for dv in wb["Settings"].data_validations.dataValidation}
+    assert kinds == {"decimal", "list"}
+
+
+def test_heat_map_is_conditional_formatting_not_painted_fills(built):
+    _, _, wb = built
+    prices = wb["Prices"]
+    # no market cell carries a static fill
+    for row in prices.iter_rows(min_row=2, min_col=4, max_col=3 + 5):
+        assert all(c.fill.fill_type in (None, "none") for c in row)
+    ((rng, rules),) = prices.conditional_formatting._cf_rules.items()
+    kinds = [r.formula[0] for r in rules]
+    assert len(rules) == 7  # cheapest-in-row + six graded bands
+    assert any("MIN(" in f for f in kinds)
+    joined = " ".join(kinds)
+    assert all(
+        n in joined for n in ("cfg_sat", "cfg_mid", "cfg_par")
+    )  # thresholds come from Settings
+    assert any(
+        r.type == "colorScale"
+        for rs in wb["Heatmap"].conditional_formatting._cf_rules.values()
+        for r in rs
+    )
+
+
+def test_heat_rules_compare_each_cell_to_its_own_rows_baseline(built):
+    _, layout, wb = built
+    base_col = openpyxl.utils.get_column_letter(layout["prices_cols"]["baseline"])
+    ((_, rules),) = wb["Prices"].conditional_formatting._cf_rules.items()
+    graded = [r.formula[0] for r in rules if "cfg_" in r.formula[0]]
+    assert all(f"${base_col}2" in f for f in graded)  # relative row, absolute column
+
+
+def test_formulas_use_prefixed_new_functions(built):
+    """MINIFS/MAXIFS written without _xlfn. show #NAME? until a person re-enters the cell."""
+    _, _, wb = built
+    for ws in wb.worksheets:
+        for row in ws.iter_rows():
+            for c in row:
+                if isinstance(c.value, str) and c.value.startswith("="):
+                    assert "MINIFS" not in c.value.replace("_xlfn.MINIFS", "")
+                    assert "MAXIFS" not in c.value.replace("_xlfn.MAXIFS", "")
+
+
+def test_one_row_per_offer_and_links_have_hyperlinks(built, research):
+    _, _, wb = built
+    assert wb["Offers"].max_row - 1 == len(research.offers)
+    links = wb["Links"]
+    n_links = sum(1 for row in links.iter_rows(min_row=2, min_col=4) for c in row if c.hyperlink)
+    n_prices = sum(
+        1 for row in links.iter_rows(min_row=2, min_col=4) for c in row if c.value is not None
+    )
+    assert n_links == n_prices > 0  # every price has a link, every link a price
+
+
+def test_market_columns_keep_their_order_even_when_empty(built, research):
+    _, _, wb = built
+    assert [c.value for c in wb["Prices"][1]][3 : 3 + len(research.markets)] == research.markets
+    assert wb["Markets"]["H6"].value == "category sweep failed (boom)"  # olcha: a known hole, named
+
+
+def test_band_labels_sort_in_heat_order():
+    assert list(BANDS) == sorted(BANDS)
+
+
+def test_extra_input_columns_become_pivot_dimensions(built):
+    _, _, wb = built
+    assert "Brand" in [c.value for c in wb["Products"][1]]
+
+
+def test_json_roundtrip(research, tmp_path):
+    p = tmp_path / "r.json"
+    research.to_json(p)
+    again = Research.from_json(p)
+    assert again == research
+
+
+def test_empty_inputs_are_refused(tmp_path):
+    with pytest.raises(ValueError):
+        build_workbook(Research(targets=[], offers=[], markets=["uzum"]), str(tmp_path / "x.xlsx"))
+
+
+def test_workbook_with_no_offers_still_builds(research, tmp_path):
+    research.offers = []
+    build_workbook(research, str(tmp_path / "x.xlsx"))
+
+
+# ---------------------------------------------------------------- raw OOXML pivots
+def test_ooxml_pivots_are_wellformed_and_wired(research, tmp_path):
+    src, dst = tmp_path / "a.xlsx", tmp_path / "b.xlsx"
+    layout = build_workbook(research, str(src), pivot_placeholders=True)
+    names = inject_pivots(str(src), str(dst), layout["offers_cols"])
+    assert names == [s.name for s in DEFAULT_SPECS]
+    z = zipfile.ZipFile(dst)
+    for n in z.namelist():
+        if n.endswith((".xml", ".rels")):
+            ET.fromstring(z.read(n))  # every part parses
+    wbx = z.read("xl/workbook.xml").decode()
+    assert (
+        "<pivotCaches>" in wbx
+        and "refreshOnLoad" in z.read("xl/pivotCache/pivotCacheDefinition1.xml").decode()
+    )
+    ct = z.read("[Content_Types].xml").decode()
+    assert ct.count("pivotTable+xml") == 3 and "pivotCacheDefinition+xml" in ct
+    assert z.namelist()[0] == "[Content_Types].xml"
+    for n in (1, 2, 3):
+        assert b"cacheId=" in z.read(f"xl/pivotTables/pivotTable{n}.xml")
+    assert openpyxl.load_workbook(dst)["Offers"].tables  # still a readable workbook
+
+
+def test_ooxml_refuses_a_workbook_without_placeholders(research, tmp_path):
+    src = tmp_path / "a.xlsx"
+    layout = build_workbook(research, str(src))
+    with pytest.raises(ValueError, match="placeholder"):
+        inject_pivots(str(src), str(tmp_path / "b.xlsx"), layout["offers_cols"])
 
 
 
@@ -27980,6 +31382,63 @@ Fixture: `tests/fixtures/sources/uzum.json`, `uzum_photos.json`. Tests: `tests/s
 
 
 ================================================
+FILE: skills/narxnoma-excel-workbooks/SKILL.md
+================================================
+---
+name: narxnoma-excel-workbooks
+description: Use when generating an Excel workbook that must be analysable, not static - PivotTables and slicers from Python, Excel Tables as a database, formulas that follow edits, conditional-formatting heat maps with per-row baselines, Data Model / DAX, or verifying a generated .xlsx in real Excel. Applies to narxnoma research workbooks and any openpyxl-built file.
+---
+
+# Analysable Excel workbooks from Python
+
+Full write-up with every trap: `docs/excel-workbooks.md`. Working code:
+`narxnoma-crawler/narxnoma/research/` (`workbook.py`, `excel/pivots.ps1`,
+`excel/ooxml_pivot.py`, `excel/verify.ps1`). Verified against desktop Excel 16.
+
+## The order (never break it)
+
+`openpyxl builds` → `pivots / slicers / Data Model added` → `nothing re-saves via openpyxl`.
+openpyxl cannot make a PivotTable and silently drops slicers and the Data Model on save.
+
+## Checklist
+
+1. **Database = Excel Tables** (one fact per row, flat long format). Table column names must equal
+   the header cells — after `table._initialise_columns()` restore them, or Excel refuses the file.
+   Calculated columns: `TableFormula(attr_text=…)` without `=`, `Tbl[[#This Row],[Col]]`, so added
+   rows fill themselves. Header names without `( ) % # [ ]`.
+2. **Knobs = defined names** on a `Settings` sheet (+ data validation). Inputs yellow, rest formulas.
+3. **Formulas**: `_xlfn.MINIFS` / `_xlfn.MAXIFS` / `_xlfn.IFS` need the prefix (else `#NAME?`). `""` for
+   no data, never 0. openpyxl writes no cached values → `fullCalcOnLoad`; to bake values let Excel save.
+4. **Heat map = conditional formatting**, never painted fills. Per-row baseline = formula rule,
+   relative row / absolute column, thresholds from names; both `fgColor` and `bgColor` on the fill;
+   `stopIfTrue` for graded bands; `ColorScaleRule(start_type="formula", start_value="-cfg_sat" …)`
+   for a scale driven by Settings. On a pivot: `AddColorScale(3)` + `ScopeType = 2`.
+5. **COM pivots** (`pivots.ps1`): wrap every call in a retry for `0x800AC472`; `CalculateFull`
+   first; `PivotCaches().Create(1, "tblX")`; ONE cache, many pivots, slicers via
+   `SlicerCaches.Add2` + `.PivotTables.AddPivotTable`; number formats on the data field; set
+   `CompactLayoutRowHeader/ColumnHeader` and `GrandTotalName` (they follow the UI language);
+   optional steps in `Try-Step`; `Quit()` in `finally`.
+6. **Data Model**: probe `$wb.Model`; `Connections.Add2(…, 7, $true, $false)` per table;
+   `ModelRelationships.Add`, `ModelMeasures.Add` (DAX), pivot from `ThisWorkbookDataModel`. In a
+   `try`; flat pivots stay as the fallback.
+7. **No Excel**: `ooxml_pivot.py` injects cache + records + pivot parts with `refreshOnLoad="1"`.
+   Declare `xmlns:r` on the `<pivotCache>` element (openpyxl's `workbook.xml` doesn't on the root).
+   No slicers / chart / model.
+8. **Verify in Excel**: `verify.ps1` (error cells per sheet, table/pivot/slicer/CF counts,
+   `-Probe` displayed fill colour of named cells). Then recompute independently in Python and
+   compare. Then render a sheet (`ExportAsFixedFormat` → PDF → PyMuPDF) and **look**. Then change an
+   input through COM and re-probe.
+
+## Don't
+
+- Don't claim a workbook works because openpyxl wrote it. Say if Excel never opened it.
+- Don't bake a colour that a rule can compute.
+- Don't put a business's private figures in examples or fixtures in this public repo: synthetic
+  rows only (`tests/research/_synth.py`).
+
+
+
+================================================
 FILE: skills/narxnoma-fetch/SKILL.md
 ================================================
 ---
@@ -28015,6 +31474,9 @@ search returns cases and other storage tiers too, so pick the variant by
 source is asked to sweep; never an empty stream that exits 0.
 
 Categories: `smartphones televisions laptops acs fridges washers ovens`.
+
+For a **list of products compared across the markets** (and an Excel file to analyse), do not
+loop `fetch` yourself: use `python -m narxnoma.research run` (skill `narxnoma-market-research`).
 
 ## Pick the source skill
 
@@ -28092,6 +31554,74 @@ Adding a store: see skill `adding-a-narxnoma-source`.
 
 
 ================================================
+FILE: skills/narxnoma-market-research/SKILL.md
+================================================
+---
+name: narxnoma-market-research
+description: Use when asked to research a list of products against Uzbek retailers (uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, openshop), compare our prices with the market, or deliver an Excel file the user can analyse, pivot and heat-map rather than a static table.
+---
+
+# narxnoma market research
+
+A product list in; an **analysable** workbook out — Excel Tables as a database, formulas that
+follow edits, a conditional-formatting heat map, real PivotTables. Canonical doc:
+`docs/market-research.md`; the Excel engineering: `docs/excel-workbooks.md` (and skill
+`narxnoma-excel-workbooks`).
+
+## Run it
+
+```bash
+pip install -e "narxnoma-crawler[excel]"          # once; openpyxl for the workbook
+cd narxnoma-crawler
+python -m narxnoma.research run --targets products.xlsx --out research.xlsx
+python -m narxnoma.research run --targets list.txt --category smartphones --sources uzum,olcha --out p.xlsx
+python -m narxnoma.research workbook --from research.json --out research.xlsx   # rebuild, no fetching
+python -m narxnoma.research check research.xlsx                                  # Excel recalculates it
+```
+
+The list: `.xlsx` / `.csv` / `.txt`. Only a name is required. Useful columns: `Our price`
+(UZS, or `Currency` = USD), `Category` (smartphones, televisions, laptops, acs, fridges,
+washers, ovens — or the RU/UZ word), and **any extra column you want to pivot by** (brand,
+supplier, segment): it becomes a column on `Products`.
+
+## Decide before running
+
+1. **Category.** A product with none is not matched. Pass `--category`, or put it in the file.
+2. **Markets.** Default = all but glotr (robots.txt forbids; only by grant — name it
+   deliberately). `mediapark` is search-only: one query per product.
+3. **Pivots.** `--pivots auto` = Excel COM when Excel is installed (slicers, chart, Data Model
+   if Power Pivot exists) else raw OOXML (pivots build on open; no slicers). `none` = tables +
+   formulas only. Say which one you used.
+4. **Excel version.** `MINIFS`/`MAXIFS` need Excel 2019 / 365.
+
+## Rules when presenting results
+
+- **Say what the workbook is**: a database + view; edit yellow cells on `Products` (Our price,
+  Category) and thresholds on `Settings`; everything follows. Don't hand over a screenshot or
+  CSV of the grid when the workbook exists.
+- **Colour direction**: red = the market is *cheaper* than the baseline; green = dearer. Baseline
+  = our price, else market median (`Settings!cfg_baseline`).
+- **An empty cell is "no match", never zero.** Misses are the price of precision (brand, model,
+  RAM and storage must match; colour is not identity except iPhone). Known matcher gaps
+  (`docs/parsers/openshop.md` §8) show as misses, not wrong prices.
+- **Read `Name delta` on `Offers` before quoting an outlier.** A plausible price is not a right
+  one; the listing name is checkable.
+- **Freshness**: each market's catalogue time is on `Markets` and `Notes`; a failed sweep is
+  named there. Re-matching is free (24 h cache); `--force` refetches.
+- **Verify, don't assume**: `run` / `workbook` call Excel's recalculation check when Excel is
+  present and exit 1 on any formula error. Without Excel, say the file is unverified.
+- Never re-save the finished file through openpyxl (drops slicers and the Data Model).
+
+## Extending
+
+New store → `adding-a-narxnoma-source` (it appears in research automatically once registered in
+`SOURCES`; add it to `collect.MARKET_ORDER`). A new input alias → `targets.ALIASES` /
+`CATEGORY_ALIASES`. Workbook layout → `research/workbook.py`; add or change a test in
+`tests/research/test_research_workbook.py` (and run `pytest -m excel` on a machine with Excel).
+
+
+
+================================================
 FILE: tools/README.md
 ================================================
 # tools/
@@ -28139,6 +31669,8 @@ ENGINE_PATTERNS = [
     "README.md", "LICENSE", "llms.txt", ".gitingestignore",
     ".claude-plugin/*",
     "docs/parsers/*",
+    "docs/market-research.md",
+    "docs/excel-workbooks.md",
     "skills/*",
     "narxnoma-crawler/pyproject.toml",
     "narxnoma-crawler/docker-compose.yml",
@@ -28245,8 +31777,8 @@ Layout: `docs/folder-map.md`. History and open items: `docs/CHANGELOG.md`.
 
 ```bash
 cd narxnoma-crawler
-python -m pip install --user -e ".[dev]"              # once: requests, psycopg, pytest, ruff
-python -m pytest -q                                    # offline; expect 584 passed, 72 skipped
+python -m pip install --user -e ".[dev]"              # once: requests, psycopg, pytest, ruff, openpyxl
+python -m pytest -q                                    # offline; expect 627 passed, 72 skipped
 python -m pytest -q -m live tests/sources/test_contract_live.py -k <slug>
 python -m ruff check --select E4,E7,E9,F,E501 <changed files>   # repo config = ruff defaults
 python -m narxnoma.cli fetch --source <slug> --category <c> --limit 20
@@ -28259,8 +31791,12 @@ Release: bump `.claude-plugin/plugin.json` `version`, add a CHANGELOG entry, com
 
 ## 4. Current state
 
-- Eleven sources; plugin **1.1.0**; schema migration **6** (openshop).
-- Offline suite 584 passed / 72 skipped / 9 live deselected (2026-10-22).
+- Eleven sources; plugin **1.2.0**; schema migration **6** (openshop).
+- Offline suite 627 passed / 72 skipped / 12 deselected = 9 live + 3 `excel` (2026-10-22).
+- `narxnoma/research/` (market research → analysable Excel workbook): canonical notes
+  `docs/market-research.md` and `docs/excel-workbooks.md`; run `pytest -m excel tests/research`
+  on a machine with desktop Excel after touching `workbook.py` or `excel/`. Never re-save a
+  finished workbook through openpyxl (drops slicers / Data Model).
 - Open: eight matcher gaps from openshop names (`docs/parsers/openshop.md` §8), not yet
   fixed in `matching/`; one pre-existing over-long line in `test_contract_live.py`.
 - Downstream user: the Extractractor project (Ishonch pricing, private) vendors
@@ -28295,7 +31831,7 @@ FILE: .claude-plugin/marketplace.json
   "plugins": [
     {
       "name": "narxnoma",
-      "description": "Fetch prices from eleven Uzbek electronics retailers; one skill per store documents its exact endpoint, price unit, URL rule and traps.",
+      "description": "Fetch prices from eleven Uzbek electronics retailers (one skill per store documents its endpoint, price unit, URL rule and traps) and turn a product list into an analysable Excel market-research workbook.",
       "source": "./",
       "category": "data"
     }
@@ -28309,8 +31845,8 @@ FILE: .claude-plugin/plugin.json
 ================================================
 {
   "name": "narxnoma",
-  "description": "Price-fetch engine for Uzbekistan's electronics retailers: verified clients, API notes and traps for uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, glotr and openshop, plus the name-to-product matcher.",
-  "version": "1.1.0",
+  "description": "Price-fetch engine for Uzbekistan's electronics retailers: verified clients, API notes and traps for uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart, asaxiy, radius, glotr and openshop, plus the name-to-product matcher and a market-research tool that turns a product list into an analysable Excel workbook (tables, formulas, heat map, PivotTables).",
+  "version": "1.2.0",
   "author": {
     "name": "ShaKQl",
     "url": "https://github.com/ShaKQl"
@@ -28329,7 +31865,10 @@ FILE: .claude-plugin/plugin.json
     "asaxiy",
     "retail-api",
     "crawler",
-    "openshop"
+    "openshop",
+    "market-research",
+    "excel",
+    "pivot-table"
   ]
 }
 

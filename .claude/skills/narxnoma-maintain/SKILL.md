@@ -40,8 +40,8 @@ Layout: `docs/folder-map.md`. History and open items: `docs/CHANGELOG.md`.
 
 ```bash
 cd narxnoma-crawler
-python -m pip install --user -e ".[dev]"              # once: requests, psycopg, pytest, ruff
-python -m pytest -q                                    # offline; expect 584 passed, 72 skipped
+python -m pip install --user -e ".[dev]"              # once: requests, psycopg, pytest, ruff, openpyxl
+python -m pytest -q                                    # offline; expect 627 passed, 72 skipped
 python -m pytest -q -m live tests/sources/test_contract_live.py -k <slug>
 python -m ruff check --select E4,E7,E9,F,E501 <changed files>   # repo config = ruff defaults
 python -m narxnoma.cli fetch --source <slug> --category <c> --limit 20
@@ -54,8 +54,12 @@ Release: bump `.claude-plugin/plugin.json` `version`, add a CHANGELOG entry, com
 
 ## 4. Current state
 
-- Eleven sources; plugin **1.1.0**; schema migration **6** (openshop).
-- Offline suite 584 passed / 72 skipped / 9 live deselected (2026-10-22).
+- Eleven sources; plugin **1.2.0**; schema migration **6** (openshop).
+- Offline suite 627 passed / 72 skipped / 12 deselected = 9 live + 3 `excel` (2026-10-22).
+- `narxnoma/research/` (market research → analysable Excel workbook): canonical notes
+  `docs/market-research.md` and `docs/excel-workbooks.md`; run `pytest -m excel tests/research`
+  on a machine with desktop Excel after touching `workbook.py` or `excel/`. Never re-save a
+  finished workbook through openpyxl (drops slicers / Data Model).
 - Open: eight matcher gaps from openshop names (`docs/parsers/openshop.md` §8), not yet
   fixed in `matching/`; one pre-existing over-long line in `test_contract_live.py`.
 - Downstream user: the Extractractor project (Ishonch pricing, private) vendors

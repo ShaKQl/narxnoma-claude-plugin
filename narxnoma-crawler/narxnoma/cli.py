@@ -2,6 +2,7 @@
     python -m narxnoma.cli fetch --source SLUG [--category C | --query Q]
     python -m narxnoma.cli harvest [--source SLUG]
     python -m narxnoma.cli report
+    python -m narxnoma.cli research run|workbook|check ...   (see narxnoma/research/cli.py)
 """
 import argparse
 import dataclasses
@@ -180,6 +181,11 @@ def run_fetch(source, category: str, query: str | None, limit: int | None,
 
 
 def main(argv: list[str] | None = None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if argv and argv[0] == "research":
+        # database-free, and kept out of the parser below so its options stay in one place
+        from narxnoma.research.cli import main as research_main
+        return research_main(argv[1:])
     parser = argparse.ArgumentParser(prog="narxnoma")
     sub = parser.add_subparsers(dest="command", required=True)
     fetch = sub.add_parser("fetch", help="print one source's listings as JSON lines; "

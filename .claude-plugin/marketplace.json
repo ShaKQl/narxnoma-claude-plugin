@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "narxnoma",
-      "description": "Fetch prices from eleven Uzbek electronics retailers; one skill per store documents its exact endpoint, price unit, URL rule and traps.",
+      "description": "Fetch prices from eleven Uzbek electronics retailers (one skill per store documents its endpoint, price unit, URL rule and traps) and turn a product list into an analysable Excel market-research workbook.",
       "source": "./",
       "category": "data"
     }
