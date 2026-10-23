@@ -46,3 +46,28 @@ store's API (URL, token, field names) is in this repo — it lives in an env fil
   ignores `page`); more than 500 pages raises.
 - Tests: `tests/test_daily.py` (offline, synthetic payloads). The real API and Telegram are
   exercised only by hand.
+
+## No file this morning: check in this order
+
+Most failures that happen before the job's own logging starts leave nothing in Telegram, so
+look on the PC, not in Saved Messages.
+
+1. **Is the code on the PC?** `python -m narxnoma.daily --help` from `narxnoma-crawler`. If it
+   says `No module named narxnoma.daily`, the checkout predates this module: pull it. The task
+   then fails before anything is logged, and Task Scheduler shows *Last Run Result* `0x1`.
+2. **Did the task run?** `Get-ScheduledTaskInfo narxnoma-report` (LastRunTime,
+   LastTaskResult). The tasks are registered as *run only when the user is logged on*: a
+   logged-off PC skips the run. `-StartWhenAvailable` catches up only after a missed start, and
+   only while the user is logged on. `python` must resolve in the task's environment (pass
+   `-Python` with a full path; the Microsoft Store `python.exe` alias does not work there).
+3. **`%NARXNOMA_DAILY_DIR%\report.log`**, last lines. `report not started, Telegram cannot
+   send: …` names the env-file problem. `PermissionError … bearer token` means the token file
+   is stale. `Telegram send failed (attempt 4/4)` means the workbook is in `reports\` but did
+   not go out.
+4. **`reports\market_analysis_<date>.xlsx` exists but was not sent**: the Telegram settings.
+   Run `python -m narxnoma.daily report` by hand and read the error.
+
+Since 2026-10-23, `report` checks the Telegram settings (all three keys, the session file,
+telethon) **before** fetching anything, and the env file accepts inline `# comments`. Before
+that, the example's inline comment on `TG_SESSION` was read as part of the path, so the job
+built the workbook and then failed to send both it and the failure notice.

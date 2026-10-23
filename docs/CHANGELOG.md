@@ -3,17 +3,18 @@
 Read this at the start of a session to know what changed last and what state the
 repo is in. Newest first. Older history is summarised per era from `git log`.
 
-## Latest state (2026-10-22)
+## Latest state (2026-10-23)
 
 - **Eleven sources**: uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart,
   asaxiy, radius, glotr, openshop. All sweepable except mediapark (search-only).
-- Offline suite: **628 passed**, 72 skipped (need `NARXNOMA_TEST_DSN`), 12 deselected
+- Offline suite: **650 passed**, 72 skipped (need `NARXNOMA_TEST_DSN`), 12 deselected
   (9 live, 3 `excel` — need desktop Excel; they pass on the dev machine). openshop's live
   contract test passes.
 - **Market research** (`narxnoma/research/`): a product list in, an analysable Excel
   workbook out — see `docs/market-research.md`.
 - **Daily jobs** (`narxnoma/daily.py`, `docs/daily-report.md`): 03:00 price refresh and 09:00
   catalogue → research workbook → Telegram, run by the owner's OS scheduler.
+  **Not on `main` yet**: merge `claude/gallant-pascal-y8au1g`, then pull on the PC.
 - Plugin manifest version **1.2.0**.
 - Open items:
   - `research`: the matcher gaps below limit recall on openshop names (iPhone `SIM + eSIM`,
@@ -26,6 +27,27 @@ repo is in. Newest first. Older history is summarised per era from `git log`.
     `tests/sources/test_contract_live.py` (uzum case).
   - `docs/superpowers/NEXT-SESSION-PROMPT.md` is a handoff from the July build on
     another machine (`D:\ASUS\Desktop\narxnoma`); historical, not current.
+
+## 2026-10-23 — daily report: why no morning file arrived, and two fixes
+
+- **Status found**: the daily jobs (`d9cfffd`) were committed only on the unmerged branch
+  `claude/ecstatic-pascal-eohvyu`, not on `main`. A PC that runs `main` has no
+  `narxnoma.daily`, so the 09:00 task exits before it logs anything and sends nothing. This
+  branch now carries that commit plus the fixes below; it still needs a merge to `main` and
+  a pull on the PC.
+- **Fix: inline comments in the env file.** `tools/daily/daily.env.example` had
+  `TG_SESSION=… # comment`, and `load_env` kept the comment as part of the path. The report
+  then built the workbook, failed to send it four times (6 min), and the failure notice failed
+  for the same reason: nothing in Telegram, only `report.log`. `load_env` now ends unquoted
+  values at ` #`; the example puts the comment on its own line.
+- **Fix: Telegram pre-flight.** `report` checks `TG_SESSION` / `TG_API_ID` / `TG_API_HASH`,
+  the session file and telethon before fetching anything, and logs the reason.
+- Tests: `tests/test_daily.py` 18 → 22, including the first end-to-end `job_report` run
+  (offline: catalogue → csv → research → workbook → one send). Suite 650 passed / 72 skipped.
+- `docs/daily-report.md`: a "no file this morning" checklist (module present, Task Scheduler
+  result, `report.log`, workbook built but not sent).
+- Still **not verified live**: the real catalogue response and the Telegram send (this
+  container cannot reach the store or Telegram); run `probe` and `report --no-send` on the PC.
 
 ## 2026-10-22 — unattended daily refresh and morning report
 

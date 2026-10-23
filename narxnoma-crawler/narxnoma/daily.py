@@ -50,11 +50,46 @@ def load_env(path: str | Path | None) -> dict:
             if not line or line.startswith("#") or "=" not in line:
                 continue
             k, v = line.split("=", 1)
-            cfg[k.strip()] = v.strip().strip("'\"")
+            cfg[k.strip()] = _env_value(v)
     for k, v in os.environ.items():
         if k.startswith(("ECOM_", "TG_", "NARXNOMA_")):
             cfg[k] = v
     return cfg
+
+
+def _env_value(v: str) -> str:
+    """A quoted value is taken as is; an unquoted one ends at ` #` (an inline comment), so
+    `TG_SESSION=C:\\x\\s   # note` is the path, not the path plus the note."""
+    v = v.strip()
+    if v[:1] in ("'", '"') and v.count(v[0]) >= 2:
+        return v[1 : v.index(v[0], 1)]
+    for sep in (" #", "\t#"):
+        if sep in v:
+            v = v[: v.index(sep)]
+    return v.strip()
+
+
+def telegram_problem(cfg: dict) -> str | None:
+    """Why a send cannot work, or None. Checked before the report does any work: a bad session
+    path also breaks the failure notice, so without this check nothing would arrive and the
+    only trace would be report.log."""
+    missing = [k for k in ("TG_SESSION", "TG_API_ID", "TG_API_HASH") if not cfg.get(k)]
+    if missing:
+        return f"missing in the env file: {', '.join(missing)}"
+    if not str(cfg["TG_API_ID"]).isdigit():
+        return "TG_API_ID must be a number"
+    if not _session_path(cfg).exists():
+        return f"Telegram session file not found: {_session_path(cfg)}"
+    try:
+        import telethon  # noqa: F401
+    except ImportError:
+        return "telethon is not installed (pip install telethon)"
+    return None
+
+
+def _session_path(cfg: dict) -> Path:
+    s = Path(cfg["TG_SESSION"])  # Telethon takes it with or without ".session"
+    return s if s.suffix == ".session" else s.with_suffix(".session")
 
 
 def read_token(cfg: dict) -> str:
@@ -271,8 +306,7 @@ def send_telegram(cfg: dict, path: Path, caption: str) -> None:
         from telethon.sync import TelegramClient
     except ImportError as exc:  # pragma: no cover - environment dependent
         raise RuntimeError("pip install telethon to send to Telegram") from exc
-    session = Path(cfg["TG_SESSION"])  # path as Telethon takes it, without ".session"
-    src = session.with_suffix(".session") if session.suffix != ".session" else session
+    src = _session_path(cfg)
     if not src.exists():
         raise FileNotFoundError(f"Telegram session file not found: {src}")
     tmpdir = Path(tempfile.mkdtemp(prefix="narxnoma_tg_"))
@@ -301,9 +335,7 @@ def send_text(cfg: dict, text: str) -> None:
         return
     tmpdir = Path(tempfile.mkdtemp(prefix="narxnoma_tg_"))
     try:
-        src = Path(cfg["TG_SESSION"])
-        src = src.with_suffix(".session") if src.suffix != ".session" else src
-        shutil.copyfile(src, tmpdir / "send.session")
+        shutil.copyfile(_session_path(cfg), tmpdir / "send.session")
         client = TelegramClient(str(tmpdir / "send"), int(cfg["TG_API_ID"]), cfg["TG_API_HASH"])
         client.connect()
         try:
@@ -354,6 +386,9 @@ def job_report(cfg: dict, send: bool = True, wait_lock_min: float = 90) -> int:
 
     out_dir = work_dir(cfg) / "reports"
     stamp = date.today().isoformat()
+    if send and (why := telegram_problem(cfg)):
+        logger.error("report not started, Telegram cannot send: %s", why)
+        return 1
     lock = Lock(work_dir(cfg) / "daily.lock")
     # the nightly refresh may still be running on a slow night: wait for it, do not race it
     if not lock.acquire(wait_s=wait_lock_min * 60):

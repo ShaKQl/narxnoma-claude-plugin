@@ -170,3 +170,83 @@ def test_load_env_file(tmp_path):
     f.write_text("# c\nECOM_PAGE_SIZE = 50\nTG_API_ID='7'\n", encoding="utf-8")
     cfg = daily.load_env(f)
     assert cfg["ECOM_PAGE_SIZE"] == "50" and cfg["TG_API_ID"] == "7"
+
+
+def test_load_env_strips_inline_comments(tmp_path):
+    f = tmp_path / "e"
+    f.write_text(
+        "TG_SESSION=C:\\tg\\userbot_session        # the .session file\n"
+        "TG_API_HASH='ab # cd'  # quoted keeps its hash\n"
+        "ECOM_EXTRA_PARAMS=a=1&b=2\n",
+        encoding="utf-8",
+    )
+    cfg = daily.load_env(f)
+    assert cfg["TG_SESSION"] == "C:\\tg\\userbot_session"
+    assert cfg["TG_API_HASH"] == "ab # cd"
+    assert cfg["ECOM_EXTRA_PARAMS"] == "a=1&b=2"
+
+
+def test_shipped_env_example_parses_to_clean_values(monkeypatch):
+    for k in list(os.environ):
+        if k.startswith(("ECOM_", "TG_", "NARXNOMA_")):
+            monkeypatch.delenv(k)
+    example = daily.Path(__file__).parents[2] / "tools" / "daily" / "daily.env.example"
+    cfg = daily.load_env(example)
+    assert cfg["TG_SESSION"] and all("#" not in v for v in cfg.values()), cfg
+
+
+def test_report_refuses_to_start_when_telegram_cannot_send(tmp_path, monkeypatch):
+    monkeypatch.setattr(daily, "fetch_catalogue", lambda *a, **k: pytest.fail("fetched"))
+    cfg = {
+        "NARXNOMA_DAILY_DIR": str(tmp_path),
+        "TG_SESSION": str(tmp_path / "nope"),
+        "TG_API_ID": "1",
+        "TG_API_HASH": "h",
+    }
+    assert "not found" in daily.telegram_problem(cfg)
+    assert daily.job_report(cfg) == 1
+    assert "missing" in daily.telegram_problem({})
+
+
+def test_report_end_to_end_offline(tmp_path, monkeypatch):
+    """Catalogue -> csv -> research on the cache -> workbook -> one send, no network."""
+    from narxnoma.research import collect
+    from narxnoma.sources import SOURCES
+
+    def sweep(slug, category, cache_dir, max_age_h, force):
+        rows = [
+            {
+                "store_slug": slug,
+                "source_key": "k",
+                "price": 4_990_000,
+                "name_raw": "Samsung Galaxy A55 8/256GB Black",
+                "url": f"https://x/{slug}",
+                "availability": "IN_STOCK",
+                "image_url": None,
+                "category": category,
+            }
+        ]
+        return (rows if category == "smartphones" else []), time.time()
+
+    monkeypatch.setattr(collect, "_sweep_cached", sweep)
+    for s in SOURCES.values():
+        if not s.can_sweep:
+            monkeypatch.setattr(s, "search", lambda q: [], raising=False)
+    items = [
+        {
+            "name": "Samsung Galaxy A55 8/256GB Black",
+            "price": "5 100 000",
+            "category": {"name": "Smartphones"},
+            "is_active": True,
+        },
+        {"name": "Old phone", "price": 1, "category": "Smartphones", "is_active": False},
+    ]
+    monkeypatch.setattr(daily, "fetch_catalogue", lambda *a, **k: items)
+    monkeypatch.setattr(daily, "telegram_problem", lambda cfg: None)
+    sent = []
+    monkeypatch.setattr(daily, "send_telegram", lambda cfg, p, c: sent.append((p, c)))
+    assert daily.job_report({"NARXNOMA_DAILY_DIR": str(tmp_path)}) == 0
+    ((path, caption),) = sent
+    assert path.name.startswith("market_analysis_") and path.exists()
+    assert caption.startswith("Market analysis") and "1 products" in caption
+    assert not (tmp_path / "daily.lock").exists()

@@ -573,17 +573,18 @@ FILE: docs/CHANGELOG.md
 Read this at the start of a session to know what changed last and what state the
 repo is in. Newest first. Older history is summarised per era from `git log`.
 
-## Latest state (2026-10-22)
+## Latest state (2026-10-23)
 
 - **Eleven sources**: uzum, alifshop, beemarket, idea, mediapark, olcha, texnomart,
   asaxiy, radius, glotr, openshop. All sweepable except mediapark (search-only).
-- Offline suite: **628 passed**, 72 skipped (need `NARXNOMA_TEST_DSN`), 12 deselected
+- Offline suite: **650 passed**, 72 skipped (need `NARXNOMA_TEST_DSN`), 12 deselected
   (9 live, 3 `excel` — need desktop Excel; they pass on the dev machine). openshop's live
   contract test passes.
 - **Market research** (`narxnoma/research/`): a product list in, an analysable Excel
   workbook out — see `docs/market-research.md`.
 - **Daily jobs** (`narxnoma/daily.py`, `docs/daily-report.md`): 03:00 price refresh and 09:00
   catalogue → research workbook → Telegram, run by the owner's OS scheduler.
+  **Not on `main` yet**: merge `claude/gallant-pascal-y8au1g`, then pull on the PC.
 - Plugin manifest version **1.2.0**.
 - Open items:
   - `research`: the matcher gaps below limit recall on openshop names (iPhone `SIM + eSIM`,
@@ -596,6 +597,27 @@ repo is in. Newest first. Older history is summarised per era from `git log`.
     `tests/sources/test_contract_live.py` (uzum case).
   - `docs/superpowers/NEXT-SESSION-PROMPT.md` is a handoff from the July build on
     another machine (`D:\ASUS\Desktop\narxnoma`); historical, not current.
+
+## 2026-10-23 — daily report: why no morning file arrived, and two fixes
+
+- **Status found**: the daily jobs (`d9cfffd`) were committed only on the unmerged branch
+  `claude/ecstatic-pascal-eohvyu`, not on `main`. A PC that runs `main` has no
+  `narxnoma.daily`, so the 09:00 task exits before it logs anything and sends nothing. This
+  branch now carries that commit plus the fixes below; it still needs a merge to `main` and
+  a pull on the PC.
+- **Fix: inline comments in the env file.** `tools/daily/daily.env.example` had
+  `TG_SESSION=… # comment`, and `load_env` kept the comment as part of the path. The report
+  then built the workbook, failed to send it four times (6 min), and the failure notice failed
+  for the same reason: nothing in Telegram, only `report.log`. `load_env` now ends unquoted
+  values at ` #`; the example puts the comment on its own line.
+- **Fix: Telegram pre-flight.** `report` checks `TG_SESSION` / `TG_API_ID` / `TG_API_HASH`,
+  the session file and telethon before fetching anything, and logs the reason.
+- Tests: `tests/test_daily.py` 18 → 22, including the first end-to-end `job_report` run
+  (offline: catalogue → csv → research → workbook → one send). Suite 650 passed / 72 skipped.
+- `docs/daily-report.md`: a "no file this morning" checklist (module present, Task Scheduler
+  result, `report.log`, workbook built but not sent).
+- Still **not verified live**: the real catalogue response and the Telegram send (this
+  container cannot reach the store or Telegram); run `probe` and `report --no-send` on the PC.
 
 ## 2026-10-22 — unattended daily refresh and morning report
 
@@ -761,6 +783,31 @@ store's API (URL, token, field names) is in this repo — it lives in an env fil
   ignores `page`); more than 500 pages raises.
 - Tests: `tests/test_daily.py` (offline, synthetic payloads). The real API and Telegram are
   exercised only by hand.
+
+## No file this morning: check in this order
+
+Most failures that happen before the job's own logging starts leave nothing in Telegram, so
+look on the PC, not in Saved Messages.
+
+1. **Is the code on the PC?** `python -m narxnoma.daily --help` from `narxnoma-crawler`. If it
+   says `No module named narxnoma.daily`, the checkout predates this module: pull it. The task
+   then fails before anything is logged, and Task Scheduler shows *Last Run Result* `0x1`.
+2. **Did the task run?** `Get-ScheduledTaskInfo narxnoma-report` (LastRunTime,
+   LastTaskResult). The tasks are registered as *run only when the user is logged on*: a
+   logged-off PC skips the run. `-StartWhenAvailable` catches up only after a missed start, and
+   only while the user is logged on. `python` must resolve in the task's environment (pass
+   `-Python` with a full path; the Microsoft Store `python.exe` alias does not work there).
+3. **`%NARXNOMA_DAILY_DIR%\report.log`**, last lines. `report not started, Telegram cannot
+   send: …` names the env-file problem. `PermissionError … bearer token` means the token file
+   is stale. `Telegram send failed (attempt 4/4)` means the workbook is in `reports\` but did
+   not go out.
+4. **`reports\market_analysis_<date>.xlsx` exists but was not sent**: the Telegram settings.
+   Run `python -m narxnoma.daily report` by hand and read the error.
+
+Since 2026-10-23, `report` checks the Telegram settings (all three keys, the session file,
+telethon) **before** fetching anything, and the env file accepts inline `# comments`. Before
+that, the example's inline comment on `TG_SESSION` was read as part of the path, so the job
+built the workbook and then failed to send both it and the failure notice.
 
 
 
@@ -5791,11 +5838,46 @@ def load_env(path: str | Path | None) -> dict:
             if not line or line.startswith("#") or "=" not in line:
                 continue
             k, v = line.split("=", 1)
-            cfg[k.strip()] = v.strip().strip("'\"")
+            cfg[k.strip()] = _env_value(v)
     for k, v in os.environ.items():
         if k.startswith(("ECOM_", "TG_", "NARXNOMA_")):
             cfg[k] = v
     return cfg
+
+
+def _env_value(v: str) -> str:
+    """A quoted value is taken as is; an unquoted one ends at ` #` (an inline comment), so
+    `TG_SESSION=C:\\x\\s   # note` is the path, not the path plus the note."""
+    v = v.strip()
+    if v[:1] in ("'", '"') and v.count(v[0]) >= 2:
+        return v[1 : v.index(v[0], 1)]
+    for sep in (" #", "\t#"):
+        if sep in v:
+            v = v[: v.index(sep)]
+    return v.strip()
+
+
+def telegram_problem(cfg: dict) -> str | None:
+    """Why a send cannot work, or None. Checked before the report does any work: a bad session
+    path also breaks the failure notice, so without this check nothing would arrive and the
+    only trace would be report.log."""
+    missing = [k for k in ("TG_SESSION", "TG_API_ID", "TG_API_HASH") if not cfg.get(k)]
+    if missing:
+        return f"missing in the env file: {', '.join(missing)}"
+    if not str(cfg["TG_API_ID"]).isdigit():
+        return "TG_API_ID must be a number"
+    if not _session_path(cfg).exists():
+        return f"Telegram session file not found: {_session_path(cfg)}"
+    try:
+        import telethon  # noqa: F401
+    except ImportError:
+        return "telethon is not installed (pip install telethon)"
+    return None
+
+
+def _session_path(cfg: dict) -> Path:
+    s = Path(cfg["TG_SESSION"])  # Telethon takes it with or without ".session"
+    return s if s.suffix == ".session" else s.with_suffix(".session")
 
 
 def read_token(cfg: dict) -> str:
@@ -6012,8 +6094,7 @@ def send_telegram(cfg: dict, path: Path, caption: str) -> None:
         from telethon.sync import TelegramClient
     except ImportError as exc:  # pragma: no cover - environment dependent
         raise RuntimeError("pip install telethon to send to Telegram") from exc
-    session = Path(cfg["TG_SESSION"])  # path as Telethon takes it, without ".session"
-    src = session.with_suffix(".session") if session.suffix != ".session" else session
+    src = _session_path(cfg)
     if not src.exists():
         raise FileNotFoundError(f"Telegram session file not found: {src}")
     tmpdir = Path(tempfile.mkdtemp(prefix="narxnoma_tg_"))
@@ -6042,9 +6123,7 @@ def send_text(cfg: dict, text: str) -> None:
         return
     tmpdir = Path(tempfile.mkdtemp(prefix="narxnoma_tg_"))
     try:
-        src = Path(cfg["TG_SESSION"])
-        src = src.with_suffix(".session") if src.suffix != ".session" else src
-        shutil.copyfile(src, tmpdir / "send.session")
+        shutil.copyfile(_session_path(cfg), tmpdir / "send.session")
         client = TelegramClient(str(tmpdir / "send"), int(cfg["TG_API_ID"]), cfg["TG_API_HASH"])
         client.connect()
         try:
@@ -6095,6 +6174,9 @@ def job_report(cfg: dict, send: bool = True, wait_lock_min: float = 90) -> int:
 
     out_dir = work_dir(cfg) / "reports"
     stamp = date.today().isoformat()
+    if send and (why := telegram_problem(cfg)):
+        logger.error("report not started, Telegram cannot send: %s", why)
+        return 1
     lock = Lock(work_dir(cfg) / "daily.lock")
     # the nightly refresh may still be running on a slow night: wait for it, do not race it
     if not lock.acquire(wait_s=wait_lock_min * 60):
@@ -16353,6 +16435,86 @@ def test_load_env_file(tmp_path):
     f.write_text("# c\nECOM_PAGE_SIZE = 50\nTG_API_ID='7'\n", encoding="utf-8")
     cfg = daily.load_env(f)
     assert cfg["ECOM_PAGE_SIZE"] == "50" and cfg["TG_API_ID"] == "7"
+
+
+def test_load_env_strips_inline_comments(tmp_path):
+    f = tmp_path / "e"
+    f.write_text(
+        "TG_SESSION=C:\\tg\\userbot_session        # the .session file\n"
+        "TG_API_HASH='ab # cd'  # quoted keeps its hash\n"
+        "ECOM_EXTRA_PARAMS=a=1&b=2\n",
+        encoding="utf-8",
+    )
+    cfg = daily.load_env(f)
+    assert cfg["TG_SESSION"] == "C:\\tg\\userbot_session"
+    assert cfg["TG_API_HASH"] == "ab # cd"
+    assert cfg["ECOM_EXTRA_PARAMS"] == "a=1&b=2"
+
+
+def test_shipped_env_example_parses_to_clean_values(monkeypatch):
+    for k in list(os.environ):
+        if k.startswith(("ECOM_", "TG_", "NARXNOMA_")):
+            monkeypatch.delenv(k)
+    example = daily.Path(__file__).parents[2] / "tools" / "daily" / "daily.env.example"
+    cfg = daily.load_env(example)
+    assert cfg["TG_SESSION"] and all("#" not in v for v in cfg.values()), cfg
+
+
+def test_report_refuses_to_start_when_telegram_cannot_send(tmp_path, monkeypatch):
+    monkeypatch.setattr(daily, "fetch_catalogue", lambda *a, **k: pytest.fail("fetched"))
+    cfg = {
+        "NARXNOMA_DAILY_DIR": str(tmp_path),
+        "TG_SESSION": str(tmp_path / "nope"),
+        "TG_API_ID": "1",
+        "TG_API_HASH": "h",
+    }
+    assert "not found" in daily.telegram_problem(cfg)
+    assert daily.job_report(cfg) == 1
+    assert "missing" in daily.telegram_problem({})
+
+
+def test_report_end_to_end_offline(tmp_path, monkeypatch):
+    """Catalogue -> csv -> research on the cache -> workbook -> one send, no network."""
+    from narxnoma.research import collect
+    from narxnoma.sources import SOURCES
+
+    def sweep(slug, category, cache_dir, max_age_h, force):
+        rows = [
+            {
+                "store_slug": slug,
+                "source_key": "k",
+                "price": 4_990_000,
+                "name_raw": "Samsung Galaxy A55 8/256GB Black",
+                "url": f"https://x/{slug}",
+                "availability": "IN_STOCK",
+                "image_url": None,
+                "category": category,
+            }
+        ]
+        return (rows if category == "smartphones" else []), time.time()
+
+    monkeypatch.setattr(collect, "_sweep_cached", sweep)
+    for s in SOURCES.values():
+        if not s.can_sweep:
+            monkeypatch.setattr(s, "search", lambda q: [], raising=False)
+    items = [
+        {
+            "name": "Samsung Galaxy A55 8/256GB Black",
+            "price": "5 100 000",
+            "category": {"name": "Smartphones"},
+            "is_active": True,
+        },
+        {"name": "Old phone", "price": 1, "category": "Smartphones", "is_active": False},
+    ]
+    monkeypatch.setattr(daily, "fetch_catalogue", lambda *a, **k: items)
+    monkeypatch.setattr(daily, "telegram_problem", lambda cfg: None)
+    sent = []
+    monkeypatch.setattr(daily, "send_telegram", lambda cfg, p, c: sent.append((p, c)))
+    assert daily.job_report({"NARXNOMA_DAILY_DIR": str(tmp_path)}) == 0
+    ((path, caption),) = sent
+    assert path.name.startswith("market_analysis_") and path.exists()
+    assert caption.startswith("Market analysis") and "1 products" in caption
+    assert not (tmp_path / "daily.lock").exists()
 
 
 
@@ -32110,7 +32272,8 @@ ECOM_ONLY_ACTIVE=1
 # --- Telegram: an existing, already logged-in user session (sends to Saved Messages) ---
 TG_API_ID=
 TG_API_HASH=
-TG_SESSION=C:\path\to\userbot_session        # the .session file, with or without the extension
+# the .session file, with or without the extension
+TG_SESSION=C:\path\to\userbot_session
 
 # --- where the daily files, cache and logs live ---
 NARXNOMA_DAILY_DIR=C:\narxnoma-daily
@@ -32188,7 +32351,7 @@ Layout: `docs/folder-map.md`. History and open items: `docs/CHANGELOG.md`.
 ```bash
 cd narxnoma-crawler
 python -m pip install --user -e ".[dev]"              # once: requests, psycopg, pytest, ruff, openpyxl
-python -m pytest -q                                    # offline; expect 628 passed, 72 skipped
+python -m pytest -q                                    # offline; expect 650 passed, 72 skipped
 python -m pytest -q -m live tests/sources/test_contract_live.py -k <slug>
 python -m ruff check --select E4,E7,E9,F,E501 <changed files>   # repo config = ruff defaults
 python -m narxnoma.cli fetch --source <slug> --category <c> --limit 20
@@ -32202,20 +32365,21 @@ Release: bump `.claude-plugin/plugin.json` `version`, add a CHANGELOG entry, com
 ## 4. Current state
 
 - Eleven sources; plugin **1.2.0**; schema migration **6** (openshop).
-- Offline suite 628 passed / 72 skipped / 12 deselected = 9 live + 3 `excel` (2026-10-22).
+- Offline suite 650 passed / 72 skipped / 12 deselected = 9 live + 3 `excel` (2026-10-23).
 - `narxnoma/research/` (market research → analysable Excel workbook): canonical notes
   `docs/market-research.md` and `docs/excel-workbooks.md`; run `pytest -m excel tests/research`
   on a machine with desktop Excel after touching `workbook.py` or `excel/`. Never re-save a
   finished workbook through openpyxl (drops slicers / Data Model).
 - `narxnoma/daily.py` (note `docs/daily-report.md`): owner-run 03:00 refresh + 09:00 report to
-  Telegram; 18 offline tests; live API shape and Telegram send unverified (owner's PC only).
+  Telegram; 22 offline tests (one end-to-end); live API shape and Telegram send unverified
+  (owner's PC only). Not on `main` yet: merge this branch, then pull on the PC.
 - Open: eight matcher gaps from openshop names (`docs/parsers/openshop.md` §8), not yet
   fixed in `matching/`; one pre-existing over-long line in `test_contract_live.py`.
 - Downstream user: the Extractractor project (Ishonch pricing, private) vendors
   `narxnoma/sources` + `matching` DB-free and runs openshop research there. Changes to
   shared clients should be copied both ways.
 
-Last updated: 2026-10-22.
+Last updated: 2026-10-23.
 
 ## 5. Maintenance protocol
 
